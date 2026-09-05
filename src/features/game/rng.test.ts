@@ -18,6 +18,18 @@ describe("seeded randomness", () => {
     );
   });
 
+  it("pins the release algorithm for an ASCII seed and scope", () => {
+    const rng = scopedRng("alpha", "arena");
+    const values = Array.from({ length: 5 }, () => Math.floor(rng.next() * 4294967296));
+    expect(values).toEqual([3012113987, 732834591, 3753724533, 2940309389, 4253879317]);
+  });
+
+  it("pins UTF-16 hashing and the release algorithm for an astral seed", () => {
+    const rng = new SeededRng("😀");
+    const values = Array.from({ length: 5 }, () => Math.floor(rng.next() * 4294967296));
+    expect(values).toEqual([3949134190, 2278450477, 1786177236, 281350428, 4170881302]);
+  });
+
   it("returns integers in the requested range", () => {
     const rng = new SeededRng("range");
     const values = Array.from({ length: 1_000 }, () => rng.int(3));
@@ -27,6 +39,26 @@ describe("seeded randomness", () => {
   it("picks a member from a list", () => {
     const values = ["a", "b", "c"] as const;
     expect(values).toContain(new SeededRng("pick").pick(values));
+  });
+
+  it("rejects sparse arrays for pick", () => {
+    expect(() => new SeededRng("sparse").pick(Array<number>(1))).toThrow(
+      new TypeError("cannot use sparse list"),
+    );
+  });
+
+  it("rejects sparse arrays for shuffle", () => {
+    const sparse = [1, , 3] as number[];
+    expect(() => new SeededRng("sparse").shuffle(sparse)).toThrow(
+      new TypeError("cannot use sparse list"),
+    );
+  });
+
+  it("accepts dense arrays containing explicit undefined", () => {
+    const values: Array<number | undefined> = [undefined, 1];
+    const rng = new SeededRng("undefined");
+    expect(values).toContain(rng.pick(values));
+    expect(rng.shuffle(values)).toHaveLength(values.length);
   });
 
   it("shuffles without mutating input and returns a permutation", () => {
