@@ -109,8 +109,12 @@ describe("local run storage", () => {
     const maps = [{ map: "Ascent", userScore: 13, opponentScore: 8 }, { map: "Bind", userScore: 13, opponentScore: 9 }];
     const valid = { ...freeRun("maps"), series: [{ stage: "group" as const, userWins: 2, opponentWins: 0, maps }, { stage: "quarterfinal" as const, userWins: 0, opponentWins: 2, maps: maps.map(map => ({ ...map, userScore: map.opponentScore, opponentScore: map.userScore })) }], stageReached: "quarterfinal" as const };
     expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [valid] }).success).toBe(true);
-    expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [{ ...maps[0], map: "Unknown" }, maps[1]] }] }] }).success).toBe(false);
-    expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [maps[0], maps[0]] }] }] }).success).toBe(false);
+    const unknown = HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [{ ...maps[0], map: "Unknown" }, maps[1]] }, valid.series[1]] }] });
+    expect(unknown.success).toBe(false);
+    if (!unknown.success) expect(unknown.error.issues).toEqual(expect.arrayContaining([expect.objectContaining({ path: ["runs", 0, "series", 0, "maps", 0, "map"], message: expect.stringMatching(/invalid option/i) })]));
+    const repeated = HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [maps[0], maps[0]] }, valid.series[1]] }] });
+    expect(repeated.success).toBe(false);
+    if (!repeated.success) expect(repeated.error.issues).toEqual(expect.arrayContaining([expect.objectContaining({ path: ["runs", 0, "series", 0, "maps"], message: "Maps may not repeat within a series" })]));
   });
 
   it("caps Daily completions at 730 after deduping newest first", () => {
