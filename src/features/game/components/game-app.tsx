@@ -18,7 +18,7 @@ import { IglPicker } from "./igl-picker";
 import { TournamentView } from "./tournament-view";
 import { HighlightFeed } from "./highlight-feed";
 import { ResultsView } from "./results-view";
-import type { GeneratedOpponent } from "../opponents";
+import type { Highlight } from "../narration";
 import type { SeriesResult } from "../tournament";
 import { formatDailyShare, formatFreePlayShare } from "../share";
 
@@ -58,7 +58,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const [simulationError, setSimulationError] = useState<string | null>(null);
   const [lockedStage, setLockedStage] = useState<string | null>(null);
   const [presentedSeries, setPresentedSeries] = useState<SeriesResult | null>(null);
-  const [presentedOpponent, setPresentedOpponent] = useState<GeneratedOpponent | null>(null);
+  const [presentedHighlights, setPresentedHighlights] = useState<readonly Highlight[] | null>(null);
   const [highlightsComplete, setHighlightsComplete] = useState(false);
   const seriesLock = useRef<string | null>(null);
   const runGeneration = useRef(0);
@@ -92,9 +92,16 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       setSimulationError(null);
       if (!opponent) throw new Error("Opponent unavailable");
       const series = gateway.playSeries(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft), opponent);
+      const highlights = series.stage === "semifinal" || series.stage === "final"
+        ? gateway.createHighlights(state.tournament.seed, series, toLineup(state.draft), opponent.lineup)
+        : null;
       // Commit the disabled control before revealing the next stage.
       await Promise.resolve();
-      if (runGeneration.current === generation && seriesLock.current === lock) { setPresentedOpponent(opponent); setPresentedSeries(series); setHighlightsComplete(series.stage === "group" || series.stage === "quarterfinal"); }
+      if (runGeneration.current === generation && seriesLock.current === lock) {
+        setPresentedHighlights(highlights);
+        setPresentedSeries(series);
+        setHighlightsComplete(highlights === null);
+      }
     }
     catch { seriesLock.current = null; setLockedStage(null); setSimulationError("Unable to play the current series. Please restart the run."); }
   };
@@ -102,6 +109,9 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     runGeneration.current += 1;
     seriesLock.current = null;
     setLockedStage(null);
+    setPresentedSeries(null);
+    setPresentedHighlights(null);
+    setHighlightsComplete(false);
   };
   const resetState = (): void => restartCurrentRun(() => setSimulationError(null), dispatch, invalidatePendingSeries);
   const restart = (): void => { resetState(); onRestart(); };
@@ -114,9 +124,11 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   }));
   const draftedCards = ROLES.flatMap(role => rosterSlots[role] ? [rosterSlots[role]] : []);
   const continueTournament = (): void => {
-    if (!presentedSeries) return;
+    if (state.phase !== "tournament" || !presentedSeries || !highlightsComplete || seriesLock.current !== state.tournament.currentStage) return;
+    // Consume the presentation synchronously, including two clicks in one task.
+    seriesLock.current = null;
     dispatch({ type: "resolve-series", series: presentedSeries });
-    seriesLock.current = null; setLockedStage(null); setPresentedSeries(null); setPresentedOpponent(null); setHighlightsComplete(false);
+    setLockedStage(null); setPresentedSeries(null); setPresentedHighlights(null); setHighlightsComplete(false);
   };
   const resultShare = state.phase === "results" ? (() => {
     const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage, series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: state.tournament.userLineup.slots };
@@ -135,7 +147,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {state.phase === "role" && (() => { const card = cards.get(state.draft.pendingCardId ?? ""); const roles = card?.eligibleRoles.filter(role => !state.draft.slots[role]) ?? []; return <><section><h2>Assign {card?.displayHandle}</h2><div role="group" aria-label="Choose an open role">{roles.map(role => <button type="button" key={role} onClick={() => dispatch({ type: "assign-role", role })}>{role}</button>)}</div></section><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></>; })()}
       {state.phase === "lineup" && <><RosterBar slots={rosterSlots} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) dispatch({ type: "enter-tournament" }); }} /></>}
       {state.phase === "tournament" && !opponent && <p role="alert">No valid opponent is available. <button type="button" onClick={restart}>Restart run</button></p>}
-      {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedSeries && (presentedSeries.stage === "semifinal" || presentedSeries.stage === "final") && presentedOpponent && <HighlightFeed highlights={gateway.createHighlights(state.tournament.seed, presentedSeries, toLineup(state.draft), presentedOpponent.lineup)} onComplete={() => setHighlightsComplete(true)} />}</>}
+      {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
       {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory })); }} />}
       {simulationError && <p role="alert">{simulationError}</p>}
     </main>;
