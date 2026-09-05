@@ -6,7 +6,7 @@ import type { GeneratedOpponent } from "../opponents";
 import type { SeriesResult } from "../tournament";
 import { ErrorBoundary } from "./error-boundary";
 import { GameApp, playCurrentTournamentSeries, restartCurrentRun } from "./game-app";
-import { createGameReducer, initialGameState, type GameState } from "../machine";
+import { createGameReducer, createStartAction, initialGameState, type GameState } from "../machine";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { parseDataset } from "../schema";
 import { startTournament } from "../tournament";
@@ -42,7 +42,7 @@ describe("GameApp", () => {
 
   it("clears a simulation error and returns the current run to mode on restart", () => {
     const reduce = createGameReducer({ dataset: parseDataset(minimalDataset) });
-    let state = reduce(initialGameState, { type: "start", mode: "daily" });
+    let state = reduce(initialGameState, createStartAction("daily", { now: () => new Date("2026-09-05T00:00:00Z") }));
     let simulationError: string | null = "Unable to play the current series. Please restart the run.";
     restartCurrentRun(() => { simulationError = null; }, action => { state = reduce(state, action); });
     expect(simulationError).toBeNull();

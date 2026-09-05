@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { ROLES, type GameDataset } from "./domain";
 import { LocalSimulationGateway } from "./gateway";
-import { createGameReducer, initialGameState, type GameState } from "./machine";
+import { createGameReducer, createStartAction, initialGameState, type GameState } from "./machine";
 import { parseDataset } from "./schema";
 
 const dataset = parseDataset(minimalDataset) as GameDataset;
@@ -28,9 +28,9 @@ function draftLineup(reduce: ReturnType<typeof createGameReducer>, started: Game
 
 describe("game reducer", () => {
   it("moves through mode, draft phases, tournament, and results", () => {
-    const reduce = createGameReducer({ dataset, now: () => new Date("2026-09-05T12:00:00Z") });
+    const reduce = createGameReducer({ dataset });
     expect(initialGameState.phase).toBe("mode");
-    let state = reduce(initialGameState, { type: "start", mode: "daily" });
+    let state = reduce(initialGameState, createStartAction("daily", { now: () => new Date("2026-09-05T12:00:00Z") }));
     expect(state.phase).toBe("team");
     state = reduce(state, { type: "reroll" });
     expect(state.phase).toBe("team");
@@ -59,17 +59,24 @@ describe("game reducer", () => {
   });
 
   it("uses the injected UTC date for daily seeds", () => {
-    const reduce = createGameReducer({ dataset, now: () => new Date("2026-09-06T00:15:00+02:00") });
-    const state = reduce(initialGameState, { type: "start", mode: "daily" });
+    const reduce = createGameReducer({ dataset });
+    const state = reduce(initialGameState, createStartAction("daily", { now: () => new Date("2026-09-06T00:15:00+02:00") }));
     expect(state).toMatchObject({ phase: "team", draft: { seed: "run-it-back:daily:2026-09-05:v1" } });
   });
 
   it("uses supplied free-play seeds only when start actions are handled", () => {
     const seeds = ["free-one", "free-two"];
-    const reduce = createGameReducer({ dataset, freeSeedFactory: () => seeds.shift()! });
-    const first = reduce(initialGameState, { type: "start", mode: "free-play" });
-    const second = reduce(reduce(first, { type: "restart" }), { type: "start", mode: "free-play" });
+    const reduce = createGameReducer({ dataset });
+    const first = reduce(initialGameState, createStartAction("free-play", { freeSeedFactory: () => seeds.shift()! }));
+    const second = reduce(reduce(first, { type: "restart" }), createStartAction("free-play", { freeSeedFactory: () => seeds.shift()! }));
     expect([first, second].map(state => state.phase === "team" ? state.draft.seed : null)).toEqual(["free-one", "free-two"]);
+  });
+
+  it("is deterministic for a supplied start action without consuming seed factories", () => {
+    const factory = () => { throw new Error("reducer must not call factories"); };
+    const action = createStartAction("free-play", { freeSeedFactory: () => "fixed" });
+    const reduce = createGameReducer({ dataset, freeSeedFactory: factory });
+    expect(reduce(initialGameState, action)).toEqual(reduce(initialGameState, action));
   });
 
   it("keeps presentation timing actions referentially unchanged", () => {

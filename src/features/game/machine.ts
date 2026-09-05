@@ -13,7 +13,7 @@ export type GameState =
   | { phase: "results"; mode: GameMode; draft: DraftState; tournament: TournamentState };
 
 export type GameAction =
-  | { type: "start"; mode: GameMode }
+  | { type: "start"; mode: GameMode; seed: string }
   | { type: "reroll" }
   | { type: "choose-team"; teamId: string }
   | { type: "choose-card"; cardId: string }
@@ -29,17 +29,20 @@ export type GameAction =
 export interface GameReducerDependencies { dataset: GameDataset; now?: () => Date; freeSeedFactory?: () => string }
 export const initialGameState: GameState = { phase: "mode" };
 
+export function createStartAction(mode: GameMode, { now = () => new Date(), freeSeedFactory = () => crypto.randomUUID() }: Omit<GameReducerDependencies, "dataset"> = {}): Extract<GameAction, { type: "start" }> {
+  return { type: "start", mode, seed: mode === "daily" ? dailySeed(now()) : freeSeedFactory() };
+}
+
 function invalid(state: GameState, action: GameAction): never { throw new Error(`Action \"${action.type}\" is not valid during ${state.phase}`); }
 function draftState(state: DraftGameState, draft: DraftState, phase: DraftPhase): GameState { return { phase, mode: state.mode, draft }; }
 
-export function createGameReducer({ dataset, now = () => new Date(), freeSeedFactory = () => crypto.randomUUID() }: GameReducerDependencies) {
+export function createGameReducer({ dataset }: GameReducerDependencies) {
   return (state: GameState, action: GameAction): GameState => {
     if (action.type === "restart") return initialGameState;
     if (action.type === "change-speed" || action.type === "skip-reveal") return state;
     if (action.type === "start") {
       if (state.phase !== "mode") return invalid(state, action);
-      const seed = action.mode === "daily" ? dailySeed(now()) : freeSeedFactory();
-      return { phase: "team", mode: action.mode, draft: createDraft(seed, dataset) };
+      return { phase: "team", mode: action.mode, draft: createDraft(action.seed, dataset) };
     }
     switch (state.phase) {
       case "mode": return invalid(state, action);

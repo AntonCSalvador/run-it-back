@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { type GameDataset } from "../domain";
 import { toLineup } from "../draft";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
-import { createGameReducer, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
+import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
 import { DAILY_RECORD, readRecord } from "../storage";
 import { AppHeader } from "./app-header";
@@ -29,30 +29,50 @@ export function restartCurrentRun(clearSimulationError: () => void, dispatch: (a
   dispatch({ type: "restart" });
 }
 
-export function GameApp({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, storage }: GameAppProps) {
+const datasetKeys = new WeakMap<object, number>(); let nextDatasetKey = 1;
+function datasetKey(dataset: object): number { const existing = datasetKeys.get(dataset); if (existing) return existing; const key = nextDatasetKey++; datasetKeys.set(dataset, key); return key; }
+
+export function GameApp(props: GameAppProps) {
+  const [restartKey, setRestartKey] = useState(0);
+  const key = datasetKey(props.dataset ?? minimalDataset);
+  const restart = (): void => setRestartKey(value => value + 1);
+  return <ErrorBoundary onRestart={restart}><GameAppCore key={`${key}:${restartKey}`} {...props} onRestart={restart} /></ErrorBoundary>;
+}
+
+export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, storage, onRestart }: GameAppProps & { onRestart: () => void }) {
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? minimalDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset, now, freeSeedFactory }), [dataset, now, freeSeedFactory]);
   const [state, dispatch] = useReducer(reducer, initialGameState);
   const [simulationError, setSimulationError] = useState<string | null>(null);
-  const adapter = storage === undefined ? browserStorage() : storage;
-  const streak = useMemo(() => readRecord(adapter, DAILY_RECORD).value.streak, [adapter]);
+  const [lockedStage, setLockedStage] = useState<string | null>(null);
+  const seriesLock = useRef<string | null>(null);
+  const [streak, setStreak] = useState(0);
+  useEffect(() => {
+    const adapter = storage === undefined ? browserStorage() : storage;
+    const update = (): void => { try { setStreak(readRecord(adapter, DAILY_RECORD).value.streak); } catch { setStreak(0); } };
+    update();
+    if (typeof window === "undefined") return undefined;
+    window.addEventListener("storage", update);
+    return () => window.removeEventListener("storage", update);
+  }, [storage]);
   const gateway = useMemo(() => suppliedGateway ?? new LocalSimulationGateway(dataset), [suppliedGateway, dataset]);
   const mode: GameMode | null = state.phase === "mode" ? null : state.mode;
   const playSeries = (): void => {
     if (state.phase !== "tournament") return;
+    const lock = state.tournament.currentStage;
+    if (seriesLock.current === lock) return;
+    seriesLock.current = lock; setLockedStage(lock);
     try { setSimulationError(null); dispatch(playCurrentTournamentSeries(state, gateway)); }
-    catch { setSimulationError("Unable to play the current series. Please restart the run."); }
+    catch { seriesLock.current = null; setLockedStage(null); setSimulationError("Unable to play the current series. Please restart the run."); }
   };
-  const restart = (): void => restartCurrentRun(() => setSimulationError(null), dispatch);
-  return <ErrorBoundary onRestart={restart}>
-    <main>
+  const restart = (): void => { restartCurrentRun(() => setSimulationError(null), dispatch); onRestart(); };
+  return <main>
       <AppHeader mode={mode} streak={streak} onStart={value => {
         if (state.phase !== "mode") restart();
-        dispatch({ type: "start", mode: value });
+        dispatch(createStartAction(value, { now, freeSeedFactory }));
       }} onRestart={restart} />
       <p aria-live="polite">Current phase: {state.phase}</p>
-      {state.phase === "tournament" && <button type="button" onClick={playSeries}>Play current series</button>}
+      {state.phase === "tournament" && <button type="button" disabled={lockedStage === state.tournament.currentStage} onClick={playSeries}>Play current series</button>}
       {simulationError && <p role="alert">{simulationError}</p>}
-    </main>
-  </ErrorBoundary>;
+    </main>;
 }
