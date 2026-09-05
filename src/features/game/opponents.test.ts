@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { GameDataset, Lineup, PlayerCard, Role } from "./domain";
 import { lineupStrength } from "./rating";
-import { generateOpponent, OPPONENT_ATTEMPT_LIMIT } from "./opponents";
+import { forEachOpponentAttempt, generateOpponent, OPPONENT_ATTEMPT_LIMIT } from "./opponents";
 import { minimalDataset } from "../../data/fixtures/minimal-dataset";
 import { parseDataset } from "./schema";
 
@@ -106,6 +106,23 @@ describe("generateOpponent", () => {
 
   test("names the exact 250-attempt boundary used for bounded search", () => {
     expect(OPPONENT_ATTEMPT_LIMIT).toBe(250);
+  });
+
+  test("visits every bounded attempt index from zero through 249", () => {
+    const attempts: number[] = [];
+    forEachOpponentAttempt(attempt => { attempts.push(attempt); });
+    expect(attempts).toHaveLength(250);
+    expect(attempts[0]).toBe(0);
+    expect(attempts.at(-1)).toBe(249);
+    expect(attempts).not.toContain(250);
+  });
+
+  test("falls back to the midpoint-nearest reachable lineup rather than an arbitrary attempt", () => {
+    const data = dataset([40, 50, 70]);
+    const user: Lineup = { slots: roles.map(role => ({ role, cardId: `${role}-40` })), iglCardId: "smokes-40" };
+    const opponent = generateOpponent("nearest-fallback", "final", user, data);
+    expect(opponent.strength).toBe(71.6);
+    expect(opponent.lineup.slots.every(slot => slot.cardId.endsWith("-70"))).toBe(true);
   });
 
   test("has strictly increasing average strength from groups through finals over deterministic seeds", () => {

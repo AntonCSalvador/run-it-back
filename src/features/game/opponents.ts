@@ -6,6 +6,12 @@ export type Stage = "group" | "quarterfinal" | "semifinal" | "final";
 
 export const OPPONENT_ATTEMPT_LIMIT = 250;
 
+export function forEachOpponentAttempt(visit: (attempt: number) => boolean | void): void {
+  for (let attempt = 0; attempt < OPPONENT_ATTEMPT_LIMIT; attempt += 1) {
+    if (visit(attempt)) return;
+  }
+}
+
 const STAGE_TARGETS: Record<Stage, readonly [number, number]> = {
   group: [50, 62],
   quarterfinal: [58, 70],
@@ -78,15 +84,21 @@ export function generateOpponent(seed: string, stage: Stage, userLineup: Lineup,
   const candidates = dataset.cards.filter(card => !userCards.has(card.id));
   const target = STAGE_TARGETS[stage];
   let closest: Candidate | undefined;
+  let inBand: Candidate | undefined;
 
-  for (let attempt = 0; attempt < OPPONENT_ATTEMPT_LIMIT; attempt += 1) {
+  forEachOpponentAttempt((attempt) => {
     const lineup = findLineup(candidates, scopedRng(seed, `opponent:${stage}:${attempt}`));
-    if (!lineup) continue;
+    if (!lineup) return false;
     const candidate = { lineup, strength: lineupStrength(lineup, dataset) };
-    if (candidate.strength >= target[0] && candidate.strength <= target[1]) return generated(seed, stage, candidate);
+    if (candidate.strength >= target[0] && candidate.strength <= target[1]) {
+      inBand = candidate;
+      return true;
+    }
     if (!closest || distanceFromRange(candidate.strength, target) < distanceFromRange(closest.strength, target)) closest = candidate;
-  }
+    return false;
+  });
 
+  if (inBand) return generated(seed, stage, inBand);
   if (!closest) throw new Error(`No valid opponent lineup exists for stage ${stage}`);
   return generated(seed, stage, closest);
 }
