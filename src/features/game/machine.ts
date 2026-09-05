@@ -26,10 +26,11 @@ export type GameAction =
   | { type: "skip-reveal" }
   | { type: "restart" };
 
-export interface GameReducerDependencies { dataset: GameDataset; now?: () => Date; freeSeedFactory?: () => string }
+export interface GameReducerDependencies { dataset: GameDataset }
+export interface GameStartDependencies { now?: () => Date; freeSeedFactory?: () => string }
 export const initialGameState: GameState = { phase: "mode" };
 
-export function createStartAction(mode: GameMode, { now = () => new Date(), freeSeedFactory = () => crypto.randomUUID() }: Omit<GameReducerDependencies, "dataset"> = {}): Extract<GameAction, { type: "start" }> {
+export function createStartAction(mode: GameMode, { now = () => new Date(), freeSeedFactory = () => crypto.randomUUID() }: GameStartDependencies = {}): Extract<GameAction, { type: "start" }> {
   return { type: "start", mode, seed: mode === "daily" ? dailySeed(now()) : freeSeedFactory() };
 }
 

@@ -6,7 +6,7 @@ import { ROLES, type Lineup } from "../domain";
 import { LocalSimulationGateway } from "../gateway";
 import type { Stage } from "../opponents";
 import { startTournament, type SeriesResult } from "../tournament";
-import { GameApp } from "./game-app";
+import { GameApp, restartCurrentRun } from "./game-app";
 import { type GameState } from "../machine";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { parseDataset } from "../schema";
@@ -38,6 +38,49 @@ function historyStorage() {
 }
 
 describe("GameApp", () => {
+  it("invalidates pending series work before clearing errors or resetting state", () => {
+    const calls: string[] = [];
+    restartCurrentRun(() => { calls.push("clear error"); }, () => { calls.push("reset state"); }, () => { calls.push("invalidate series"); });
+    expect(calls).toEqual(["invalidate series", "clear error", "reset state"]);
+  });
+
+  it("keeps mode after Play and Reset in the same task without stale work or warnings", async () => {
+    const gateway = gatewayFixture();
+    const storage = historyStorage();
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} storage={storage} />);
+      act(() => {
+        fireEvent.click(screen.getByRole("button", { name: "Play current series" }));
+        fireEvent.click(screen.getByRole("button", { name: "Reset current run" }));
+      });
+      expect(screen.getByText("Current phase: mode")).toBeVisible();
+      await act(async () => { await Promise.resolve(); });
+      expect(screen.getByText("Current phase: mode")).toBeVisible();
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
+      expect(gateway.playSeries).toHaveBeenCalledTimes(1);
+      expect(storage.removeItem).not.toHaveBeenCalled();
+      expect(errors).not.toHaveBeenCalled();
+    } finally { errors.mockRestore(); }
+  });
+
+  it("discards a pending series when its core unmounts", async () => {
+    const gateway = gatewayFixture();
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      const view = render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
+      act(() => {
+        fireEvent.click(screen.getByRole("button", { name: "Play current series" }));
+        view.unmount();
+      });
+      await act(async () => { await Promise.resolve(); });
+      expect(view.container).toBeEmptyDOMElement();
+      expect(gateway.playSeries).toHaveBeenCalledTimes(1);
+      expect(errors).not.toHaveBeenCalled();
+    } finally { errors.mockRestore(); }
+  });
+
   it("renders an accessible wordmark and mode controls immediately", () => {
     render(<GameApp />);
     expect(screen.getByRole("heading", { name: "Run It Back", level: 1 })).toBeVisible();

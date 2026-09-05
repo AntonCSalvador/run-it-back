@@ -24,7 +24,8 @@ export function playCurrentTournamentSeries(state: Extract<GameState, { phase: "
   return { type: "resolve-series", series: gateway.playSeries(seed, currentStage, lineup, opponent) };
 }
 
-export function restartCurrentRun(clearSimulationError: () => void, dispatch: (action: GameAction) => void): void {
+export function restartCurrentRun(clearSimulationError: () => void, dispatch: (action: GameAction) => void, invalidatePendingSeries: () => void): void {
+  invalidatePendingSeries();
   clearSimulationError();
   dispatch({ type: "restart" });
 }
@@ -41,11 +42,16 @@ export function GameApp(props: GameAppProps) {
 
 export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, onRestart }: GameAppProps & { onRestart: () => void }) {
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? minimalDataset), [suppliedDataset]);
-  const reducer = useMemo(() => createGameReducer({ dataset, now, freeSeedFactory }), [dataset, now, freeSeedFactory]);
+  const reducer = useMemo(() => createGameReducer({ dataset }), [dataset]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [simulationError, setSimulationError] = useState<string | null>(null);
   const [lockedStage, setLockedStage] = useState<string | null>(null);
   const seriesLock = useRef<string | null>(null);
+  const runGeneration = useRef(0);
+  useEffect(() => () => {
+    runGeneration.current += 1;
+    seriesLock.current = null;
+  }, []);
   const [streak, setStreak] = useState(0);
   useEffect(() => {
     const adapter = storage === undefined ? browserStorage() : storage;
@@ -62,21 +68,27 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     const lock = state.tournament.currentStage;
     if (seriesLock.current === lock) return;
     seriesLock.current = lock; setLockedStage(lock);
+    const generation = runGeneration.current;
     try {
       setSimulationError(null);
       const action = playCurrentTournamentSeries(state, gateway);
       // Commit the disabled control before revealing the next stage.
       await Promise.resolve();
-      if (seriesLock.current === lock) dispatch(action);
+      if (runGeneration.current === generation && seriesLock.current === lock) dispatch(action);
     }
     catch { seriesLock.current = null; setLockedStage(null); setSimulationError("Unable to play the current series. Please restart the run."); }
   };
-  const restart = (): void => { restartCurrentRun(() => setSimulationError(null), dispatch); onRestart(); };
+  const invalidatePendingSeries = (): void => {
+    runGeneration.current += 1;
+    seriesLock.current = null;
+    setLockedStage(null);
+  };
+  const resetState = (): void => restartCurrentRun(() => setSimulationError(null), dispatch, invalidatePendingSeries);
+  const restart = (): void => { resetState(); onRestart(); };
   return <main>
       <AppHeader mode={mode} streak={streak} onStart={value => {
         if (state.phase !== "mode") {
-          seriesLock.current = null; setLockedStage(null);
-          restartCurrentRun(() => setSimulationError(null), dispatch);
+          resetState();
         }
         dispatch(createStartAction(value, { now, freeSeedFactory }));
       }} onRestart={restart} />

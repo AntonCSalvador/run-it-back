@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it, vi } from "vitest";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { ROLES, type GameDataset } from "./domain";
 import { LocalSimulationGateway } from "./gateway";
@@ -27,6 +27,10 @@ function draftLineup(reduce: ReturnType<typeof createGameReducer>, started: Game
 }
 
 describe("game reducer", () => {
+  it("separates dataset-only reducer dependencies from seed-generation dependencies", () => {
+    expectTypeOf<keyof Parameters<typeof createGameReducer>[0]>().toEqualTypeOf<"dataset">();
+    expectTypeOf<keyof NonNullable<Parameters<typeof createStartAction>[1]>>().toEqualTypeOf<"now" | "freeSeedFactory">();
+  });
   it("moves through mode, draft phases, tournament, and results", () => {
     const reduce = createGameReducer({ dataset });
     expect(initialGameState.phase).toBe("mode");
@@ -73,10 +77,11 @@ describe("game reducer", () => {
   });
 
   it("is deterministic for a supplied start action without consuming seed factories", () => {
-    const factory = () => { throw new Error("reducer must not call factories"); };
-    const action = createStartAction("free-play", { freeSeedFactory: () => "fixed" });
-    const reduce = createGameReducer({ dataset, freeSeedFactory: factory });
+    const factory = vi.fn(() => "fixed");
+    const action = createStartAction("free-play", { freeSeedFactory: factory });
+    const reduce = createGameReducer({ dataset });
     expect(reduce(initialGameState, action)).toEqual(reduce(initialGameState, action));
+    expect(factory).toHaveBeenCalledTimes(1);
   });
 
   it("keeps presentation timing actions referentially unchanged", () => {
