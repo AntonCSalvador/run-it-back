@@ -24,6 +24,11 @@ export function playCurrentTournamentSeries(state: Extract<GameState, { phase: "
   return { type: "resolve-series", series: gateway.playSeries(seed, currentStage, lineup, opponent) };
 }
 
+export function restartCurrentRun(clearSimulationError: () => void, dispatch: (action: GameAction) => void): void {
+  clearSimulationError();
+  dispatch({ type: "restart" });
+}
+
 export function GameApp({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, storage }: GameAppProps) {
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? minimalDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset, now, freeSeedFactory }), [dataset, now, freeSeedFactory]);
@@ -38,12 +43,13 @@ export function GameApp({ dataset: suppliedDataset, now, freeSeedFactory, gatewa
     try { setSimulationError(null); dispatch(playCurrentTournamentSeries(state, gateway)); }
     catch { setSimulationError("Unable to play the current series. Please restart the run."); }
   };
-  return <ErrorBoundary onRestart={() => dispatch({ type: "restart" })}>
+  const restart = (): void => restartCurrentRun(() => setSimulationError(null), dispatch);
+  return <ErrorBoundary onRestart={restart}>
     <main>
       <AppHeader mode={mode} streak={streak} onStart={value => {
-        if (state.phase !== "mode") dispatch({ type: "restart" });
+        if (state.phase !== "mode") restart();
         dispatch({ type: "start", mode: value });
-      }} onRestart={() => dispatch({ type: "restart" })} />
+      }} onRestart={restart} />
       <p aria-live="polite">Current phase: {state.phase}</p>
       {state.phase === "tournament" && <button type="button" onClick={playSeries}>Play current series</button>}
       {simulationError && <p role="alert">{simulationError}</p>}

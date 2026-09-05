@@ -5,8 +5,10 @@ import { ROLES, type Lineup } from "../domain";
 import type { GeneratedOpponent } from "../opponents";
 import type { SeriesResult } from "../tournament";
 import { ErrorBoundary } from "./error-boundary";
-import { GameApp, playCurrentTournamentSeries } from "./game-app";
-import type { GameState } from "../machine";
+import { GameApp, playCurrentTournamentSeries, restartCurrentRun } from "./game-app";
+import { createGameReducer, initialGameState, type GameState } from "../machine";
+import { minimalDataset } from "@/data/fixtures/minimal-dataset";
+import { parseDataset } from "../schema";
 import { startTournament } from "../tournament";
 
 describe("GameApp", () => {
@@ -36,5 +38,14 @@ describe("GameApp", () => {
     expect(playCurrentTournamentSeries(state, gateway)).toEqual({ type: "resolve-series", series });
     expect(gateway.generateOpponent).toHaveBeenCalledWith("seed", "group", lineup);
     expect(gateway.playSeries).toHaveBeenCalledWith("seed", "group", lineup, opponent);
+  });
+
+  it("clears a simulation error and returns the current run to mode on restart", () => {
+    const reduce = createGameReducer({ dataset: parseDataset(minimalDataset) });
+    let state = reduce(initialGameState, { type: "start", mode: "daily" });
+    let simulationError: string | null = "Unable to play the current series. Please restart the run.";
+    restartCurrentRun(() => { simulationError = null; }, action => { state = reduce(state, action); });
+    expect(simulationError).toBeNull();
+    expect(state.phase).toBe("mode");
   });
 });
