@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { StrictMode } from "react";
 import { ROLES, type Lineup } from "../domain";
 import type { GeneratedOpponent } from "../opponents";
 import type { SeriesResult } from "../tournament";
@@ -18,6 +19,16 @@ describe("GameApp", () => {
     expect(screen.getByRole("button", { name: "Daily" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Free Play" })).toBeVisible();
   });
+
+  it("consumes one free-play seed for one StrictMode click", async () => {
+    const user = userEvent.setup();
+    const factory = vi.fn(() => "strict-seed");
+    render(<StrictMode><GameApp freeSeedFactory={factory} /></StrictMode>);
+    await user.click(screen.getByRole("button", { name: "Free Play" }));
+    expect(factory).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Current phase: team")).toBeVisible();
+  });
+
 
   it("recovers a broken subtree without clearing browser storage", async () => {
     const user = userEvent.setup();

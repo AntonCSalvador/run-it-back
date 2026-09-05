@@ -11,7 +11,7 @@ import { DAILY_RECORD, readRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 
-export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; storage?: Storage | null }
+export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
 function browserStorage(): Storage | null {
   if (typeof window === "undefined") return null;
   try { return window.localStorage; } catch { return null; }
@@ -39,10 +39,10 @@ export function GameApp(props: GameAppProps) {
   return <ErrorBoundary onRestart={restart}><GameAppCore key={`${key}:${restartKey}`} {...props} onRestart={restart} /></ErrorBoundary>;
 }
 
-export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, storage, onRestart }: GameAppProps & { onRestart: () => void }) {
+export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, onRestart }: GameAppProps & { onRestart: () => void }) {
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? minimalDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset, now, freeSeedFactory }), [dataset, now, freeSeedFactory]);
-  const [state, dispatch] = useReducer(reducer, initialGameState);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [simulationError, setSimulationError] = useState<string | null>(null);
   const [lockedStage, setLockedStage] = useState<string | null>(null);
   const seriesLock = useRef<string | null>(null);
@@ -55,7 +55,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     window.addEventListener("storage", update);
     return () => window.removeEventListener("storage", update);
   }, [storage]);
-  const gateway = useMemo(() => suppliedGateway ?? new LocalSimulationGateway(dataset), [suppliedGateway, dataset]);
+  const gateway = useMemo(() => suppliedGateway ?? gatewayFactory?.(dataset) ?? new LocalSimulationGateway(dataset), [suppliedGateway, gatewayFactory, dataset]);
   const mode: GameMode | null = state.phase === "mode" ? null : state.mode;
   const playSeries = (): void => {
     if (state.phase !== "tournament") return;
