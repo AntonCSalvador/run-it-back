@@ -29,13 +29,6 @@ function browserStorage(): Storage | null {
   try { return window.localStorage; } catch { return null; }
 }
 
-export function playCurrentTournamentSeries(state: Extract<GameState, { phase: "tournament" }>, gateway: SimulationGateway): GameAction {
-  const lineup = toLineup(state.draft);
-  const { seed, currentStage } = state.tournament;
-  const opponent = gateway.generateOpponent(seed, currentStage, lineup);
-  return { type: "resolve-series", series: gateway.playSeries(seed, currentStage, lineup, opponent) };
-}
-
 export function restartCurrentRun(clearSimulationError: () => void, dispatch: (action: GameAction) => void, invalidatePendingSeries: () => void): void {
   invalidatePendingSeries();
   clearSimulationError();

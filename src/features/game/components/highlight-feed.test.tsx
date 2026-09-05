@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Highlight } from "../narration";
@@ -13,6 +13,49 @@ beforeEach(() => { vi.useFakeTimers(); });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); });
 
 describe("HighlightFeed", () => {
+  it("appends timed moments to a stable labelled polite log", () => {
+    render(<HighlightFeed highlights={moments()} onComplete={vi.fn()} />);
+    const log = screen.getByRole("log", { name: "Simulated series moments" });
+    expect(log).toHaveAttribute("aria-live", "polite");
+    expect(log).toHaveAttribute("aria-relevant", "additions");
+    expect(log).toHaveAttribute("aria-atomic", "false");
+    const first = within(log).getByText("Moment 1");
+    expect(log.children).toHaveLength(1);
+    tick(1600);
+    expect(screen.getByRole("log", { name: "Simulated series moments" })).toBe(log);
+    expect(within(log).getByText("Moment 1")).toBe(first);
+    const second = within(log).getByText("Moment 2");
+    expect(log.children).toHaveLength(2);
+    tick(1600);
+    expect(within(log).getByText("Moment 1")).toBe(first);
+    expect(within(log).getByText("Moment 2")).toBe(second);
+    expect(Array.from(log.children, item => item.textContent)).toEqual(["Moment 1", "Moment 2", "Moment 3"]);
+  });
+
+  it("uses one live timer and completes a non-empty StrictMode queue once", () => {
+    const done = vi.fn();
+    const view = render(<StrictMode><HighlightFeed highlights={moments()} onComplete={done} /></StrictMode>);
+    expect(vi.getTimerCount()).toBe(1);
+    expect(screen.getAllByText("Moment 1")).toHaveLength(1);
+    tick(1599);
+    expect(screen.queryByText("Moment 2")).not.toBeInTheDocument();
+    tick(1);
+    expect(screen.getAllByText("Moment 2")).toHaveLength(1);
+    expect(vi.getTimerCount()).toBe(1);
+    tick(1599);
+    expect(done).not.toHaveBeenCalled();
+    tick(1);
+    expect(screen.getAllByText("Moment 3")).toHaveLength(1);
+    expect(done).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+    view.rerender(<StrictMode><HighlightFeed highlights={moments("Replacement")} onComplete={done} /></StrictMode>);
+    expect(vi.getTimerCount()).toBe(1);
+    view.unmount();
+    expect(vi.getTimerCount()).toBe(0);
+    tick(10000);
+    expect(done).toHaveBeenCalledTimes(1);
+  });
+
   it.each([["1x", 1600], ["2x", 800]] as const)("shows the first moment immediately and each next moment after exactly %s's interval", (speed, interval) => {
     const done = vi.fn();
     render(<HighlightFeed highlights={moments()} onComplete={done} />);

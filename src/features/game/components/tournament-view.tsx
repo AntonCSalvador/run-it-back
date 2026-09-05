@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ROLES, type Lineup, type PlayerCard } from "../domain";
 import type { GeneratedOpponent } from "../opponents";
 import type { SeriesResult } from "../tournament";
@@ -11,5 +12,33 @@ function Roster({ label, lineup, cards }: { label: string; lineup: Lineup; cards
 }
 export interface TournamentViewProps { opponent: GeneratedOpponent; userLineup: Lineup; cards: readonly PlayerCard[]; result: SeriesResult | null; resolving?: boolean; onPlay(): void; onContinue(): void; continueDisabled?: boolean }
 export function TournamentView({ opponent, userLineup, cards, result, resolving = false, onPlay, onContinue, continueDisabled = false }: TournamentViewProps) {
-  return <section aria-label="Tournament"><h2>{stageLabel[opponent.stage]}</h2><p>{opponent.stage === "final" ? "BO5" : "BO3"}</p><div><Roster label="Your roster" lineup={userLineup} cards={cards} /><Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} /></div>{result ? <><p aria-label="Series score">{result.userWins}–{result.opponentWins}</p><ol aria-label="Map results">{result.maps.map(map => <li key={map.map}>{map.map} {map.userScore}–{map.opponentScore}</li>)}</ol><button type="button" disabled={continueDisabled} onClick={onContinue}>Continue</button></> : <button type="button" disabled={resolving} onClick={onPlay}>Play series</button>}</section>;
+  const stageHeading = useRef<HTMLHeadingElement>(null);
+  const resultHeading = useRef<HTMLHeadingElement>(null);
+  const previousStage = useRef(opponent.stage);
+
+  useEffect(() => {
+    if (result) resultHeading.current?.focus();
+  }, [result]);
+  useEffect(() => {
+    if (previousStage.current !== opponent.stage) stageHeading.current?.focus();
+    previousStage.current = opponent.stage;
+  }, [opponent.stage]);
+
+  return <section aria-label="Tournament">
+    <h2 ref={stageHeading} tabIndex={-1}>{stageLabel[opponent.stage]}</h2>
+    <p>{opponent.stage === "final" ? "BO5" : "BO3"}</p>
+    <div>
+      <Roster label="Your roster" lineup={userLineup} cards={cards} />
+      <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} />
+    </div>
+    <div role="status" aria-label="Series result announcement" aria-live="polite">
+      {result && <>
+        <h3 ref={resultHeading} tabIndex={-1}>Series result: {result.userWins}–{result.opponentWins}</h3>
+        <ol aria-label="Map results">{result.maps.map(map => <li key={map.map}>{map.map} {map.userScore}–{map.opponentScore}</li>)}</ol>
+      </>}
+    </div>
+    {result
+      ? <button key="continue" type="button" disabled={continueDisabled} onClick={onContinue}>Continue</button>
+      : <button key="play" type="button" disabled={resolving} onClick={onPlay}>Play series</button>}
+  </section>;
 }

@@ -43,7 +43,9 @@ function HighlightQueue({ highlights, onComplete, instant = false }: HighlightFe
   return <section aria-label="SIMULATED HIGHLIGHTS">
     <h2>SIMULATED HIGHLIGHTS</h2>
     <p>Fantasy simulation moments from this series.</p>
-    <div>{highlights.slice(0, count).map(item => <p key={item.id}>{item.text}</p>)}</div>
+    <div role="log" aria-label="Simulated series moments" aria-live="polite" aria-relevant="additions" aria-atomic="false">
+      {highlights.slice(0, count).map(item => <p key={item.id}>{item.text}</p>)}
+    </div>
     <div>
       <button type="button" aria-pressed={speed === "normal"} onClick={() => setSpeed("normal")}>1x</button>
       <button type="button" aria-pressed={speed === "fast"} onClick={() => setSpeed("fast")}>2x</button>

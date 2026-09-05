@@ -39,6 +39,45 @@ function draftNewRun() {
 }
 
 describe("tournament presentation", () => {
+  it("preserves initial focus, then focuses and announces the series result after Play", async () => {
+    const gateway = gatewayFixture();
+    render(<><button type="button" autoFocus>Outside control</button><GameApp dataset={dataset} initialState={activeState()} gateway={gateway} /></>);
+    expect(screen.getByRole("button", { name: "Outside control" })).toHaveFocus();
+    const announcement = screen.getByRole("status", { name: "Series result announcement" });
+    expect(announcement).toBeEmptyDOMElement();
+    const playButton = screen.getByRole("button", { name: "Play series" });
+    playButton.focus();
+    await play();
+    expect(playButton).not.toBeInTheDocument();
+    const resultHeading = screen.getByRole("heading", { name: "Series result: 2–1" });
+    expect(resultHeading).toHaveAttribute("tabindex", "-1");
+    expect(resultHeading).toHaveFocus();
+    expect(screen.getByRole("status", { name: "Series result announcement" })).toBe(announcement);
+    expect(announcement).toHaveAttribute("aria-live", "polite");
+    expect(announcement).toHaveTextContent("Series result: 2–1");
+    for (const text of ["Ascent 13–7", "Bind 7–13", "Haven 13–7"]) expect(announcement).toHaveTextContent(text);
+    expect(screen.getAllByRole("button", { name: "Continue" })).toHaveLength(1);
+  });
+
+  it("moves focus from Continue to the next stage heading without repeat focus on rerender", async () => {
+    const gateway = gatewayFixture();
+    const initial = activeState();
+    const view = render(<GameApp dataset={dataset} initialState={initial} gateway={gateway} />);
+    await play();
+    const button = screen.getByRole("button", { name: "Continue" });
+    button.focus();
+    next();
+    expect(button).not.toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: "Quarterfinal" });
+    expect(heading).toHaveAttribute("tabindex", "-1");
+    expect(heading).toHaveFocus();
+    const playButton = screen.getByRole("button", { name: "Play series" });
+    playButton.focus();
+    view.rerender(<GameApp dataset={dataset} initialState={initial} gateway={gateway} />);
+    expect(playButton).toHaveFocus();
+    expect(gateway.generateOpponent).toHaveBeenCalledTimes(2);
+  });
+
   it("shows exactly five official opponent roles, handles, years and one IGL before play", () => {
     const gateway = gatewayFixture();
     const { container } = render(<GameApp dataset={dataset} initialState={activeState()} gateway={gateway} />);
@@ -71,7 +110,7 @@ describe("tournament presentation", () => {
     expect(gateway.playSeries).toHaveBeenCalledExactlyOnceWith(runSeed, "group", lineup, opponent);
     expect(gateway.playSeries.mock.calls[0][3]).toBe(opponent);
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
-    expect(screen.getByLabelText("Series score")).toHaveTextContent("2–1");
+    expect(screen.getByRole("heading", { name: "Series result: 2–1" })).toBeVisible();
   });
 
   it.each([["group", "Group stage", "Quarterfinal"], ["quarterfinal", "Quarterfinal", "Semifinal"]] as const)("pauses %s on every map score without highlights; Continue advances exactly once", async (stage, label, nextLabel) => {
@@ -80,7 +119,7 @@ describe("tournament presentation", () => {
     render(<GameApp dataset={dataset} initialState={activeState(stage)} gateway={gateway} />);
     await play();
     expect(screen.getByRole("heading", { name: label })).toBeVisible();
-    expect(screen.getByLabelText("Series score")).toHaveTextContent("2–1");
+    expect(screen.getByRole("heading", { name: "Series result: 2–1" })).toBeVisible();
     assertMaps();
     expect(screen.queryByRole("region", { name: "SIMULATED HIGHLIGHTS" })).not.toBeInTheDocument();
     expect(gateway.createHighlights).not.toHaveBeenCalled();
@@ -92,7 +131,7 @@ describe("tournament presentation", () => {
     expect(screen.getByRole("heading", { name: nextLabel })).toBeVisible();
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(2);
     expect(gateway.playSeries).toHaveBeenCalledTimes(1);
-    expect(screen.queryByLabelText("Series score")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /^Series result:/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Play series" })).toBeEnabled();
   });
 
@@ -124,7 +163,7 @@ describe("tournament presentation", () => {
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
     if (stage === "final") {
       expect(screen.getByText("BO5")).toBeVisible();
-      expect(screen.getByLabelText("Series score")).toHaveTextContent("3–2");
+      expect(screen.getByRole("heading", { name: "Series result: 3–2" })).toBeVisible();
       expect(within(screen.getByRole("list", { name: "Map results" })).getAllByRole("listitem").map(row => row.textContent)).toEqual([
         "Ascent 13–7", "Bind 7–13", "Haven 13–7", "Split 7–13", "Icebox 13–7",
       ]);
@@ -140,6 +179,7 @@ describe("tournament presentation", () => {
     expect(screen.getByText("semifinal moment 3")).toBeVisible();
     expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
     next();
+    tick(0); // Flush jsdom's selectionchange tasks caused by the focus transition.
     expect(vi.getTimerCount()).toBe(0);
     expect(screen.getByRole("heading", { name: "Final" })).toBeVisible();
     await play();
@@ -170,7 +210,7 @@ describe("tournament presentation", () => {
       draftNewRun();
       expect(screen.getByRole("heading", { name: "Group stage" })).toBeVisible();
       expect(screen.getByRole("button", { name: "Play series" })).toBeEnabled();
-      expect(screen.queryByLabelText("Series score")).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: /^Series result:/ })).not.toBeInTheDocument();
       expect(screen.queryByText("semifinal moment 1")).not.toBeInTheDocument();
     }
   });
@@ -238,6 +278,7 @@ describe("terminal GameApp integration", () => {
     expect(container).not.toHaveTextContent(/strength|probability|\broll\b|traits|formula/iu);
     expect(expected).not.toMatch(/aspas|player-|seed|0\.6|0\.2/);
     expect(gateway.playSeries).toHaveBeenCalledTimes(champion ? 4 : 1);
+    tick(0); // Flush focus-related selectionchange events, without advancing reveals.
     expect(vi.getTimerCount()).toBe(0);
   });
 
@@ -274,7 +315,7 @@ describe("terminal GameApp integration", () => {
     draftNewRun();
     expect(screen.getByRole("heading", { name: "Group stage" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Play series" })).toBeEnabled();
-    expect(screen.queryByLabelText("Series score")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /^Series result:/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Continue" })).not.toBeInTheDocument();
     await play();
     expect(gateway.playSeries).toHaveBeenCalledTimes(2);

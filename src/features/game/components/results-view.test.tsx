@@ -28,8 +28,71 @@ function renderResult(champion = false) {
   return { ...view, state, onRunAgain, onModeChange };
 }
 const clickShare = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
+function deferred() {
+  let resolve!: () => void;
+  let reject!: (reason: unknown) => void;
+  const promise = new Promise<void>((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
 
 describe("ResultsView", () => {
+  it("locks Share synchronously through a pending native share and unlocks after one final status", async () => {
+    const pending = deferred();
+    const share = vi.fn(() => pending.promise);
+    const writeText = vi.fn();
+    browserApis(share, writeText);
+    renderResult();
+    const button = screen.getByRole("button", { name: "Share" });
+    act(() => { fireEvent.click(button); fireEvent.click(button); });
+    expect(share).toHaveBeenCalledExactlyOnceWith({ text: shareText });
+    expect(button).toBeDisabled();
+    expect(screen.getByRole("status", { name: "Share status" })).toHaveTextContent("Sharing…");
+    fireEvent.click(button);
+    expect(share).toHaveBeenCalledTimes(1);
+    await act(async () => { pending.resolve(); });
+    expect(button).toBeEnabled();
+    expect(screen.getByRole("status", { name: "Share status" })).toHaveTextContent("Share sheet opened.");
+    expect(writeText).not.toHaveBeenCalled();
+    await clickShare();
+    expect(share).toHaveBeenCalledTimes(2);
+    expect(button).toBeEnabled();
+  });
+
+  it("keeps one lock across native rejection and a pending clipboard fallback", async () => {
+    const native = deferred();
+    const clipboard = deferred();
+    const share = vi.fn(() => native.promise);
+    const writeText = vi.fn(() => clipboard.promise);
+    browserApis(share, writeText);
+    renderResult();
+    const button = screen.getByRole("button", { name: "Share" });
+    act(() => { fireEvent.click(button); fireEvent.click(button); });
+    expect(share).toHaveBeenCalledTimes(1);
+    await act(async () => { native.reject(new Error("Unavailable")); });
+    expect(writeText).toHaveBeenCalledExactlyOnceWith(shareText);
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    await act(async () => { clipboard.resolve(); });
+    expect(share).toHaveBeenCalledTimes(1);
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(button).toBeEnabled();
+    expect(screen.getByRole("status", { name: "Share status" })).toHaveTextContent("Copied to clipboard.");
+  });
+
+  it.each(["native", "clipboard"])("discards a pending %s rejection after unmount", async phase => {
+    const pending = deferred();
+    const writeText = vi.fn(() => phase === "clipboard" ? pending.promise : Promise.resolve());
+    browserApis(phase === "native" ? vi.fn(() => pending.promise) : undefined, writeText);
+    const view = renderResult();
+    const focus = vi.spyOn(HTMLTextAreaElement.prototype, "focus");
+    fireEvent.click(screen.getByRole("button", { name: "Share" }));
+    view.unmount();
+    await act(async () => { pending.reject(new Error("Denied")); });
+    expect(writeText).toHaveBeenCalledTimes(phase === "clipboard" ? 1 : 0);
+    expect(view.container).toBeEmptyDOMElement();
+    expect(focus).not.toHaveBeenCalled();
+  });
+
   it.each([false, true])("shows exact terminal result, scores, roster and rerolls (champion %s)", champion => {
     const { state, container } = renderResult(champion);
     expect(screen.getByRole("heading", { name: champion ? "Champion" : "Eliminated" })).toBeVisible();
