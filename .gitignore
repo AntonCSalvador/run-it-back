@@ -7,5 +7,6 @@ test-results/
 .vercel/
 .superpowers/
 .worktrees/
+*.tsbuildinfo
 .env*
 !.env.example
