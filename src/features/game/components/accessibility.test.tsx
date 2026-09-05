@@ -103,7 +103,6 @@ describe("broadcast accessibility", () => {
 
   it("accents a winning series and a champion result until the finite fallback", () => {
     vi.useFakeTimers();
-    const state = activeState();
     const opponent = { generateOpponent: () => null };
     void opponent;
     render(<TournamentView opponent={{ id: "opponent", stage: "group", lineup, strength: 60 }} userLineup={lineup} cards={fixtureDataset.cards} result={series("group", true)} onPlay={vi.fn()} onContinue={vi.fn()} />);
