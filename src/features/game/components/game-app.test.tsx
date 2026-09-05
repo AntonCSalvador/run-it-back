@@ -1,21 +1,47 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
 import { ROLES, type Lineup } from "../domain";
-import type { GeneratedOpponent } from "../opponents";
-import type { SeriesResult } from "../tournament";
-import { ErrorBoundary } from "./error-boundary";
-import { GameApp, playCurrentTournamentSeries, restartCurrentRun } from "./game-app";
-import { createGameReducer, createStartAction, initialGameState, type GameState } from "../machine";
+import { LocalSimulationGateway } from "../gateway";
+import type { Stage } from "../opponents";
+import { startTournament, type SeriesResult } from "../tournament";
+import { GameApp } from "./game-app";
+import { type GameState } from "../machine";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { parseDataset } from "../schema";
-import { startTournament } from "../tournament";
+import { STORAGE_KEYS } from "../storage";
+
+const dataset = parseDataset(minimalDataset);
+const lineup: Lineup = {
+  slots: ROLES.map((role, index) => ({ role, cardId: dataset.cards[index].id })),
+  iglCardId: dataset.cards[0].id,
+};
+const activeState: GameState = {
+  phase: "tournament", mode: "daily",
+  draft: { seed: "seed", offerIndex: 5, rerollsRemaining: 3, offeredTeamIds: [], selectedTeamId: null, pendingCardId: null, slots: Object.fromEntries(lineup.slots.map(slot => [slot.role, slot.cardId])), iglCardId: lineup.iglCardId },
+  tournament: startTournament("seed", lineup),
+};
+function winningSeries(stage: Stage): SeriesResult {
+  return { stage, bestOf: 3, userWins: 2, opponentWins: 0, maps: (["Ascent", "Bind"] as const).map(map => ({ map, winner: "user", userScore: 13, opponentScore: 7, probability: 0.6, roll: 0.2 })) };
+}
+function gatewayFixture() {
+  const local = new LocalSimulationGateway(dataset);
+  return {
+    generateOpponent: vi.fn(local.generateOpponent.bind(local)),
+    playSeries: vi.fn((_seed: string, stage: Stage) => winningSeries(stage)),
+    createHighlights: vi.fn(() => []),
+  };
+}
+function historyStorage() {
+  return { length: 1, key: vi.fn(() => STORAGE_KEYS.history), getItem: vi.fn((key: string) => key === STORAGE_KEYS.history ? "keep-me" : null), setItem: vi.fn(), removeItem: vi.fn(), clear: vi.fn() };
+}
 
 describe("GameApp", () => {
   it("renders an accessible wordmark and mode controls immediately", () => {
     render(<GameApp />);
-    expect(screen.getByRole("heading", { name: "Run It Back" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Run It Back", level: 1 })).toBeVisible();
+    expect(screen.getByRole("group", { name: "Game mode" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Daily" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Free Play" })).toBeVisible();
   });
@@ -29,34 +55,98 @@ describe("GameApp", () => {
     expect(screen.getByText("Current phase: team")).toBeVisible();
   });
 
-
-  it("recovers a broken subtree without clearing browser storage", async () => {
+  it("recovers a failed core initialization through the real boundary restart", async () => {
     const user = userEvent.setup();
-    window.localStorage.setItem("run-it-back:history:v1", "keep-me");
-    const Broken = () => { throw new Error("boom"); };
-    render(<ErrorBoundary onRestart={() => undefined}><Broken /></ErrorBoundary>);
-    expect(screen.getByText(/something went wrong/i)).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Restart run" }));
-    expect(window.localStorage.getItem("run-it-back:history:v1")).toBe("keep-me");
+    const storage = historyStorage();
+    let broken = true;
+    const factory = vi.fn(() => {
+      if (broken) throw new Error("gateway initialization failed");
+      return gatewayFixture();
+    });
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      render(<GameApp dataset={dataset} initialState={activeState} storage={storage} gatewayFactory={factory} />);
+      expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
+      broken = false;
+      await user.click(screen.getByRole("button", { name: "Restart run" }));
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Run It Back", level: 1 })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Daily" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Free Play" })).toBeVisible();
+      expect(screen.getByText("Current phase: mode")).toBeVisible();
+      expect(storage.removeItem).not.toHaveBeenCalled();
+      expect(storage.getItem(STORAGE_KEYS.history)).toBe("keep-me");
+    } finally { errors.mockRestore(); }
   });
 
-  it("uses the injected gateway to resolve the current tournament series", () => {
-    const lineup: Lineup = { slots: ROLES.map(role => ({ role, cardId: `${role}-card` })), iglCardId: "smokes-card" };
-    const state: GameState = { phase: "tournament", mode: "daily", draft: { seed: "seed", offerIndex: 5, rerollsRemaining: 3, offeredTeamIds: [], selectedTeamId: null, pendingCardId: null, slots: Object.fromEntries(lineup.slots.map(slot => [slot.role, slot.cardId])), iglCardId: lineup.iglCardId }, tournament: startTournament("seed", lineup) };
-    const opponent = {} as GeneratedOpponent;
-    const series = {} as SeriesResult;
-    const gateway = { generateOpponent: vi.fn(() => opponent), playSeries: vi.fn(() => series), createHighlights: vi.fn() };
-    expect(playCurrentTournamentSeries(state, gateway)).toEqual({ type: "resolve-series", series });
+  it("locks the actual series control and applies only one group result for two same-tick clicks", async () => {
+    const gateway = gatewayFixture();
+    render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
+    const button = screen.getByRole("button", { name: "Play current series" });
+    act(() => { fireEvent.click(button); fireEvent.click(button); });
+    expect(button).toBeDisabled();
+    await act(async () => { await Promise.resolve(); });
+    expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
+    expect(gateway.playSeries).toHaveBeenCalledTimes(1);
     expect(gateway.generateOpponent).toHaveBeenCalledWith("seed", "group", lineup);
-    expect(gateway.playSeries).toHaveBeenCalledWith("seed", "group", lineup, opponent);
+    expect(screen.getByText("Current stage: quarterfinal")).toBeVisible();
+    expect(screen.getByText("Completed series: 1")).toBeVisible();
+    expect(button).toBeEnabled();
+    await userEvent.setup().click(button);
+    expect(gateway.generateOpponent).toHaveBeenCalledTimes(2);
+    expect(gateway.generateOpponent).toHaveBeenLastCalledWith("seed", "quarterfinal", lineup);
+    expect(screen.getByText("Current stage: semifinal")).toBeVisible();
+    expect(screen.getByText("Completed series: 2")).toBeVisible();
   });
 
-  it("clears a simulation error and returns the current run to mode on restart", () => {
-    const reduce = createGameReducer({ dataset: parseDataset(minimalDataset) });
-    let state = reduce(initialGameState, createStartAction("daily", { now: () => new Date("2026-09-05T00:00:00Z") }));
-    let simulationError: string | null = "Unable to play the current series. Please restart the run.";
-    restartCurrentRun(() => { simulationError = null; }, action => { state = reduce(state, action); });
-    expect(simulationError).toBeNull();
-    expect(state.phase).toBe("mode");
+  it("starts the selected mode when switching from an active run", async () => {
+    const factory = vi.fn(() => "replacement-seed");
+    render(<GameApp dataset={dataset} initialState={activeState} freeSeedFactory={factory} />);
+    await userEvent.setup().click(screen.getByRole("button", { name: "Free Play" }));
+    expect(screen.getByText("Current phase: team")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Free Play" })).toHaveAttribute("aria-pressed", "true");
+    expect(factory).toHaveBeenCalledTimes(1);
+  });
+
+  it("catches reducer errors from a series result and restarts the core", async () => {
+    const gateway = gatewayFixture();
+    gateway.playSeries.mockImplementation(() => winningSeries("quarterfinal"));
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
+      await userEvent.setup().click(screen.getByRole("button", { name: "Play current series" }));
+      expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
+      await userEvent.setup().click(screen.getByRole("button", { name: "Restart run" }));
+      expect(screen.getByText("Current phase: mode")).toBeVisible();
+    } finally { errors.mockRestore(); }
+  });
+
+  it.each(["generateOpponent", "playSeries"] as const)("resets a real %s error and can start another mode without deleting history", async method => {
+    const user = userEvent.setup();
+    const storage = historyStorage();
+    const gateway = gatewayFixture();
+    gateway[method].mockImplementation(() => { throw new Error("simulation failed"); });
+    render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} storage={storage} />);
+    await user.click(screen.getByRole("button", { name: "Play current series" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Unable to play the current series");
+    await user.click(screen.getByRole("button", { name: "Reset current run" }));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByText("Current phase: mode")).toBeVisible();
+    expect(storage.removeItem).not.toHaveBeenCalled();
+    expect(storage.getItem(STORAGE_KEYS.history)).toBe("keep-me");
+    await user.click(screen.getByRole("button", { name: "Daily" }));
+    expect(screen.getByText("Current phase: team")).toBeVisible();
+  });
+
+  it("resets an active run immediately when the dataset identity changes", () => {
+    const gateway = gatewayFixture();
+    const view = render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
+    expect(screen.getByRole("button", { name: "Play current series" })).toBeVisible();
+    view.rerender(<GameApp dataset={parseDataset(minimalDataset)} initialState={activeState} gateway={gateway} />);
+    expect(screen.getByText("Current phase: mode")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Play current series" })).not.toBeInTheDocument();
+    expect(gateway.generateOpponent).not.toHaveBeenCalled();
+    view.rerender(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
+    expect(screen.getByText("Current phase: mode")).toBeVisible();
   });
 });
