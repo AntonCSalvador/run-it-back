@@ -71,10 +71,11 @@ describe("tournament simulation", () => {
   });
 
   test("rejects replayed, double-advanced, and terminal tournament states", () => {
-    const data = dataset(); const state = startTournament("state-guards", lineup(data)); const played = playCurrentSeries(state, data, opponent(data, "group"));
+    const data = dataset(); const user = lineup(data, 85); const foe = opponent(data, "group", 45); const seed = Array.from({ length: 100 }, (_, index) => `state-guards-${index}`).find(candidate => playSeries(candidate, "group", user, foe, data).userWins === 2)!; const state = startTournament(seed, user); const played = playCurrentSeries(state, data, foe);
     expect(() => playCurrentSeries(played, data, opponent(data, "group"))).toThrow(/resolved/i);
     const advanced = advanceTournament(played);
-    expect(() => advanceTournament(advanced)).toThrow(/terminal/i);
+    expect(advanced).toMatchObject({ status: "active", currentStage: "quarterfinal" });
+    expect(() => advanceTournament(advanced)).toThrow(/stage|current/i);
     expect(() => playCurrentSeries({ ...advanced, status: "champion" }, data, opponent(data, "quarterfinal"))).toThrow(/terminal/i);
   });
 
@@ -102,12 +103,23 @@ describe("tournament simulation", () => {
     expect(advanceTournament(played).currentStage).toBe("quarterfinal");
   });
 
-  test("uses distinct scoped streams for different matchups and pins a golden result", () => {
+  test("canonicalizes reordered lineup slots and disambiguates delimiter-bearing IDs", () => {
+    const data = dataset(); const user = lineup(data); const foe = opponent(data, "group", 65);
+    expect(playSeries("canonical", "group", user, foe, data)).toEqual(playSeries("canonical", "group", { ...user, slots: [...user.slots].reverse() }, { ...foe, lineup: { ...foe.lineup, slots: [...foe.lineup.slots].reverse() } }, data));
+    const special = dataset(); const smoke = special.cards.find(card => card.id === "smokes-55")!; const duelist = special.cards.find(card => card.id === "duelist-55")!;
+    special.cards.push({ ...smoke, id: "x" }, { ...smoke, id: "x,duelist:y" }, { ...duelist, id: "z" }, { ...duelist, id: "y,duelist:z" });
+    const rest = roles.slice(2).map(role => ({ role, cardId: `${role}-55` })); const first: Lineup = { slots: [{ role: "smokes", cardId: "x,duelist:y" }, { role: "duelist", cardId: "z" }, ...rest], iglCardId: "x,duelist:y" }; const second: Lineup = { slots: [{ role: "smokes", cardId: "x" }, { role: "duelist", cardId: "y,duelist:z" }, ...rest], iglCardId: "x" };
+    const specialFoe = opponent(special, "group", 75); const project = (value: ReturnType<typeof playSeries>) => value.maps.map(map => [map.map, map.roll, map.userScore, map.opponentScore]);
+    expect(project(playSeries("delimiters", "group", first, specialFoe, special))).not.toEqual(project(playSeries("delimiters", "group", second, specialFoe, special)));
+  });
+
+  test("uses distinct RNG projections for different matchups and pins a golden result", () => {
     const data = dataset(); const user = lineup(data); const first = playSeries("golden", "group", user, opponent(data, "group", 65), data); const second = playSeries("golden", "group", user, opponent(data, "group", 75), data);
-    expect(first.maps).not.toEqual(second.maps);
+    const project = (value: ReturnType<typeof playSeries>) => value.maps.map(map => [map.map, map.roll, map.userScore, map.opponentScore]);
+    expect(project(first)).not.toEqual(project(second));
     expect(first.maps).toEqual([
-      { map: "Abyss", userScore: 11, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4752376093529165 },
-      { map: "Icebox", userScore: 10, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.6169319236651063 },
+      { map: "Ascent", userScore: 7, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4055811050347984 },
+      { map: "Breeze", userScore: 6, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4386219778098166 },
     ]);
   });
 });

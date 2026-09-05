@@ -1,4 +1,4 @@
-import type { GameDataset, Lineup, Role } from "./domain";
+import { ROLES, type GameDataset, type Lineup, type Role } from "./domain";
 import { type GeneratedOpponent, type Stage } from "./opponents";
 import { lineupStrength, rollMap } from "./rating";
 import { scopedRng } from "./rng";
@@ -16,7 +16,10 @@ function cloneLineup(lineup: FrozenLineup | Lineup): Lineup { return { slots: li
 function freezeLineup(lineup: FrozenLineup | Lineup): FrozenLineup { return Object.freeze({ slots: Object.freeze(lineup.slots.map(slot => Object.freeze({ role: slot.role, cardId: slot.cardId }))), iglCardId: lineup.iglCardId }); }
 function freezeSeries(series: SeriesResult): SeriesResult { return Object.freeze({ ...series, maps: Object.freeze(series.maps.map(map => Object.freeze({ ...map }))) }); }
 function freezeState(state: Omit<TournamentState, "userLineup" | "completedSeries"> & { userLineup: FrozenLineup | Lineup; completedSeries: readonly SeriesResult[] }): TournamentState { return Object.freeze({ ...state, userLineup: freezeLineup(state.userLineup), completedSeries: Object.freeze(state.completedSeries.map(freezeSeries)) }); }
-function fingerprint(lineup: FrozenLineup | Lineup): string { return `${lineup.slots.map(slot => `${slot.role}:${slot.cardId}`).join(",")}:${lineup.iglCardId}`; }
+function fingerprint(lineup: FrozenLineup | Lineup): string {
+  const cardByRole = new Map(lineup.slots.map(slot => [slot.role, slot.cardId]));
+  return JSON.stringify({ slots: ROLES.map(role => [role, cardByRole.get(role)]), iglCardId: lineup.iglCardId });
+}
 
 function opponentStrength(opponent: GeneratedOpponent, stage: Stage, dataset: GameDataset): number {
   if (!opponent || opponent.stage !== stage) throw new Error(`Opponent stage ${String(opponent?.stage)} does not match ${stage}`);
