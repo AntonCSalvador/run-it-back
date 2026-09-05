@@ -12,6 +12,8 @@ const utcDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 const stage = z.enum(["group", "quarterfinal", "semifinal", "final"]);
 const rosterSlot = z.object({ role: z.enum(ROLES), cardId: z.string().min(1).max(128) }).strict();
 const seriesSummarySchema = z.object({ stage, userWins: z.number().int().nonnegative(), opponentWins: z.number().int().nonnegative() }).strict();
+const mapSummarySchema = z.object({ map: z.string().min(1).max(64), userScore: z.number().int().nonnegative(), opponentScore: z.number().int().nonnegative() }).strict();
+const persistedSeriesSchema = seriesSummarySchema.extend({ maps: z.array(mapSummarySchema).min(2).max(5).optional() }).strict();
 function runIssues(run: { roster: readonly { role: Role; cardId: string }[]; series: readonly { stage: Stage; userWins: number; opponentWins: number }[]; stageReached: Stage; rerollsUsed: number }, context: z.RefinementCtx): void {
   const roles = new Set(run.roster.map(slot => slot.role)); const cards = new Set(run.roster.map(slot => slot.cardId));
   if (roles.size !== ROLES.length || ROLES.some(role => !roles.has(role))) context.addIssue({ code: "custom", path: ["roster"], message: "Roster must include each role exactly once" });
@@ -29,12 +31,12 @@ function runIssues(run: { roster: readonly { role: Role; cardId: string }[]; ser
 }
 const runBaseSchema = z.object({
   completedAtUtc: utcDate,
-  stageReached: stage, series: z.array(seriesSummarySchema).min(1).max(4),
-  rerollsUsed: z.number().int().min(0).max(3), roster: z.array(rosterSlot).length(ROLES.length),
+  stageReached: stage, outcome: z.enum(["champion", "eliminated"]).optional(), series: z.array(persistedSeriesSchema).min(1).max(4),
+  rerollsUsed: z.number().int().min(0).max(3), roster: z.array(rosterSlot).length(ROLES.length), iglCardId: z.string().min(1).max(128).optional(),
 });
 export const dailyRunSchema = runBaseSchema.extend({ mode: z.literal("daily"), utcDate }).strict().superRefine(runIssues);
 export const freePlayRunSchema = runBaseSchema.extend({ mode: z.literal("free") }).strict().superRefine(runIssues);
-type StoredRunBase = { readonly completedAtUtc: string; readonly stageReached: Stage; readonly series: readonly { readonly stage: Stage; readonly userWins: number; readonly opponentWins: number }[]; readonly rerollsUsed: number; readonly roster: readonly { readonly role: Role; readonly cardId: string }[] };
+type StoredRunBase = { readonly completedAtUtc: string; readonly stageReached: Stage; readonly outcome?: "champion" | "eliminated"; readonly series: readonly { readonly stage: Stage; readonly userWins: number; readonly opponentWins: number; readonly maps?: readonly { readonly map: string; readonly userScore: number; readonly opponentScore: number }[] }[]; readonly rerollsUsed: number; readonly roster: readonly { readonly role: Role; readonly cardId: string }[]; readonly iglCardId?: string };
 export type DailyRun = StoredRunBase & { readonly mode: "daily"; readonly utcDate: string };
 export type FreePlayRun = StoredRunBase & { readonly mode: "free" };
 export type StoredRunResult = DailyRun | FreePlayRun;

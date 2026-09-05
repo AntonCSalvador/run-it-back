@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
+  snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
   timeout: 90_000,
   fullyParallel: false,
   workers: 1,
@@ -17,7 +18,7 @@ export default defineConfig({
     env: { ...process.env, PLAYWRIGHT_TEST_BUILD: "1" },
   },
   projects: [
-    { name: "Desktop Chrome", use: { browserName: "chromium", viewport: { width: 1440, height: 900 }, reducedMotion: "no-preference" } },
-    { name: "Pixel 7", use: { ...devices["Pixel 7"], browserName: "chromium" } },
+    { name: "desktop", use: { browserName: "chromium", viewport: { width: 1440, height: 900 }, reducedMotion: "no-preference" } },
+    { name: "pixel-7", use: { ...devices["Pixel 7"], browserName: "chromium" } },
   ],
 });

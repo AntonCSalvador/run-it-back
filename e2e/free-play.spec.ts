@@ -1,17 +1,40 @@
-import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
 import { expect, test } from "@playwright/test";
+import { assertNoPrivateModelData, firstSeriesOracle } from "./support/audit";
 import { completeTournament, draftRoster, start } from "./support/journey";
 
-for (const [seed, expected] of [["e2e-164", /semifinal: 2–0/], ["e2e-4", /group: 2–/]] as const) {
-  test(`Free Play ${seed === "e2e-164" ? "favorite win" : "underdog upset"} completes without exposing ratings or probability`, async ({ page }) => {
+for (const [seed, expected, relation] of [["e2e-18", /group: 2–0/, "favorite"], ["e2e-4", /group: 2–1/, "underdog"]] as const) {
+  test(`Free Play ${relation === "favorite" ? "favorite win" : "underdog upset"} completes without exposing ratings or probability`, async ({ page }) => {
+    const oracle = firstSeriesOracle(seed);
+    if (relation === "favorite") expect(oracle.userStrength).toBeGreaterThan(oracle.opponentStrength);
+    else expect(oracle.userStrength).toBeLessThan(oracle.opponentStrength);
+    expect(oracle.userWins).toBeGreaterThan(oracle.opponentWins);
     await page.goto(`/?e2e-seed=${seed}`);
+    await assertNoPrivateModelData(page);
     await start(page, "Free Play");
+    await assertNoPrivateModelData(page);
     const results = await completeTournament(page);
     expect(results).toMatch(expected);
-    await expect(page.locator("body")).not.toContainText(/rating|probability|odds|chance|lineup strength|\broll\b/i);
+    await assertNoPrivateModelData(page);
   });
 }
+
+test("private model fields never enter serialized, hidden, or accessible content", async ({ page }) => {
+  await page.goto("/?e2e-seed=e2e-164");
+  await assertNoPrivateModelData(page);
+  await start(page, "Free Play");
+  await page.locator(".team-card").first().click();
+  await assertNoPrivateModelData(page);
+  await page.locator('[data-testid^="player-card-"]').first().getByRole("button").click();
+  await assertNoPrivateModelData(page);
+  await page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first().click();
+  await assertNoPrivateModelData(page);
+  await page.getByRole("button", { name: "Reset current run" }).click();
+  await start(page, "Free Play");
+  await completeTournament(page);
+  await assertNoPrivateModelData(page);
+  const share = page.getByRole("button", { name: "Share" });
+  if (await share.count()) { await share.click(); await assertNoPrivateModelData(page); }
+});
 
 test("the build-only seed query makes Free Play repeatable across isolated contexts", async ({ browser, page }) => {
   await page.goto("/?e2e-seed=e2e-164");
@@ -25,14 +48,11 @@ test("the build-only seed query makes Free Play repeatable across isolated conte
   await context.close();
 });
 
-test("captures the complete Free Play journey", async ({ page }, testInfo) => {
-  const device = testInfo.project.name === "Pixel 7" ? "pixel-7" : "desktop";
-  const directory = join(process.cwd(), "e2e", "__screenshots__", device);
-  await mkdir(directory, { recursive: true });
+test("captures the complete Free Play journey", async ({ page }) => {
   const capture = async (name: string) => {
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-    await page.locator("main").screenshot({ path: join(directory, `${name}.png`), animations: "disabled" });
+    await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio: 0.01 });
   };
 
   await page.goto("/?e2e-seed=e2e-164");

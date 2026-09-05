@@ -72,10 +72,12 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   }, []);
   const [streak, setStreak] = useState(0);
   const [dailyHistoryCount, setDailyHistoryCount] = useState(0);
+  const refreshDailyHeader = useRef<() => void>(() => undefined);
   const persistedResult = useRef<string | null>(null);
   useEffect(() => {
     const adapter = storage === undefined ? browserStorage() : storage;
     const update = (): void => { try { const daily = readRecord(adapter, DAILY_RECORD).value; setStreak(daily.streak); setDailyHistoryCount(daily.completions.length); } catch { setStreak(0); setDailyHistoryCount(0); } };
+    refreshDailyHeader.current = update;
     update();
     if (typeof window === "undefined") return undefined;
     window.addEventListener("storage", update);
@@ -86,12 +88,15 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     if (state.phase !== "results") return;
     const adapter = storage === undefined ? browserStorage() : storage;
     const completedAtUtc = state.mode === "daily" ? dailyDateFromSeed(state.tournament.seed) : new Date().toISOString().slice(0, 10);
+    const outcome: "champion" | "eliminated" = state.tournament.status === "champion" ? "champion" : "eliminated";
     const run = {
       completedAtUtc,
       stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage,
-      series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })),
+      outcome,
+      series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins, maps: series.maps.map(map => ({ map: map.map, userScore: map.userScore, opponentScore: map.opponentScore })) })),
       rerollsUsed: 3 - state.draft.rerollsRemaining,
       roster: state.tournament.userLineup.slots,
+      iglCardId: state.tournament.userLineup.iglCardId,
     };
     const signature = `${state.mode}:${JSON.stringify(run)}`;
     if (persistedResult.current === signature) return;
@@ -101,7 +106,9 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       const completion = { ...run, mode: "daily" as const, utcDate: dailyDateFromSeed(state.tournament.seed) };
       const value = addDailyCompletion(current, completion);
       writeRecord(adapter, DAILY_RECORD, { ...value, streak: Math.max(1, value.streak) });
-      window.dispatchEvent(new StorageEvent("storage", { key: DAILY_RECORD.key }));
+      // Storage events are intentionally cross-document only. Refresh this
+      // document through the app-owned callback instead of synthesizing one.
+      refreshDailyHeader.current();
     } else {
       const current = readRecord(adapter, HISTORY_RECORD).value;
       writeRecord(adapter, HISTORY_RECORD, prependFreePlayHistory(current, { ...run, mode: "free" }));
