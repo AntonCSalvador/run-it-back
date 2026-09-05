@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ROLES, type GameDataset } from "./domain";
+import { normalizeHandle } from "./handle";
 
 const id = z.string().min(1);
 const year = z.union([z.literal(2021), z.literal(2022), z.literal(2023), z.literal(2024), z.literal(2025)]);
@@ -7,8 +8,9 @@ const sourceIds = z.array(id);
 export const traitsSchema = z.object({ firepower: z.number().min(0).max(100), utility: z.number().min(0).max(100), survival: z.number().min(0).max(100), clutch: z.number().min(0).max(100), consistency: z.number().min(0).max(100), leadership: z.number().min(0).max(100) }).strict();
 export const sourceRefSchema = z.object({ id, url: z.string().url(), retrievedAt: z.string().date(), usage: z.enum(["facts", "asset"]), credit: z.string().optional(), license: z.string().optional() }).strict();
 export const teamAppearanceSchema = z.object({ id, name: z.string().min(1), shortName: z.string().min(1), year, logo: z.string().nullable(), sourceIds }).strict();
-export const playerIdentitySchema = z.object({ id, canonicalHandle: z.string().min(1), portrait: z.string().nullable(), sourceIds }).strict();
-export const playerCardSchema = z.object({ id, playerId: id, teamId: id, year, displayHandle: z.string().min(1), mapsPlayed: z.number().int().positive(), eligibleRoles: z.array(z.enum(ROLES)).min(1), historicalIgl: z.boolean(), traits: traitsSchema, sourceIds }).strict();
+const handle = z.string().transform((value, context) => { try { return normalizeHandle(value); } catch { context.addIssue({ code: "custom", message: "Invalid handle" }); return z.NEVER; } });
+export const playerIdentitySchema = z.object({ id, canonicalHandle: handle, portrait: z.string().nullable(), sourceIds }).strict();
+export const playerCardSchema = z.object({ id, playerId: id, teamId: id, year, displayHandle: handle, mapsPlayed: z.number().int().positive(), eligibleRoles: z.array(z.enum(ROLES)).min(1), historicalIgl: z.boolean(), traits: traitsSchema, sourceIds }).strict();
 export const gameDatasetSchema = z.object({ version: z.number().int().positive(), sources: z.array(sourceRefSchema), teams: z.array(teamAppearanceSchema), players: z.array(playerIdentitySchema), cards: z.array(playerCardSchema) }).strict();
 
 function duplicateErrors(items: Array<{ id: string }>, collection: string): string[] {

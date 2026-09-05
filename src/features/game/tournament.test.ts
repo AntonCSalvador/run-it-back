@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import type { GameDataset, Lineup, PlayerCard, Role } from "./domain";
 import { type GeneratedOpponent, type Stage } from "./opponents";
 import { lineupStrength } from "./rating";
-import { advanceTournament, MAP_POOL, playCurrentSeries, playSeries, STAGE_ORDER, startTournament } from "./tournament";
+import { advanceTournament, canonicalLineupFingerprint, MAP_POOL, playCurrentSeries, playSeries, STAGE_ORDER, startTournament, validateSeries } from "./tournament";
 
 const roles: readonly Role[] = ["smokes", "duelist", "initiator", "sentinel", "flex"];
 const traits = (rating: number): PlayerCard["traits"] => ({ firepower: rating, utility: rating, survival: rating, clutch: rating, consistency: rating, leadership: rating });
@@ -121,5 +121,12 @@ describe("tournament simulation", () => {
       { map: "Ascent", userScore: 7, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4055811050347984 },
       { map: "Breeze", userScore: 6, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4386219778098166 },
     ]);
+  });
+
+  test("exports canonical lineup and series validation for downstream consumers", () => {
+    const data = dataset(); const user = lineup(data); const result = playSeries("validator", "semifinal", user, opponent(data, "semifinal"), data);
+    expect(canonicalLineupFingerprint(user)).toBe(canonicalLineupFingerprint({ ...user, slots: [...user.slots].reverse() }));
+    expect(() => validateSeries(result, "semifinal")).not.toThrow();
+    expect(() => validateSeries({ ...result, stage: "final", bestOf: 5 }, "semifinal")).toThrow(/stage/i);
   });
 });

@@ -35,4 +35,12 @@ describe("game dataset schema", () => {
   });
   it("rejects duplicate team IDs", () => { const data = structuredClone(minimalDataset) as unknown as { teams: unknown[] }; data.teams.push(data.teams[0]); expect(() => parseDataset(data)).toThrow("duplicate teams id"); });
   it("rejects duplicate player IDs", () => { const data = structuredClone(minimalDataset) as unknown as { players: unknown[] }; data.players.push(data.players[0]); expect(() => parseDataset(data)).toThrow("duplicate players id"); });
+  it("normalizes safe display handles and rejects spoofing controls", () => {
+    const spaced = clone() as unknown as { cards: Array<{ displayHandle: string }> }; spaced.cards[0].displayHandle = "  Caf\u0065\u0301!  ";
+    expect(parseDataset(spaced).cards[0].displayHandle).toBe("Caf\u00e9!");
+    for (const handle of ["bad\nname", "bad\u202Ename", "bad\u00adname", "\tname", "x".repeat(33)]) {
+      const data = clone() as unknown as { cards: Array<{ displayHandle: string }> }; data.cards[0].displayHandle = handle;
+      expect(() => parseDataset(data)).toThrow(/handle/i);
+    }
+  });
 });

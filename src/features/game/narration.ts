@@ -1,7 +1,7 @@
-import { ROLES, type GameDataset, type Lineup, type PlayerCard } from "./domain";
+import { ROLES, type GameDataset, type Lineup, type PlayerCard, type Role } from "./domain";
+import { normalizeHandle } from "./handle";
 import { scopedRng, type SeededRng } from "./rng";
-import { lineupStrength } from "./rating";
-import { MAP_POOL, type MapResult, type SeriesResult } from "./tournament";
+import { canonicalLineupFingerprint, type MapResult, type SeriesResult, validateSeries } from "./tournament";
 
 export type HighlightKind = "ace" | "clutch" | "ninja-defuse" | "retake" | "eco" | "failed-clutch" | "throw";
 export interface Highlight {
@@ -21,38 +21,22 @@ type Participant = { readonly card: PlayerCard; readonly handle: string };
 const positiveKinds: readonly HighlightKind[] = ["ace", "clutch", "ninja-defuse", "retake", "eco"];
 
 function fail(message: string): never { throw new Error(message); }
-function hash(value: string): string {
-  let result = 2166136261;
-  for (let index = 0; index < value.length; index += 1) result = Math.imul(result ^ value.charCodeAt(index), 16777619);
-  return (result >>> 0).toString(36);
-}
-function assertMap(result: unknown): asserts result is MapResult {
-  if (!result || typeof result !== "object") fail("Invalid narration series map");
-  const map = result as MapResult;
-  if (!MAP_POOL.includes(map.map) || (map.winner !== "user" && map.winner !== "opponent")) fail("Invalid narration map identity");
-  if (!Number.isFinite(map.probability) || map.probability < 0.08 || map.probability > 0.92 || !Number.isFinite(map.roll) || map.roll < 0 || map.roll >= 1) fail("Invalid narration map roll");
-  if (map.winner !== (map.roll < map.probability ? "user" : "opponent")) fail("Invalid narration map winner");
-  if (![map.userScore, map.opponentScore].every(Number.isInteger) || map.userScore < 0 || map.opponentScore < 0) fail("Invalid narration map score");
-  const high = map.winner === "user" ? map.userScore : map.opponentScore;
-  const low = map.winner === "user" ? map.opponentScore : map.userScore;
-  if (high <= low || !((high === 13 && low >= 3 && low <= 11) || ([14, 15, 16].includes(high) && low === high - 2))) fail("Invalid narration map score");
-}
-function assertSeries(series: SeriesResult): void {
-  if (!series || typeof series !== "object" || !["group", "quarterfinal", "semifinal", "final"].includes(series.stage)) fail("Invalid narration series");
-  const needed = series.stage === "final" ? 3 : 2;
-  if (series.bestOf !== (series.stage === "final" ? 5 : 3) || !Array.isArray(series.maps) || !Number.isInteger(series.userWins) || !Number.isInteger(series.opponentWins)) fail("Invalid narration series shape");
-  if (!((series.userWins === needed && series.opponentWins < needed) || (series.opponentWins === needed && series.userWins < needed)) || series.maps.length !== series.userWins + series.opponentWins) fail("Invalid narration series result");
-  let userWins = 0; let opponentWins = 0; const maps = new Set<string>();
-  for (const result of series.maps) { assertMap(result); if (maps.has(result.map)) fail("Duplicate narration map"); maps.add(result.map); if (result.winner === "user") userWins += 1; else opponentWins += 1; }
-  if (userWins !== series.userWins || opponentWins !== series.opponentWins) fail("Invalid narration series wins");
+function hash128(value: string): string {
+  const hashes = [2166136261, 2246822519, 3266489917, 668265263];
+  for (const code of Array.from(value, character => character.codePointAt(0)!)) for (let index = 0; index < hashes.length; index += 1) hashes[index] = Math.imul(hashes[index] ^ code, [16777619, 2246822519, 3266489917, 668265263][index]);
+  return hashes.map(part => (part >>> 0).toString(16).padStart(8, "0")).join("");
 }
 function resolveLineup(lineup: Lineup, dataset: GameDataset): readonly Participant[] {
-  lineupStrength(lineup, dataset);
-  if (!Array.isArray(dataset.players) || !Array.isArray(dataset.cards) || lineup.slots.length !== ROLES.length) fail("Invalid narration lineup");
-  return lineup.slots.map(slot => {
-    const card = dataset.cards.find(candidate => candidate.id === slot.cardId);
-    if (!card || !dataset.players.some(player => player.id === card.playerId) || typeof card.displayHandle !== "string" || card.displayHandle.trim().length === 0) fail("Narration participant cannot be resolved");
-    return { card, handle: card.displayHandle };
+  if (!lineup || !Array.isArray(lineup.slots) || lineup.slots.length !== ROLES.length || !Array.isArray(dataset.players) || !Array.isArray(dataset.cards)) fail("Invalid narration lineup");
+  const byRole = new Map<Role, string>(); const cards = new Set<string>();
+  for (const slot of lineup.slots) { if (!ROLES.includes(slot.role) || byRole.has(slot.role) || cards.has(slot.cardId)) fail("Invalid narration lineup"); byRole.set(slot.role, slot.cardId); cards.add(slot.cardId); }
+  if (!cards.has(lineup.iglCardId) || byRole.size !== ROLES.length) fail("Invalid narration lineup");
+  return ROLES.map(role => {
+    const cardId = byRole.get(role)!;
+    const slot = lineup.slots.find(candidate => candidate.role === role)!;
+    const card = dataset.cards.find(candidate => candidate.id === cardId);
+    if (!card || !card.eligibleRoles.includes(slot.role) || !dataset.players.some(player => player.id === card.playerId)) fail("Narration participant cannot be resolved");
+    try { return { card, handle: normalizeHandle(card.displayHandle) }; } catch { return fail("Narration participant cannot be resolved"); }
   });
 }
 function weighted<T>(rng: SeededRng, choices: readonly T[], weight: (choice: T) => number): T {
@@ -82,36 +66,38 @@ function template(kind: HighlightKind, actor: string, target?: string): string {
     case "throw": return `${actor} lets a simulated advantage slip to ${target!}.`;
   }
 }
-function makeHighlight(scope: string, result: MapResult, mapIndex: number, eventIndex: number, side: Side, kind: HighlightKind, actor: Participant, target: Participant | undefined, emphasis: Highlight["emphasis"]): Highlight {
-  return Object.freeze({ id: `hl-${hash(`${scope}:${eventIndex}:${actor.card.id}:${target?.card.id ?? ""}`)}`, kind, actorCardId: actor.card.id, ...(target ? { targetCardId: target.card.id } : {}), side, text: template(kind, actor.handle, target?.handle), emphasis, map: result.map, mapIndex });
+function makeHighlight(feed: string, result: MapResult, mapIndex: number, eventIndex: number, side: Side, kind: HighlightKind, actor: Participant, target: Participant | undefined, emphasis: Highlight["emphasis"]): Highlight {
+  const identity = JSON.stringify({ feed, map: result.map, mapIndex, eventIndex, kind, actor: actor.card.id, target: target?.card.id ?? null, side, emphasis });
+  return Object.freeze({ id: `hl-${hash128(identity)}`, kind, actorCardId: actor.card.id, ...(target ? { targetCardId: target.card.id } : {}), side, text: template(kind, actor.handle, target?.handle), emphasis, map: result.map, mapIndex });
 }
 function eventFor(rng: SeededRng, own: readonly Participant[], other: readonly Participant[], kinds: readonly HighlightKind[]): { kind: HighlightKind; actor: Participant; target?: Participant } {
   const kind = weighted(rng, kinds, candidate => own.reduce((sum, participant) => sum + kindWeight(candidate, participant.card), 0));
   const actor = weighted(rng, own, participant => kindWeight(kind, participant.card));
-  const target = weighted(rng, other, participant => Math.max(0, participant.card.traits.survival));
+  const target = kind === "ace" ? undefined : weighted(rng, other, participant => Math.max(0, participant.card.traits.survival));
   return { kind, actor, target };
 }
 
-export function createHighlights(seed: string, series: SeriesResult, userLineup: Lineup, opponent: Lineup, dataset: GameDataset): Highlight[] {
+export function createHighlights(seed: string, series: SeriesResult, userLineup: Lineup, opponent: Lineup, dataset: GameDataset): readonly Highlight[] {
   if (typeof seed !== "string" || seed.length === 0) fail("Narration seed must be non-empty");
-  assertSeries(series);
+  validateSeries(series);
   const user = resolveLineup(userLineup, dataset); const foe = resolveLineup(opponent, dataset);
   const shared = new Set(user.map(participant => participant.card.id)); if (foe.some(participant => shared.has(participant.card.id))) fail("Narration lineups must not share cards");
-  if (series.stage === "group" || series.stage === "quarterfinal") return Object.freeze([]) as unknown as Highlight[];
+  if (series.stage === "group" || series.stage === "quarterfinal") return Object.freeze([]);
+  const matchup = JSON.stringify({ user: canonicalLineupFingerprint(userLineup), opponent: canonicalLineupFingerprint(opponent) });
   const highlights: Highlight[] = [];
   for (const [mapIndex, result] of series.maps.entries()) {
-    const scope = `narration:${series.stage}:${mapIndex}:${result.map}:${series.userWins}-${series.opponentWins}`;
+    const scope = JSON.stringify({ narration: 1, matchup, stage: series.stage, map: result.map, mapIndex });
     const rng = scopedRng(seed, scope); const count = 4 + rng.int(3);
     for (let eventIndex = 0; eventIndex < count - 1; eventIndex += 1) {
       const side: Side = rng.next() < 0.5 ? "user" : "opponent"; const own = side === "user" ? user : foe; const other = side === "user" ? foe : user;
       const event = eventFor(rng, own, other, ["ace", "clutch", "ninja-defuse", "retake", "eco", "failed-clutch", "throw"]);
-      highlights.push(makeHighlight(scope, result, mapIndex, eventIndex, side, event.kind, event.actor, event.target, event.kind === "clutch" ? "clutch" : "normal"));
+      highlights.push(makeHighlight(JSON.stringify({ seed, matchup, stage: series.stage }), result, mapIndex, eventIndex, side, event.kind, event.actor, event.target, event.kind === "clutch" ? "clutch" : "normal"));
     }
     const winner = result.winner; const own = winner === "user" ? user : foe; const other = winner === "user" ? foe : user;
     const finish = eventFor(rng, own, other, positiveKinds);
-    highlights.push(makeHighlight(scope, result, mapIndex, count - 1, winner, finish.kind, finish.actor, finish.target, "decisive"));
+    highlights.push(makeHighlight(JSON.stringify({ seed, matchup, stage: series.stage }), result, mapIndex, count - 1, winner, finish.kind, finish.actor, finish.target, "decisive"));
   }
-  return Object.freeze(highlights) as unknown as Highlight[];
+  return Object.freeze(highlights);
 }
 
 export const generateHighlights = createHighlights;

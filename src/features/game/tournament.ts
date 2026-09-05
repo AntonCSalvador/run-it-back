@@ -16,7 +16,7 @@ function cloneLineup(lineup: FrozenLineup | Lineup): Lineup { return { slots: li
 function freezeLineup(lineup: FrozenLineup | Lineup): FrozenLineup { return Object.freeze({ slots: Object.freeze(lineup.slots.map(slot => Object.freeze({ role: slot.role, cardId: slot.cardId }))), iglCardId: lineup.iglCardId }); }
 function freezeSeries(series: SeriesResult): SeriesResult { return Object.freeze({ ...series, maps: Object.freeze(series.maps.map(map => Object.freeze({ ...map }))) }); }
 function freezeState(state: Omit<TournamentState, "userLineup" | "completedSeries"> & { userLineup: FrozenLineup | Lineup; completedSeries: readonly SeriesResult[] }): TournamentState { return Object.freeze({ ...state, userLineup: freezeLineup(state.userLineup), completedSeries: Object.freeze(state.completedSeries.map(freezeSeries)) }); }
-function fingerprint(lineup: FrozenLineup | Lineup): string {
+export function canonicalLineupFingerprint(lineup: FrozenLineup | Lineup): string {
   const cardByRole = new Map(lineup.slots.map(slot => [slot.role, slot.cardId]));
   return JSON.stringify({ slots: ROLES.map(role => [role, cardByRole.get(role)]), iglCardId: lineup.iglCardId });
 }
@@ -43,9 +43,10 @@ function validateMap(map: unknown): asserts map is MapResult {
   const high = value.winner === "user" ? value.userScore : value.opponentScore; const low = value.winner === "user" ? value.opponentScore : value.userScore;
   if (high <= low || !((high === 13 && low >= 3 && low <= 11) || ([14, 15, 16].includes(high) && low === high - 2))) throw new Error("Invalid series map score");
 }
-function validateSeries(series: unknown, stage: Stage): asserts series is SeriesResult {
-  if (!series || typeof series !== "object") throw new Error("Invalid series"); const value = series as SeriesResult; const required = requiredWins(stage); const bestOf: 3 | 5 = stage === "final" ? 5 : 3;
-  if (value.stage !== stage) throw new Error("Series stage does not match current stage"); if (value.bestOf !== bestOf) throw new Error("Series best-of does not match stage");
+export function validateSeries(series: unknown, expectedStage?: Stage): asserts series is SeriesResult {
+  if (!series || typeof series !== "object") throw new Error("Invalid series"); const value = series as SeriesResult;
+  assertStage(value.stage); const stage = value.stage; const required = requiredWins(stage); const bestOf: 3 | 5 = stage === "final" ? 5 : 3;
+  if (expectedStage !== undefined && value.stage !== expectedStage) throw new Error("Series stage does not match current stage"); if (value.bestOf !== bestOf) throw new Error("Series best-of does not match stage");
   if (!Number.isInteger(value.userWins) || !Number.isInteger(value.opponentWins) || value.userWins < 0 || value.opponentWins < 0 || !Array.isArray(value.maps)) throw new Error("Invalid series wins or maps");
   if (!((value.userWins === required && value.opponentWins < required) || (value.opponentWins === required && value.userWins < required))) throw new Error("Invalid series winning count");
   if (value.maps.length !== value.userWins + value.opponentWins || value.maps.length < required || value.maps.length > required * 2 - 1) throw new Error("Invalid series maps count");
@@ -56,7 +57,7 @@ function validateSeries(series: unknown, stage: Stage): asserts series is Series
 
 export function playSeries(seed: string, stage: Stage, userLineup: Lineup, opponent: GeneratedOpponent, dataset: GameDataset): SeriesResult {
   assertStage(stage); const userStrength = lineupStrength(userLineup, dataset); const foeStrength = opponentStrength(opponent, stage, dataset); const bestOf: 3 | 5 = stage === "final" ? 5 : 3; const required = requiredWins(stage);
-  const scope = `series:${stage}:${fingerprint(userLineup)}:${opponent.id}:${fingerprint(opponent.lineup)}`; const order = scopedRng(seed, `${scope}:maps`).shuffle(MAP_POOL); const outcomes = scopedRng(seed, `${scope}:outcomes`); const maps: MapResult[] = []; let userWins = 0; let opponentWins = 0;
+  const scope = `series:${stage}:${canonicalLineupFingerprint(userLineup)}:${opponent.id}:${canonicalLineupFingerprint(opponent.lineup)}`; const order = scopedRng(seed, `${scope}:maps`).shuffle(MAP_POOL); const outcomes = scopedRng(seed, `${scope}:outcomes`); const maps: MapResult[] = []; let userWins = 0; let opponentWins = 0;
   while (userWins < required && opponentWins < required) { const result = rollMap(userStrength, foeStrength, outcomes); maps.push({ map: order[maps.length], ...scoreMap(`${seed}:${scope}`, maps.length, result.winner, userStrength - foeStrength), ...result }); if (result.winner === "user") userWins += 1; else opponentWins += 1; }
   return freezeSeries({ stage, bestOf, userWins, opponentWins, maps });
 }
