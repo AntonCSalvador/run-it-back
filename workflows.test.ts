@@ -10,4 +10,11 @@ describe("workflow action versions", () => {
     expect(ci).toContain('PLAYWRIGHT_TEST_BUILD: "1"');
     expect(ci).toContain("PLAYWRIGHT_PREBUILT=1 npm run test:e2e");
   });
+
+  it("keeps CI cache shell-free and report upload nonfatal before E2E starts", () => {
+    const ci = readFileSync(".github/workflows/ci.yml", "utf8");
+    expect(ci).not.toContain("playwright-version");
+    expect(ci).toContain("key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}");
+    expect(ci).toMatch(/if: failure\(\)[\s\S]*?if-no-files-found: ignore/);
+  });
 });
