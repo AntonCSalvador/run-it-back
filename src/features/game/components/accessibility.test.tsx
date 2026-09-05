@@ -5,6 +5,15 @@ import { AppHeader } from "./app-header";
 import { TeamOffer } from "./team-offer";
 import type { TeamAppearance } from "../domain";
 import { useFireAccent } from "./use-fire-accent";
+import { GameApp } from "./game-app";
+import { minimalDataset } from "@/data/fixtures/minimal-dataset";
+import { parseDataset } from "../schema";
+import { activeState } from "./tournament-test-fixtures";
+import { dataset as fixtureDataset, lineup, series, terminalState } from "./tournament-test-fixtures";
+import { TournamentView } from "./tournament-view";
+import { ResultsView } from "./results-view";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onAnimationEnd={fire.onAnimationEnd} onClick={fire.trigger}>ignite</button>; }
 
@@ -52,6 +61,58 @@ describe("broadcast accessibility", () => {
     expect(button).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(650));
     expect(button).not.toHaveClass("fire-accent");
+    vi.useRealTimers();
+  });
+
+  it("keeps focus visible and changes a live phase status from mode to team", () => {
+    const css = readFileSync(join(process.cwd(), "src/app/globals.css"), "utf8");
+    render(<GameApp dataset={parseDataset(minimalDataset)} now={() => new Date("2026-09-05T12:00:00Z")} />);
+    const daily = screen.getByRole("button", { name: "Daily" });
+    daily.focus();
+    expect(document.activeElement).toBe(daily);
+    expect(css).toMatch(/:focus-visible\s*\{[\s\S]*?outline:3px solid var\(--action\);[\s\S]*?outline-offset:3px/);
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent("Current phase: mode");
+    fireEvent.click(daily);
+    expect(status).toHaveTextContent("Current phase: team");
+  });
+
+  it("fires the persistent shell after player and tournament lock-ins", () => {
+    vi.useFakeTimers();
+    const dataset = parseDataset(minimalDataset);
+    const first = render(<GameApp dataset={dataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
+    fireEvent.click(screen.getByRole("button", { name: "Daily" }));
+    fireEvent.click(screen.getAllByRole("button").find(button => button.dataset.teamId)!);
+    act(() => vi.advanceTimersByTime(650));
+    fireEvent.click(screen.getAllByRole("button").find(button => button.closest("[data-testid]") !== null)!);
+    const shell = document.querySelector("main")!;
+    expect(screen.getByRole("heading", { name: /Assign/ })).toBeVisible();
+    expect(shell).toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(650));
+    expect(shell).not.toHaveClass("fire-accent");
+    first.unmount();
+
+    const active = activeState();
+    render(<GameApp dataset={dataset} initialState={{ phase: "lineup", mode: "daily", draft: active.draft }} />);
+    fireEvent.click(screen.getByRole("radio", { checked: true }));
+    fireEvent.click(screen.getByRole("button", { name: "Start tournament" }));
+    expect(document.querySelector("main")).toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(650));
+    vi.useRealTimers();
+  });
+
+  it("accents a winning series and a champion result until the finite fallback", () => {
+    vi.useFakeTimers();
+    const state = activeState();
+    const opponent = { generateOpponent: () => null };
+    void opponent;
+    render(<TournamentView opponent={{ id: "opponent", stage: "group", lineup, strength: 60 }} userLineup={lineup} cards={fixtureDataset.cards} result={series("group", true)} onPlay={vi.fn()} onContinue={vi.fn()} />);
+    expect(screen.getByRole("status", { name: "Series result announcement" })).toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(650));
+    const champion = terminalState(true);
+    render(<ResultsView mode="daily" tournament={champion.tournament} cards={fixtureDataset.cards} rerollsUsed={0} shareText="share" onRunAgain={vi.fn()} onModeChange={vi.fn()} />);
+    expect(screen.getByRole("region", { name: "Results" })).toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(650));
     vi.useRealTimers();
   });
 });
