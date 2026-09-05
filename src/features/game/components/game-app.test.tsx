@@ -66,13 +66,44 @@ describe("GameApp", () => {
     writeRecord(storage, DAILY_RECORD, { completions: [storedRun("daily")], streak: 1 });
     writeRecord(storage, HISTORY_RECORD, { runs: [storedRun("free")] });
     const first = render(<GameApp dataset={dataset} storage={storage} />);
-    expect(screen.getByRole("region", { name: "Recent results" })).toHaveTextContent("Daily");
-    expect(screen.getByRole("region", { name: "Recent results" })).toHaveTextContent("Free Play");
+    expect(screen.getByRole("button", { name: /Show saved results/ })).toBeVisible();
     first.unmount();
     render(<GameApp dataset={dataset} storage={storage} />);
+    fireEvent.click(screen.getByRole("button", { name: /Show saved results/ }));
     expect(screen.getAllByRole("button", { name: /View .* result/ })).toHaveLength(2);
     fireEvent.click(screen.getByRole("button", { name: "View Daily result" }));
     expect(screen.getByRole("region", { name: "Daily result details" })).toHaveTextContent("Rerolls used: 1");
+  });
+
+  it("keeps a large saved history collapsed and bounds its keyboard controls", () => {
+    const storage = memoryStorage();
+    const completions = Array.from({ length: 730 }, (_, index) => {
+      const utcDate = new Date(Date.UTC(2024, 0, index + 1)).toISOString().slice(0, 10);
+      return { ...storedRun("daily"), utcDate, completedAtUtc: utcDate };
+    });
+    writeRecord(storage, DAILY_RECORD, { completions, streak: 1 });
+    writeRecord(storage, HISTORY_RECORD, { runs: Array.from({ length: 20 }, () => storedRun("free")) });
+    render(<GameApp dataset={dataset} storage={storage} initialState={{ phase: "team", mode: "daily", draft: createDraft("history", dataset) }} />);
+    expect(screen.queryAllByRole("button", { name: /View .* result/ })).toHaveLength(0);
+    expect(screen.getByRole("button", { name: /Show saved results/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Reroll teams" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /Show saved results/ }));
+    expect(screen.getAllByRole("button", { name: /View .* result/ }).length).toBeLessThanOrEqual(6);
+    fireEvent.click(screen.getByRole("button", { name: "Hide saved results" }));
+    expect(screen.queryAllByRole("button", { name: /View .* result/ })).toHaveLength(0);
+  });
+
+  it("infers champion from an outcome-less stored final", () => {
+    const storage = memoryStorage();
+    const champion = terminalState(true).tournament;
+    writeRecord(storage, HISTORY_RECORD, { runs: [{
+      mode: "free", completedAtUtc: "2026-09-05", stageReached: "final", rerollsUsed: 0,
+      roster: champion.userLineup.slots, iglCardId: champion.userLineup.iglCardId,
+      series: champion.completedSeries.map(result => ({ stage: result.stage, userWins: result.userWins, opponentWins: result.opponentWins, maps: result.maps.map(map => ({ map: map.map, userScore: map.userScore, opponentScore: map.opponentScore })) })),
+    }] });
+    render(<GameApp dataset={dataset} storage={storage} />);
+    fireEvent.click(screen.getByRole("button", { name: /Show saved results/ }));
+    expect(screen.getByRole("button", { name: "View Free Play result" }).parentElement).toHaveTextContent("Champion, final");
   });
 
   it("announces recovery and non-persistent saved-result storage states", () => {

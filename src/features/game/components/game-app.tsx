@@ -8,7 +8,7 @@ import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
-import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, type DailyRun, type FreePlayRun, writeRecord } from "../storage";
+import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, type DailyRun, type FreePlayRun, type StoredRunResult, writeRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 import { TeamOffer } from "./team-offer";
@@ -45,20 +45,30 @@ export function restartCurrentRun(clearSimulationError: () => void, dispatch: (a
 }
 
 function RecentResults({ daily, free, cards }: { daily: readonly DailyRun[]; free: readonly FreePlayRun[]; cards: readonly PlayerCard[] }) {
+  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const byId = new Map(cards.map(card => [card.id, card]));
-  const runs = [...daily.map(run => ({ key: `daily-${run.utcDate}`, label: "Daily", run })), ...free.map((run, index) => ({ key: `free-${index}-${run.completedAtUtc}`, label: "Free Play", run }))];
+  const runs = [...daily.slice(0, 3).map(run => ({ key: `daily-${run.utcDate}`, label: "Daily", run })), ...free.slice(0, 3).map((run, index) => ({ key: `free-${index}-${run.completedAtUtc}`, label: "Free Play", run }))];
   if (!runs.length) return null;
   const selectedRun = runs.find(item => item.key === selected);
+  const outcome = (run: StoredRunResult): "Champion" | "Eliminated" | "Completed" => {
+    if (run.outcome === "champion") return "Champion";
+    if (run.outcome === "eliminated") return "Eliminated";
+    const final = run.series.at(-1);
+    if (final?.stage === "final" && final.userWins === 3) return "Champion";
+    if (final && final.opponentWins > final.userWins) return "Eliminated";
+    return "Completed";
+  };
   return <section aria-label="Recent results">
     <h2>Recent results</h2>
-    <ul>{runs.map(({ key, label, run }) => <li key={key}><button type="button" aria-expanded={selected === key} onClick={() => setSelected(current => current === key ? null : key)}>View {label} result</button> — {run.outcome === "champion" ? "Champion" : "Eliminated"}, {run.stageReached}</li>)}</ul>
+    <button type="button" aria-expanded={open} onClick={() => setOpen(value => { if (value) setSelected(null); return !value; })}>{open ? "Hide" : "Show"} saved results</button>
+    {open && <><ul>{runs.map(({ key, label, run }) => <li key={key}><button type="button" aria-expanded={selected === key} onClick={() => setSelected(current => current === key ? null : key)}>View {label} result</button> — {outcome(run)}, {run.stageReached}</li>)}</ul>
     {selectedRun && <section aria-label={`${selectedRun.label} result details`}>
       <h3>{selectedRun.label} result</h3>
-      <p>{selectedRun.run.outcome === "champion" ? "Champion" : "Eliminated"} at {selectedRun.run.stageReached}. Rerolls used: {selectedRun.run.rerollsUsed}</p>
+      <p>{outcome(selectedRun.run)} at {selectedRun.run.stageReached}. Rerolls used: {selectedRun.run.rerollsUsed}</p>
       <ul>{selectedRun.run.roster.map(slot => { const card = byId.get(slot.cardId); return <li key={slot.role}>{slot.role}: {card?.displayHandle ?? "Unknown"} {card?.year ?? ""}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</li>; })}</ul>
       <ol>{selectedRun.run.series.map(series => <li key={series.stage}>{series.stage}: {series.userWins}–{series.opponentWins}</li>)}</ol>
-    </section>}
+    </section>}</>}
   </section>;
 }
 
