@@ -1,14 +1,15 @@
 import { normalizeHandle } from "./handle";
 import { ROLES, type GameDataset } from "./domain";
-import type { StoredRunResult } from "./storage";
+import type { DailyRun, FreePlayRun } from "./storage";
 
-type ShareableRun = Pick<StoredRunResult, "utcDate" | "stageReached" | "series" | "rerollsUsed" | "roster">;
+type ShareableRun = Pick<DailyRun, "stageReached" | "series" | "rerollsUsed" | "roster">;
 function summary(run: ShareableRun): string {
   const grid = run.series.map(series => `${series.userWins > series.opponentWins ? "W" : "L"} ${series.userWins}-${series.opponentWins}`).join(" · ");
   return [`Stage: ${run.stageReached}`, `Series: ${grid || "—"}`, `Rerolls: ${run.rerollsUsed}`].join("\n");
 }
-export function formatDailyShare(run: ShareableRun): string { return [`Run It Back — Daily ${run.utcDate ?? ""}`.trimEnd(), summary(run), "Run It Back"].join("\n"); }
-export function formatFreePlayShare(run: ShareableRun, dataset: GameDataset): string {
+function isUtcDate(value: string): boolean { const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value); if (!match) return false; const [year, month, day] = match.slice(1).map(Number); const parsed = new Date(Date.UTC(year, month - 1, day)); return parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month - 1 && parsed.getUTCDate() === day; }
+export function formatDailyShare(run: Pick<DailyRun, "utcDate" | "stageReached" | "series" | "rerollsUsed" | "roster">): string { if (!isUtcDate(run.utcDate)) throw new Error("Daily share requires a valid UTC date"); return [`Run It Back — Daily ${run.utcDate}`, summary(run), "Run It Back"].join("\n"); }
+export function formatFreePlayShare(run: Pick<FreePlayRun, "stageReached" | "series" | "rerollsUsed" | "roster">, dataset: GameDataset): string {
   const byCard = new Map(dataset.cards.map(card => [card.id, card]));
   const selected = new Map(run.roster.map(slot => [slot.role, slot.cardId]));
   const roster = ROLES.map(role => {

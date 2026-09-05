@@ -10,22 +10,29 @@ const utcDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 }, "Invalid UTC date");
 const stage = z.enum(["group", "quarterfinal", "semifinal", "final"]);
 const rosterSlot = z.object({ role: z.enum(ROLES), cardId: z.string().min(1) }).strict();
-const runSchema = z.object({
-  mode: z.enum(["daily", "free"]), utcDate: utcDate.optional(), completedAtUtc: utcDate,
+const runBaseSchema = z.object({
+  completedAtUtc: utcDate,
   stageReached: stage, series: z.array(z.object({ stage, userWins: z.number().int().nonnegative(), opponentWins: z.number().int().nonnegative() }).strict()),
   rerollsUsed: z.number().int().nonnegative(), roster: z.array(rosterSlot).length(ROLES.length),
-}).strict().superRefine((run, context) => { if (run.mode === "daily" && !run.utcDate) context.addIssue({ code: "custom", message: "Daily runs need a UTC date" }); });
-
-export type StoredRunResult = Omit<z.infer<typeof runSchema>, "stageReached" | "roster"> & { readonly stageReached: Stage; readonly roster: readonly { readonly role: Role; readonly cardId: string }[] };
+});
+const dailyRunSchema = runBaseSchema.extend({ mode: z.literal("daily"), utcDate }).strict();
+const freePlayRunSchema = runBaseSchema.extend({ mode: z.literal("free") }).strict();
+type StoredRunBase = { readonly completedAtUtc: string; readonly stageReached: Stage; readonly series: readonly { readonly stage: Stage; readonly userWins: number; readonly opponentWins: number }[]; readonly rerollsUsed: number; readonly roster: readonly { readonly role: Role; readonly cardId: string }[] };
+export type DailyRun = StoredRunBase & { readonly mode: "daily"; readonly utcDate: string };
+export type FreePlayRun = StoredRunBase & { readonly mode: "free" };
+export type StoredRunResult = DailyRun | FreePlayRun;
 export interface StoredSettings { readonly soundEnabled: boolean }
-export interface DailyStorage { readonly completions: readonly StoredRunResult[]; readonly streak: number }
-export interface HistoryStorage { readonly runs: readonly StoredRunResult[] }
+export interface DailyStorage { readonly completions: readonly DailyRun[]; readonly streak: number }
+export interface HistoryStorage { readonly runs: readonly FreePlayRun[] }
 export interface RecordAdapter<T> { readonly key: string; readonly schema: ZodType<{ version: 1 } & T>; readonly defaultValue: T }
 export interface StorageResult<T> { readonly value: T; readonly recovered: boolean; readonly persistent: boolean }
 
 export const SETTINGS_RECORD: RecordAdapter<StoredSettings> = { key: STORAGE_KEYS.settings, schema: z.object({ version: z.literal(1), soundEnabled: z.boolean() }).strict(), defaultValue: { soundEnabled: true } };
-export const DAILY_RECORD: RecordAdapter<DailyStorage> = { key: STORAGE_KEYS.daily, schema: z.object({ version: z.literal(1), completions: z.array(runSchema), streak: z.number().int().nonnegative() }).strict().refine(value => value.completions.every(run => run.mode === "daily"), "Daily storage only accepts Daily runs"), defaultValue: { completions: [], streak: 0 } };
-export const HISTORY_RECORD: RecordAdapter<HistoryStorage> = { key: STORAGE_KEYS.history, schema: z.object({ version: z.literal(1), runs: z.array(runSchema).max(20) }).strict(), defaultValue: { runs: [] } };
+export const DAILY_RECORD: RecordAdapter<DailyStorage> = { key: STORAGE_KEYS.daily, schema: z.object({ version: z.literal(1), completions: z.array(dailyRunSchema), streak: z.number().int().nonnegative() }).strict().superRefine((value, context) => {
+  const dates = new Set<string>();
+  value.completions.forEach((run, index) => { if (dates.has(run.utcDate)) context.addIssue({ code: "custom", path: ["completions", index, "utcDate"], message: `Duplicate Daily completion for UTC date ${run.utcDate}` }); dates.add(run.utcDate); });
+}), defaultValue: { completions: [], streak: 0 } };
+export const HISTORY_RECORD: RecordAdapter<HistoryStorage> = { key: STORAGE_KEYS.history, schema: z.object({ version: z.literal(1), runs: z.array(freePlayRunSchema).max(20) }).strict(), defaultValue: { runs: [] } };
 
 const memory = new Map<string, unknown>();
 function copy<T>(value: T): T { return structuredClone(value); }
@@ -65,12 +72,10 @@ export function removeRecord<T>(storage: Storage | null, record: RecordAdapter<T
   catch { return { value: copy(record.defaultValue), recovered: false, persistent: false }; }
 }
 
-export function addDailyCompletion(current: DailyStorage, completion: StoredRunResult): DailyStorage {
-  if (completion.mode !== "daily" || !completion.utcDate) throw new Error("Daily completion requires a UTC date");
+export function addDailyCompletion(current: DailyStorage, completion: DailyRun): DailyStorage {
   const withoutDate = current.completions.filter(run => run.utcDate !== completion.utcDate);
   return { completions: [copy(completion), ...withoutDate], streak: current.streak };
 }
-export function prependFreePlayHistory(current: HistoryStorage, run: StoredRunResult): HistoryStorage {
-  if (run.mode !== "free") throw new Error("History only accepts Free Play runs");
+export function prependFreePlayHistory(current: HistoryStorage, run: FreePlayRun): HistoryStorage {
   return { runs: [copy(run), ...current.runs].slice(0, 20) };
 }
