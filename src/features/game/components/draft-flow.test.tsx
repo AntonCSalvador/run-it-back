@@ -51,11 +51,16 @@ describe("draft flow", () => {
       if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
     }
     expect(screen.getByRole("region", { name: "Roster" })).toBeVisible();
-    const assignmentsBefore = [...screen.getByRole("region", { name: "Roster" }).querySelectorAll("strong")].map(label => label.parentElement?.textContent).join("|");
-    const move = screen.getAllByRole("button", { name: /Move .* to / }).find(button => button.textContent?.includes("to duelist"))!;
+    const sourceRole = "smokes";
+    const targetRole = "duelist";
+    const sourceCard = "player-21 2022";
+    const displacedCard = "player-16 2022";
+    expect(screen.getByLabelText(`${sourceRole} slot`)).toHaveTextContent(sourceCard);
+    expect(screen.getByLabelText(`${targetRole} slot`)).toHaveTextContent(displacedCard);
+    const move = screen.getByRole("button", { name: `Move ${sourceCard} to ${targetRole}` });
     await user.click(move);
-    const assignmentsAfter = [...screen.getByRole("region", { name: "Roster" }).querySelectorAll("strong")].map(label => label.parentElement?.textContent).join("|");
-    expect(assignmentsAfter).not.toBe(assignmentsBefore);
+    expect(screen.getByLabelText(`${targetRole} slot`)).toHaveTextContent(sourceCard);
+    expect(screen.getByLabelText(`${sourceRole} slot`)).toHaveTextContent(displacedCard);
     expect(screen.getByRole("radiogroup", { name: "Choose in-game leader" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeDisabled();
     await user.click(screen.getByRole("radio", { name: cardLabelFromMove(move) }));
