@@ -25,4 +25,4 @@ every submitted Daily run server-side; never trust a client-computed result.
 
 ## Audit notes
 
-Dependency installation completed with no reported vulnerabilities. npm may emit peer-dependency or engine warnings for transitive packages; no forced upgrades are used.
+Dependency installation completed with no reported vulnerabilities or engine warnings on the supported Node runtime.
