@@ -76,8 +76,8 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
   const reached = new Set<number>();
   for (let index = 0; index < expected.length + 3; index += 1) {
     await page.keyboard.press("Tab");
-    const current = await page.evaluate(() => Number((document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-tab-index")));
-    if (Number.isInteger(current)) reached.add(current);
+    const marker = await page.evaluate(() => (document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-tab-index"));
+    if (marker !== null && /^\d+$/.test(marker)) reached.add(Number(marker));
   }
   expect([...reached].sort((a, b) => a - b), "every enabled action must be keyboard reachable").toEqual(expected);
   await controls.evaluateAll(elements => elements.forEach(element => element.removeAttribute("data-e2e-tab-index")));
@@ -88,8 +88,8 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
     const reachedRadios = new Set<number>([0]);
     for (let index = 1; index < await radios.count(); index += 1) {
       await page.keyboard.press("ArrowDown");
-      const current = await page.evaluate(() => Number((document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-radio-index")));
-      if (Number.isInteger(current)) reachedRadios.add(current);
+      const marker = await page.evaluate(() => (document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-radio-index"));
+      if (marker !== null && /^\d+$/.test(marker)) reachedRadios.add(Number(marker));
     }
     expect([...reachedRadios].sort((a, b) => a - b), "each radio option is arrow-key reachable from its tab stop").toEqual(Array.from({ length: await radios.count() }, (_, index) => index));
     await radios.evaluateAll(elements => elements.forEach(element => element.removeAttribute("data-e2e-radio-index")));

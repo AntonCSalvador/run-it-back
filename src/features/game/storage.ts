@@ -99,6 +99,16 @@ export function addDailyCompletion(current: DailyStorage, completion: DailyRun):
   const withoutDate = current.completions.filter(run => run.utcDate !== completion.utcDate);
   return { completions: [copy(completion), ...withoutDate].slice(0, 730), streak: current.streak };
 }
+/** UTC-only streak calculation; older submissions never rewrite the latest streak. */
+export function nextDailyStreak(completions: readonly DailyRun[], utcDate: string, currentStreak: number): number {
+  const dates = completions.map(run => run.utcDate).sort();
+  const latest = dates.at(-1);
+  if (!latest || utcDate === latest) return latest ? currentStreak || 1 : 1;
+  if (utcDate < latest) return currentStreak;
+  const previous = new Date(`${latest}T00:00:00.000Z`).getTime();
+  const next = new Date(`${utcDate}T00:00:00.000Z`).getTime();
+  return next - previous === 86_400_000 ? currentStreak + 1 : 1;
+}
 export function prependFreePlayHistory(current: HistoryStorage, run: FreePlayRun): HistoryStorage {
   return { runs: [copy(run), ...current.runs].slice(0, 20) };
 }

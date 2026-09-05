@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { DAILY_RECORD, HISTORY_RECORD, SETTINGS_RECORD, STORAGE_KEYS, addDailyCompletion, prependFreePlayHistory, readRecord, removeRecord, writeRecord, type DailyRun, type FreePlayRun, type HistoryStorage, type StoredRunResult } from "./storage";
+import { DAILY_RECORD, HISTORY_RECORD, SETTINGS_RECORD, STORAGE_KEYS, addDailyCompletion, nextDailyStreak, prependFreePlayHistory, readRecord, removeRecord, writeRecord, type DailyRun, type FreePlayRun, type HistoryStorage, type StoredRunResult } from "./storage";
 
 class MemoryStorage implements Storage {
   private readonly entries = new Map<string, string>();
@@ -15,6 +15,14 @@ const freeRun = (id: string, date = "2026-09-05"): FreePlayRun => ({ mode: "free
 const dailyRun = (date: string, stageReached: StoredRunResult["stageReached"] = "group"): DailyRun => stageReached === "final" ? ({ ...freeRun("a", date), mode: "daily", utcDate: date, stageReached, series: [{ stage: "group", userWins: 2, opponentWins: 0 }, { stage: "quarterfinal", userWins: 2, opponentWins: 0 }, { stage: "semifinal", userWins: 2, opponentWins: 0 }, { stage: "final", userWins: 3, opponentWins: 0 }] }) : ({ ...freeRun("a", date), mode: "daily", utcDate: date, stageReached });
 
 describe("local run storage", () => {
+  it("computes UTC Daily streaks across consecutive, duplicate, gap, leap, and out-of-order dates", () => {
+    expect(nextDailyStreak([], "2026-01-01", 0)).toBe(1);
+    expect(nextDailyStreak([dailyRun("2026-01-01")], "2026-01-01", 1)).toBe(1);
+    expect(nextDailyStreak([dailyRun("2026-01-01")], "2026-01-02", 1)).toBe(2);
+    expect(nextDailyStreak([dailyRun("2024-02-28")], "2024-02-29", 1)).toBe(2);
+    expect(nextDailyStreak([dailyRun("2026-01-01")], "2026-01-03", 1)).toBe(1);
+    expect(nextDailyStreak([dailyRun("2026-01-03")], "2026-01-02", 4)).toBe(4);
+  });
   it("uses namespaced v1 keys and round trips each valid record", () => {
     expect(STORAGE_KEYS).toEqual({ settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1" });
     const storage = new MemoryStorage();

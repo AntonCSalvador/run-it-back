@@ -8,7 +8,7 @@ import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
-import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, prependFreePlayHistory, readRecord, writeRecord } from "../storage";
+import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, writeRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 import { TeamOffer } from "./team-offer";
@@ -105,7 +105,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       const current = readRecord(adapter, DAILY_RECORD).value;
       const completion = { ...run, mode: "daily" as const, utcDate: dailyDateFromSeed(state.tournament.seed) };
       const value = addDailyCompletion(current, completion);
-      writeRecord(adapter, DAILY_RECORD, { ...value, streak: Math.max(1, value.streak) });
+      writeRecord(adapter, DAILY_RECORD, { ...value, streak: nextDailyStreak(current.completions, completion.utcDate, current.streak) });
       // Storage events are intentionally cross-document only. Refresh this
       // document through the app-owned callback instead of synthesizing one.
       refreshDailyHeader.current();
