@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_PAGES: "true"
           GITHUB_REPOSITORY: ${{ github.repository }}
-      - run: npm run smoke:static -- out --base-path /run-it-back
+      - run: npm run smoke:static -- --base-path /run-it-back
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out

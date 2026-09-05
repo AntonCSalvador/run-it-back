@@ -11,6 +11,9 @@ type HtmlNode = {
 };
 
 type SmokeOptions = { basePath?: string; projectRoot?: string };
+const usage = "usage: smoke-static [output-directory] [--base-path /repository]";
+
+class ArgumentError extends Error {}
 
 const projectRoot = resolve(process.cwd());
 
@@ -29,21 +32,24 @@ function normalizeBasePath(basePath = "") {
 
 function localReference(raw: string) {
   const value = raw.trim();
-  if (/^(?:https?:|data:|mailto:|tel:)/i.test(value) || value.startsWith("//")) return null;
-  if (value === "" || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value)) return null;
-  if (value.includes("\\") || /^[a-zA-Z]:[\\/]/.test(value) || value.startsWith("\\\\") || /[?#]/.test(value)) {
+  if (value.includes("\\") || /^[a-zA-Z]:[\\/]/.test(value) || value.startsWith("\\\\")) {
     throw new Error(`invalid local reference "${raw}"`);
   }
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value) || value.startsWith("//")) return null;
+  if (value === "" || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value)) return null;
+  const separator = value.search(/[?#]/);
+  const pathname = separator === -1 ? value : value.slice(0, separator);
   let decoded: string;
   try {
-    decoded = decodeURIComponent(value);
+    decoded = decodeURIComponent(pathname);
   } catch {
     throw new Error(`invalid encoded local reference "${raw}"`);
   }
-  if (decoded.includes("\\") || decoded.split("/").some(part => part === "." || part === "..")) {
+  const normalized = decoded.startsWith("./") ? decoded.slice(2) : decoded;
+  if (normalized.includes("\\") || normalized.split("/").some(part => part === "." || part === "..")) {
     throw new Error(`invalid local reference "${raw}"`);
   }
-  return decoded;
+  return normalized;
 }
 
 function outputPath(outputDirectory: string, reference: string, basePath: string) {
@@ -61,10 +67,10 @@ function outputPath(outputDirectory: string, reference: string, basePath: string
 
 function collectReferences(node: HtmlNode, references: string[]) {
   const attrs = node.attrs ?? [];
-  const src = attrs.find(attribute => attribute.name === "src")?.value;
-  const href = attrs.find(attribute => attribute.name === "href")?.value;
-  const isStylesheet = node.tagName === "link" && attrs.some(attribute => attribute.name === "rel" && attribute.value.split(/\s+/).includes("stylesheet"));
-  if (node.tagName === "script" && src) references.push(src);
+  const src = attrs.find(attribute => attribute.name.toLowerCase() === "src")?.value;
+  const href = attrs.find(attribute => attribute.name.toLowerCase() === "href")?.value;
+  const isStylesheet = node.tagName?.toLowerCase() === "link" && attrs.some(attribute => attribute.name.toLowerCase() === "rel" && attribute.value.split(/\s+/).some(token => token.toLowerCase() === "stylesheet"));
+  if (node.tagName?.toLowerCase() === "script" && src) references.push(src);
   if (isStylesheet && href) references.push(href);
   for (const child of node.childNodes ?? []) collectReferences(child, references);
 }
@@ -73,9 +79,9 @@ function datasetAssets(dataDirectory: string) {
   const assets: string[] = [];
   for (const file of readdirSync(dataDirectory)) {
     if (!/^20\d\d\.json$/.test(file)) continue;
-    const parsed = JSON.parse(readFileSync(resolve(dataDirectory, file), "utf8")) as { teams?: Array<{ logo?: string | null }>; players?: Array<{ portrait?: string | null }> };
-    for (const team of parsed.teams ?? []) if (team.logo) assets.push(team.logo);
-    for (const player of parsed.players ?? []) if (player.portrait) assets.push(player.portrait);
+    const parsed = JSON.parse(readFileSync(resolve(dataDirectory, file), "utf8")) as { teams?: Array<{ logo: string | null }>; players?: Array<{ portrait: string | null }> };
+    for (const team of parsed.teams ?? []) if (team.logo !== null) assets.push(team.logo);
+    for (const player of parsed.players ?? []) if (player.portrait !== null) assets.push(player.portrait);
   }
   return assets;
 }
@@ -117,21 +123,29 @@ export function smokeStatic(outputDirectory: string, options: SmokeOptions = {})
 }
 
 function parseArguments(args: string[]) {
-  let outputDirectory = "out";
-  let basePath = "";
+  let outputDirectory: string | undefined;
+  let basePath: string | undefined;
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
     if (argument === "--base-path") {
-      basePath = args[++index] ?? "";
+      if (basePath !== undefined) throw new ArgumentError("--base-path may only be provided once");
+      const value = args[++index];
+      if (!value || value.startsWith("-")) throw new ArgumentError("--base-path requires a path value");
+      basePath = value;
     } else if (argument.startsWith("--base-path=")) {
-      basePath = argument.slice("--base-path=".length);
-    } else if (!argument.startsWith("-") && outputDirectory === "out") {
+      if (basePath !== undefined) throw new ArgumentError("--base-path may only be provided once");
+      const value = argument.slice("--base-path=".length);
+      if (!value || value.startsWith("-")) throw new ArgumentError("--base-path requires a path value");
+      basePath = value;
+    } else if (argument.startsWith("-")) {
+      throw new ArgumentError(`unknown option "${argument}"`);
+    } else if (outputDirectory === undefined) {
       outputDirectory = argument;
     } else {
-      throw new Error(`usage: smoke-static [output-directory] [--base-path /repository]`);
+      throw new ArgumentError("only one output directory may be provided");
     }
   }
-  return { outputDirectory, basePath };
+  return { outputDirectory: outputDirectory ?? "out", basePath: basePath ?? "" };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
@@ -140,7 +154,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     const result = smokeStatic(outputDirectory, { basePath });
     console.log(`Static smoke passed: ${basename(resolve(outputDirectory))} (${result.references} references, ${result.assets} dataset assets)`);
   } catch (error) {
-    console.error(error instanceof Error ? error.message : error);
+    if (error instanceof ArgumentError) console.error(`error: ${error.message}\n${usage}`);
+    else console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
   }
 }
