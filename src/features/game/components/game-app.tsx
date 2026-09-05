@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { minimalDataset } from "@/data/fixtures/minimal-dataset";
+import { championsDataset } from "@/data/champions";
 import { type GameDataset } from "../domain";
 import { canRerollOffer, isLineupReady, selectableCards, toLineup } from "../draft";
 import { ROLES, type PlayerCard, type Role } from "../domain";
@@ -48,7 +48,7 @@ export function GameApp(props: GameAppProps) {
 
 export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, onRestart }: GameAppProps & { onRestart: () => void }) {
   const actionFire = useFireAccent();
-  const dataset = useMemo(() => parseDataset(suppliedDataset ?? minimalDataset), [suppliedDataset]);
+  const dataset = useMemo(() => parseDataset(suppliedDataset ?? championsDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset }), [dataset]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [simulationError, setSimulationError] = useState<string | null>(null);

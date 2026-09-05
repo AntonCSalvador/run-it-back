@@ -1,0 +1,2931 @@
+{
+  "year": 2021,
+  "teams": [
+    {
+      "id": "acend-2021",
+      "name": "Acend",
+      "shortName": "ACEND",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "cloud9-2021",
+      "name": "Cloud9",
+      "shortName": "C9",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "crazy-raccoon-2021",
+      "name": "Crazy Raccoon",
+      "shortName": "CR",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "envy-2021",
+      "name": "ENVY",
+      "shortName": "ENVY",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "fnatic-2021",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "full-sense-2021",
+      "name": "FULL SENSE",
+      "shortName": "FS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "furia-2021",
+      "name": "FURIA",
+      "shortName": "FUR",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "gambit-esports-2021",
+      "name": "Gambit Esports",
+      "shortName": "GMB",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "keyd-stars-2021",
+      "name": "Keyd Stars",
+      "shortName": "VK",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "kru-esports-2021",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "sentinels-2021",
+      "name": "Sentinels",
+      "shortName": "SEN",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "team-liquid-2021",
+      "name": "Team Liquid",
+      "shortName": "TL",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "team-secret-2021",
+      "name": "Team Secret",
+      "shortName": "TS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "team-vikings-2021",
+      "name": "Team Vikings",
+      "shortName": "VKS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "vision-strikers-2021",
+      "name": "Vision Strikers",
+      "shortName": "VS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "id": "x10-esports-2021",
+      "name": "X10 Esports",
+      "shortName": "X10",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    }
+  ],
+  "players": [
+    {
+      "id": "player-101",
+      "canonicalHandle": "soulcas",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1026",
+      "canonicalHandle": "ade",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1046",
+      "canonicalHandle": "Fisker",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-10782",
+      "canonicalHandle": "Witz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1219",
+      "canonicalHandle": "v1xen",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1294",
+      "canonicalHandle": "NagZ",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1369",
+      "canonicalHandle": "doma",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1427",
+      "canonicalHandle": "Redgar",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1428",
+      "canonicalHandle": "sheydos",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1457",
+      "canonicalHandle": "Mistic",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-14669",
+      "canonicalHandle": "Nivera",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1575",
+      "canonicalHandle": "qck",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1585",
+      "canonicalHandle": "gtn",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1711",
+      "canonicalHandle": "Khalil",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1970",
+      "canonicalHandle": "neth",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2173",
+      "canonicalHandle": "MAGNUM",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2333",
+      "canonicalHandle": "BORKUM",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2334",
+      "canonicalHandle": "JessieVash",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2335",
+      "canonicalHandle": "dispenser",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2452",
+      "canonicalHandle": "Patiphan",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2462",
+      "canonicalHandle": "keznit",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2468",
+      "canonicalHandle": "delz1k",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2489",
+      "canonicalHandle": "Munchkin",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-252",
+      "canonicalHandle": "d3ffo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-261",
+      "canonicalHandle": "Victor",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2610",
+      "canonicalHandle": "Klaus",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-263",
+      "canonicalHandle": "Marved",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2679",
+      "canonicalHandle": "DubsteP",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2894",
+      "canonicalHandle": "Kiles",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3342",
+      "canonicalHandle": "Sushiboys",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3401",
+      "canonicalHandle": "PTC",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3672",
+      "canonicalHandle": "BONECOLD",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3977",
+      "canonicalHandle": "Crws",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4",
+      "canonicalHandle": "crashies",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4375",
+      "canonicalHandle": "SuperBusS",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4376",
+      "canonicalHandle": "SantaGolf",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4377",
+      "canonicalHandle": "JohnOlsen",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4378",
+      "canonicalHandle": "LAMMYSNAX",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-438",
+      "canonicalHandle": "Boaster",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4382",
+      "canonicalHandle": "sScary",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4462",
+      "canonicalHandle": "MaKo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-45",
+      "canonicalHandle": "SicK",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-454",
+      "canonicalHandle": "dapr",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-457",
+      "canonicalHandle": "nAts",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-458",
+      "canonicalHandle": "Chronicle",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-46",
+      "canonicalHandle": "ShahZaM",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-47",
+      "canonicalHandle": "zombs",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-474",
+      "canonicalHandle": "xeta",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-485",
+      "canonicalHandle": "stax",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-488",
+      "canonicalHandle": "Rb",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-5022",
+      "canonicalHandle": "Derke",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-5244",
+      "canonicalHandle": "sutecas",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-562",
+      "canonicalHandle": "zeek",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-565",
+      "canonicalHandle": "starxo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-573",
+      "canonicalHandle": "cNed",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-612",
+      "canonicalHandle": "mitch",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-651",
+      "canonicalHandle": "frz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-659",
+      "canonicalHandle": "Sacy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-6723",
+      "canonicalHandle": "foxz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-681",
+      "canonicalHandle": "xand",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-725",
+      "canonicalHandle": "nzr",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-727",
+      "canonicalHandle": "saadhak",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7603",
+      "canonicalHandle": "Mazino",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-771",
+      "canonicalHandle": "k1Ng",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-773",
+      "canonicalHandle": "Lakia",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-783",
+      "canonicalHandle": "murizzz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7870",
+      "canonicalHandle": "vanity",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7871",
+      "canonicalHandle": "Xeppaa",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7873",
+      "canonicalHandle": "leaf",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-804",
+      "canonicalHandle": "BuZz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-805",
+      "canonicalHandle": "Bazzi",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-817",
+      "canonicalHandle": "FiNESSE",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8673",
+      "canonicalHandle": "heat",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-881",
+      "canonicalHandle": "yay",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8872",
+      "canonicalHandle": "mazin",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9",
+      "canonicalHandle": "TenZ",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-92",
+      "canonicalHandle": "ScreaM",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-937",
+      "canonicalHandle": "JhoW",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-939",
+      "canonicalHandle": "mwzera",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9780",
+      "canonicalHandle": "Jamppi",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-99",
+      "canonicalHandle": "L1NK",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-993",
+      "canonicalHandle": "Medusa",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "ade-crazy-raccoon-2021",
+      "playerId": "player-1026",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "ade",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 4,
+        "utility": 54,
+        "survival": 21,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "bazzi-crazy-raccoon-2021",
+      "playerId": "player-805",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "Bazzi",
+      "mapsPlayed": 2,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 65,
+        "utility": 59,
+        "survival": 32,
+        "clutch": 100,
+        "consistency": 86,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "boaster-fnatic-2021",
+      "playerId": "player-438",
+      "teamId": "fnatic-2021",
+      "year": 2021,
+      "displayHandle": "Boaster",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 58,
+        "utility": 82,
+        "survival": 47,
+        "clutch": 100,
+        "consistency": 85,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "bonecold-acend-2021",
+      "playerId": "player-3672",
+      "teamId": "acend-2021",
+      "year": 2021,
+      "displayHandle": "BONECOLD",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 80,
+        "utility": 34,
+        "survival": 99,
+        "clutch": 100,
+        "consistency": 42,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "borkum-team-secret-2021",
+      "playerId": "player-2333",
+      "teamId": "team-secret-2021",
+      "year": 2021,
+      "displayHandle": "BORKUM",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 51,
+        "utility": 9,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 9,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "buzz-vision-strikers-2021",
+      "playerId": "player-804",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "BuZz",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 64,
+        "utility": 20,
+        "survival": 48,
+        "clutch": 100,
+        "consistency": 20,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "chronicle-gambit-esports-2021",
+      "playerId": "player-458",
+      "teamId": "gambit-esports-2021",
+      "year": 2021,
+      "displayHandle": "Chronicle",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 92,
+        "utility": 20,
+        "survival": 92,
+        "clutch": 100,
+        "consistency": 16,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "cned-acend-2021",
+      "playerId": "player-573",
+      "teamId": "acend-2021",
+      "year": 2021,
+      "displayHandle": "cNed",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 84,
+        "utility": 84,
+        "survival": 96,
+        "clutch": 100,
+        "consistency": 76,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "crashies-envy-2021",
+      "playerId": "player-4",
+      "teamId": "envy-2021",
+      "year": 2021,
+      "displayHandle": "crashies",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 86,
+        "utility": 73,
+        "survival": 78,
+        "clutch": 100,
+        "consistency": 16,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "crws-x10-esports-2021",
+      "playerId": "player-3977",
+      "teamId": "x10-esports-2021",
+      "year": 2021,
+      "displayHandle": "Crws",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 21,
+        "utility": 100,
+        "survival": 37,
+        "clutch": 100,
+        "consistency": 57,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "d3ffo-gambit-esports-2021",
+      "playerId": "player-252",
+      "teamId": "gambit-esports-2021",
+      "year": 2021,
+      "displayHandle": "d3ffo",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 52,
+        "utility": 36,
+        "survival": 68,
+        "clutch": 100,
+        "consistency": 88,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "dapr-sentinels-2021",
+      "playerId": "player-454",
+      "teamId": "sentinels-2021",
+      "year": 2021,
+      "displayHandle": "dapr",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 64,
+        "utility": 72,
+        "survival": 12,
+        "clutch": 100,
+        "consistency": 52,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "delz1k-kru-esports-2021",
+      "playerId": "player-2468",
+      "teamId": "kru-esports-2021",
+      "year": 2021,
+      "displayHandle": "delz1k",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 15,
+        "utility": 65,
+        "survival": 11,
+        "clutch": 100,
+        "consistency": 20,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "derke-fnatic-2021",
+      "playerId": "player-5022",
+      "teamId": "fnatic-2021",
+      "year": 2021,
+      "displayHandle": "Derke",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 45,
+        "survival": 29,
+        "clutch": 100,
+        "consistency": 17,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "dispenser-team-secret-2021",
+      "playerId": "player-2335",
+      "teamId": "team-secret-2021",
+      "year": 2021,
+      "displayHandle": "dispenser",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 77,
+        "utility": 49,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 5,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "doma-fnatic-2021",
+      "playerId": "player-1369",
+      "teamId": "fnatic-2021",
+      "year": 2021,
+      "displayHandle": "doma",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 73,
+        "utility": 93,
+        "survival": 53,
+        "clutch": 100,
+        "consistency": 77,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "dubstep-team-secret-2021",
+      "playerId": "player-2679",
+      "teamId": "team-secret-2021",
+      "year": 2021,
+      "displayHandle": "DubsteP",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 53,
+        "utility": 9,
+        "survival": 93,
+        "clutch": 100,
+        "consistency": 13,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "finesse-envy-2021",
+      "playerId": "player-817",
+      "teamId": "envy-2021",
+      "year": 2021,
+      "displayHandle": "FiNESSE",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 32,
+        "utility": 20,
+        "survival": 24,
+        "clutch": 100,
+        "consistency": 96,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "fisker-crazy-raccoon-2021",
+      "playerId": "player-1046",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "Fisker",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 12,
+        "utility": 12,
+        "survival": 24,
+        "clutch": 100,
+        "consistency": 28,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "foxz-x10-esports-2021",
+      "playerId": "player-6723",
+      "teamId": "x10-esports-2021",
+      "year": 2021,
+      "displayHandle": "foxz",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 60,
+        "utility": 31,
+        "survival": 66,
+        "clutch": 100,
+        "consistency": 12,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "frz-team-vikings-2021",
+      "playerId": "player-651",
+      "teamId": "team-vikings-2021",
+      "year": 2021,
+      "displayHandle": "frz",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 3,
+        "utility": 73,
+        "survival": 22,
+        "clutch": 100,
+        "consistency": 76,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "gtn-team-vikings-2021",
+      "playerId": "player-1585",
+      "teamId": "team-vikings-2021",
+      "year": 2021,
+      "displayHandle": "gtn",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 20,
+        "utility": 16,
+        "survival": 68,
+        "clutch": 100,
+        "consistency": 76,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "heat-keyd-stars-2021",
+      "playerId": "player-8673",
+      "teamId": "keyd-stars-2021",
+      "year": 2021,
+      "displayHandle": "heat",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 88,
+        "utility": 4,
+        "survival": 80,
+        "clutch": 100,
+        "consistency": 4,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jamppi-team-liquid-2021",
+      "playerId": "player-9780",
+      "teamId": "team-liquid-2021",
+      "year": 2021,
+      "displayHandle": "Jamppi",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 35,
+        "utility": 19,
+        "survival": 60,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jessievash-team-secret-2021",
+      "playerId": "player-2334",
+      "teamId": "team-secret-2021",
+      "year": 2021,
+      "displayHandle": "JessieVash",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 47,
+        "utility": 63,
+        "survival": 93,
+        "clutch": 100,
+        "consistency": 85,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jhow-keyd-stars-2021",
+      "playerId": "player-937",
+      "teamId": "keyd-stars-2021",
+      "year": 2021,
+      "displayHandle": "JhoW",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 4,
+        "utility": 76,
+        "survival": 44,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "johnolsen-full-sense-2021",
+      "playerId": "player-4377",
+      "teamId": "full-sense-2021",
+      "year": 2021,
+      "displayHandle": "JohnOlsen",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 8,
+        "utility": 52,
+        "survival": 16,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "k1ng-vision-strikers-2021",
+      "playerId": "player-771",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "k1Ng",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 28,
+        "utility": 40,
+        "survival": 84,
+        "clutch": 100,
+        "consistency": 36,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "keznit-kru-esports-2021",
+      "playerId": "player-2462",
+      "teamId": "kru-esports-2021",
+      "year": 2021,
+      "displayHandle": "keznit",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 83,
+        "utility": 83,
+        "survival": 23,
+        "clutch": 100,
+        "consistency": 47,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "khalil-furia-2021",
+      "playerId": "player-1711",
+      "teamId": "furia-2021",
+      "year": 2021,
+      "displayHandle": "Khalil",
+      "mapsPlayed": 6,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 40,
+        "utility": 88,
+        "survival": 4,
+        "clutch": 100,
+        "consistency": 84,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "kiles-acend-2021",
+      "playerId": "player-2894",
+      "teamId": "acend-2021",
+      "year": 2021,
+      "displayHandle": "Kiles",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 28,
+        "utility": 56,
+        "survival": 64,
+        "clutch": 100,
+        "consistency": 32,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "klaus-kru-esports-2021",
+      "playerId": "player-2610",
+      "teamId": "kru-esports-2021",
+      "year": 2021,
+      "displayHandle": "Klaus",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 55,
+        "utility": 31,
+        "survival": 23,
+        "clutch": 100,
+        "consistency": 67,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "l1nk-team-liquid-2021",
+      "playerId": "player-99",
+      "teamId": "team-liquid-2021",
+      "year": 2021,
+      "displayHandle": "L1NK",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 87,
+        "utility": 11,
+        "survival": 84,
+        "clutch": 100,
+        "consistency": 30,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "lakia-vision-strikers-2021",
+      "playerId": "player-773",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "Lakia",
+      "mapsPlayed": 1,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 35,
+        "utility": 3,
+        "survival": 19,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "lammysnax-full-sense-2021",
+      "playerId": "player-4378",
+      "teamId": "full-sense-2021",
+      "year": 2021,
+      "displayHandle": "LAMMYSNAX",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 62,
+        "utility": 19,
+        "survival": 11,
+        "clutch": 100,
+        "consistency": 5,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "leaf-cloud9-2021",
+      "playerId": "player-7873",
+      "teamId": "cloud9-2021",
+      "year": 2021,
+      "displayHandle": "leaf",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 98,
+        "utility": 82,
+        "survival": 6,
+        "clutch": 100,
+        "consistency": 52,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "magnum-fnatic-2021",
+      "playerId": "player-2173",
+      "teamId": "fnatic-2021",
+      "year": 2021,
+      "displayHandle": "MAGNUM",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 57,
+        "utility": 9,
+        "survival": 65,
+        "clutch": 100,
+        "consistency": 93,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mako-vision-strikers-2021",
+      "playerId": "player-4462",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "MaKo",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 83,
+        "utility": 92,
+        "survival": 88,
+        "clutch": 100,
+        "consistency": 58,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "marved-envy-2021",
+      "playerId": "player-263",
+      "teamId": "envy-2021",
+      "year": 2021,
+      "displayHandle": "Marved",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 88,
+        "utility": 75,
+        "survival": 17,
+        "clutch": 100,
+        "consistency": 50,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mazin-furia-2021",
+      "playerId": "player-8872",
+      "teamId": "furia-2021",
+      "year": 2021,
+      "displayHandle": "mazin",
+      "mapsPlayed": 6,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 14,
+        "utility": 22,
+        "survival": 3,
+        "clutch": 100,
+        "consistency": 65,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mazino-kru-esports-2021",
+      "playerId": "player-7603",
+      "teamId": "kru-esports-2021",
+      "year": 2021,
+      "displayHandle": "Mazino",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 73,
+        "utility": 57,
+        "survival": 17,
+        "clutch": 100,
+        "consistency": 25,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "medusa-crazy-raccoon-2021",
+      "playerId": "player-993",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "Medusa",
+      "mapsPlayed": 2,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 16,
+        "utility": 16,
+        "survival": 8,
+        "clutch": 100,
+        "consistency": 68,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mistic-fnatic-2021",
+      "playerId": "player-1457",
+      "teamId": "fnatic-2021",
+      "year": 2021,
+      "displayHandle": "Mistic",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 26,
+        "utility": 84,
+        "survival": 39,
+        "clutch": 100,
+        "consistency": 63,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mitch-cloud9-2021",
+      "playerId": "player-612",
+      "teamId": "cloud9-2021",
+      "year": 2021,
+      "displayHandle": "mitch",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 53,
+        "utility": 33,
+        "survival": 17,
+        "clutch": 100,
+        "consistency": 33,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "munchkin-crazy-raccoon-2021",
+      "playerId": "player-2489",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "Munchkin",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 19,
+        "utility": 41,
+        "survival": 32,
+        "clutch": 100,
+        "consistency": 57,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "murizzz-keyd-stars-2021",
+      "playerId": "player-783",
+      "teamId": "keyd-stars-2021",
+      "year": 2021,
+      "displayHandle": "murizzz",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 12,
+        "utility": 64,
+        "survival": 68,
+        "clutch": 100,
+        "consistency": 60,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mwzera-keyd-stars-2021",
+      "playerId": "player-939",
+      "teamId": "keyd-stars-2021",
+      "year": 2021,
+      "displayHandle": "mwzera",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 43,
+        "utility": 5,
+        "survival": 89,
+        "clutch": 100,
+        "consistency": 32,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nagz-kru-esports-2021",
+      "playerId": "player-1294",
+      "teamId": "kru-esports-2021",
+      "year": 2021,
+      "displayHandle": "NagZ",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 35,
+        "utility": 43,
+        "survival": 47,
+        "clutch": 100,
+        "consistency": 35,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nats-gambit-esports-2021",
+      "playerId": "player-457",
+      "teamId": "gambit-esports-2021",
+      "year": 2021,
+      "displayHandle": "nAts",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 76,
+        "survival": 84,
+        "clutch": 100,
+        "consistency": 12,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "neth-crazy-raccoon-2021",
+      "playerId": "player-1970",
+      "teamId": "crazy-raccoon-2021",
+      "year": 2021,
+      "displayHandle": "neth",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 8,
+        "utility": 81,
+        "survival": 32,
+        "clutch": 100,
+        "consistency": 95,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nivera-team-liquid-2021",
+      "playerId": "player-14669",
+      "teamId": "team-liquid-2021",
+      "year": 2021,
+      "displayHandle": "Nivera",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 99,
+        "utility": 47,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 47,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nzr-furia-2021",
+      "playerId": "player-725",
+      "teamId": "furia-2021",
+      "year": 2021,
+      "displayHandle": "nzr",
+      "mapsPlayed": 6,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 81,
+        "utility": 43,
+        "survival": 68,
+        "clutch": 100,
+        "consistency": 92,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "patiphan-x10-esports-2021",
+      "playerId": "player-2452",
+      "teamId": "x10-esports-2021",
+      "year": 2021,
+      "displayHandle": "Patiphan",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 69,
+        "utility": 73,
+        "survival": 61,
+        "clutch": 100,
+        "consistency": 81,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "ptc-full-sense-2021",
+      "playerId": "player-3401",
+      "teamId": "full-sense-2021",
+      "year": 2021,
+      "displayHandle": "PTC",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 11,
+        "utility": 49,
+        "survival": 32,
+        "clutch": 100,
+        "consistency": 62,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "qck-furia-2021",
+      "playerId": "player-1575",
+      "teamId": "furia-2021",
+      "year": 2021,
+      "displayHandle": "qck",
+      "mapsPlayed": 6,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 44,
+        "utility": 36,
+        "survival": 28,
+        "clutch": 100,
+        "consistency": 48,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "rb-vision-strikers-2021",
+      "playerId": "player-488",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "Rb",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 40,
+        "utility": 64,
+        "survival": 72,
+        "clutch": 100,
+        "consistency": 44,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "redgar-gambit-esports-2021",
+      "playerId": "player-1427",
+      "teamId": "gambit-esports-2021",
+      "year": 2021,
+      "displayHandle": "Redgar",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 55,
+        "utility": 61,
+        "survival": 74,
+        "clutch": 100,
+        "consistency": 23,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "saadhak-team-vikings-2021",
+      "playerId": "player-727",
+      "teamId": "team-vikings-2021",
+      "year": 2021,
+      "displayHandle": "saadhak",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 84,
+        "utility": 96,
+        "survival": 40,
+        "clutch": 100,
+        "consistency": 24,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sacy-team-vikings-2021",
+      "playerId": "player-659",
+      "teamId": "team-vikings-2021",
+      "year": 2021,
+      "displayHandle": "Sacy",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 92,
+        "survival": 49,
+        "clutch": 100,
+        "consistency": 24,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "santagolf-full-sense-2021",
+      "playerId": "player-4376",
+      "teamId": "full-sense-2021",
+      "year": 2021,
+      "displayHandle": "SantaGolf",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 8,
+        "utility": 4,
+        "survival": 56,
+        "clutch": 100,
+        "consistency": 88,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "scream-team-liquid-2021",
+      "playerId": "player-92",
+      "teamId": "team-liquid-2021",
+      "year": 2021,
+      "displayHandle": "ScreaM",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 95,
+        "utility": 31,
+        "survival": 63,
+        "clutch": 100,
+        "consistency": 39,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "shahzam-sentinels-2021",
+      "playerId": "player-46",
+      "teamId": "sentinels-2021",
+      "year": 2021,
+      "displayHandle": "ShahZaM",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 89,
+        "utility": 51,
+        "survival": 51,
+        "clutch": 100,
+        "consistency": 3,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sheydos-gambit-esports-2021",
+      "playerId": "player-1428",
+      "teamId": "gambit-esports-2021",
+      "year": 2021,
+      "displayHandle": "sheydos",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 31,
+        "utility": 69,
+        "survival": 77,
+        "clutch": 100,
+        "consistency": 80,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sick-sentinels-2021",
+      "playerId": "player-45",
+      "teamId": "sentinels-2021",
+      "year": 2021,
+      "displayHandle": "SicK",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 68,
+        "utility": 56,
+        "survival": 32,
+        "clutch": 100,
+        "consistency": 80,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "soulcas-team-liquid-2021",
+      "playerId": "player-101",
+      "teamId": "team-liquid-2021",
+      "year": 2021,
+      "displayHandle": "soulcas",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 19,
+        "utility": 89,
+        "survival": 79,
+        "clutch": 100,
+        "consistency": 38,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sscary-x10-esports-2021",
+      "playerId": "player-4382",
+      "teamId": "x10-esports-2021",
+      "year": 2021,
+      "displayHandle": "sScary",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 39,
+        "utility": 80,
+        "survival": 76,
+        "clutch": 100,
+        "consistency": 84,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "starxo-acend-2021",
+      "playerId": "player-565",
+      "teamId": "acend-2021",
+      "year": 2021,
+      "displayHandle": "starxo",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 28,
+        "survival": 56,
+        "clutch": 100,
+        "consistency": 20,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "stax-vision-strikers-2021",
+      "playerId": "player-485",
+      "teamId": "vision-strikers-2021",
+      "year": 2021,
+      "displayHandle": "stax",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 49,
+        "utility": 32,
+        "survival": 54,
+        "clutch": 100,
+        "consistency": 30,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "superbuss-full-sense-2021",
+      "playerId": "player-4375",
+      "teamId": "full-sense-2021",
+      "year": 2021,
+      "displayHandle": "SuperBusS",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 42,
+        "utility": 4,
+        "survival": 33,
+        "clutch": 100,
+        "consistency": 92,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sushiboys-x10-esports-2021",
+      "playerId": "player-3342",
+      "teamId": "x10-esports-2021",
+      "year": 2021,
+      "displayHandle": "Sushiboys",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 61,
+        "utility": 85,
+        "survival": 77,
+        "clutch": 100,
+        "consistency": 21,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sutecas-team-vikings-2021",
+      "playerId": "player-5244",
+      "teamId": "team-vikings-2021",
+      "year": 2021,
+      "displayHandle": "sutecas",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 79,
+        "utility": 58,
+        "survival": 58,
+        "clutch": 100,
+        "consistency": 88,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "tenz-sentinels-2021",
+      "playerId": "player-9",
+      "teamId": "sentinels-2021",
+      "year": 2021,
+      "displayHandle": "TenZ",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 56,
+        "utility": 56,
+        "survival": 36,
+        "clutch": 100,
+        "consistency": 8,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "v1xen-keyd-stars-2021",
+      "playerId": "player-1219",
+      "teamId": "keyd-stars-2021",
+      "year": 2021,
+      "displayHandle": "v1xen",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 8,
+        "utility": 67,
+        "survival": 67,
+        "clutch": 100,
+        "consistency": 71,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "vanity-cloud9-2021",
+      "playerId": "player-7870",
+      "teamId": "cloud9-2021",
+      "year": 2021,
+      "displayHandle": "vanity",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 34,
+        "utility": 100,
+        "survival": 13,
+        "clutch": 100,
+        "consistency": 97,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "victor-envy-2021",
+      "playerId": "player-261",
+      "teamId": "envy-2021",
+      "year": 2021,
+      "displayHandle": "Victor",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 5,
+        "utility": 68,
+        "survival": 19,
+        "clutch": 100,
+        "consistency": 89,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "witz-team-secret-2021",
+      "playerId": "player-10782",
+      "teamId": "team-secret-2021",
+      "year": 2021,
+      "displayHandle": "Witz",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 31,
+        "utility": 47,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 63,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "xand-furia-2021",
+      "playerId": "player-681",
+      "teamId": "furia-2021",
+      "year": 2021,
+      "displayHandle": "xand",
+      "mapsPlayed": 6,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 44,
+        "utility": 48,
+        "survival": 12,
+        "clutch": 100,
+        "consistency": 96,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "xeppaa-cloud9-2021",
+      "playerId": "player-7871",
+      "teamId": "cloud9-2021",
+      "year": 2021,
+      "displayHandle": "Xeppaa",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 25,
+        "utility": 100,
+        "survival": 9,
+        "clutch": 100,
+        "consistency": 55,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "xeta-cloud9-2021",
+      "playerId": "player-474",
+      "teamId": "cloud9-2021",
+      "year": 2021,
+      "displayHandle": "xeta",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 58,
+        "utility": 87,
+        "survival": 44,
+        "clutch": 100,
+        "consistency": 79,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "yay-envy-2021",
+      "playerId": "player-881",
+      "teamId": "envy-2021",
+      "year": 2021,
+      "displayHandle": "yay",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 84,
+        "utility": 24,
+        "survival": 44,
+        "clutch": 100,
+        "consistency": 88,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "zeek-acend-2021",
+      "playerId": "player-562",
+      "teamId": "acend-2021",
+      "year": 2021,
+      "displayHandle": "zeek",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 85,
+        "utility": 100,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 53,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "zombs-sentinels-2021",
+      "playerId": "player-47",
+      "teamId": "sentinels-2021",
+      "year": 2021,
+      "displayHandle": "zombs",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 29,
+        "utility": 96,
+        "survival": 50,
+        "clutch": 100,
+        "consistency": 25,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2021",
+        "vct-reference-dataset"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2879 @@
+{
+  "year": 2024,
+  "teams": [
+    {
+      "id": "edward-gaming-2024",
+      "name": "EDward Gaming",
+      "shortName": "EDG",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "fnatic-2024",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "funplus-phoenix-2024",
+      "name": "FunPlus Phoenix",
+      "shortName": "FPX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "fut-esports-2024",
+      "name": "FUT Esports",
+      "shortName": "FUT",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "g2-esports-2024",
+      "name": "G2 Esports",
+      "shortName": "G2",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "gen-g-2024",
+      "name": "Gen.G",
+      "shortName": "GEN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "guangzhou-huadu-bilibili-gaming-2024",
+      "name": "Guangzhou Huadu Bilibili Gaming",
+      "shortName": "BLG",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "kiwoom-drx-2024",
+      "name": "KIWOOM DRX",
+      "shortName": "DRX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "kru-esports-2024",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "leviatan-2024",
+      "name": "LEVIATÁN",
+      "shortName": "LEV",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "paper-rex-2024",
+      "name": "Paper Rex",
+      "shortName": "PRX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "sentinels-2024",
+      "name": "Sentinels",
+      "shortName": "SEN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "talon-2024",
+      "name": "TALON",
+      "shortName": "TLN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "team-heretics-2024",
+      "name": "Team Heretics",
+      "shortName": "TH",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "team-vitality-2024",
+      "name": "Team Vitality",
+      "shortName": "VIT",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "id": "trace-esports-2024",
+      "name": "Trace Esports",
+      "shortName": "TE",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    }
+  ],
+  "players": [
+    {
+      "id": "player-10698",
+      "canonicalHandle": "nephh",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-10971",
+      "canonicalHandle": "RieNs",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-11134",
+      "canonicalHandle": "Kicks",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1139",
+      "canonicalHandle": "qRaxs",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1144",
+      "canonicalHandle": "Boo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-11600",
+      "canonicalHandle": "Foxy9",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1265",
+      "canonicalHandle": "johnqt",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-13039",
+      "canonicalHandle": "Meteor",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1311",
+      "canonicalHandle": "Melser",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-13768",
+      "canonicalHandle": "S1Mon",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-13788",
+      "canonicalHandle": "JitBoyS",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-15500",
+      "canonicalHandle": "trent",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-15559",
+      "canonicalHandle": "CHICHOO",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-17086",
+      "canonicalHandle": "something",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-1818",
+      "canonicalHandle": "tex",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-18350",
+      "canonicalHandle": "MiniBoo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-19530",
+      "canonicalHandle": "AAAAY",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-21328",
+      "canonicalHandle": "Wo0t",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-21610",
+      "canonicalHandle": "runneR",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2168",
+      "canonicalHandle": "trexx",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-24007",
+      "canonicalHandle": "Shyy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2462",
+      "canonicalHandle": "keznit",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-2489",
+      "canonicalHandle": "Munchkin",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-25255",
+      "canonicalHandle": "primmie",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-29867",
+      "canonicalHandle": "hiro",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-29873",
+      "canonicalHandle": "benjyfishy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3017",
+      "canonicalHandle": "nobody",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3021",
+      "canonicalHandle": "Biank",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3028",
+      "canonicalHandle": "Life",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3045",
+      "canonicalHandle": "LuoK1ng",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-312",
+      "canonicalHandle": "Sayf",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-34974",
+      "canonicalHandle": "Karon",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-35013",
+      "canonicalHandle": "Flashback",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3520",
+      "canonicalHandle": "ZmjjKK",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-36169",
+      "canonicalHandle": "mta",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-37489",
+      "canonicalHandle": "Lysoar",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-37494",
+      "canonicalHandle": "Kai",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3885",
+      "canonicalHandle": "valyn",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3977",
+      "canonicalHandle": "Crws",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-3980",
+      "canonicalHandle": "Governor",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4004",
+      "canonicalHandle": "zekken",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4321",
+      "canonicalHandle": "ceNder",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-438",
+      "canonicalHandle": "Boaster",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4462",
+      "canonicalHandle": "MaKo",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-458",
+      "canonicalHandle": "Chronicle",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4581",
+      "canonicalHandle": "JonahP",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4678",
+      "canonicalHandle": "BeYN",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4705",
+      "canonicalHandle": "Flex1n",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4712",
+      "canonicalHandle": "heybay",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4742",
+      "canonicalHandle": "Smoggy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4770",
+      "canonicalHandle": "FengF",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4774",
+      "canonicalHandle": "Knight",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-4885",
+      "canonicalHandle": "whzy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-5022",
+      "canonicalHandle": "Derke",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-5129",
+      "canonicalHandle": "ban",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-573",
+      "canonicalHandle": "cNed",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-6022",
+      "canonicalHandle": "yosemite",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-619",
+      "canonicalHandle": "C0M",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-6510",
+      "canonicalHandle": "AtaKaptan",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-659",
+      "canonicalHandle": "Sacy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-729",
+      "canonicalHandle": "Zellsis",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7378",
+      "canonicalHandle": "Jinggg",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7603",
+      "canonicalHandle": "Mazino",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-773",
+      "canonicalHandle": "Lakia",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7857",
+      "canonicalHandle": "BerLIN",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-7873",
+      "canonicalHandle": "leaf",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-804",
+      "canonicalHandle": "BuZz",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8044",
+      "canonicalHandle": "MrFaliN",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8369",
+      "canonicalHandle": "yetujey",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8402",
+      "canonicalHandle": "icy",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8480",
+      "canonicalHandle": "aspas",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8549",
+      "canonicalHandle": "kiNgg",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-8673",
+      "canonicalHandle": "heat",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-872",
+      "canonicalHandle": "Autumn",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9",
+      "canonicalHandle": "TenZ",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9196",
+      "canonicalHandle": "t3xture",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9800",
+      "canonicalHandle": "mindfreak",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9801",
+      "canonicalHandle": "f0rsakeN",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9803",
+      "canonicalHandle": "d4v41",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "player-9810",
+      "canonicalHandle": "Alfajer",
+      "portrait": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "aaaay-funplus-phoenix-2024",
+      "playerId": "player-19530",
+      "teamId": "funplus-phoenix-2024",
+      "year": 2024,
+      "displayHandle": "AAAAY",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 51,
+        "utility": 3,
+        "survival": 29,
+        "clutch": 100,
+        "consistency": 80,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "alfajer-fnatic-2024",
+      "playerId": "player-9810",
+      "teamId": "fnatic-2024",
+      "year": 2024,
+      "displayHandle": "Alfajer",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 92,
+        "utility": 24,
+        "survival": 65,
+        "clutch": 100,
+        "consistency": 6,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "aspas-leviatan-2024",
+      "playerId": "player-8480",
+      "teamId": "leviatan-2024",
+      "year": 2024,
+      "displayHandle": "aspas",
+      "mapsPlayed": 18,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 71,
+        "utility": 35,
+        "survival": 61,
+        "clutch": 100,
+        "consistency": 45,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "atakaptan-fut-esports-2024",
+      "playerId": "player-6510",
+      "teamId": "fut-esports-2024",
+      "year": 2024,
+      "displayHandle": "AtaKaptan",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 10,
+        "utility": 61,
+        "survival": 23,
+        "clutch": 100,
+        "consistency": 81,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "autumn-funplus-phoenix-2024",
+      "playerId": "player-872",
+      "teamId": "funplus-phoenix-2024",
+      "year": 2024,
+      "displayHandle": "Autumn",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 82,
+        "utility": 50,
+        "survival": 23,
+        "clutch": 100,
+        "consistency": 95,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "ban-talon-2024",
+      "playerId": "player-5129",
+      "teamId": "talon-2024",
+      "year": 2024,
+      "displayHandle": "ban",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 41,
+        "utility": 45,
+        "survival": 64,
+        "clutch": 100,
+        "consistency": 73,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "benjyfishy-team-heretics-2024",
+      "playerId": "player-29873",
+      "teamId": "team-heretics-2024",
+      "year": 2024,
+      "displayHandle": "benjyfishy",
+      "mapsPlayed": 25,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 49,
+        "utility": 40,
+        "survival": 40,
+        "clutch": 100,
+        "consistency": 22,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "berlin-funplus-phoenix-2024",
+      "playerId": "player-7857",
+      "teamId": "funplus-phoenix-2024",
+      "year": 2024,
+      "displayHandle": "BerLIN",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 39,
+        "utility": 74,
+        "survival": 35,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "beyn-kiwoom-drx-2024",
+      "playerId": "player-4678",
+      "teamId": "kiwoom-drx-2024",
+      "year": 2024,
+      "displayHandle": "BeYN",
+      "mapsPlayed": 12,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 50,
+        "utility": 21,
+        "survival": 98,
+        "clutch": 100,
+        "consistency": 18,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "biank-trace-esports-2024",
+      "playerId": "player-3021",
+      "teamId": "trace-esports-2024",
+      "year": 2024,
+      "displayHandle": "Biank",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 15,
+        "utility": 58,
+        "survival": 58,
+        "clutch": 100,
+        "consistency": 95,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "boaster-fnatic-2024",
+      "playerId": "player-438",
+      "teamId": "fnatic-2024",
+      "year": 2024,
+      "displayHandle": "Boaster",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 7,
+        "utility": 49,
+        "survival": 91,
+        "clutch": 100,
+        "consistency": 30,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "boo-team-heretics-2024",
+      "playerId": "player-1144",
+      "teamId": "team-heretics-2024",
+      "year": 2024,
+      "displayHandle": "Boo",
+      "mapsPlayed": 25,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 70,
+        "utility": 84,
+        "survival": 47,
+        "clutch": 100,
+        "consistency": 64,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "buzz-kiwoom-drx-2024",
+      "playerId": "player-804",
+      "teamId": "kiwoom-drx-2024",
+      "year": 2024,
+      "displayHandle": "BuZz",
+      "mapsPlayed": 12,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 64,
+        "utility": 22,
+        "survival": 75,
+        "clutch": 100,
+        "consistency": 6,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "c0m-leviatan-2024",
+      "playerId": "player-619",
+      "teamId": "leviatan-2024",
+      "year": 2024,
+      "displayHandle": "C0M",
+      "mapsPlayed": 18,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 77,
+        "utility": 43,
+        "survival": 34,
+        "clutch": 100,
+        "consistency": 49,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "cender-team-vitality-2024",
+      "playerId": "player-4321",
+      "teamId": "team-vitality-2024",
+      "year": 2024,
+      "displayHandle": "ceNder",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 19,
+        "utility": 52,
+        "survival": 39,
+        "clutch": 100,
+        "consistency": 77,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "chichoo-edward-gaming-2024",
+      "playerId": "player-15559",
+      "teamId": "edward-gaming-2024",
+      "year": 2024,
+      "displayHandle": "CHICHOO",
+      "mapsPlayed": 21,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 81,
+        "survival": 81,
+        "clutch": 100,
+        "consistency": 40,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "chronicle-fnatic-2024",
+      "playerId": "player-458",
+      "teamId": "fnatic-2024",
+      "year": 2024,
+      "displayHandle": "Chronicle",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 12,
+        "survival": 95,
+        "clutch": 100,
+        "consistency": 32,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "cned-fut-esports-2024",
+      "playerId": "player-573",
+      "teamId": "fut-esports-2024",
+      "year": 2024,
+      "displayHandle": "cNed",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 53,
+        "utility": 11,
+        "survival": 11,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "crws-talon-2024",
+      "playerId": "player-3977",
+      "teamId": "talon-2024",
+      "year": 2024,
+      "displayHandle": "Crws",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 3,
+        "utility": 17,
+        "survival": 3,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "d4v41-paper-rex-2024",
+      "playerId": "player-9803",
+      "teamId": "paper-rex-2024",
+      "year": 2024,
+      "displayHandle": "d4v41",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 36,
+        "utility": 55,
+        "survival": 50,
+        "clutch": 100,
+        "consistency": 50,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "derke-fnatic-2024",
+      "playerId": "player-5022",
+      "teamId": "fnatic-2024",
+      "year": 2024,
+      "displayHandle": "Derke",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 100,
+        "utility": 43,
+        "survival": 80,
+        "clutch": 100,
+        "consistency": 12,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "f0rsaken-paper-rex-2024",
+      "playerId": "player-9801",
+      "teamId": "paper-rex-2024",
+      "year": 2024,
+      "displayHandle": "f0rsakeN",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 57,
+        "utility": 37,
+        "survival": 60,
+        "clutch": 100,
+        "consistency": 3,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "fengf-trace-esports-2024",
+      "playerId": "player-4770",
+      "teamId": "trace-esports-2024",
+      "year": 2024,
+      "displayHandle": "FengF",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 33,
+        "utility": 10,
+        "survival": 78,
+        "clutch": 100,
+        "consistency": 69,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "flashback-kiwoom-drx-2024",
+      "playerId": "player-35013",
+      "teamId": "kiwoom-drx-2024",
+      "year": 2024,
+      "displayHandle": "Flashback",
+      "mapsPlayed": 12,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 74,
+        "utility": 37,
+        "survival": 96,
+        "clutch": 100,
+        "consistency": 42,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "flex1n-guangzhou-huadu-bilibili-gaming-2024",
+      "playerId": "player-4705",
+      "teamId": "guangzhou-huadu-bilibili-gaming-2024",
+      "year": 2024,
+      "displayHandle": "Flex1n",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 32,
+        "utility": 42,
+        "survival": 48,
+        "clutch": 100,
+        "consistency": 23,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "foxy9-kiwoom-drx-2024",
+      "playerId": "player-11600",
+      "teamId": "kiwoom-drx-2024",
+      "year": 2024,
+      "displayHandle": "Foxy9",
+      "mapsPlayed": 12,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 32,
+        "utility": 72,
+        "survival": 90,
+        "clutch": 100,
+        "consistency": 35,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "governor-talon-2024",
+      "playerId": "player-3980",
+      "teamId": "talon-2024",
+      "year": 2024,
+      "displayHandle": "Governor",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 11,
+        "utility": 79,
+        "survival": 21,
+        "clutch": 100,
+        "consistency": 79,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "heat-kru-esports-2024",
+      "playerId": "player-8673",
+      "teamId": "kru-esports-2024",
+      "year": 2024,
+      "displayHandle": "heat",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 83,
+        "utility": 17,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 31,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "heybay-trace-esports-2024",
+      "playerId": "player-4712",
+      "teamId": "trace-esports-2024",
+      "year": 2024,
+      "displayHandle": "heybay",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 19,
+        "utility": 92,
+        "survival": 37,
+        "clutch": 100,
+        "consistency": 33,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "hiro-fnatic-2024",
+      "playerId": "player-29867",
+      "teamId": "fnatic-2024",
+      "year": 2024,
+      "displayHandle": "hiro",
+      "mapsPlayed": 14,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 69,
+        "utility": 65,
+        "survival": 87,
+        "clutch": 100,
+        "consistency": 15,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "icy-g2-esports-2024",
+      "playerId": "player-8402",
+      "teamId": "g2-esports-2024",
+      "year": 2024,
+      "displayHandle": "icy",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 21,
+        "utility": 52,
+        "survival": 21,
+        "clutch": 100,
+        "consistency": 24,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jinggg-paper-rex-2024",
+      "playerId": "player-7378",
+      "teamId": "paper-rex-2024",
+      "year": 2024,
+      "displayHandle": "Jinggg",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 14,
+        "utility": 100,
+        "survival": 55,
+        "clutch": 100,
+        "consistency": 45,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jitboys-talon-2024",
+      "playerId": "player-13788",
+      "teamId": "talon-2024",
+      "year": 2024,
+      "displayHandle": "JitBoyS",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 13,
+        "utility": 16,
+        "survival": 3,
+        "clutch": 100,
+        "consistency": 87,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "johnqt-sentinels-2024",
+      "playerId": "player-1265",
+      "teamId": "sentinels-2024",
+      "year": 2024,
+      "displayHandle": "johnqt",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 29,
+        "utility": 70,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 61,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "jonahp-g2-esports-2024",
+      "playerId": "player-4581",
+      "teamId": "g2-esports-2024",
+      "year": 2024,
+      "displayHandle": "JonahP",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 41,
+        "utility": 24,
+        "survival": 7,
+        "clutch": 100,
+        "consistency": 95,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "kai-trace-esports-2024",
+      "playerId": "player-37494",
+      "teamId": "trace-esports-2024",
+      "year": 2024,
+      "displayHandle": "Kai",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 65,
+        "utility": 60,
+        "survival": 83,
+        "clutch": 100,
+        "consistency": 65,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "karon-gen-g-2024",
+      "playerId": "player-34974",
+      "teamId": "gen-g-2024",
+      "year": 2024,
+      "displayHandle": "Karon",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 42,
+        "utility": 94,
+        "survival": 58,
+        "clutch": 100,
+        "consistency": 6,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "keznit-kru-esports-2024",
+      "playerId": "player-2462",
+      "teamId": "kru-esports-2024",
+      "year": 2024,
+      "displayHandle": "keznit",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 95,
+        "utility": 95,
+        "survival": 100,
+        "clutch": 100,
+        "consistency": 58,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "kicks-team-vitality-2024",
+      "playerId": "player-11134",
+      "teamId": "team-vitality-2024",
+      "year": 2024,
+      "displayHandle": "Kicks",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 86,
+        "utility": 100,
+        "survival": 49,
+        "clutch": 100,
+        "consistency": 11,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "kingg-leviatan-2024",
+      "playerId": "player-8549",
+      "teamId": "leviatan-2024",
+      "year": 2024,
+      "displayHandle": "kiNgg",
+      "mapsPlayed": 18,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 68,
+        "utility": 80,
+        "survival": 64,
+        "clutch": 100,
+        "consistency": 45,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "knight-guangzhou-huadu-bilibili-gaming-2024",
+      "playerId": "player-4774",
+      "teamId": "guangzhou-huadu-bilibili-gaming-2024",
+      "year": 2024,
+      "displayHandle": "Knight",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 9,
+        "utility": 86,
+        "survival": 27,
+        "clutch": 100,
+        "consistency": 86,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "lakia-gen-g-2024",
+      "playerId": "player-773",
+      "teamId": "gen-g-2024",
+      "year": 2024,
+      "displayHandle": "Lakia",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 6,
+        "utility": 51,
+        "survival": 26,
+        "clutch": 100,
+        "consistency": 51,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "leaf-g2-esports-2024",
+      "playerId": "player-7873",
+      "teamId": "g2-esports-2024",
+      "year": 2024,
+      "displayHandle": "leaf",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 65,
+        "utility": 15,
+        "survival": 10,
+        "clutch": 100,
+        "consistency": 28,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "life-funplus-phoenix-2024",
+      "playerId": "player-3028",
+      "teamId": "funplus-phoenix-2024",
+      "year": 2024,
+      "displayHandle": "Life",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 5,
+        "utility": 16,
+        "survival": 5,
+        "clutch": 100,
+        "consistency": 89,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "luok1ng-trace-esports-2024",
+      "playerId": "player-3045",
+      "teamId": "trace-esports-2024",
+      "year": 2024,
+      "displayHandle": "LuoK1ng",
+      "mapsPlayed": 10,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 72,
+        "utility": 56,
+        "survival": 72,
+        "clutch": 100,
+        "consistency": 49,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "lysoar-funplus-phoenix-2024",
+      "playerId": "player-37489",
+      "teamId": "funplus-phoenix-2024",
+      "year": 2024,
+      "displayHandle": "Lysoar",
+      "mapsPlayed": 5,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 16,
+        "utility": 87,
+        "survival": 6,
+        "clutch": 100,
+        "consistency": 65,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mako-kiwoom-drx-2024",
+      "playerId": "player-4462",
+      "teamId": "kiwoom-drx-2024",
+      "year": 2024,
+      "displayHandle": "MaKo",
+      "mapsPlayed": 12,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 69,
+        "utility": 69,
+        "survival": 95,
+        "clutch": 100,
+        "consistency": 75,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mazino-leviatan-2024",
+      "playerId": "player-7603",
+      "teamId": "leviatan-2024",
+      "year": 2024,
+      "displayHandle": "Mazino",
+      "mapsPlayed": 18,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 74,
+        "utility": 69,
+        "survival": 17,
+        "clutch": 100,
+        "consistency": 66,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "melser-kru-esports-2024",
+      "playerId": "player-1311",
+      "teamId": "kru-esports-2024",
+      "year": 2024,
+      "displayHandle": "Melser",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 35,
+        "utility": 26,
+        "survival": 77,
+        "clutch": 100,
+        "consistency": 3,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "meteor-gen-g-2024",
+      "playerId": "player-13039",
+      "teamId": "gen-g-2024",
+      "year": 2024,
+      "displayHandle": "Meteor",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 95,
+        "utility": 18,
+        "survival": 50,
+        "clutch": 100,
+        "consistency": 9,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mindfreak-paper-rex-2024",
+      "playerId": "player-9800",
+      "teamId": "paper-rex-2024",
+      "year": 2024,
+      "displayHandle": "mindfreak",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 77,
+        "utility": 81,
+        "survival": 68,
+        "clutch": 100,
+        "consistency": 45,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "miniboo-team-heretics-2024",
+      "playerId": "player-18350",
+      "teamId": "team-heretics-2024",
+      "year": 2024,
+      "displayHandle": "MiniBoo",
+      "mapsPlayed": 25,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 41,
+        "utility": 51,
+        "survival": 41,
+        "clutch": 100,
+        "consistency": 25,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mrfalin-fut-esports-2024",
+      "playerId": "player-8044",
+      "teamId": "fut-esports-2024",
+      "year": 2024,
+      "displayHandle": "MrFaliN",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 17,
+        "utility": 69,
+        "survival": 9,
+        "clutch": 100,
+        "consistency": 97,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "mta-kru-esports-2024",
+      "playerId": "player-36169",
+      "teamId": "kru-esports-2024",
+      "year": 2024,
+      "displayHandle": "mta",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 29,
+        "utility": 6,
+        "survival": 74,
+        "clutch": 100,
+        "consistency": 14,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "munchkin-gen-g-2024",
+      "playerId": "player-2489",
+      "teamId": "gen-g-2024",
+      "year": 2024,
+      "displayHandle": "Munchkin",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 63,
+        "utility": 100,
+        "survival": 17,
+        "clutch": 100,
+        "consistency": 74,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nephh-guangzhou-huadu-bilibili-gaming-2024",
+      "playerId": "player-10698",
+      "teamId": "guangzhou-huadu-bilibili-gaming-2024",
+      "year": 2024,
+      "displayHandle": "nephh",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 11,
+        "utility": 43,
+        "survival": 23,
+        "clutch": 100,
+        "consistency": 77,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "nobody-edward-gaming-2024",
+      "playerId": "player-3017",
+      "teamId": "edward-gaming-2024",
+      "year": 2024,
+      "displayHandle": "nobody",
+      "mapsPlayed": 21,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 50,
+        "utility": 41,
+        "survival": 78,
+        "clutch": 100,
+        "consistency": 53,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "primmie-talon-2024",
+      "playerId": "player-25255",
+      "teamId": "talon-2024",
+      "year": 2024,
+      "displayHandle": "primmie",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 89,
+        "utility": 89,
+        "survival": 95,
+        "clutch": 100,
+        "consistency": 84,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "qraxs-fut-esports-2024",
+      "playerId": "player-1139",
+      "teamId": "fut-esports-2024",
+      "year": 2024,
+      "displayHandle": "qRaxs",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 26,
+        "utility": 46,
+        "survival": 69,
+        "clutch": 100,
+        "consistency": 86,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "riens-team-heretics-2024",
+      "playerId": "player-10971",
+      "teamId": "team-heretics-2024",
+      "year": 2024,
+      "displayHandle": "RieNs",
+      "mapsPlayed": 25,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 98,
+        "utility": 35,
+        "survival": 70,
+        "clutch": 100,
+        "consistency": 44,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "runner-team-vitality-2024",
+      "playerId": "player-21610",
+      "teamId": "team-vitality-2024",
+      "year": 2024,
+      "displayHandle": "runneR",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 50,
+        "utility": 82,
+        "survival": 14,
+        "clutch": 100,
+        "consistency": 77,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "s1mon-edward-gaming-2024",
+      "playerId": "player-13768",
+      "teamId": "edward-gaming-2024",
+      "year": 2024,
+      "displayHandle": "S1Mon",
+      "mapsPlayed": 21,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 47,
+        "utility": 95,
+        "survival": 93,
+        "clutch": 100,
+        "consistency": 70,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sacy-sentinels-2024",
+      "playerId": "player-659",
+      "teamId": "sentinels-2024",
+      "year": 2024,
+      "displayHandle": "Sacy",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 79,
+        "utility": 91,
+        "survival": 56,
+        "clutch": 100,
+        "consistency": 45,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "sayf-team-vitality-2024",
+      "playerId": "player-312",
+      "teamId": "team-vitality-2024",
+      "year": 2024,
+      "displayHandle": "Sayf",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 42,
+        "utility": 68,
+        "survival": 63,
+        "clutch": 100,
+        "consistency": 95,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "shyy-kru-esports-2024",
+      "playerId": "player-24007",
+      "teamId": "kru-esports-2024",
+      "year": 2024,
+      "displayHandle": "Shyy",
+      "mapsPlayed": 8,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 77,
+        "utility": 73,
+        "survival": 95,
+        "clutch": 100,
+        "consistency": 82,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "smoggy-edward-gaming-2024",
+      "playerId": "player-4742",
+      "teamId": "edward-gaming-2024",
+      "year": 2024,
+      "displayHandle": "Smoggy",
+      "mapsPlayed": 21,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 98,
+        "utility": 69,
+        "survival": 88,
+        "clutch": 100,
+        "consistency": 17,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "something-paper-rex-2024",
+      "playerId": "player-17086",
+      "teamId": "paper-rex-2024",
+      "year": 2024,
+      "displayHandle": "something",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 37,
+        "utility": 66,
+        "survival": 63,
+        "clutch": 100,
+        "consistency": 86,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "t3xture-gen-g-2024",
+      "playerId": "player-9196",
+      "teamId": "gen-g-2024",
+      "year": 2024,
+      "displayHandle": "t3xture",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 79,
+        "utility": 42,
+        "survival": 47,
+        "clutch": 100,
+        "consistency": 37,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "tenz-sentinels-2024",
+      "playerId": "player-9",
+      "teamId": "sentinels-2024",
+      "year": 2024,
+      "displayHandle": "TenZ",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 93,
+        "utility": 96,
+        "survival": 48,
+        "clutch": 100,
+        "consistency": 28,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "tex-leviatan-2024",
+      "playerId": "player-1818",
+      "teamId": "leviatan-2024",
+      "year": 2024,
+      "displayHandle": "tex",
+      "mapsPlayed": 18,
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 26,
+        "utility": 44,
+        "survival": 8,
+        "clutch": 100,
+        "consistency": 26,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "trent-g2-esports-2024",
+      "playerId": "player-15500",
+      "teamId": "g2-esports-2024",
+      "year": 2024,
+      "displayHandle": "trent",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 64,
+        "utility": 55,
+        "survival": 15,
+        "clutch": 100,
+        "consistency": 70,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "trexx-team-vitality-2024",
+      "playerId": "player-2168",
+      "teamId": "team-vitality-2024",
+      "year": 2024,
+      "displayHandle": "trexx",
+      "mapsPlayed": 7,
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 97,
+        "utility": 60,
+        "survival": 80,
+        "clutch": 100,
+        "consistency": 6,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "valyn-g2-esports-2024",
+      "playerId": "player-3885",
+      "teamId": "g2-esports-2024",
+      "year": 2024,
+      "displayHandle": "valyn",
+      "mapsPlayed": 9,
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 56,
+        "utility": 59,
+        "survival": 30,
+        "clutch": 100,
+        "consistency": 72,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "whzy-guangzhou-huadu-bilibili-gaming-2024",
+      "playerId": "player-4885",
+      "teamId": "guangzhou-huadu-bilibili-gaming-2024",
+      "year": 2024,
+      "displayHandle": "whzy",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 47,
+        "utility": 53,
+        "survival": 16,
+        "clutch": 100,
+        "consistency": 53,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "wo0t-team-heretics-2024",
+      "playerId": "player-21328",
+      "teamId": "team-heretics-2024",
+      "year": 2024,
+      "displayHandle": "Wo0t",
+      "mapsPlayed": 25,
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 87,
+        "utility": 90,
+        "survival": 38,
+        "clutch": 100,
+        "consistency": 75,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "yetujey-fut-esports-2024",
+      "playerId": "player-8369",
+      "teamId": "fut-esports-2024",
+      "year": 2024,
+      "displayHandle": "yetujey",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 86,
+        "utility": 5,
+        "survival": 18,
+        "clutch": 100,
+        "consistency": 91,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "yosemite-guangzhou-huadu-bilibili-gaming-2024",
+      "playerId": "player-6022",
+      "teamId": "guangzhou-huadu-bilibili-gaming-2024",
+      "year": 2024,
+      "displayHandle": "yosemite",
+      "mapsPlayed": 4,
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 5,
+        "utility": 27,
+        "survival": 41,
+        "clutch": 100,
+        "consistency": 100,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "zekken-sentinels-2024",
+      "playerId": "player-4004",
+      "teamId": "sentinels-2024",
+      "year": 2024,
+      "displayHandle": "zekken",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 86,
+        "utility": 86,
+        "survival": 34,
+        "clutch": 100,
+        "consistency": 28,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "zellsis-sentinels-2024",
+      "playerId": "player-729",
+      "teamId": "sentinels-2024",
+      "year": 2024,
+      "displayHandle": "Zellsis",
+      "mapsPlayed": 17,
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 57,
+        "utility": 97,
+        "survival": 79,
+        "clutch": 100,
+        "consistency": 57,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    },
+    {
+      "id": "zmjjkk-edward-gaming-2024",
+      "playerId": "player-3520",
+      "teamId": "edward-gaming-2024",
+      "year": 2024,
+      "displayHandle": "ZmjjKK",
+      "mapsPlayed": 21,
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "firepower": 78,
+        "utility": 62,
+        "survival": 46,
+        "clutch": 100,
+        "consistency": 36,
+        "leadership": 50
+      },
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "vct-reference-dataset"
+      ]
+    }
+  ]
+}
