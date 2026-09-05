@@ -11,8 +11,8 @@ class MemoryStorage implements Storage {
   removeItem(key: string) { this.entries.delete(key); }
   setItem(key: string, value: string) { this.entries.set(key, value); }
 }
-const freeRun = (id: string, date = "2026-09-05"): FreePlayRun => ({ mode: "free", stageReached: "group", completedAtUtc: date, series: [{ stage: "group", userWins: 2, opponentWins: 0 }], rerollsUsed: 1, roster: [{ role: "smokes", cardId: id }, { role: "duelist", cardId: "d" }, { role: "initiator", cardId: "i" }, { role: "sentinel", cardId: "s" }, { role: "flex", cardId: "f" }] });
-const dailyRun = (date: string, stageReached: StoredRunResult["stageReached"] = "group"): DailyRun => ({ ...freeRun("a", date), mode: "daily", utcDate: date, stageReached });
+const freeRun = (id: string, date = "2026-09-05"): FreePlayRun => ({ mode: "free", stageReached: "group", completedAtUtc: date, series: [{ stage: "group", userWins: 0, opponentWins: 2 }], rerollsUsed: 1, roster: [{ role: "smokes", cardId: id }, { role: "duelist", cardId: "d" }, { role: "initiator", cardId: "i" }, { role: "sentinel", cardId: "s" }, { role: "flex", cardId: "f" }] });
+const dailyRun = (date: string, stageReached: StoredRunResult["stageReached"] = "group"): DailyRun => stageReached === "final" ? ({ ...freeRun("a", date), mode: "daily", utcDate: date, stageReached, series: [{ stage: "group", userWins: 2, opponentWins: 0 }, { stage: "quarterfinal", userWins: 2, opponentWins: 0 }, { stage: "semifinal", userWins: 2, opponentWins: 0 }, { stage: "final", userWins: 3, opponentWins: 0 }] }) : ({ ...freeRun("a", date), mode: "daily", utcDate: date, stageReached });
 
 describe("local run storage", () => {
   it("uses namespaced v1 keys and round trips each valid record", () => {
@@ -43,6 +43,21 @@ describe("local run storage", () => {
     expect(readRecord(null, HISTORY_RECORD).value.runs[0].roster[0].cardId).toBe("memory");
     expect(writeRecord(throwing, SETTINGS_RECORD, { soundEnabled: false }).persistent).toBe(false);
     expect(readRecord(throwing, SETTINGS_RECORD).persistent).toBe(false);
+  });
+
+  it("does not claim persistence after set fails and a later read is empty", () => {
+    const storage: Storage = { get length() { return 0; }, clear() {}, key() { return null; }, removeItem() {}, getItem() { return null; }, setItem() { throw new Error("quota"); } };
+    expect(writeRecord(storage, HISTORY_RECORD, { runs: [freeRun("dirty")] }).persistent).toBe(false);
+    expect(readRecord(storage, HISTORY_RECORD)).toMatchObject({ persistent: false, value: { runs: [freeRun("dirty")] } });
+  });
+
+  it.each([
+    ["duplicate roles", (run: FreePlayRun) => ({ ...run, roster: [...run.roster.slice(0, 4), { role: "sentinel" as const, cardId: "x" }] })],
+    ["duplicate cards", (run: FreePlayRun) => ({ ...run, roster: run.roster.map((slot, index) => index === 1 ? { ...slot, cardId: run.roster[0].cardId } : slot) })],
+    ["tied series", (run: FreePlayRun) => ({ ...run, series: [{ stage: "group" as const, userWins: 1, opponentWins: 1 }] })],
+    ["skipped stage", (run: FreePlayRun) => ({ ...run, stageReached: "semifinal" as const, series: [{ stage: "group" as const, userWins: 2, opponentWins: 0 }, { stage: "semifinal" as const, userWins: 2, opponentWins: 0 }] })],
+  ])("rejects malformed stored run: %s", (_, mutate) => {
+    expect(() => writeRecord(new MemoryStorage(), HISTORY_RECORD, { runs: [mutate(freeRun("valid")) as FreePlayRun] })).toThrow();
   });
 
   it("has one trusted Daily completion per UTC date deterministically", () => {
