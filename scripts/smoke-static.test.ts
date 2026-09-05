@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -17,6 +17,25 @@ function temporaryProject() {
   writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [], players: [] }));
   return root;
 }
+
+function linkDirectory(target: string, path: string) {
+  symlinkSync(target, path, process.platform === "win32" ? "junction" : "dir");
+}
+
+function supportsFileSymlinks() {
+  const root = mkdtempSync(join(tmpdir(), "run-it-back-link-capability-"));
+  try {
+    writeFileSync(join(root, "target"), "x");
+    symlinkSync(join(root, "target"), join(root, "link"), "file");
+    return true;
+  } catch {
+    return false;
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
+const fileSymlinkTest = supportsFileSymlinks() ? it : it.skip;
 
 describe("smoke-static CLI", () => {
   it("reports a useful error when index.html is absent", () => {
@@ -42,6 +61,27 @@ describe("smoke-static CLI", () => {
     expect(result.stderr).toContain("error:");
     expect(result.stderr).toContain("usage: smoke-static");
   });
+
+  it("prints help without running smoke", () => {
+    const result = runCli("--help");
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("usage: smoke-static");
+    expect(result.stderr).toBe("");
+  });
+
+  it("rejects help combined with other arguments", () => {
+    const result = runCli("--help", "out");
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("error:");
+    expect(result.stderr).toContain("usage: smoke-static");
+  });
+
+  it("prints usage for an invalid base path", () => {
+    const result = runCli("--base-path", "invalid");
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("error: invalid base path");
+    expect(result.stderr).toContain("usage: smoke-static");
+  });
 });
 
 describe("smokeStatic", () => {
@@ -52,6 +92,45 @@ describe("smokeStatic", () => {
       expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("/style.css");
     } finally {
       rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects a referenced directory", () => {
+    const root = temporaryProject();
+    try {
+      mkdirSync(join(root, "out", "app.js"));
+      writeFileSync(join(root, "out", "index.html"), '<script src="/app.js"></script>');
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("not a regular file");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  fileSymlinkTest("rejects a referenced symlink file", () => {
+    const root = temporaryProject();
+    const outside = mkdtempSync(join(tmpdir(), "run-it-back-outside-"));
+    try {
+      writeFileSync(join(outside, "app.js"), "outside");
+      symlinkSync(join(outside, "app.js"), join(root, "out", "app.js"), "file");
+      writeFileSync(join(root, "out", "index.html"), '<script src="/app.js"></script>');
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("symlink");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+      rmSync(outside, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects a referenced file through an escaping directory link", () => {
+    const root = temporaryProject();
+    const outside = mkdtempSync(join(tmpdir(), "run-it-back-outside-"));
+    try {
+      writeFileSync(join(outside, "app.js"), "outside");
+      linkDirectory(outside, join(root, "out", "nested"));
+      writeFileSync(join(root, "out", "index.html"), '<script src="/nested/app.js"></script>');
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("resolves outside");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+      rmSync(outside, { recursive: true, force: true });
     }
   });
 
@@ -138,6 +217,53 @@ describe("smokeStatic", () => {
       expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("invalid local reference");
     } finally {
       rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  fileSymlinkTest("rejects symlinked public and exported dataset assets", () => {
+    const root = temporaryProject();
+    const outside = mkdtempSync(join(tmpdir(), "run-it-back-outside-"));
+    try {
+      mkdirSync(join(root, "public", "assets"), { recursive: true });
+      mkdirSync(join(root, "out", "assets"), { recursive: true });
+      writeFileSync(join(outside, "asset.svg"), "outside");
+      symlinkSync(join(outside, "asset.svg"), join(root, "public", "assets", "asset.svg"), "file");
+      writeFileSync(join(root, "out", "assets", "asset.svg"), "exported");
+      writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [{ logo: "/assets/asset.svg" }], players: [] }));
+      writeFileSync(join(root, "out", "index.html"), "");
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("symlink");
+      rmSync(join(root, "public", "assets", "asset.svg"));
+      writeFileSync(join(root, "public", "assets", "asset.svg"), "source");
+      rmSync(join(root, "out", "assets", "asset.svg"));
+      symlinkSync(join(outside, "asset.svg"), join(root, "out", "assets", "asset.svg"), "file");
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("symlink");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+      rmSync(outside, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects public and exported assets reached through escaping directory junctions", () => {
+    const root = temporaryProject();
+    const outside = mkdtempSync(join(tmpdir(), "run-it-back-outside-"));
+    try {
+      mkdirSync(join(root, "public"), { recursive: true });
+      mkdirSync(join(root, "out", "assets"), { recursive: true });
+      writeFileSync(join(outside, "asset.svg"), "outside");
+      linkDirectory(outside, join(root, "public", "assets"));
+      writeFileSync(join(root, "out", "assets", "asset.svg"), "exported");
+      writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [{ logo: "/assets/asset.svg" }], players: [] }));
+      writeFileSync(join(root, "out", "index.html"), "");
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("resolves outside public directory");
+      rmSync(join(root, "public", "assets"), { recursive: true, force: true });
+      mkdirSync(join(root, "public", "assets"));
+      writeFileSync(join(root, "public", "assets", "asset.svg"), "source");
+      rmSync(join(root, "out", "assets"), { recursive: true, force: true });
+      linkDirectory(outside, join(root, "out", "assets"));
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("resolves outside output directory");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+      rmSync(outside, { recursive: true, force: true });
     }
   });
 });

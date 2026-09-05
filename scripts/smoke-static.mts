@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { basename, isAbsolute, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse } from "parse5";
@@ -11,6 +11,7 @@ type HtmlNode = {
 };
 
 type SmokeOptions = { basePath?: string; projectRoot?: string };
+type RootDirectory = { path: string; realPath: string; label: string };
 const usage = "usage: smoke-static [output-directory] [--base-path /repository]";
 
 class ArgumentError extends Error {}
@@ -22,10 +23,26 @@ function contained(base: string, target: string) {
   return child !== ".." && !child.startsWith(`..${sep}`) && !isAbsolute(child);
 }
 
+function rootDirectory(path: string, label: string): RootDirectory {
+  if (!existsSync(path)) throw new Error(`${label} missing: ${path}`);
+  const stat = lstatSync(path);
+  if (stat.isSymbolicLink() || !stat.isDirectory()) throw new Error(`${label} is not a real directory: ${path}`);
+  return { path, realPath: realpathSync(path), label };
+}
+
+function regularFile(root: RootDirectory, target: string, label: string) {
+  if (!existsSync(target)) return false;
+  const stat = lstatSync(target);
+  if (stat.isSymbolicLink()) throw new Error(`${label} is a symlink: ${target}`);
+  if (!stat.isFile()) throw new Error(`${label} is not a regular file: ${target}`);
+  if (!contained(root.realPath, realpathSync(target))) throw new Error(`${label} resolves outside ${root.label}: ${target}`);
+  return true;
+}
+
 function normalizeBasePath(basePath = "") {
   if (basePath === "") return "";
   if (!basePath.startsWith("/") || basePath.includes("\\") || /[?#]/.test(basePath) || basePath.split("/").some(part => part === "." || part === "..")) {
-    throw new Error(`invalid base path "${basePath}"`);
+    throw new ArgumentError(`invalid base path "${basePath}"`);
   }
   return basePath.replace(/\/+$/, "");
 }
@@ -99,6 +116,8 @@ export function smokeStatic(outputDirectory: string, options: SmokeOptions = {})
   const output = resolve(outputDirectory);
   const indexHtml = resolve(output, "index.html");
   if (!existsSync(indexHtml)) throw new Error(`index.html missing: ${indexHtml}`);
+  const outputRoot = rootDirectory(output, "output directory");
+  regularFile(outputRoot, indexHtml, "index.html");
   const basePath = normalizeBasePath(options.basePath);
   const references: string[] = [];
   collectReferences(parse(readFileSync(indexHtml, "utf8")) as unknown as HtmlNode, references);
@@ -106,17 +125,18 @@ export function smokeStatic(outputDirectory: string, options: SmokeOptions = {})
   const missing: string[] = [];
   for (const reference of references) {
     const local = localReference(reference);
-    if (local && !existsSync(outputPath(output, local, basePath))) missing.push(reference);
+    if (local && !regularFile(outputRoot, outputPath(output, local, basePath), `local reference "${reference}"`)) missing.push(reference);
   }
 
   const root = resolve(options.projectRoot ?? projectRoot);
-  const publicRoot = resolve(root, "public");
   const assets = datasetAssets(resolve(root, "src/data/champions"));
+  let publicRoot: RootDirectory | undefined;
   for (const asset of assets) {
-    const sourceAsset = assetPath(publicRoot, asset, "public");
+    const sourceAsset = assetPath(resolve(root, "public"), asset, "public");
+    publicRoot ??= rootDirectory(resolve(root, "public"), "public directory");
     const exportedAsset = outputPath(output, `${basePath}${sourceAsset.local}`, basePath);
-    if (!existsSync(sourceAsset.target)) missing.push(`public${sourceAsset.local}`);
-    if (!existsSync(exportedAsset)) missing.push(`${basePath}${sourceAsset.local}`);
+    if (!regularFile(publicRoot!, sourceAsset.target, `dataset source asset "${asset}"`)) missing.push(`public${sourceAsset.local}`);
+    if (!regularFile(outputRoot, exportedAsset, `exported dataset asset "${asset}"`)) missing.push(`${basePath}${sourceAsset.local}`);
   }
 
   if (missing.length > 0) throw new Error(`missing static files:\n${missing.map(path => `- ${path}`).join("\n")}`);
@@ -124,6 +144,10 @@ export function smokeStatic(outputDirectory: string, options: SmokeOptions = {})
 }
 
 function parseArguments(args: string[]) {
+  if (args.includes("-h") || args.includes("--help")) {
+    if (args.length !== 1) throw new ArgumentError("help cannot be combined with other arguments");
+    return { help: true, outputDirectory: "out", basePath: "" };
+  }
   let outputDirectory: string | undefined;
   let basePath: string | undefined;
   for (let index = 0; index < args.length; index += 1) {
@@ -146,14 +170,17 @@ function parseArguments(args: string[]) {
       throw new ArgumentError("only one output directory may be provided");
     }
   }
-  return { outputDirectory: outputDirectory ?? "out", basePath: basePath ?? "" };
+  return { help: false, outputDirectory: outputDirectory ?? "out", basePath: basePath ?? "" };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
-    const { outputDirectory, basePath } = parseArguments(process.argv.slice(2));
-    const result = smokeStatic(outputDirectory, { basePath });
-    console.log(`Static smoke passed: ${basename(resolve(outputDirectory))} (${result.references} references, ${result.assets} dataset assets)`);
+    const parsed = parseArguments(process.argv.slice(2));
+    if (parsed.help) console.log(usage);
+    else {
+      const result = smokeStatic(parsed.outputDirectory, { basePath: parsed.basePath });
+      console.log(`Static smoke passed: ${basename(resolve(parsed.outputDirectory))} (${result.references} references, ${result.assets} dataset assets)`);
+    }
   } catch (error) {
     if (error instanceof ArgumentError) console.error(`error: ${error.message}\n${usage}`);
     else console.error(error instanceof Error ? error.message : error);
