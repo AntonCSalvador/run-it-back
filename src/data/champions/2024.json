@@ -913,12 +913,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 51,
-        "utility": 3,
-        "survival": 29,
-        "clutch": 10,
-        "consistency": 80,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 1,
+        "survival": 27,
+        "clutch": 14,
+        "consistency": 79
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -939,12 +939,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 92,
-        "utility": 24,
-        "survival": 65,
-        "clutch": 60,
-        "consistency": 6,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 28,
+        "survival": 71,
+        "clutch": 67,
+        "consistency": 6
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -963,12 +963,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 71,
-        "utility": 35,
-        "survival": 61,
-        "clutch": 100,
-        "consistency": 45,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 68,
+        "utility": 31,
+        "survival": 57,
+        "clutch": 73,
+        "consistency": 41
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -987,12 +987,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 10,
-        "utility": 61,
-        "survival": 23,
-        "clutch": 0,
-        "consistency": 81,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 60,
+        "survival": 19,
+        "clutch": 6,
+        "consistency": 79
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1013,12 +1013,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 82,
-        "utility": 50,
-        "survival": 23,
-        "clutch": 20,
-        "consistency": 95,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 77,
+        "utility": 39,
+        "survival": 26,
+        "clutch": 95,
+        "consistency": 93
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1037,12 +1037,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 41,
-        "utility": 45,
-        "survival": 64,
-        "clutch": 11,
-        "consistency": 73,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 39,
+        "utility": 34,
+        "survival": 70,
+        "clutch": 32,
+        "consistency": 70
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1061,12 +1061,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 49,
-        "utility": 40,
-        "survival": 40,
-        "clutch": 100,
-        "consistency": 22,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 46,
+        "utility": 19,
+        "survival": 33,
+        "clutch": 60,
+        "consistency": 23
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1085,12 +1085,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 39,
-        "utility": 74,
-        "survival": 35,
-        "clutch": 7,
-        "consistency": 100,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 73,
+        "survival": 32,
+        "clutch": 26,
+        "consistency": 98
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1109,12 +1109,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 50,
+        "leadership": 50,
+        "firepower": 45,
         "utility": 21,
-        "survival": 98,
-        "clutch": 90,
-        "consistency": 18,
-        "leadership": 50
+        "survival": 97,
+        "clutch": 98,
+        "consistency": 17
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1133,12 +1133,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 15,
-        "utility": 58,
-        "survival": 58,
-        "clutch": 60,
-        "consistency": 95,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 60,
+        "survival": 60,
+        "clutch": 92,
+        "consistency": 91
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1157,12 +1157,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 7,
-        "utility": 49,
-        "survival": 91,
-        "clutch": 33,
-        "consistency": 30,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 48,
+        "survival": 88,
+        "clutch": 54,
+        "consistency": 28
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1183,12 +1183,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 70,
+        "leadership": 50,
+        "firepower": 57,
         "utility": 84,
         "survival": 47,
-        "clutch": 100,
-        "consistency": 64,
-        "leadership": 50
+        "clutch": 97,
+        "consistency": 57
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1207,12 +1207,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 64,
-        "utility": 22,
-        "survival": 75,
-        "clutch": 29,
-        "consistency": 6,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 19,
+        "survival": 72,
+        "clutch": 40,
+        "consistency": 4
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1231,12 +1231,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 77,
-        "utility": 43,
-        "survival": 34,
-        "clutch": 80,
-        "consistency": 49,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 41,
+        "survival": 32,
+        "clutch": 71,
+        "consistency": 46
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1255,12 +1255,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 19,
-        "utility": 52,
-        "survival": 39,
-        "clutch": 7,
-        "consistency": 77,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 18,
+        "utility": 50,
+        "survival": 37,
+        "clutch": 21,
+        "consistency": 76
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1281,12 +1281,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 100,
-        "utility": 81,
-        "survival": 81,
-        "clutch": 60,
-        "consistency": 40,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 61,
+        "survival": 86,
+        "clutch": 73,
+        "consistency": 38
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1307,12 +1307,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 100,
-        "utility": 12,
-        "survival": 95,
-        "clutch": 27,
-        "consistency": 32,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 33,
+        "survival": 91,
+        "clutch": 37,
+        "consistency": 26
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1331,12 +1331,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 53,
-        "utility": 11,
-        "survival": 11,
-        "clutch": 0,
-        "consistency": 100,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 8,
+        "survival": 8,
+        "clutch": 8,
+        "consistency": 97
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1355,12 +1355,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 3,
-        "utility": 17,
-        "survival": 3,
-        "clutch": 10,
-        "consistency": 100,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 1,
+        "utility": 11,
+        "survival": 4,
+        "clutch": 23,
+        "consistency": 99
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1381,12 +1381,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 36,
-        "utility": 55,
-        "survival": 50,
-        "clutch": 40,
-        "consistency": 50,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 43,
+        "survival": 53,
+        "clutch": 86,
+        "consistency": 46
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1405,12 +1405,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 100,
-        "utility": 43,
-        "survival": 80,
-        "clutch": 86,
-        "consistency": 12,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 38,
+        "survival": 77,
+        "clutch": 83,
+        "consistency": 9
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1429,12 +1429,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 57,
-        "utility": 37,
-        "survival": 60,
-        "clutch": 40,
-        "consistency": 3,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 33,
+        "survival": 61,
+        "clutch": 84,
+        "consistency": 1
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1455,12 +1455,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 33,
-        "utility": 10,
-        "survival": 78,
-        "clutch": 43,
-        "consistency": 69,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 46,
+        "utility": 3,
+        "survival": 70,
+        "clutch": 60,
+        "consistency": 67
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1481,12 +1481,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 74,
-        "utility": 37,
-        "survival": 96,
-        "clutch": 40,
-        "consistency": 42,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 26,
+        "survival": 95,
+        "clutch": 79,
+        "consistency": 41
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1505,12 +1505,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 32,
-        "utility": 42,
-        "survival": 48,
-        "clutch": 13,
-        "consistency": 23,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 40,
+        "survival": 45,
+        "clutch": 77,
+        "consistency": 21
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1529,12 +1529,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 32,
-        "utility": 72,
-        "survival": 90,
-        "clutch": 40,
-        "consistency": 35,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 68,
+        "survival": 87,
+        "clutch": 44,
+        "consistency": 31
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1553,12 +1553,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 11,
-        "utility": 79,
-        "survival": 21,
-        "clutch": 0,
-        "consistency": 79,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 76,
+        "survival": 18,
+        "clutch": 8,
+        "consistency": 76
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1577,12 +1577,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 83,
-        "utility": 17,
-        "survival": 100,
-        "clutch": 20,
-        "consistency": 31,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 11,
+        "survival": 99,
+        "clutch": 23,
+        "consistency": 27
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1603,12 +1603,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 19,
-        "utility": 92,
-        "survival": 37,
-        "clutch": 20,
-        "consistency": 33,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 16,
+        "utility": 86,
+        "survival": 47,
+        "clutch": 18,
+        "consistency": 27
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1629,12 +1629,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 69,
-        "utility": 65,
-        "survival": 87,
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 50,
+        "survival": 86,
         "clutch": 40,
-        "consistency": 15,
-        "leadership": 50
+        "consistency": 14
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1655,12 +1655,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 21,
-        "utility": 52,
-        "survival": 21,
-        "clutch": 57,
-        "consistency": 24,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 25,
+        "utility": 33,
+        "survival": 18,
+        "clutch": 81,
+        "consistency": 20
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1681,12 +1681,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 14,
-        "utility": 100,
-        "survival": 55,
-        "clutch": 29,
-        "consistency": 45,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 33,
+        "utility": 91,
+        "survival": 38,
+        "clutch": 53,
+        "consistency": 46
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1705,12 +1705,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 13,
-        "utility": 16,
-        "survival": 3,
-        "clutch": 7,
-        "consistency": 87,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 11,
+        "utility": 15,
+        "survival": 2,
+        "clutch": 34,
+        "consistency": 85
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1731,12 +1731,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 29,
-        "utility": 70,
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 53,
         "survival": 100,
-        "clutch": 60,
-        "consistency": 61,
-        "leadership": 50
+        "clutch": 85,
+        "consistency": 59
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1757,12 +1757,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 41,
-        "utility": 24,
-        "survival": 7,
-        "clutch": 20,
-        "consistency": 95,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 40,
+        "survival": 6,
+        "clutch": 46,
+        "consistency": 89
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1783,12 +1783,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 65,
-        "utility": 60,
-        "survival": 83,
-        "clutch": 14,
-        "consistency": 65,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 16,
+        "survival": 75,
+        "clutch": 18,
+        "consistency": 62
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1807,12 +1807,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 42,
-        "utility": 94,
-        "survival": 58,
-        "clutch": 20,
-        "consistency": 6,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 40,
+        "utility": 92,
+        "survival": 56,
+        "clutch": 68,
+        "consistency": 5
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1831,12 +1831,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 95,
-        "utility": 95,
-        "survival": 100,
-        "clutch": 14,
-        "consistency": 58,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 92,
+        "utility": 92,
+        "survival": 97,
+        "clutch": 29,
+        "consistency": 55
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1855,12 +1855,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 86,
-        "utility": 100,
-        "survival": 49,
-        "clutch": 40,
-        "consistency": 11,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 97,
+        "survival": 50,
+        "clutch": 84,
+        "consistency": 13
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1879,12 +1879,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 68,
-        "utility": 80,
-        "survival": 64,
-        "clutch": 67,
-        "consistency": 45,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 65,
+        "utility": 78,
+        "survival": 62,
+        "clutch": 89,
+        "consistency": 42
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1905,12 +1905,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 9,
-        "utility": 86,
-        "survival": 27,
-        "clutch": 10,
-        "consistency": 86,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 7,
+        "utility": 81,
+        "survival": 36,
+        "clutch": 27,
+        "consistency": 83
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1929,12 +1929,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 6,
-        "utility": 51,
-        "survival": 26,
-        "clutch": 30,
-        "consistency": 51,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 4,
+        "utility": 53,
+        "survival": 24,
+        "clutch": 61,
+        "consistency": 50
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1955,12 +1955,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 65,
-        "utility": 15,
+        "leadership": 50,
+        "firepower": 54,
+        "utility": 16,
         "survival": 10,
-        "clutch": 13,
-        "consistency": 28,
-        "leadership": 50
+        "clutch": 29,
+        "consistency": 31
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -1979,12 +1979,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 5,
-        "utility": 16,
-        "survival": 5,
-        "clutch": 14,
-        "consistency": 89,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 13,
+        "survival": 3,
+        "clutch": 50,
+        "consistency": 87
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2003,12 +2003,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 72,
-        "utility": 56,
-        "survival": 72,
-        "clutch": 0,
-        "consistency": 49,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 54,
+        "survival": 70,
+        "clutch": 7,
+        "consistency": 48
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2027,12 +2027,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 16,
-        "utility": 87,
-        "survival": 6,
-        "clutch": 7,
-        "consistency": 65,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 15,
+        "utility": 84,
+        "survival": 5,
+        "clutch": 26,
+        "consistency": 63
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2051,12 +2051,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 69,
-        "utility": 69,
-        "survival": 95,
-        "clutch": 27,
-        "consistency": 75,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 67,
+        "utility": 67,
+        "survival": 93,
+        "clutch": 48,
+        "consistency": 74
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2077,12 +2077,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 74,
-        "utility": 69,
-        "survival": 17,
-        "clutch": 40,
-        "consistency": 66,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 72,
+        "survival": 13,
+        "clutch": 47,
+        "consistency": 59
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2101,12 +2101,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 35,
-        "utility": 26,
-        "survival": 77,
-        "clutch": 20,
-        "consistency": 3,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 24,
+        "survival": 76,
+        "clutch": 60,
+        "consistency": 2
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2125,12 +2125,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 95,
-        "utility": 18,
-        "survival": 50,
-        "clutch": 33,
-        "consistency": 9,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 11,
+        "survival": 43,
+        "clutch": 70,
+        "consistency": 11
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2149,12 +2149,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 77,
-        "utility": 81,
-        "survival": 68,
-        "clutch": 20,
-        "consistency": 45,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 76,
+        "utility": 79,
+        "survival": 66,
+        "clutch": 68,
+        "consistency": 44
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2173,12 +2173,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 41,
-        "utility": 51,
-        "survival": 41,
-        "clutch": 43,
-        "consistency": 25,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 48,
+        "survival": 37,
+        "clutch": 27,
+        "consistency": 21
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2197,12 +2197,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 17,
-        "utility": 69,
-        "survival": 9,
-        "clutch": 10,
-        "consistency": 97,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 13,
+        "utility": 64,
+        "survival": 13,
+        "clutch": 23,
+        "consistency": 96
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2223,12 +2223,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 29,
-        "utility": 6,
-        "survival": 74,
-        "clutch": 7,
-        "consistency": 14,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 19,
+        "survival": 76,
+        "clutch": 12,
+        "consistency": 9
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2249,12 +2249,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 63,
-        "utility": 100,
-        "survival": 17,
-        "clutch": 13,
-        "consistency": 74,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 98,
+        "survival": 21,
+        "clutch": 36,
+        "consistency": 69
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2273,12 +2273,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 11,
-        "utility": 43,
-        "survival": 23,
-        "clutch": 0,
-        "consistency": 77,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 44,
+        "survival": 21,
+        "clutch": 1,
+        "consistency": 76
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2297,12 +2297,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 50,
-        "utility": 41,
-        "survival": 78,
-        "clutch": 100,
-        "consistency": 53,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 43,
+        "utility": 37,
+        "survival": 74,
+        "clutch": 80,
+        "consistency": 51
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2321,12 +2321,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 89,
-        "utility": 89,
-        "survival": 95,
-        "clutch": 29,
-        "consistency": 84,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 87,
+        "survival": 92,
+        "clutch": 97,
+        "consistency": 82
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2345,12 +2345,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 26,
-        "utility": 46,
-        "survival": 69,
-        "clutch": 30,
-        "consistency": 86,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 21,
+        "utility": 50,
+        "survival": 67,
+        "clutch": 97,
+        "consistency": 81
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2371,12 +2371,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 98,
-        "utility": 35,
-        "survival": 70,
-        "clutch": 93,
-        "consistency": 44,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 94,
+        "utility": 48,
+        "survival": 67,
+        "clutch": 88,
+        "consistency": 34
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2395,12 +2395,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 50,
-        "utility": 82,
-        "survival": 14,
-        "clutch": 0,
-        "consistency": 77,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 66,
+        "survival": 11,
+        "clutch": 7,
+        "consistency": 75
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2419,12 +2419,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 47,
-        "utility": 95,
-        "survival": 93,
-        "clutch": 80,
-        "consistency": 70,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 51,
+        "utility": 97,
+        "survival": 90,
+        "clutch": 57,
+        "consistency": 71
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2443,12 +2443,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 79,
-        "utility": 91,
-        "survival": 56,
-        "clutch": 80,
-        "consistency": 45,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 92,
+        "survival": 58,
+        "clutch": 75,
+        "consistency": 43
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2467,12 +2467,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 42,
-        "utility": 68,
-        "survival": 63,
-        "clutch": 43,
-        "consistency": 95,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 66,
+        "survival": 61,
+        "clutch": 82,
+        "consistency": 92
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2491,12 +2491,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 77,
-        "utility": 73,
-        "survival": 95,
-        "clutch": 67,
-        "consistency": 82,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 52,
+        "survival": 89,
+        "clutch": 98,
+        "consistency": 84
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2515,12 +2515,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 98,
-        "utility": 69,
-        "survival": 88,
-        "clutch": 60,
-        "consistency": 17,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 96,
+        "utility": 67,
+        "survival": 86,
+        "clutch": 72,
+        "consistency": 15
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2541,12 +2541,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 37,
-        "utility": 66,
-        "survival": 63,
-        "clutch": 14,
-        "consistency": 86,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 43,
+        "survival": 54,
+        "clutch": 22,
+        "consistency": 78
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2565,12 +2565,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 79,
-        "utility": 42,
-        "survival": 47,
-        "clutch": 43,
-        "consistency": 37,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 82,
+        "utility": 37,
+        "survival": 45,
+        "clutch": 82,
+        "consistency": 34
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2591,12 +2591,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 93,
-        "utility": 96,
-        "survival": 48,
-        "clutch": 13,
-        "consistency": 28,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 93,
+        "survival": 52,
+        "clutch": 11,
+        "consistency": 20
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2615,12 +2615,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 26,
-        "utility": 44,
-        "survival": 8,
-        "clutch": 56,
-        "consistency": 26,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 18,
+        "utility": 32,
+        "survival": 4,
+        "clutch": 41,
+        "consistency": 27
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2639,12 +2639,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 64,
-        "utility": 55,
-        "survival": 15,
-        "clutch": 30,
-        "consistency": 70,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 54,
+        "utility": 57,
+        "survival": 17,
+        "clutch": 44,
+        "consistency": 71
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2663,12 +2663,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 97,
-        "utility": 60,
-        "survival": 80,
-        "clutch": 30,
-        "consistency": 6,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 61,
+        "survival": 74,
+        "clutch": 61,
+        "consistency": 4
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2687,12 +2687,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 56,
-        "utility": 59,
-        "survival": 30,
-        "clutch": 33,
-        "consistency": 72,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 57,
+        "utility": 57,
+        "survival": 28,
+        "clutch": 88,
+        "consistency": 70
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2711,12 +2711,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 47,
-        "utility": 53,
-        "survival": 16,
-        "clutch": 0,
-        "consistency": 53,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 39,
+        "utility": 50,
+        "survival": 13,
+        "clutch": 8,
+        "consistency": 50
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2737,12 +2737,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 87,
-        "utility": 90,
-        "survival": 38,
-        "clutch": 60,
-        "consistency": 75,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 88,
+        "survival": 40,
+        "clutch": 56,
+        "consistency": 65
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2763,12 +2763,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 86,
-        "utility": 5,
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 11,
         "survival": 18,
-        "clutch": 0,
-        "consistency": 91,
-        "leadership": 50
+        "clutch": 7,
+        "consistency": 89
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2789,12 +2789,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 5,
-        "utility": 27,
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 25,
         "survival": 41,
-        "clutch": 0,
-        "consistency": 100,
-        "leadership": 50
+        "clutch": 7,
+        "consistency": 96
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2813,12 +2813,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 86,
-        "utility": 86,
-        "survival": 34,
+        "leadership": 50,
+        "firepower": 78,
+        "utility": 84,
+        "survival": 31,
         "clutch": 57,
-        "consistency": 28,
-        "leadership": 50
+        "consistency": 26
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2839,12 +2839,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 57,
-        "utility": 97,
-        "survival": 79,
-        "clutch": 70,
-        "consistency": 57,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 42,
+        "utility": 93,
+        "survival": 80,
+        "clutch": 61,
+        "consistency": 56
       },
       "sourceIds": [
         "liquipedia-champions-2024",
@@ -2863,12 +2863,12 @@
       ],
       "historicalIgl": false,
       "traits": {
-        "firepower": 78,
-        "utility": 62,
-        "survival": 46,
-        "clutch": 57,
-        "consistency": 36,
-        "leadership": 50
+        "leadership": 50,
+        "firepower": 75,
+        "utility": 59,
+        "survival": 43,
+        "clutch": 49,
+        "consistency": 33
       },
       "sourceIds": [
         "liquipedia-champions-2024",

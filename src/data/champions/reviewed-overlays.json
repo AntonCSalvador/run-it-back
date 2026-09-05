@@ -1,0 +1,999 @@
+{
+  "teams": [
+    {
+      "databaseTeamId": 2,
+      "id": "sentinels-2021",
+      "name": "Sentinels",
+      "shortName": "SEN",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 188,
+      "id": "cloud9-2021",
+      "name": "Cloud9",
+      "shortName": "C9",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 198,
+      "id": "vision-strikers-2021",
+      "name": "Vision Strikers",
+      "shortName": "VS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 277,
+      "id": "crazy-raccoon-2021",
+      "name": "Crazy Raccoon",
+      "shortName": "CR",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 420,
+      "id": "team-vikings-2021",
+      "name": "Team Vikings",
+      "shortName": "VKS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 427,
+      "id": "envy-2021",
+      "name": "ENVY",
+      "shortName": "ENVY",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 474,
+      "id": "team-liquid-2021",
+      "name": "Team Liquid",
+      "shortName": "TL",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 682,
+      "id": "gambit-esports-2021",
+      "name": "Gambit Esports",
+      "shortName": "GMB",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 2112,
+      "id": "x10-esports-2021",
+      "name": "X10 Esports",
+      "shortName": "X10",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 2355,
+      "id": "kru-esports-2021",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 2406,
+      "id": "furia-2021",
+      "name": "FURIA",
+      "shortName": "FUR",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 2593,
+      "id": "fnatic-2021",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 3531,
+      "id": "acend-2021",
+      "name": "Acend",
+      "shortName": "ACEND",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 4050,
+      "id": "full-sense-2021",
+      "name": "FULL SENSE",
+      "shortName": "FS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 4894,
+      "id": "keyd-stars-2021",
+      "name": "Keyd Stars",
+      "shortName": "VK",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 6199,
+      "id": "team-secret-2021",
+      "name": "Team Secret",
+      "shortName": "TS",
+      "year": 2021,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2021"
+      ]
+    },
+    {
+      "databaseTeamId": 120,
+      "id": "100-thieves-2022",
+      "name": "100 Thieves",
+      "shortName": "100T",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 466,
+      "id": "boom-esports-2022",
+      "name": "BOOM Esports",
+      "shortName": "BOOM",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 474,
+      "id": "team-liquid-2022",
+      "name": "Team Liquid",
+      "shortName": "TL",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 533,
+      "id": "xset-2022",
+      "name": "XSET",
+      "shortName": "XSET",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 624,
+      "id": "paper-rex-2022",
+      "name": "Paper Rex",
+      "shortName": "PRX",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 628,
+      "id": "funplus-phoenix-2022",
+      "name": "FunPlus Phoenix",
+      "shortName": "FPX",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 1120,
+      "id": "edward-gaming-2022",
+      "name": "EDward Gaming",
+      "shortName": "EDG",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 2355,
+      "id": "kru-esports-2022",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 2359,
+      "id": "leviatan-2022",
+      "name": "LEVIATÁN",
+      "shortName": "LEV",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 2406,
+      "id": "furia-2022",
+      "name": "FURIA",
+      "shortName": "FUR",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 2593,
+      "id": "fnatic-2022",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 5448,
+      "id": "zeta-division-2022",
+      "name": "ZETA DIVISION",
+      "shortName": "ZETA",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 6961,
+      "id": "loud-2022",
+      "name": "LOUD",
+      "shortName": "LOUD",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 7397,
+      "id": "xerxia-esports-2022",
+      "name": "XERXIA Esports",
+      "shortName": "XERXIA",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 8127,
+      "id": "optic-gaming-2022",
+      "name": "OpTic Gaming",
+      "shortName": "OPT",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 8185,
+      "id": "drx-2022",
+      "name": "DRX",
+      "shortName": "DRX",
+      "year": 2022,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2022",
+        "riot-champions-2022"
+      ]
+    },
+    {
+      "databaseTeamId": 14,
+      "id": "t1-2023",
+      "name": "T1",
+      "shortName": "T1",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 474,
+      "id": "team-liquid-2023",
+      "name": "Team Liquid",
+      "shortName": "TL",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 624,
+      "id": "paper-rex-2023",
+      "name": "Paper Rex",
+      "shortName": "PRX",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 1034,
+      "id": "nrg-2023",
+      "name": "NRG",
+      "shortName": "NRG",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 1120,
+      "id": "edward-gaming-2023",
+      "name": "EDward Gaming",
+      "shortName": "EDG",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 1184,
+      "id": "fut-esports-2023",
+      "name": "FUT Esports",
+      "shortName": "FUT",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 2304,
+      "id": "giants-gaming-2023",
+      "name": "Giants Gaming",
+      "shortName": "GX",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 2355,
+      "id": "kru-esports-2023",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 2593,
+      "id": "fnatic-2023",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 4915,
+      "id": "natus-vincere-2023",
+      "name": "Natus Vincere",
+      "shortName": "NAVI",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 5248,
+      "id": "evil-geniuses-2023",
+      "name": "Evil Geniuses",
+      "shortName": "EG",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 5448,
+      "id": "zeta-division-2023",
+      "name": "ZETA DIVISION",
+      "shortName": "ZETA",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 6961,
+      "id": "loud-2023",
+      "name": "LOUD",
+      "shortName": "LOUD",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 8185,
+      "id": "drx-2023",
+      "name": "DRX",
+      "shortName": "DRX",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 11328,
+      "id": "funplus-phoenix-2023",
+      "name": "FunPlus Phoenix",
+      "shortName": "FPX",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 12010,
+      "id": "bilibili-gaming-2023",
+      "name": "Bilibili Gaming",
+      "shortName": "BLG",
+      "year": 2023,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2023",
+        "riot-champions-2023"
+      ]
+    },
+    {
+      "databaseTeamId": 2,
+      "id": "sentinels-2024",
+      "name": "Sentinels",
+      "shortName": "SEN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 17,
+      "id": "gen-g-2024",
+      "name": "Gen.G",
+      "shortName": "GEN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 624,
+      "id": "paper-rex-2024",
+      "name": "Paper Rex",
+      "shortName": "PRX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 1001,
+      "id": "team-heretics-2024",
+      "name": "Team Heretics",
+      "shortName": "TH",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 1120,
+      "id": "edward-gaming-2024",
+      "name": "EDward Gaming",
+      "shortName": "EDG",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 1184,
+      "id": "fut-esports-2024",
+      "name": "FUT Esports",
+      "shortName": "FUT",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 2059,
+      "id": "team-vitality-2024",
+      "name": "Team Vitality",
+      "shortName": "VIT",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 2355,
+      "id": "kru-esports-2024",
+      "name": "KRÜ Esports",
+      "shortName": "KRU",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 2359,
+      "id": "leviatan-2024",
+      "name": "LEVIATÁN",
+      "shortName": "LEV",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 2593,
+      "id": "fnatic-2024",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 8185,
+      "id": "drx-2024",
+      "name": "DRX",
+      "shortName": "DRX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 8304,
+      "id": "talon-2024",
+      "name": "TALON",
+      "shortName": "TLN",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 11058,
+      "id": "g2-esports-2024",
+      "name": "G2 Esports",
+      "shortName": "G2",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 11328,
+      "id": "funplus-phoenix-2024",
+      "name": "FunPlus Phoenix",
+      "shortName": "FPX",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 12010,
+      "id": "bilibili-gaming-2024",
+      "name": "Bilibili Gaming",
+      "shortName": "BLG",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 12685,
+      "id": "trace-esports-2024",
+      "name": "Trace Esports",
+      "shortName": "TE",
+      "year": 2024,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2024",
+        "riot-champions-2024"
+      ]
+    },
+    {
+      "databaseTeamId": 2,
+      "id": "sentinels-2025",
+      "name": "Sentinels",
+      "shortName": "SEN",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 14,
+      "id": "t1-2025",
+      "name": "T1",
+      "shortName": "T1",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 474,
+      "id": "team-liquid-2025",
+      "name": "Team Liquid",
+      "shortName": "TL",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 624,
+      "id": "paper-rex-2025",
+      "name": "Paper Rex",
+      "shortName": "PRX",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 878,
+      "id": "rex-regum-qeon-2025",
+      "name": "Rex Regum Qeon",
+      "shortName": "RRQ",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 1001,
+      "id": "team-heretics-2025",
+      "name": "Team Heretics",
+      "shortName": "TH",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 1034,
+      "id": "nrg-2025",
+      "name": "NRG",
+      "shortName": "NRG",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 1120,
+      "id": "edward-gaming-2025",
+      "name": "EDward Gaming",
+      "shortName": "EDG",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 2593,
+      "id": "fnatic-2025",
+      "name": "FNATIC",
+      "shortName": "FNC",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 7386,
+      "id": "mibr-2025",
+      "name": "MIBR",
+      "shortName": "MIBR",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 8185,
+      "id": "drx-2025",
+      "name": "DRX",
+      "shortName": "DRX",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 11058,
+      "id": "g2-esports-2025",
+      "name": "G2 Esports",
+      "shortName": "G2",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 11981,
+      "id": "dragon-ranger-gaming-2025",
+      "name": "Dragon Ranger Gaming",
+      "shortName": "DRG",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 12010,
+      "id": "bilibili-gaming-2025",
+      "name": "Bilibili Gaming",
+      "shortName": "BLG",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 13581,
+      "id": "xi-lai-gaming-2025",
+      "name": "Xi Lai Gaming",
+      "shortName": "XLG",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    },
+    {
+      "databaseTeamId": 14419,
+      "id": "giantx-2025",
+      "name": "GIANTX",
+      "shortName": "GX",
+      "year": 2025,
+      "logo": null,
+      "sourceIds": [
+        "liquipedia-champions-2025",
+        "riot-champions-2025"
+      ]
+    }
+  ],
+  "roleOverrides": [
+    {
+      "cardId": "lakia-vision-strikers-2021",
+      "roles": [
+        "initiator"
+      ],
+      "reason": "One-map short-event appearance; observed initiator agent is retained after manual review.",
+      "sourceIds": [
+        "liquipedia-champions-2021-player-information",
+        "vct-reference-dataset"
+      ]
+    }
+  ],
+  "leadership": [
+    {
+      "cardId": "boaster-fnatic-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    },
+    {
+      "cardId": "d4v41-paper-rex-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    },
+    {
+      "cardId": "finesse-nrg-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    },
+    {
+      "cardId": "redgar-team-liquid-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    },
+    {
+      "cardId": "saadhak-loud-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    },
+    {
+      "cardId": "stax-drx-2023",
+      "sourceIds": [
+        "riot-vct-2023-awards"
+      ]
+    }
+  ]
+}

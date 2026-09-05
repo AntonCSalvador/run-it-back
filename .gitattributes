@@ -1,0 +1,2 @@
+# The external extraction audit compares exact UTF-8 bytes on every platform.
+src/data/champions/raw-extraction.json text eol=lf

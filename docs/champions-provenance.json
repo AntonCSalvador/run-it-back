@@ -4,6 +4,12 @@
   "sha256": "faa56883676dec0b89426c0ba36c65acad232f77d2fbbb5e03878a9522d53792",
   "eventIds": { "2021": 449, "2022": 1015, "2023": 1657, "2024": 2097, "2025": 2283 },
   "sql": "docs/champions-extraction.sql",
-  "transformCheck": "scripts/verify-champions-extraction.py --check",
+  "transformCheck": "npm run audit:data -- PATH/vct.duckdb --check",
+  "rawArtifact": "src/data/champions/raw-extraction.json",
+  "rawArtifactSha256": "838d75d5cbab3ac50ba6c4d7ea2a565c9a61f7996c2b90a159a669ec7e8f79b4",
+  "rawJsonStringifySha256": "25d688e794e3031b019fa0341653d410afda6da90cbb5cd387e7d9986673c546",
+  "reviewedOverlaysJsonStringifySha256": "960a351382216a2359087835c53c4d506406134b6b42bc815e17f5a3288b1369",
+  "pureTransform": "src/data/champions/derivation.ts",
+  "regenerate": "npm run derive:data",
   "auditEvidence": "src/data/champions/evidence.json"
 }

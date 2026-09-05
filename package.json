@@ -10,6 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-data.mts",
+    "derive:data": "tsx scripts/derive-champions.mts",
+    "audit:data": "python scripts/verify-champions-extraction.py",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
