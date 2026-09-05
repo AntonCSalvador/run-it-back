@@ -6,6 +6,32 @@ import raw from "./raw-extraction.json";
 import overlays from "./reviewed-overlays.json";
 
 describe("Champions audit validation", () => {
+  it("rejects source URLs swapped between otherwise valid IDs", () => {
+    const data = structuredClone(championsDataset);
+    const first = data.sources.find(source => source.id === "liquipedia-champions-2021")!;
+    const last = data.sources.find(source => source.id === "liquipedia-champions-2025")!;
+    [first.url, last.url] = [last.url, first.url];
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+  });
+
+  it.each(["retrievedAt", "usage", "credit", "license", "undefined credit"])("rejects changes to reviewed source %s metadata", field => {
+    const data = structuredClone(championsDataset);
+    if (field === "retrievedAt") data.sources[0].retrievedAt = "2026-09-04";
+    if (field === "usage") data.sources[0].usage = "asset";
+    if (field === "credit") data.sources[0].credit = "Unreviewed credit";
+    if (field === "license") data.sources[0].license = "Unreviewed license";
+    if (field === "undefined credit") data.sources[0].credit = undefined;
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+  });
+
+  it.each(["missing", "extra", "duplicate"])("rejects %s source catalog records", kind => {
+    const data = structuredClone(championsDataset);
+    if (kind === "missing") data.sources.pop();
+    if (kind === "extra") data.sources.push({ ...data.sources[0], id: "extra-reviewed-looking-source" });
+    if (kind === "duplicate") data.sources.push({ ...data.sources[0] });
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+  });
+
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
     const data = structuredClone(championsDataset);
     const audit = structuredClone(evidence) as Evidence[];

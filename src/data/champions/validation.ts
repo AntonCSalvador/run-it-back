@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import rawData from "./raw-extraction.json";
 import reviewedOverlays from "./reviewed-overlays.json";
 import { deriveChampions, type Overlays, type RawExtraction } from "./derivation";
+import { validateSourceCatalog } from "./source-policy";
 
 export type Evidence = {
   cardId: string; year: number; mapsPlayed: number; threshold: number;
@@ -16,6 +17,7 @@ export type Evidence = {
 };
 
 export function validateChampions(dataset: GameDataset, evidence: Evidence[]): void {
+  validateSourceCatalog(dataset.sources);
   const errors: string[] = [];
   if (createHash("sha256").update(JSON.stringify(rawData)).digest("hex") !== "25d688e794e3031b019fa0341653d410afda6da90cbb5cd387e7d9986673c546") throw new Error("raw extraction checksum mismatch");
   if (createHash("sha256").update(JSON.stringify(reviewedOverlays)).digest("hex") !== "960a351382216a2359087835c53c4d506406134b6b42bc815e17f5a3288b1369") throw new Error("reviewed overlays checksum mismatch");

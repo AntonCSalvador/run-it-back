@@ -20,8 +20,11 @@ database are not needed for ordinary offline builds.
 Run `npm run audit:data -- PATH/vct.duckdb --check`. Exactly one explicit mode,
 `--check` or `--extract`, is required. Missing mode or both flags fail during
 argument parsing, before opening the database or writing artifacts. `--check`
-never writes the extraction. `python scripts/test-champions-extraction.py`
-runs the standard-library-only CLI subprocess regression tests; `--help`
+never writes the extraction. `npm run test:audit-cli`
+runs the standard-library-only CLI subprocess regression tests and is included
+in `npm run verify`. Verification requires Python 3.11+ on PATH as `python`;
+the normal `npm test` command runs only Vitest. `npm run build` remains offline
+and requires neither Python nor the external database. CLI `--help`
 also works without DuckDB installed. The audit command first checks
 the database SHA-256, then extracts all participation rows, player IDs/names,
 teams, map counts, team-index assignments, selected agents, raw metric values,
@@ -43,6 +46,15 @@ LF. Offline validation also pins the SHA-256 of its `JSON.stringify` encoding
 to evidence. `reviewed-overlays.json` is separately checksum-pinned: 80
 sourced event team names/IDs/abbreviations, one role exception, six leadership
 decisions. No raw metrics or trait numbers are manually overlaid.
+
+`src/data/champions/source-policy.ts` separately pins the twelve reviewed
+source records by exact ID, URL, retrieval date (`2026-09-05`), and usage
+(`facts`). Optional credit/license properties are absent for every record
+in this snapshot; their presence is also checked, even if assigned undefined.
+It does not import the runtime `sources.json` catalog. Missing, extra, duplicate,
+or altered records fail validation before citation mappings are evaluated.
+Catalog ordering is immaterial; each record's own keys and values must match.
+Future asset references or source corrections require a reviewed policy update.
 
 Identity and citation expectations also derive independently of the application
 JSON. A canonical player ID is `player-<raw playerId>` and its handle is the

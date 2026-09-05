@@ -9,10 +9,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:audit-cli": "python scripts/test-champions-extraction.py",
     "validate:data": "tsx scripts/validate-data.mts",
     "derive:data": "tsx scripts/derive-champions.mts",
     "audit:data": "python scripts/verify-champions-extraction.py",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run test:audit-cli && npm run build"
   },
   "dependencies": {
     "lucide-react": "^1.41.0",
