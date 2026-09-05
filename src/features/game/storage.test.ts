@@ -105,6 +105,14 @@ describe("local run storage", () => {
     expect(value.completions[0].stageReached).toBe("final");
   });
 
+  it("rejects unknown or repeated persisted maps while allowing legacy absence and cross-stage reuse", () => {
+    const maps = [{ map: "Ascent", userScore: 13, opponentScore: 8 }, { map: "Bind", userScore: 13, opponentScore: 9 }];
+    const valid = { ...freeRun("maps"), series: [{ stage: "group" as const, userWins: 2, opponentWins: 0, maps }, { stage: "quarterfinal" as const, userWins: 0, opponentWins: 2, maps: maps.map(map => ({ ...map, userScore: map.opponentScore, opponentScore: map.userScore })) }], stageReached: "quarterfinal" as const };
+    expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [valid] }).success).toBe(true);
+    expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [{ ...maps[0], map: "Unknown" }, maps[1]] }] }] }).success).toBe(false);
+    expect(HISTORY_RECORD.schema.safeParse({ version: 1, runs: [{ ...valid, series: [{ ...valid.series[0], maps: [maps[0], maps[0]] }] }] }).success).toBe(false);
+  });
+
   it("caps Daily completions at 730 after deduping newest first", () => {
     const distinct = Array.from({ length: 730 }, (_, index) => dailyRun(new Date(Date.UTC(2024, 0, 1 + index)).toISOString().slice(0, 10)));
     const result = addDailyCompletion({ completions: distinct, streak: 0 }, dailyRun("2026-01-01"));

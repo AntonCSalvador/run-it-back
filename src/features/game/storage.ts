@@ -1,7 +1,7 @@
 import { z, type ZodType } from "zod";
 import { ROLES, type Role } from "./domain";
 import type { Stage } from "./opponents";
-import { STAGE_ORDER } from "./tournament";
+import { MAP_POOL, STAGE_ORDER } from "./tournament";
 
 export const STORAGE_KEYS = { settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1" } as const;
 
@@ -12,7 +12,7 @@ const utcDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 const stage = z.enum(["group", "quarterfinal", "semifinal", "final"]);
 const rosterSlot = z.object({ role: z.enum(ROLES), cardId: z.string().min(1).max(128) }).strict();
 const seriesSummarySchema = z.object({ stage, userWins: z.number().int().nonnegative(), opponentWins: z.number().int().nonnegative() }).strict();
-const mapSummarySchema = z.object({ map: z.string().min(1).max(64), userScore: z.number().int().nonnegative(), opponentScore: z.number().int().nonnegative() }).strict();
+const mapSummarySchema = z.object({ map: z.enum(MAP_POOL), userScore: z.number().int().nonnegative(), opponentScore: z.number().int().nonnegative() }).strict();
 const persistedSeriesSchema = seriesSummarySchema.extend({ maps: z.array(mapSummarySchema).min(2).max(5).optional() }).strict();
 function runIssues(run: { roster: readonly { role: Role; cardId: string }[]; series: readonly { stage: Stage; userWins: number; opponentWins: number }[]; stageReached: Stage; rerollsUsed: number }, context: z.RefinementCtx): void {
   const roles = new Set(run.roster.map(slot => slot.role)); const cards = new Set(run.roster.map(slot => slot.cardId));
@@ -44,6 +44,7 @@ function extendedRunIssues(run: z.infer<typeof runBaseSchema>, context: z.Refine
   }
   run.series.forEach((series, index) => {
     if (!series.maps) return;
+    if (new Set(series.maps.map(map => map.map)).size !== series.maps.length) context.addIssue({ code: "custom", path: ["series", index, "maps"], message: "Maps may not repeat within a series" });
     const needed = series.stage === "final" ? 3 : 2;
     if (series.maps.length !== series.userWins + series.opponentWins) context.addIssue({ code: "custom", path: ["series", index, "maps"], message: "Map count must equal series wins" });
     let user = 0; let opponent = 0;
