@@ -26,8 +26,9 @@ describe("draft flow", () => {
     expect(new Set(offered().map(button => button.textContent)).size).toBe(3);
     expect(new Set(offered().map(button => button.dataset.teamId)).size).toBe(3);
     const before = offered().map(button => button.textContent).join("|");
-    const selectedTeamId = offered()[0].dataset.teamId!;
-    await user.click(offered()[0]);
+    const selectedTeam = offered().find(button => button.dataset.teamId === "team-2-2021")!;
+    const selectedTeamId = selectedTeam.dataset.teamId!;
+    await user.click(selectedTeam);
     const selectedCard = flexibleDataset.cards.find(card => card.teamId === selectedTeamId)!;
     expect(within(screen.getByTestId(`player-card-${selectedCard.id}`)).getByRole("presentation")).toHaveAttribute("src", "/assets/players/test.webp");
     expect(document.querySelectorAll(".role-chip").length).toBeGreaterThan(0);
@@ -38,22 +39,26 @@ describe("draft flow", () => {
     expect(screen.getByText("2 rerolls remaining")).toBeVisible();
     expect(offered().map(button => button.textContent).join("|")).not.toBe(before);
 
-    for (let pick = 0; pick < 5; pick += 1) {
-      await user.click(offered()[0]);
-      await user.click(screen.getAllByRole("button", { name: /player/i })[0]);
-      const roles = screen.getByRole("group", { name: "Choose an open role" });
-      await user.click(within(roles).getAllByRole("button")[0]);
-      if (pick === 0) expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
+    const drafted = new Set<string>();
+    for (const role of ROLES) {
+      const team = offered().find(button => Boolean(button.dataset.teamId))!;
+      const teamId = team.dataset.teamId!;
+      const card = flexibleDataset.cards.find(candidate => candidate.teamId === teamId && !drafted.has(candidate.id) && candidate.eligibleRoles.includes(role))!;
+      await user.click(team);
+      await user.click(screen.getByRole("button", { name: `${card.displayHandle} ${card.year}` }));
+      await user.click(within(screen.getByRole("group", { name: "Choose an open role" })).getByRole("button", { name: role }));
+      drafted.add(card.id);
+      if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
     }
     expect(screen.getByRole("region", { name: "Roster" })).toBeVisible();
     const assignmentsBefore = [...screen.getByRole("region", { name: "Roster" }).querySelectorAll("strong")].map(label => label.parentElement?.textContent).join("|");
-    const move = screen.getAllByRole("button", { name: /Move .* to / })[0];
+    const move = screen.getAllByRole("button", { name: /Move .* to / }).find(button => button.textContent?.includes("to duelist"))!;
     await user.click(move);
     const assignmentsAfter = [...screen.getByRole("region", { name: "Roster" }).querySelectorAll("strong")].map(label => label.parentElement?.textContent).join("|");
     expect(assignmentsAfter).not.toBe(assignmentsBefore);
     expect(screen.getByRole("radiogroup", { name: "Choose in-game leader" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeDisabled();
-    await user.click(screen.getAllByRole("radio")[0]);
+    await user.click(screen.getByRole("radio", { name: cardLabelFromMove(move) }));
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Start tournament" }));
     expect(screen.getByText("Current phase: tournament")).toBeVisible();
@@ -98,12 +103,20 @@ describe("draft flow", () => {
 
   it("keeps decorative fallback media out of choice accessibility", () => {
     const choose = vi.fn();
-    render(<TeamOffer teams={dataset.teams.slice(0, 3)} rerolls={3} canReroll={false} onChoose={choose} onReroll={vi.fn()} />);
+    const onReroll = vi.fn();
+    render(<TeamOffer teams={dataset.teams.slice(0, 3)} rerolls={3} canReroll={false} onChoose={choose} onReroll={onReroll} />);
     const choice = screen.getByRole("button", { name: `${dataset.teams[0].name} ${dataset.teams[0].year}` });
     expect(within(choice).queryByRole("img")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Reroll teams" })).toBeDisabled();
+    const reroll = screen.getByRole("button", { name: "Reroll teams" });
+    expect(screen.getByText("3 rerolls remaining")).toBeVisible();
+    expect(reroll).toBeDisabled();
+    fireEvent.click(reroll);
+    expect(onReroll).not.toHaveBeenCalled();
+    expect(screen.getByText("3 rerolls remaining")).toBeVisible();
   });
 });
+
+function cardLabelFromMove(move: HTMLElement): string { return move.textContent!.replace(/^Move\s+/, "").replace(/\s+to\s+\w+$/, ""); }
 
 describe("assetUrl", () => {
   afterEach(() => vi.unstubAllEnvs());
