@@ -64,9 +64,11 @@ test("captures the complete Free Play journey", async ({ page }) => {
   await capture("player-picker");
   await page.getByRole("button", { name: "Back to teams" }).click();
   await draftRoster(page);
+  await assertNoPrivateModelData(page);
   await capture("complete-roster");
   await page.getByRole("radiogroup", { name: "Choose in-game leader" }).getByRole("radio").first().check();
   await page.getByRole("button", { name: "Start tournament" }).click();
+  await assertNoPrivateModelData(page);
   for (const stage of ["group", "quarterfinal"]) {
     await page.getByRole("button", { name: "Play series" }).click();
     await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
@@ -75,6 +77,7 @@ test("captures the complete Free Play journey", async ({ page }) => {
   }
   await page.getByRole("button", { name: "Play series" }).click();
   await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
+  await assertNoPrivateModelData(page);
   await capture("semifinal-highlights");
   await page.getByRole("button", { name: "Skip" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
@@ -83,5 +86,6 @@ test("captures the complete Free Play journey", async ({ page }) => {
   await page.getByRole("button", { name: "Skip" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByRole("region", { name: "Results" })).toBeVisible();
+  await assertNoPrivateModelData(page);
   await capture("results");
 });

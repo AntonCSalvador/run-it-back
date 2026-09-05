@@ -37,10 +37,14 @@ export async function assertNoPrivateModelData(page: Page): Promise<void> {
   for (const value of visibleAndSerialized) expect(value, "private model term leaked into DOM/text/attribute").not.toMatch(hiddenTerms);
   const accessible = await page.locator("button, input, textarea, [role]").evaluateAll(elements => elements.map(element => `${element.getAttribute("role") ?? ""} ${element.getAttribute("aria-label") ?? ""} ${(element as HTMLElement).innerText ?? ""} ${element.getAttribute("title") ?? ""} ${element.getAttribute("value") ?? ""}`));
   for (const value of accessible) expect(value, "private model term leaked into accessible control").not.toMatch(hiddenTerms);
+  // Playwright's computed accessibility tree catches names/descriptions that
+  // are not represented by a simple DOM attribute concatenation.
+  const tree = await page.locator("main").ariaSnapshot();
+  expect(tree, "private model term leaked into computed accessibility tree").not.toMatch(hiddenTerms);
 }
 
 export async function assertRenderedControlsFit(page: Page): Promise<void> {
-  const controls = page.locator("button:not([disabled]), input:not([disabled]), textarea:not([disabled])");
+  const controls = page.locator("button, input, textarea, select, [role=button]");
   const count = await controls.count();
   expect(count).toBeGreaterThan(0);
   for (let index = 0; index < count; index += 1) {
@@ -52,7 +56,10 @@ export async function assertRenderedControlsFit(page: Page): Promise<void> {
     expect(box, `control ${index} has a bounding box`).not.toBeNull();
     expect(box!.x, `control ${index} left edge`).toBeGreaterThanOrEqual(-1);
     expect(box!.x + box!.width, `control ${index} right edge`).toBeLessThanOrEqual(viewport.width + 1);
+    expect(box!.y, `control ${index} top edge`).toBeGreaterThanOrEqual(-1);
+    expect(box!.y + box!.height, `control ${index} bottom edge`).toBeLessThanOrEqual(viewport.height + 1);
     expect(box!.width, `control ${index} width`).toBeLessThanOrEqual(viewport.width + 1);
+    expect(box!.height, `control ${index} height`).toBeLessThanOrEqual(viewport.height + 1);
   }
 }
 
