@@ -1,11 +1,17 @@
 "use client";
 
+import type { KeyboardEvent } from "react";
 import { ROLES, type PlayerCard, type Role } from "../domain";
 
 export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; onMove(cardId: string, role: Role): void }
 type RosterBarIntegrationProps = RosterBarProps & { canMove?: boolean };
 export function RosterBar({ slots, onMove, canMove = true }: RosterBarIntegrationProps) {
-  return <section aria-label="Roster" className="roster-bar scroll-track">{ROLES.map(role => {
+  const scroll = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+    event.preventDefault();
+    event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 260 : -260, behavior: "smooth" });
+  };
+  return <section aria-label="Roster" role="region" tabIndex={0} onKeyDown={scroll} className="roster-bar scroll-track">{ROLES.map(role => {
     const card = slots[role];
     const compatibleTargets = card ? ROLES.filter(target => {
       const occupant = slots[target];

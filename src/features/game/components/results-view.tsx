@@ -86,7 +86,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
     })}</section>
     <p>Rerolls used: {rerollsUsed}</p>
     <button type="button" disabled={sharing} onClick={share}>Share</button>
-    <button type="button" onClick={() => { trigger(); onRunAgain(); }}>Run again</button>
+    <button type="button" onClick={onRunAgain}>Run again</button>
     <button type="button" aria-pressed={mode === "daily"} onClick={() => onModeChange("daily")}>Daily</button>
     <button type="button" aria-pressed={mode === "free-play"} onClick={() => onModeChange("free-play")}>Free Play</button>
     {fallbackCount > 0 && <textarea ref={field} readOnly value={shareText} aria-label="Share result" />}
