@@ -53,6 +53,22 @@ describe("draft engine", () => {
     state = rerollOffer(state, dataset); state = rerollOffer(state, dataset); state = rerollOffer(state, dataset);
     expect(() => rerollOffer(state, dataset)).toThrow("No rerolls remaining");
   });
+  test("offer operations require an unselected offer phase", () => {
+    const state = createDraft("phase", dataset);
+    const selected = chooseTeam(state, state.offeredTeamIds[0]);
+    expect(() => createOffer(selected, dataset)).toThrow("Offer phase required");
+    const card = selectableCards(selected, dataset)[0];
+    const pending = chooseCard(selected, card.id, dataset);
+    expect(() => rerollOffer(pending, dataset)).toThrow("Offer phase required");
+  });
+  test("assign rejects stale or hand-built pending cards", () => {
+    const state = createDraft("phase", dataset);
+    const card = dataset.cards[0];
+    expect(() => assignPendingCard({ ...state, pendingCardId: card.id }, card.eligibleRoles[0], dataset)).toThrow("Selected team required");
+    const selected = chooseTeam(state, state.offeredTeamIds[0]);
+    const stale = { ...selected, selectedTeamId: "not-offered", pendingCardId: card.id };
+    expect(() => assignPendingCard(stale, card.eligibleRoles[0], dataset)).toThrow("Selected team required");
+  });
   test("exact card cannot be selected twice", () => {
     let state = chooseTeam(createDraft("alpha", dataset), createDraft("alpha", dataset).offeredTeamIds[0]);
     const card = selectableCards(state, dataset)[0];
@@ -102,5 +118,24 @@ describe("draft engine", () => {
     for (const role of ROLES) { state = choose(state, role); }
     state = tagIgl(state, state.slots.smokes!);
     expect(toLineup(state).slots.map(s => s.role)).toEqual([...ROLES]);
+  });
+  test("official slots must contain five distinct cards and official IGL", () => {
+    const state = createDraft("shape", dataset);
+    const ids = dataset.cards.slice(0, 5).map(card => card.id);
+    const complete = { ...state, slots: { smokes: ids[0], duelist: ids[1], initiator: ids[2], sentinel: ids[3], flex: ids[4] }, iglCardId: ids[0] };
+    expect(isLineupReady(complete)).toBe(true);
+    const duplicate = { ...complete, slots: { ...complete.slots, flex: ids[0] } };
+    expect(isLineupReady(duplicate)).toBe(false);
+    expect(() => toLineup(duplicate)).toThrow("Lineup is not ready");
+    const extraIgl = { ...complete, slots: { ...complete.slots, flex: undefined, controller: ids[4] } as unknown as typeof complete.slots, iglCardId: ids[4] };
+    expect(isLineupReady(extraIgl)).toBe(false);
+    const unofficial = { ...complete, slots: { ...complete.slots, controller: ids[4], flex: undefined } as unknown as typeof complete.slots, iglCardId: ids[4] };
+    expect(isLineupReady(unofficial)).toBe(false);
+    expect(() => toLineup(unofficial)).toThrow();
+  });
+  test("reroll with only the current three teams has no alternate offer", () => {
+    const onlyThree = { ...dataset, teams: dataset.teams.slice(0, 3), cards: dataset.cards.filter(card => card.teamId.startsWith("team-1-") || card.teamId.startsWith("team-2-") || card.teamId.startsWith("team-3-")) };
+    const state = createDraft("13", onlyThree);
+    expect(() => rerollOffer(state, onlyThree)).toThrow("No alternate offers available");
   });
 });

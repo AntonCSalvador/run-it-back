@@ -14,6 +14,9 @@ describe("game dataset schema", () => {
     const parsed = parseDataset(minimalDataset);
     expect(parsed.teams).toHaveLength(6);
     expect(parsed.cards).toHaveLength(30);
+    const history = parsed.cards.filter(card => card.playerId === "aspas");
+    expect(new Set(history.map(card => card.year)).size).toBe(2);
+    expect(new Set(parsed.cards.map(card => card.playerId))).toEqual(new Set(parsed.players.map(player => player.id)));
   });
   it("rejects duplicate card ID", () => rejects(d => d.cards.push({ ...d.cards[0] }), "duplicate cards id"));
   it("rejects mapsPlayed 0", () => rejects(d => d.cards[0].mapsPlayed = 0, "mapsPlayed"));
