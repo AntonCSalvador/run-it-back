@@ -17,7 +17,7 @@ export interface ResultsViewProps {
 }
 
 export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, onRunAgain, onModeChange }: ResultsViewProps) {
-  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
+  const { fireClass, trigger } = useFireAccent();
   const [message, setMessage] = useState("");
   const [fallbackCount, setFallbackCount] = useState(0);
   const [sharing, setSharing] = useState(false);
@@ -73,7 +73,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
     }
   };
 
-  return <section aria-label="Results" className={tournament.status === "champion" ? fireClass : ""} onAnimationEnd={onAnimationEnd}>
+  return <section aria-label="Results" className={tournament.status === "champion" ? fireClass : ""}>
     <h2>{tournament.status === "champion" ? "Champion" : "Eliminated"}</h2>
     <p>Stage reached: {tournament.completedSeries.at(-1)?.stage ?? tournament.currentStage}</p>
     <ol>{tournament.completedSeries.map(series => <li key={series.stage}>

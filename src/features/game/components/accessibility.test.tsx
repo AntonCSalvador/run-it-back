@@ -12,9 +12,18 @@ import { activeState } from "./tournament-test-fixtures";
 import { dataset as fixtureDataset, lineup, series, terminalState } from "./tournament-test-fixtures";
 import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
+import { RosterBar } from "./roster-bar";
 
-function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onAnimationEnd={fire.onAnimationEnd} onClick={fire.trigger}>ignite</button>; }
-function animationEnd(target: HTMLElement, animationName: string): void { const event = new Event("animationend", { bubbles: true }); Object.defineProperty(event, "animationName", { value: animationName }); fireEvent(target, event); }
+function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onClick={fire.trigger}>ignite</button>; }
+function animationEnd(target: HTMLElement, animationName: string): void {
+  // jsdom lacks AnimationEvent; React therefore registers the WebKit fallback.
+  // Emit both spellings so this helper also works when jsdom gains native support.
+  for (const type of ["animationend", "webkitAnimationEnd"]) {
+    const event = new Event(type, { bubbles: true });
+    Object.defineProperty(event, "animationName", { value: animationName });
+    fireEvent(target, event);
+  }
+}
 
 const teams: TeamAppearance[] = [
   { id: "one", name: "One", shortName: "ONE", year: 2024, logo: null, sourceIds: [] },
@@ -23,6 +32,13 @@ const teams: TeamAppearance[] = [
 ];
 
 describe("broadcast accessibility", () => {
+  it("delivers simulated animation-end events through React", () => {
+    const ended = vi.fn();
+    render(<button onAnimationEnd={ended}>event delivery</button>);
+    animationEnd(screen.getByRole("button", { name: "event delivery" }), "ignite-a");
+    expect(ended).toHaveBeenCalledOnce();
+    expect(ended.mock.calls[0][0].nativeEvent.animationName).toBe("ignite-a");
+  });
   it("exposes the selected game mode and draft progress semantically", () => {
     render(<><AppHeader mode="daily" streak={2} onStart={vi.fn()} onRestart={vi.fn()} /><TeamOffer teams={teams} rerolls={2} onChoose={vi.fn()} onReroll={vi.fn()} /></>);
     expect(screen.getByRole("button", { name: "Daily" })).toHaveAttribute("aria-pressed", "true");
@@ -69,6 +85,72 @@ describe("broadcast accessibility", () => {
     act(() => vi.advanceTimersByTime(650));
     expect(button).not.toHaveClass("fire-accent");
     vi.useRealTimers();
+  });
+
+  it("ignores generation N's animation end when the same animation name returns in N+2", () => {
+    vi.useFakeTimers();
+    try {
+      render(<StrictMode><AccentProbe /></StrictMode>);
+      const button = screen.getByRole("button", { name: "ignite" });
+      fireEvent.click(button);
+      const firstName = button.classList.contains("fire-accent--b") ? "ignite-b" : "ignite-a";
+      for (let replay = 0; replay < 2; replay += 1) {
+        fireEvent.click(button);
+        act(() => vi.advanceTimersToNextFrame());
+      }
+      expect(button).toHaveClass(`fire-accent--${firstName.at(-1)}`);
+      animationEnd(button, firstName);
+      expect(button).toHaveClass("fire-accent");
+      act(() => vi.advanceTimersByTime(649));
+      expect(button).toHaveClass("fire-accent");
+      act(() => vi.advanceTimersByTime(1));
+      expect(button).not.toHaveClass("fire-accent");
+    } finally { vi.useRealTimers(); }
+  });
+
+  it("gives a replay its full lifetime beyond the previous generation's deadline", () => {
+    vi.useFakeTimers();
+    try {
+      render(<AccentProbe />);
+      const button = screen.getByRole("button", { name: "ignite" });
+      fireEvent.click(button);
+      act(() => vi.advanceTimersByTime(400));
+      fireEvent.click(button);
+      act(() => vi.advanceTimersToNextFrame());
+      act(() => vi.advanceTimersByTime(649));
+      expect(button).toHaveClass("fire-accent");
+      act(() => vi.advanceTimersByTime(1));
+      expect(button).not.toHaveClass("fire-accent");
+    } finally { vi.useRealTimers(); }
+  });
+
+  it.each([false, true])("cancels pending fire work on unmount (replay pending: %s)", replay => {
+    vi.useFakeTimers();
+    try {
+      const view = render(<AccentProbe />);
+      const button = screen.getByRole("button", { name: "ignite" });
+      fireEvent.click(button);
+      if (replay) fireEvent.click(button);
+      expect(vi.getTimerCount()).toBe(1);
+      view.unmount();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it("lets CSS choose keyboard scroll motion and prevents arrow-key page scrolling", () => {
+    render(<RosterBar slots={{}} onMove={vi.fn()} canMove={false} />);
+    const roster = screen.getByRole("region", { name: "Roster" });
+    const scrollBy = vi.fn();
+    Object.defineProperty(roster, "scrollBy", { configurable: true, value: scrollBy });
+    roster.focus();
+    expect(roster).toHaveFocus();
+    expect(fireEvent.keyDown(roster, { key: "ArrowRight" })).toBe(false);
+    expect(scrollBy).toHaveBeenLastCalledWith({ left: 260 });
+    expect(fireEvent.keyDown(roster, { key: "ArrowLeft" })).toBe(false);
+    expect(scrollBy).toHaveBeenLastCalledWith({ left: -260 });
+    expect(fireEvent.keyDown(roster, { key: "Enter" })).toBe(true);
+    expect(fireEvent.keyDown(screen.getByText("duelist"), { key: "ArrowRight" })).toBe(true);
+    expect(scrollBy).toHaveBeenCalledTimes(2);
   });
 
   it("allows keyboard focus and changes a live phase status from mode to team", () => {

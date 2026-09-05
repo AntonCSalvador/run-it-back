@@ -130,7 +130,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage, series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: state.tournament.userLineup.slots };
     return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(state.tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
   })() : "";
-  return <main className={`game-shell ${actionFire.fireClass}`} onAnimationEnd={actionFire.onAnimationEnd}>
+  return <main className={`game-shell ${actionFire.fireClass}`}>
       <AppHeader mode={mode} streak={streak} onStart={value => {
         if (state.phase !== "mode") {
           resetState();

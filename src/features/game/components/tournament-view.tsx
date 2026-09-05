@@ -13,7 +13,7 @@ function Roster({ label, lineup, cards }: { label: string; lineup: Lineup; cards
 }
 export interface TournamentViewProps { opponent: GeneratedOpponent; userLineup: Lineup; cards: readonly PlayerCard[]; result: SeriesResult | null; resolving?: boolean; onPlay(): void; onContinue(): void; continueDisabled?: boolean }
 export function TournamentView({ opponent, userLineup, cards, result, resolving = false, onPlay, onContinue, continueDisabled = false }: TournamentViewProps) {
-  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
+  const { fireClass, trigger } = useFireAccent();
   const stageHeading = useRef<HTMLHeadingElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const previousStage = useRef(opponent.stage);
@@ -38,7 +38,7 @@ export function TournamentView({ opponent, userLineup, cards, result, resolving 
       <Roster label="Your roster" lineup={userLineup} cards={cards} />
       <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} />
     </div>
-    <div className={result ? fireClass : ""} onAnimationEnd={onAnimationEnd} role="status" aria-label="Series result announcement" aria-live="polite">
+    <div className={result ? fireClass : ""} role="status" aria-label="Series result announcement" aria-live="polite">
       {result && <>
         <h3 ref={resultHeading} tabIndex={-1}>Series result: {result.userWins}–{result.opponentWins}</h3>
         <ol aria-label="Map results">{result.maps.map(map => <li key={map.map}>{map.map} {map.userScore}–{map.opponentScore}</li>)}</ol>

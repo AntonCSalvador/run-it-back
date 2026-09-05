@@ -9,7 +9,7 @@ export function RosterBar({ slots, onMove, canMove = true }: RosterBarIntegratio
   const scroll = (event: KeyboardEvent<HTMLElement>) => {
     if (event.target !== event.currentTarget || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
     event.preventDefault();
-    event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 260 : -260, behavior: "smooth" });
+    event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 260 : -260 });
   };
   return <section aria-label="Roster" role="region" tabIndex={0} onKeyDown={scroll} className="roster-bar scroll-track">{ROLES.map(role => {
     const card = slots[role];

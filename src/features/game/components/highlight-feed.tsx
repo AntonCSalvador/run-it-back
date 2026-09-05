@@ -5,10 +5,10 @@ import type { Highlight } from "../narration";
 import { useFireAccent } from "./use-fire-accent";
 
 function HighlightRow({ item }: { item: Highlight }) {
-  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
+  const { fireClass, trigger } = useFireAccent();
   const hot = item.kind === "clutch" || item.emphasis === "clutch" || item.emphasis === "decisive";
   useEffect(() => { if (hot) trigger(); }, [hot, trigger]);
-  return <p className={hot ? fireClass : ""} onAnimationEnd={onAnimationEnd}>{item.text}</p>;
+  return <p className={hot ? fireClass : ""}>{item.text}</p>;
 }
 
 export interface HighlightFeedProps {
