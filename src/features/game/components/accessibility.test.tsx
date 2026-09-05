@@ -16,6 +16,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onAnimationEnd={fire.onAnimationEnd} onClick={fire.trigger}>ignite</button>; }
+function animationEnd(target: HTMLElement, animationName: string): void { const event = new Event("animationend", { bubbles: true }); Object.defineProperty(event, "animationName", { value: animationName }); fireEvent(target, event); }
 
 const teams: TeamAppearance[] = [
   { id: "one", name: "One", shortName: "ONE", year: 2024, logo: null, sourceIds: [] },
@@ -57,6 +58,14 @@ describe("broadcast accessibility", () => {
     expect(button).toHaveClass("fire-accent");
     fireEvent.click(button);
     expect(button).not.toHaveClass("fire-accent");
+    animationEnd(button, "ignite-a");
+    act(() => vi.advanceTimersByTime(20));
+    expect(button).toHaveClass("fire-accent");
+    animationEnd(button, "ignite-a");
+    expect(button).toHaveClass("fire-accent");
+    fireEvent.click(button);
+    fireEvent.click(button);
+    fireEvent.click(button);
     act(() => vi.advanceTimersByTime(20));
     expect(button).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(650));

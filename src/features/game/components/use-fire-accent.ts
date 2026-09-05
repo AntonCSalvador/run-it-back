@@ -5,9 +5,12 @@ import { useCallback, useEffect, useRef, useState, type AnimationEvent } from "r
 /** A short-lived visual acknowledgement that can be replayed after every action. */
 export function useFireAccent() {
   const [active, setActive] = useState(false);
+  const [variant, setVariant] = useState<"a" | "b">("a");
   const activeRef = useRef(false);
   const timeout = useRef<number | null>(null);
   const frame = useRef<number | null>(null);
+  const generation = useRef(0);
+  const expectedAnimation = useRef("ignite-a");
 
   const clear = useCallback(() => {
     if (timeout.current !== null) window.clearTimeout(timeout.current);
@@ -20,6 +23,9 @@ export function useFireAccent() {
   const trigger = useCallback(() => {
     if (timeout.current !== null) window.clearTimeout(timeout.current);
     if (frame.current !== null) window.cancelAnimationFrame(frame.current);
+    generation.current += 1;
+    expectedAnimation.current = generation.current % 2 ? "ignite-a" : "ignite-b";
+    setVariant(generation.current % 2 ? "a" : "b");
     const arm = () => { frame.current = null; activeRef.current = true; setActive(true); timeout.current = window.setTimeout(clear, 650); };
     if (activeRef.current) {
       activeRef.current = false;
@@ -28,9 +34,9 @@ export function useFireAccent() {
     } else { activeRef.current = true; arm(); }
   }, [clear]);
   const onAnimationEnd = useCallback((event: AnimationEvent<HTMLElement>) => {
-    if (event.target === event.currentTarget) clear();
+    if (event.target === event.currentTarget && event.nativeEvent.animationName === expectedAnimation.current) clear();
   }, [clear]);
   useEffect(() => clear, [clear]);
 
-  return { fireClass: active ? "fire-accent" : "", trigger, onAnimationEnd };
+  return { fireClass: active ? `fire-accent fire-accent--${variant}` : "", trigger, onAnimationEnd };
 }
