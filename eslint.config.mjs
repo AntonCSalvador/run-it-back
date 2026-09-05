@@ -10,5 +10,6 @@ export default defineConfig([
     "out/**",
     "coverage/**",
     "playwright-report/**",
+    ".worktrees/**",
   ]),
 ]);
