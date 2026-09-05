@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { minimalDataset } from "../../data/fixtures/minimal-dataset";
 import { parseDataset } from "./schema";
 import { ROLES, type GameDataset, type Role } from "./domain";
-import { assignPendingCard, chooseCard, chooseTeam, createDraft, createOffer, isLineupReady, moveCard, rerollOffer, selectableCards, tagIgl, toLineup } from "./draft";
+import { assignPendingCard, canRerollOffer, chooseCard, chooseTeam, createDraft, createOffer, isLineupReady, moveCard, rerollOffer, selectableCards, tagIgl, toLineup } from "./draft";
 
 const dataset = parseDataset(minimalDataset) as GameDataset;
 const choose = (state: ReturnType<typeof createDraft>, role: Role = "flex") => {
@@ -136,6 +136,13 @@ describe("draft engine", () => {
   test("reroll with only the current three teams has no alternate offer", () => {
     const onlyThree = { ...dataset, teams: dataset.teams.slice(0, 3), cards: dataset.cards.filter(card => card.teamId.startsWith("team-1-") || card.teamId.startsWith("team-2-") || card.teamId.startsWith("team-3-")) };
     const state = createDraft("13", onlyThree);
+    expect(canRerollOffer(state, onlyThree)).toBe(false);
     expect(() => rerollOffer(state, onlyThree)).toThrow("No alternate offers available");
+  });
+  test("reroll eligibility requires an offer-phase reroll and an alternate team", () => {
+    const state = createDraft("eligible", dataset);
+    expect(canRerollOffer(state, dataset)).toBe(true);
+    expect(canRerollOffer({ ...state, rerollsRemaining: 0 }, dataset)).toBe(false);
+    expect(canRerollOffer(chooseTeam(state, state.offeredTeamIds[0]), dataset)).toBe(false);
   });
 });

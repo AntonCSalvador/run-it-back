@@ -10,15 +10,15 @@ function initials(value: string): string {
 }
 
 export function MediaMark({ src, alt, label }: { src: string | null; alt: string; label?: string }) {
-  const [failed, setFailed] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const safeSrc = assetUrl(src);
   const text = initials(label ?? alt);
-  const dimensions = { display: "inline-flex", width: "48px", height: "48px", aspectRatio: "1 / 1" };
-  const fill = { display: "block", width: "100%", height: "100%" };
-  return <span className="media-mark" style={dimensions}>{safeSrc && !failed
+  const dimensions = { display: "inline-flex", width: "48px", height: "48px", aspectRatio: "1 / 1" } as const;
+  const fill = { display: "block", width: "100%", height: "100%", objectFit: "contain" } as const;
+  return <span className="media-mark" style={dimensions}>{safeSrc && failedSrc !== safeSrc
     // Public game data points at local static assets; this native image enables a same-sized error fallback.
     // eslint-disable-next-line @next/next/no-img-element
-    ? <img className="media-mark__image" style={fill} src={safeSrc} alt={alt} onError={() => setFailed(true)} />
+    ? <img className="media-mark__image" style={fill} src={safeSrc} alt={alt} onError={() => setFailedSrc(safeSrc)} />
     : <span className="media-mark__fallback" style={fill} role="img" aria-label={alt}>{text}</span>}
   </span>;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { type GameDataset } from "../domain";
-import { isLineupReady, selectableCards, toLineup } from "../draft";
+import { canRerollOffer, isLineupReady, selectableCards, toLineup } from "../draft";
 import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
@@ -106,7 +106,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         dispatch(createStartAction(value, { now, freeSeedFactory }));
       }} onRestart={restart} />
       <p aria-live="polite">Current phase: {state.phase}</p>
-      {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} onChoose={teamId => dispatch({ type: "choose-team", teamId })} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
+      {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} canReroll={canRerollOffer(state.draft, dataset)} onChoose={teamId => dispatch({ type: "choose-team", teamId })} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
       {state.phase === "player" && (() => { const team = teams.get(state.draft.selectedTeamId ?? ""); return team ? <><PlayerPicker team={team} cards={selectableCards(state.draft, dataset)} portraitForPlayer={playerId => players.get(playerId)?.portrait ?? null} onChoose={cardId => dispatch({ type: "choose-card", cardId })} onBack={() => dispatch({ type: "back-to-teams" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></> : <p role="alert">Selected team is unavailable.</p>; })()}
       {state.phase === "role" && (() => { const card = cards.get(state.draft.pendingCardId ?? ""); const roles = card?.eligibleRoles.filter(role => !state.draft.slots[role]) ?? []; return <><section><h2>Assign {card?.displayHandle}</h2><div role="group" aria-label="Choose an open role">{roles.map(role => <button type="button" key={role} onClick={() => dispatch({ type: "assign-role", role })}>{role}</button>)}</div></section><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></>; })()}
       {state.phase === "lineup" && <><RosterBar slots={rosterSlots} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) dispatch({ type: "enter-tournament" }); }} /></>}

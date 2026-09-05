@@ -8,6 +8,13 @@ const eligible = (card: PlayerCard, state: DraftState) => !drafted(state).has(ca
 const assertOfferPhase = (state: DraftState) => { if (state.selectedTeamId !== null || state.pendingCardId !== null) throw new Error("Offer phase required"); };
 const eligibleTeams = (state: DraftState, dataset: GameDataset) => dataset.teams.filter(team => dataset.cards.some(card => card.teamId === team.id && eligible(card, state)));
 
+/** Whether the current three-team offer can be replaced without throwing. */
+export function canRerollOffer(state: DraftState, dataset: GameDataset): boolean {
+  if (state.rerollsRemaining <= 0 || state.selectedTeamId !== null || state.pendingCardId !== null) return false;
+  const current = new Set(state.offeredTeamIds);
+  return eligibleTeams(state, dataset).some(team => !current.has(team.id));
+}
+
 export function createOffer(state: DraftState, dataset: GameDataset): DraftState {
   assertOfferPhase(state);
   const candidates = eligibleTeams(state, dataset);
