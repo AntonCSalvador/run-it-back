@@ -3,8 +3,56 @@ import evidence from "./evidence.json";
 import { championsDataset } from "./index";
 import { validateChampions, type Evidence } from "./validation";
 import raw from "./raw-extraction.json";
+import overlays from "./reviewed-overlays.json";
 
 describe("Champions audit validation", () => {
+  it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
+    const data = structuredClone(championsDataset);
+    const audit = structuredClone(evidence) as Evidence[];
+    const wrong = ["liquipedia-champions-2025"];
+    if (target === "player") data.players[0].sourceIds = wrong;
+    if (target === "team") data.teams[0].sourceIds = wrong;
+    if (target === "card") data.cards[0].sourceIds = wrong;
+    if (target === "evidence") audit[0].sourceIds = wrong;
+    if (target === "clutch evidence") audit[0].clutchSourceIds = wrong;
+    expect(() => validateChampions(data, audit)).toThrow(/sources|citations/);
+  });
+
+  it.each(["extra", "missing", "duplicate"])("rejects %s valid citations", mode => {
+    const data = structuredClone(championsDataset);
+    if (mode === "extra") data.cards[0].sourceIds.push("liquipedia-champions-2025");
+    if (mode === "missing") data.cards[0].sourceIds.pop();
+    if (mode === "duplicate") data.cards[0].sourceIds.push(data.cards[0].sourceIds[0]);
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/sources|citations/);
+  });
+
+  it.each(["canonicalHandle", "playerId", "displayHandle", "teamName", "teamId"])("rejects edits to pinned %s", target => {
+    const data = structuredClone(championsDataset);
+    if (target === "canonicalHandle") data.players[0].canonicalHandle = "DifferentHandle";
+    if (target === "playerId") data.players[0].id = "player-999999";
+    if (target === "displayHandle") data.cards[0].displayHandle = "DifferentHandle";
+    if (target === "teamName") data.teams[0].name = "Different team";
+    if (target === "teamId") data.cards[0].teamId = data.teams[0].id;
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping/);
+  });
+
+  it("rejects wrong existing citations for overrides and leadership", () => {
+    const audit = structuredClone(evidence) as Evidence[];
+    audit.find(row => row.override)!.override!.sourceIds = ["liquipedia-champions-2025"];
+    expect(() => validateChampions(championsDataset, audit)).toThrow(/override/);
+    const data = structuredClone(championsDataset);
+    data.cards.find(card => card.historicalIgl)!.sourceIds = ["liquipedia-champions-2025", "vct-reference-dataset", "riot-vct-2023-awards"];
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/sources|citations/);
+  });
+
+  it("rejects changes to the reviewed IGL citation overlay", () => {
+    const sourceIds = overlays.leadership[0].sourceIds;
+    try {
+      overlays.leadership[0].sourceIds = ["liquipedia-champions-2025"];
+      expect(() => validateChampions(championsDataset, evidence as Evidence[])).toThrow(/overlays checksum/);
+    } finally { overlays.leadership[0].sourceIds = sourceIds; }
+  });
+
   it("accepts the full committed derivation", () => {
     expect(() => validateChampions(championsDataset, evidence as Evidence[])).not.toThrow();
   });

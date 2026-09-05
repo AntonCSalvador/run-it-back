@@ -17,7 +17,12 @@ Python 3.11+ with `duckdb==1.5.5` (`python -m pip install duckdb==1.5.5`) and
 the project's Node dependencies (`npm ci`). These Python dependencies and the
 database are not needed for ordinary offline builds.
 
-Run `npm run audit:data -- PATH/vct.duckdb --check`. The command first checks
+Run `npm run audit:data -- PATH/vct.duckdb --check`. Exactly one explicit mode,
+`--check` or `--extract`, is required. Missing mode or both flags fail during
+argument parsing, before opening the database or writing artifacts. `--check`
+never writes the extraction. `python scripts/test-champions-extraction.py`
+runs the standard-library-only CLI subprocess regression tests; `--help`
+also works without DuckDB installed. The audit command first checks
 the database SHA-256, then extracts all participation rows, player IDs/names,
 teams, map counts, team-index assignments, selected agents, raw metric values,
 performance coverage, clutch wins, and match stage/round/final-score inputs.
@@ -38,6 +43,34 @@ LF. Offline validation also pins the SHA-256 of its `JSON.stringify` encoding
 to evidence. `reviewed-overlays.json` is separately checksum-pinned: 80
 sourced event team names/IDs/abbreviations, one role exception, six leadership
 decisions. No raw metrics or trait numbers are manually overlaid.
+
+Identity and citation expectations also derive independently of the application
+JSON. A canonical player ID is `player-<raw playerId>` and its handle is the
+pinned raw player name. All event rows for the same identity currently agree;
+no alias overlay is needed. Card display handles must match their raw row, and
+card IDs/team/year mappings must match the raw participation plus reviewed
+event team mapping. Any future name correction or alias requires an explicit
+sourced review rather than accepting an edited application handle.
+
+Citation arrays have this exact ordered policy; unrelated extra sources,
+missing sources, duplicates, and substitutions with another existing source
+are rejected:
+
+- Teams: the pinned reviewed event mapping requires
+  `liquipedia-champions-<year>`, followed by `riot-champions-<year>` for
+  2022-2025. The explicit 2021 exception has only the Liquipedia event source;
+  this snapshot has no reviewed Riot 2021 cross-check source.
+- Cards and their evidence rows: `liquipedia-champions-<year>`, then
+  `vct-reference-dataset`, then the reviewed leadership citation only for
+  the six documented 2023 IGL cards (`riot-vct-2023-awards`).
+- Player identities: deduplicated union of the independently derived source
+  arrays for their historical cards, traversed by ascending event year,
+  preserving first occurrence. No citations come from unrelated appearances.
+- Clutch evidence: exactly `vct-reference-dataset`.
+- Role override and IGL citation arrays: exact reviewed checksum-pinned
+  overlays. Lakia's short-event rationale retains both the 2021 player
+  information source and VCT Reference; that extra role-review citation is
+  attached to the override, not silently added to every identity/card.
 
 For deliberate regeneration, `npm run audit:data -- PATH/vct.duckdb --extract`
 rewrites only the raw artifact after checking the DB hash. `npm run derive:data`

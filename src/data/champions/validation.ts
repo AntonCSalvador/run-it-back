@@ -21,13 +21,27 @@ export function validateChampions(dataset: GameDataset, evidence: Evidence[]): v
   if (createHash("sha256").update(JSON.stringify(reviewedOverlays)).digest("hex") !== "960a351382216a2359087835c53c4d506406134b6b42bc815e17f5a3288b1369") throw new Error("reviewed overlays checksum mismatch");
   const derived = deriveChampions(rawData as RawExtraction, reviewedOverlays as Overlays);
   const expectedCards = new Map(derived.map(card => [card.id, card]));
+  // Raw player names are identical across event rows in this pinned snapshot.
+  // Future aliases require an explicit reviewed overlay; never infer them from application JSON.
+  const expectedPlayers = new Map<string, { canonicalHandle: string; sourceIds: string[] }>();
+  for (const card of derived) {
+    const player = expectedPlayers.get(card.playerId);
+    if (player && player.canonicalHandle !== card.displayHandle) errors.push(`unreviewed identity alias ${card.playerId}`);
+    expectedPlayers.set(card.playerId, { canonicalHandle: card.displayHandle, sourceIds: [...new Set([...(player?.sourceIds ?? []), ...card.sourceIds])] });
+  }
   if (dataset.cards.length !== 404 || new Set(dataset.cards.map(card => card.id)).size !== 404 || dataset.players.length !== 239 || new Set(dataset.players.map(player => player.id)).size !== 239) errors.push("raw participation cardinality");
   const playerIds = new Set(rawData.cards.map(card => `player-${card.playerId}`));
   if (dataset.players.some(player => !playerIds.has(player.id))) errors.push("raw player identity");
+  for (const player of dataset.players) {
+    const expected = expectedPlayers.get(player.id);
+    if (!expected || player.canonicalHandle !== expected.canonicalHandle) errors.push(`raw identity handle ${player.id}`);
+    if (!expected || JSON.stringify(player.sourceIds) !== JSON.stringify(expected.sourceIds)) errors.push(`identity sources ${player.id}`);
+  }
   if (dataset.teams.length !== reviewedOverlays.teams.length || new Set(dataset.teams.map(team => team.id)).size !== 80) errors.push("raw teams");
   for (const expected of reviewedOverlays.teams) {
     const team = dataset.teams.find(team => team.id === expected.id);
     if (!team || team.year !== expected.year || team.name !== expected.name || team.shortName !== expected.shortName) errors.push(`reviewed team mapping ${expected.id}`);
+    if (!team || JSON.stringify(team.sourceIds) !== JSON.stringify(expected.sourceIds)) errors.push(`reviewed team sources ${expected.id}`);
   }
   const sourceIds = new Set(dataset.sources.map(source => source.id));
   for (const year of [2021, 2022, 2023, 2024, 2025]) {
@@ -42,6 +56,9 @@ export function validateChampions(dataset: GameDataset, evidence: Evidence[]): v
     const expected = expectedCards.get(card.id);
     if (!expected) { errors.push(`raw participation ${card.id}`); continue; }
     for (const key of ["playerId", "teamId", "year", "displayHandle", "mapsPlayed", "historicalIgl"] as const) if (card[key] !== expected[key]) errors.push(`raw ${key} ${card.id}`);
+    if (JSON.stringify(card.sourceIds) !== JSON.stringify(expected.sourceIds)) errors.push(`card sources ${card.id}`);
+    if (JSON.stringify(entry.sourceIds) !== JSON.stringify(expected.sourceIds)) errors.push(`evidence sources ${card.id}`);
+    if (JSON.stringify(entry.clutchSourceIds) !== JSON.stringify(["vct-reference-dataset"])) errors.push(`clutch evidence sources ${card.id}`);
     for (const trait of ["firepower", "utility", "survival", "clutch", "consistency", "leadership"] as const) if (card.traits[trait] !== expected.traits[trait]) errors.push(`derived trait ${trait} ${card.id}`);
     if (entry.clutchWins !== expected.clutchWins || entry.clutchCoverageMaps !== expected.performanceAvailableMaps || entry.performanceAvailableMaps !== expected.performanceAvailableMaps) errors.push(`raw clutch/coverage ${card.id}`);
     if (Object.entries(expected.agentClassMaps).some(([role, count]) => entry.agentClassMaps[role as Exclude<Role, "flex">] !== count)) errors.push(`raw class counts ${card.id}`);

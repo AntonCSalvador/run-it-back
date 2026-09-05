@@ -17,13 +17,14 @@ for (const year of [2021, 2022, 2023, 2024, 2025]) {
     card.traits = row.traits;
     card.eligibleRoles = row.eligibleRoles;
     card.historicalIgl = row.historicalIgl;
+    card.sourceIds = row.sourceIds;
   }
   writeFileSync(path, JSON.stringify(snapshot, null, 2) + "\n");
 }
 const evidence = derived.sort((a, b) => a.year - b.year || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).map(row => ({
   cardId: row.id, year: row.year, mapsPlayed: row.mapsPlayed, agentClassMaps: row.agentClassMaps,
   threshold: row.threshold, suggestedRoles: row.suggestedRoles, finalEligibleRoles: row.eligibleRoles,
-  override: row.override, sourceIds: [`liquipedia-champions-${row.year}`, "vct-reference-dataset", ...(overlays.leadership.find(leader => leader.cardId === row.id)?.sourceIds ?? [])],
+  override: row.override, sourceIds: row.sourceIds,
   clutchCoverageMaps: row.performanceAvailableMaps, clutchWins: row.clutchWins,
   clutchSourceIds: ["vct-reference-dataset"], performanceAvailableMaps: row.performanceAvailableMaps,
 }));

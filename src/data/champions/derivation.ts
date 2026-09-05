@@ -87,7 +87,10 @@ export function deriveChampions(raw: RawExtraction, overlays: Overlays) {
       clutchWins: card.clutchWins, progressionBonus: progression(raw, card.year, card.teamId), scores };
   });
   return rows.map(row => {
-    const historicalIgl = overlays.leadership.some(leader => leader.cardId === row.id);
+    const leadership = overlays.leadership.find(leader => leader.cardId === row.id);
+    const historicalIgl = Boolean(leadership);
+    // Citation policy is independently derived from the pinned event and reviewed IGL decision.
+    const sourceIds = [`liquipedia-champions-${row.year}`, "vct-reference-dataset", ...(leadership?.sourceIds ?? [])];
     const traits = { leadership: historicalIgl ? 75 : 50 } as Traits;
     for (const metric of METRICS) {
       const score = row.scores[metric];
@@ -99,6 +102,6 @@ export function deriveChampions(raw: RawExtraction, overlays: Overlays) {
       });
       traits[metric] = Math.max(0, Math.min(100, Math.round(mean(rolePercentiles) + row.progressionBonus)));
     }
-    return { ...row, historicalIgl, traits };
+    return { ...row, historicalIgl, traits, sourceIds };
   });
 }

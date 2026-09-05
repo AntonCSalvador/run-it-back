@@ -5,7 +5,6 @@ import json
 import subprocess
 from collections import defaultdict
 from pathlib import Path
-import duckdb
 
 ROOT = Path(__file__).resolve().parents[1]
 SHA256 = "faa56883676dec0b89426c0ba36c65acad232f77d2fbbb5e03878a9522d53792"
@@ -70,23 +69,25 @@ def extract(conn):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("database", type=Path)
-    parser.add_argument("--check", action="store_true", help="default: compare raw artifact and validate every derived field")
-    parser.add_argument("--extract", action="store_true", help="explicitly regenerate raw artifact; review checksum change")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true", help="compare raw artifact and validate every derived field without writing")
+    mode.add_argument("--extract", action="store_true", help="explicitly regenerate raw artifact; review checksum change")
     args = parser.parse_args()
     with args.database.open("rb") as stream:
         if hashlib.file_digest(stream, "sha256").hexdigest() != SHA256:
             raise SystemExit("pinned database SHA-256 mismatch")
+    import duckdb  # CLI help/mode validation and hash rejection need only the standard library.
     with duckdb.connect(str(args.database), read_only=True) as conn:
         raw = extract(conn)
     encoded = (json.dumps(raw, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf8")
-    if args.extract:
-        RAW.write_bytes(encoded)
-        print("raw SHA-256:", hashlib.sha256(encoded).hexdigest())
-    else:
+    if args.check:
         if RAW.read_bytes() != encoded:
             raise SystemExit("raw extraction differs from pinned database")
         subprocess.run(["node", str(ROOT / "node_modules/tsx/dist/cli.mjs"), "scripts/validate-data.mts"], cwd=ROOT, check=True)
         print("Full Champions audit: 404 player-event cards, 239 identities, 80 teams, 4,150 player-maps, 1,375 clutch events; all roles and traits verified")
+    elif args.extract:
+        RAW.write_bytes(encoded)
+        print("raw SHA-256:", hashlib.sha256(encoded).hexdigest())
 
 
 if __name__ == "__main__":
