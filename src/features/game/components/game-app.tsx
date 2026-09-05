@@ -3,13 +3,18 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { type GameDataset } from "../domain";
-import { toLineup } from "../draft";
+import { isLineupReady, selectableCards, toLineup } from "../draft";
+import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
 import { DAILY_RECORD, readRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
+import { TeamOffer } from "./team-offer";
+import { PlayerPicker } from "./player-picker";
+import { RosterBar } from "./roster-bar";
+import { IglPicker } from "./igl-picker";
 
 export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
 function browserStorage(): Storage | null {
@@ -85,6 +90,13 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   };
   const resetState = (): void => restartCurrentRun(() => setSimulationError(null), dispatch, invalidatePendingSeries);
   const restart = (): void => { resetState(); onRestart(); };
+  const teams = new Map(dataset.teams.map(team => [team.id, team]));
+  const cards = new Map(dataset.cards.map(card => [card.id, card]));
+  const rosterSlots: Partial<Record<Role, PlayerCard>> = Object.fromEntries(ROLES.flatMap(role => {
+    const card = state.phase !== "mode" ? cards.get(state.draft.slots[role] ?? "") : undefined;
+    return card ? [[role, card] as const] : [];
+  }));
+  const draftedCards = ROLES.flatMap(role => rosterSlots[role] ? [rosterSlots[role]] : []);
   return <main>
       <AppHeader mode={mode} streak={streak} onStart={value => {
         if (state.phase !== "mode") {
@@ -93,6 +105,10 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         dispatch(createStartAction(value, { now, freeSeedFactory }));
       }} onRestart={restart} />
       <p aria-live="polite">Current phase: {state.phase}</p>
+      {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer as [typeof offer[0], typeof offer[1], typeof offer[2]]} rerolls={state.draft.rerollsRemaining} onChoose={teamId => dispatch({ type: "choose-team", teamId })} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
+      {state.phase === "player" && (() => { const team = teams.get(state.draft.selectedTeamId ?? ""); return team ? <><PlayerPicker team={team} cards={selectableCards(state.draft, dataset)} onChoose={cardId => dispatch({ type: "choose-card", cardId })} onBack={() => dispatch({ type: "back-to-teams" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} /></> : <p role="alert">Selected team is unavailable.</p>; })()}
+      {state.phase === "role" && (() => { const card = cards.get(state.draft.pendingCardId ?? ""); const roles = card?.eligibleRoles.filter(role => !state.draft.slots[role]) ?? []; return <><section><h2>Assign {card?.displayHandle}</h2><div role="group" aria-label="Choose an open role">{roles.map(role => <button type="button" key={role} onClick={() => dispatch({ type: "assign-role", role })}>{role}</button>)}</div></section><RosterBar slots={rosterSlots} onMove={() => undefined} /></>; })()}
+      {state.phase === "lineup" && <><RosterBar slots={rosterSlots} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) dispatch({ type: "enter-tournament" }); }} /></>}
       {state.phase === "tournament" && <p>Current stage: {state.tournament.currentStage}</p>}
       {state.phase === "tournament" && <p>Completed series: {state.tournament.completedSeries.length}</p>}
       {state.phase === "tournament" && <button type="button" disabled={lockedStage === state.tournament.currentStage} onClick={playSeries}>Play current series</button>}
