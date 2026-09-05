@@ -20,6 +20,7 @@ function draftLineup(reduce: ReturnType<typeof createGameReducer>, started: Game
     const cardId = dataset.cards.find(card => card.teamId === teamId && card.eligibleRoles.includes(role) && !Object.values(playerDraft.slots).includes(card.id))?.id;
     if (!cardId) throw new Error(`No card for ${role}`);
     state = reduce(state, { type: "choose-card", cardId });
+    expect(state.phase).toBe("role");
     state = reduce(state, { type: "assign-role", role });
   }
   return state;
@@ -28,9 +29,11 @@ function draftLineup(reduce: ReturnType<typeof createGameReducer>, started: Game
 describe("game reducer", () => {
   it("moves through mode, draft phases, tournament, and results", () => {
     const reduce = createGameReducer({ dataset, now: () => new Date("2026-09-05T12:00:00Z") });
+    expect(initialGameState.phase).toBe("mode");
     let state = reduce(initialGameState, { type: "start", mode: "daily" });
     expect(state.phase).toBe("team");
     state = reduce(state, { type: "reroll" });
+    expect(state.phase).toBe("team");
     state = draftLineup(reduce, state);
     expect(state.phase).toBe("lineup");
     if (state.phase !== "lineup") throw new Error("Expected lineup");

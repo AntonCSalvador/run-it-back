@@ -1,8 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { ROLES, type Lineup } from "../domain";
+import type { GeneratedOpponent } from "../opponents";
+import type { SeriesResult } from "../tournament";
 import { ErrorBoundary } from "./error-boundary";
-import { GameApp } from "./game-app";
+import { GameApp, playCurrentTournamentSeries } from "./game-app";
+import type { GameState } from "../machine";
+import { startTournament } from "../tournament";
 
 describe("GameApp", () => {
   it("renders an accessible wordmark and mode controls immediately", () => {
@@ -20,5 +25,16 @@ describe("GameApp", () => {
     expect(screen.getByText(/something went wrong/i)).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Restart run" }));
     expect(window.localStorage.getItem("run-it-back:history:v1")).toBe("keep-me");
+  });
+
+  it("uses the injected gateway to resolve the current tournament series", () => {
+    const lineup: Lineup = { slots: ROLES.map(role => ({ role, cardId: `${role}-card` })), iglCardId: "smokes-card" };
+    const state: GameState = { phase: "tournament", mode: "daily", draft: { seed: "seed", offerIndex: 5, rerollsRemaining: 3, offeredTeamIds: [], selectedTeamId: null, pendingCardId: null, slots: Object.fromEntries(lineup.slots.map(slot => [slot.role, slot.cardId])), iglCardId: lineup.iglCardId }, tournament: startTournament("seed", lineup) };
+    const opponent = {} as GeneratedOpponent;
+    const series = {} as SeriesResult;
+    const gateway = { generateOpponent: vi.fn(() => opponent), playSeries: vi.fn(() => series), createHighlights: vi.fn() };
+    expect(playCurrentTournamentSeries(state, gateway)).toEqual({ type: "resolve-series", series });
+    expect(gateway.generateOpponent).toHaveBeenCalledWith("seed", "group", lineup);
+    expect(gateway.playSeries).toHaveBeenCalledWith("seed", "group", lineup, opponent);
   });
 });
