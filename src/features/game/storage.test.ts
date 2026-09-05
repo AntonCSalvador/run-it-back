@@ -75,6 +75,13 @@ describe("local run storage", () => {
     expect(readRecord(storage, HISTORY_RECORD)).toEqual({ value: { runs: [] }, recovered: false, persistent: true });
   });
 
+  it("removes only the requested null-mode cache record", () => {
+    writeRecord(null, HISTORY_RECORD, { runs: [freeRun("erase")] }); writeRecord(null, SETTINGS_RECORD, { soundEnabled: false });
+    expect(readRecord(null, HISTORY_RECORD).value.runs[0].roster[0].cardId).toBe("erase");
+    expect(removeRecord(null, HISTORY_RECORD)).toEqual({ value: { runs: [] }, recovered: false, persistent: false });
+    expect(readRecord(null, HISTORY_RECORD).value).toEqual({ runs: [] }); expect(readRecord(null, SETTINGS_RECORD).value).toEqual({ soundEnabled: false });
+  });
+
   it.each([
     ["duplicate roles", (run: FreePlayRun) => ({ ...run, roster: [...run.roster.slice(0, 4), { role: "sentinel" as const, cardId: "x" }] })],
     ["duplicate cards", (run: FreePlayRun) => ({ ...run, roster: run.roster.map((slot, index) => index === 1 ? { ...slot, cardId: run.roster[0].cardId } : slot) })],

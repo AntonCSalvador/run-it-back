@@ -88,7 +88,7 @@ export function writeRecord<T>(storage: Storage | null, record: RecordAdapter<T>
 
 export function removeRecord<T>(storage: Storage | null, record: RecordAdapter<T>): StorageResult<T> {
   const memory = memoryFor(storage);
-  if (!storage) return { value: copy(record.defaultValue), recovered: false, persistent: false };
+  if (!storage) { memory.delete(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: false }; }
   try { storage.removeItem(record.key); memory.delete(record.key); dirtyKeys(storage).delete(record.key); tombstoneKeys(storage).delete(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: true }; }
   catch { memory.set(record.key, copy(record.defaultValue)); dirtyKeys(storage).add(record.key); tombstoneKeys(storage).add(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: false }; }
 }
