@@ -4,6 +4,7 @@ out/
 coverage/
 playwright-report/
 test-results/
+.e2e-build-*/
 .vercel/
 .superpowers/
 .worktrees/

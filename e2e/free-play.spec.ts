@@ -48,11 +48,38 @@ test("the build-only seed query makes Free Play repeatable across isolated conte
   await context.close();
 });
 
-test("captures the complete Free Play journey", async ({ page }) => {
+test("captures the complete Free Play journey", async ({ page, isMobile }) => {
   const capture = async (name: string) => {
+    // Wait for real finite feedback to finish. Screenshot animation disabling
+    // alone can restart a class whose animationend handler is still pending.
+    await expect(page.locator(".fire-accent")).toHaveCount(0);
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-    await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio: 0.01 });
+    const bounds = await page.locator("main").evaluate(async element => {
+      const sample = () => {
+        const { x, y, width, height } = element.getBoundingClientRect();
+        return { x, y, width, height };
+      };
+      const frames = [sample()];
+      for (let frame = 0; frame < 2; frame += 1) {
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        frames.push(sample());
+      }
+      return frames;
+    });
+    expect(bounds[0].y, "main starts at document top before capture").toBe(0);
+    expect(bounds[1]).toEqual(bounds[0]);
+    expect(bounds[2]).toEqual(bounds[0]);
+    if (isMobile) {
+      // Use document coordinates; locator screenshots scroll the element again,
+      // introducing fractional crop offsets in Chromium's mobile emulation.
+      const { x, y, width, height } = bounds[0];
+      const clip = { x: Math.floor(x), y: 0, width: Math.ceil(x + width) - Math.floor(x), height: Math.ceil(y + height) };
+      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, clip, animations: "disabled", maxDiffPixelRatio: 0.01 });
+      expect(await page.evaluate(() => window.scrollY), "capture preserves document origin").toBe(0);
+    } else {
+      await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio: 0.01 });
+    }
   };
 
   await page.goto("/?e2e-seed=e2e-164");
