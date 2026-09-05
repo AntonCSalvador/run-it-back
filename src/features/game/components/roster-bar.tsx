@@ -5,7 +5,7 @@ import { ROLES, type PlayerCard, type Role } from "../domain";
 export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; onMove(cardId: string, role: Role): void }
 type RosterBarIntegrationProps = RosterBarProps & { canMove?: boolean };
 export function RosterBar({ slots, onMove, canMove = true }: RosterBarIntegrationProps) {
-  return <section aria-label="Roster" className="roster-bar">{ROLES.map(role => {
+  return <section aria-label="Roster" className="roster-bar scroll-track">{ROLES.map(role => {
     const card = slots[role];
     const compatibleTargets = card ? ROLES.filter(target => {
       const occupant = slots[target];

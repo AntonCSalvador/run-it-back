@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ROLES, type PlayerCard } from "../domain";
+import { useFireAccent } from "./use-fire-accent";
 import type { GameMode } from "../machine";
 import type { TournamentState } from "../tournament";
 
@@ -16,6 +17,7 @@ export interface ResultsViewProps {
 }
 
 export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, onRunAgain, onModeChange }: ResultsViewProps) {
+  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
   const [message, setMessage] = useState("");
   const [fallbackCount, setFallbackCount] = useState(0);
   const [sharing, setSharing] = useState(false);
@@ -70,7 +72,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
     }
   };
 
-  return <section aria-label="Results">
+  return <section aria-label="Results" className={tournament.status === "champion" ? fireClass : ""} onAnimationEnd={onAnimationEnd}>
     <h2>{tournament.status === "champion" ? "Champion" : "Eliminated"}</h2>
     <p>Stage reached: {tournament.completedSeries.at(-1)?.stage ?? tournament.currentStage}</p>
     <ol>{tournament.completedSeries.map(series => <li key={series.stage}>
@@ -83,7 +85,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
     })}</section>
     <p>Rerolls used: {rerollsUsed}</p>
     <button type="button" disabled={sharing} onClick={share}>Share</button>
-    <button type="button" onClick={onRunAgain}>Run again</button>
+    <button type="button" onClick={() => { trigger(); onRunAgain(); }}>Run again</button>
     <button type="button" aria-pressed={mode === "daily"} onClick={() => onModeChange("daily")}>Daily</button>
     <button type="button" aria-pressed={mode === "free-play"} onClick={() => onModeChange("free-play")}>Free Play</button>
     {fallbackCount > 0 && <textarea ref={field} readOnly value={shareText} aria-label="Share result" />}

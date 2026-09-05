@@ -1,28 +1,12 @@
-:root {
-  color-scheme: dark;
-  --canvas: #0f1113;
-  --text: #f4efe8;
-  --action: #ff4d3d;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--canvas);
-  color: var(--text);
-}
-
-button,
-input {
-  font: inherit;
-}
-
-:focus-visible {
-  outline: 3px solid var(--action);
-  outline-offset: 3px;
-}
+:root { color-scheme:dark; --canvas:#0f1113; --surface:#191c1f; --text:#f4efe8; --action:#ff4d3d; --heat:#ffbf3f; --border:#62686d; --muted:#b7b4ae; }
+* { box-sizing:border-box; } html,body { margin:0; min-height:100%; background:var(--canvas); color:var(--text); font-family:Arial,Helvetica,sans-serif; } body { overflow-x:hidden; }
+main { width:min(100%,80rem); margin-inline:auto; padding:1rem; } header,section,article { min-width:0; }
+header { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem 1rem; padding-bottom:1rem; border-bottom:1px solid var(--border); }
+h1,h2,h3 { margin:.35rem 0; line-height:1.15; } h1 { font-size:1.65rem; } h2 { font-size:1.25rem; } h3 { font-size:1rem; } p,li,span { overflow-wrap:anywhere; }
+button,input,textarea { font:inherit; } button { min-height:44px; border:1px solid var(--border); border-radius:4px; padding:.55rem .8rem; background:var(--surface); color:var(--text); cursor:pointer; } button:hover:not(:disabled),button[aria-pressed="true"] { border-color:var(--action); } button:disabled { cursor:not-allowed; opacity:.6; } :focus-visible { outline:3px solid var(--action); outline-offset:3px; }
+section { margin-block:1rem; } .team-offer__cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-flow:row; grid-auto-columns:auto; overflow:visible; gap:.75rem; margin-bottom:.75rem; } .team-card { min-height:9rem; display:grid; align-content:center; justify-items:center; gap:.5rem; border-radius:6px; text-align:center; } .media-mark { flex:none; } .media-mark__fallback { display:grid !important; place-items:center; background:#292d31; color:var(--heat); }
+.roster-bar { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-flow:row; grid-auto-columns:auto; overflow:visible; gap:.55rem; } .roster-bar > div,article,.role-chip,section > div > [data-testid^="player-card"] { border:1px solid var(--border); border-radius:6px; background:var(--surface); padding:.6rem; } .roster-bar strong { display:block; color:var(--heat); } .role-chip { display:inline-block; margin:.15rem; padding:.2rem .4rem; } .action-button { background:var(--action); color:#160b09; border-color:var(--action); font-weight:700; } [role="group"],[role="radiogroup"] { display:flex; flex-wrap:wrap; gap:.5rem; } section > div > [data-testid^="player-card"] button { width:100%; display:flex; align-items:center; gap:.5rem; text-align:left; } ol,ul { padding-left:1.4rem; } textarea { width:100%; min-height:8rem; background:var(--surface); color:var(--text); border:1px solid var(--border); }
+.scroll-track { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(15rem,82vw); overflow-x:auto; scroll-behavior:smooth; scroll-snap-type:x mandatory; overscroll-behavior-inline:contain; scrollbar-color:#62686d #191c1f; scrollbar-width:thin; -webkit-overflow-scrolling:touch; } .scroll-track > * { scroll-snap-align:start; }
+.fire-accent { position:relative; isolation:isolate; } .fire-accent::after { content:""; position:absolute; inset:-4px; z-index:-1; border:2px solid var(--heat); border-radius:inherit; background:linear-gradient(125deg,rgba(255,77,61,.45),rgba(255,191,63,.18)); box-shadow:0 0 16px var(--action); pointer-events:none; animation:ignite .65s ease-out 1; } @keyframes ignite { 0% { opacity:0; transform:scale(.92); } 35% { opacity:1; transform:scale(1.03); } 100% { opacity:0; transform:scale(1); } }
+@media (max-width:44rem) { main { padding:.75rem; } header { align-items:flex-start; } .team-offer__cards,.roster-bar { grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:minmax(15rem,82vw); overflow-x:auto; scroll-behavior:smooth; scroll-snap-type:x mandatory; overscroll-behavior-inline:contain; scrollbar-color:#62686d #191c1f; scrollbar-width:thin; -webkit-overflow-scrolling:touch; } .team-offer__cards > *,.roster-bar > * { scroll-snap-align:start; } }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:0.01ms !important; } .fire-accent { outline:3px solid var(--heat); outline-offset:3px; } }
