@@ -1,5 +1,4 @@
 import { ROLES, type GameDataset, type Lineup, type PlayerCard, type Role } from "./domain";
-import { SeededRng } from "./rng";
 
 const TRAIT_WEIGHTS = {
   firepower: 0.35,
@@ -76,7 +75,11 @@ export interface MapRoll {
   winner: "user" | "opponent";
 }
 
-export function rollMap(userStrength: number, opponentStrength: number, rng: SeededRng): MapRoll {
+export interface RandomSource {
+  next(): number;
+}
+
+export function rollMap(userStrength: number, opponentStrength: number, rng: RandomSource): MapRoll {
   const probability = mapWinProbability(finite(userStrength, "user strength") - finite(opponentStrength, "opponent strength"));
   const roll = rng.next();
   if (!Number.isFinite(roll) || roll < 0 || roll >= 1) throw new RangeError("rng.next() must return a value in [0, 1)");
