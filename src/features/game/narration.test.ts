@@ -17,7 +17,6 @@ function series(stage: "group" | "quarterfinal" | "semifinal" | "final", winners
   const maps = winners.map((winner, index) => map((["Ascent", "Bind", "Haven", "Split", "Icebox"] as const)[index], winner));
   return { stage, bestOf: stage === "final" ? 5 : 3, userWins: winners.filter(winner => winner === "user").length, opponentWins: winners.filter(winner => winner === "opponent").length, maps };
 }
-const participants = new Map(dataset.cards.map(card => [card.id, card.displayHandle]));
 const idsFor = (lineup: Lineup) => new Set(lineup.slots.map(slot => slot.cardId));
 function expectedText(kind: HighlightKind, actor: string, target?: string): string {
   switch (kind) {
