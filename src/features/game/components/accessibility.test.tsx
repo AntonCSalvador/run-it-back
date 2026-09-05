@@ -77,6 +77,16 @@ describe("broadcast accessibility", () => {
     expect(status).toHaveTextContent("Current phase: team");
   });
 
+  it("preserves static fire feedback for reduced motion", () => {
+    const css = readFileSync(join(process.cwd(), "src/app/globals.css"), "utf8");
+    const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
+    expect(reduced).toMatch(/scroll-behavior:auto !important/);
+    expect(reduced).toMatch(/transition-duration:0\.01ms !important/);
+    expect(reduced).toMatch(/\.fire-accent\s*\{[^}]*outline:3px solid var\(--heat\)[^}]*color:var\(--heat\)/);
+    expect(reduced).toMatch(/\.fire-accent::before,\.fire-accent::after\s*\{[^}]*animation:none !important[^}]*opacity:1/);
+    expect(reduced).not.toMatch(/\.fire-accent[^}]*display:none|\.fire-accent[^}]*opacity:0/);
+  });
+
   it("fires the persistent shell after player and tournament lock-ins", () => {
     vi.useFakeTimers();
     const dataset = parseDataset(minimalDataset);
