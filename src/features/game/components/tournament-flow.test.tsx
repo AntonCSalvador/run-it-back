@@ -4,7 +4,7 @@ import { ROLES } from "../domain";
 import type { GeneratedOpponent } from "../opponents";
 import { parseDataset } from "../schema";
 import { GameApp } from "./game-app";
-import { activeState, dataset, gatewayFixture, lineup, series, terminalState } from "./tournament-test-fixtures";
+import { activeState, dataset, gatewayFixture, lineup, runSeed, series, terminalState } from "./tournament-test-fixtures";
 
 const originalShare = Object.getOwnPropertyDescriptor(navigator, "share");
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
@@ -68,7 +68,7 @@ describe("tournament presentation", () => {
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     expect(button).toBeDisabled();
     await act(async () => { await Promise.resolve(); });
-    expect(gateway.playSeries).toHaveBeenCalledExactlyOnceWith("seed", "group", lineup, opponent);
+    expect(gateway.playSeries).toHaveBeenCalledExactlyOnceWith(runSeed, "group", lineup, opponent);
     expect(gateway.playSeries.mock.calls[0][3]).toBe(opponent);
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
     expect(screen.getByLabelText("Series score")).toHaveTextContent("2–1");
@@ -104,7 +104,7 @@ describe("tournament presentation", () => {
     const opponent = gateway.generateOpponent.mock.results[0].value;
     await play();
     const result = gateway.playSeries.mock.results[0].value;
-    expect(gateway.createHighlights).toHaveBeenCalledExactlyOnceWith("seed", result, lineup, opponent.lineup);
+    expect(gateway.createHighlights).toHaveBeenCalledExactlyOnceWith(runSeed, result, lineup, opponent.lineup);
     expect(gateway.createHighlights.mock.calls[0][1]).toBe(result);
     expect(gateway.createHighlights.mock.calls[0][3]).toBe(opponent.lineup);
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
@@ -177,6 +177,42 @@ describe("tournament presentation", () => {
 });
 
 describe("terminal GameApp integration", () => {
+  it("keeps the original Daily date when a run starts before midnight and finishes the next UTC day", async () => {
+    vi.useFakeTimers();
+    let currentDate = new Date("2026-09-04T23:59:59Z");
+    vi.setSystemTime(currentDate);
+    const now = vi.fn(() => currentDate);
+    const gateway = gatewayFixture();
+    gateway.playSeries.mockImplementation((_seed, stage) => series(stage, false));
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    render(<GameApp dataset={dataset} gateway={gateway} now={now} />);
+    fireEvent.click(screen.getByRole("button", { name: "Daily" }));
+    draftNewRun();
+    expect(gateway.generateOpponent.mock.calls[0][0]).toBe("run-it-back:daily:2026-09-04:v1");
+    currentDate = new Date("2026-09-05T00:00:01Z");
+    vi.setSystemTime(currentDate);
+    await play();
+    next();
+    expect(screen.getByRole("heading", { name: "Eliminated" })).toBeVisible();
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
+    expect(writeText).toHaveBeenCalledExactlyOnceWith("Run It Back — Daily 2026-09-04\nStage: group\nSeries: L 1-2\nRerolls: 0\nRun It Back");
+    expect(now).toHaveBeenCalledTimes(1);
+  });
+
+  it("recovers an invalid Daily seed through the error boundary without substituting today's date", () => {
+    const initial = terminalState(false);
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    render(<GameApp dataset={dataset} initialState={{ ...initial, tournament: { ...initial.tournament, seed: "invalid-daily-seed" } }} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong with this run.");
+    expect(screen.queryByRole("button", { name: "Share" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Restart run" }));
+    expect(screen.getByText("Current phase: mode")).toBeVisible();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(errors).toHaveBeenCalled();
+  });
+
   it.each([false, true])("projects a valid privacy-safe Daily share only after terminal Continue (champion %s)", async champion => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-09-05T12:00:00Z"));

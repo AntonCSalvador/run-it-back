@@ -9,6 +9,7 @@ import { parseDataset } from "../schema";
 import { advanceTournament, MAP_POOL, STAGE_ORDER, startTournament, validateSeries, type SeriesResult } from "../tournament";
 
 export const dataset = parseDataset(minimalDataset);
+export const runSeed = "run-it-back:daily:2026-09-05:v1";
 export const lineup: Lineup = {
   slots: ROLES.map((role, index) => ({ role, cardId: dataset.cards[index].id })),
   iglCardId: dataset.cards[0].id,
@@ -30,12 +31,12 @@ export function series(stage: Stage, won = true): SeriesResult {
 }
 
 export function activeState(stage: Stage = "group"): Extract<GameState, { phase: "tournament" }> {
-  let tournament = startTournament("seed", lineup);
+  let tournament = startTournament(runSeed, lineup);
   for (const previous of STAGE_ORDER.slice(0, STAGE_ORDER.indexOf(stage))) {
     tournament = advanceTournament({ ...tournament, completedSeries: [...tournament.completedSeries, series(previous)] });
   }
   return { phase: "tournament", mode: "daily", tournament,
-    draft: { seed: "seed", offerIndex: 5, rerollsRemaining: 2, offeredTeamIds: [], selectedTeamId: null,
+    draft: { seed: runSeed, offerIndex: 5, rerollsRemaining: 2, offeredTeamIds: [], selectedTeamId: null,
       pendingCardId: null, slots: Object.fromEntries(lineup.slots.map(slot => [slot.role, slot.cardId])), iglCardId: lineup.iglCardId } };
 }
 

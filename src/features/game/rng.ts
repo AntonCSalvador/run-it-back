@@ -66,3 +66,13 @@ export function scopedRng(seed: string, scope: string): SeededRng {
 export function dailySeed(date: Date): string {
   return `run-it-back:daily:${date.toISOString().slice(0, 10)}:v1`;
 }
+
+export function dailyDateFromSeed(seed: string): string {
+  const match = typeof seed === "string" ? /^run-it-back:daily:(\d{4}-\d{2}-\d{2}):v1$/.exec(seed) : null;
+  if (!match || match[0] !== seed) throw new Error("Invalid Daily seed");
+  const date = new Date(`${match[1]}T00:00:00Z`);
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== match[1]) {
+    throw new Error("Invalid Daily seed");
+  }
+  return match[1];
+}

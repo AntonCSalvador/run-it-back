@@ -21,6 +21,7 @@ import { ResultsView } from "./results-view";
 import type { Highlight } from "../narration";
 import type { SeriesResult } from "../tournament";
 import { formatDailyShare, formatFreePlayShare } from "../share";
+import { dailyDateFromSeed } from "../rng";
 
 export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
 function browserStorage(): Storage | null {
@@ -132,7 +133,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   };
   const resultShare = state.phase === "results" ? (() => {
     const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage, series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: state.tournament.userLineup.slots };
-    return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: run.completedAtUtc }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
+    return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(state.tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
   })() : "";
   return <main>
       <AppHeader mode={mode} streak={streak} onStart={value => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dailySeed, scopedRng, SeededRng } from "./rng";
+import { dailyDateFromSeed, dailySeed, scopedRng, SeededRng } from "./rng";
 
 describe("seeded randomness", () => {
   it("produces equal sequences for equal seed and scope", () => {
@@ -72,6 +72,22 @@ describe("seeded randomness", () => {
 
   it("formats a daily seed in UTC", () => {
     expect(dailySeed(new Date("2026-09-04T23:59:00Z"))).toBe("run-it-back:daily:2026-09-04:v1");
+  });
+
+  it.each(["2026-09-04", "2024-02-29", "2000-02-29"])("extracts the exact UTC date from a canonical Daily seed for %s", date => {
+    expect(dailyDateFromSeed(dailySeed(new Date(`${date}T23:59:59Z`)))).toBe(date);
+  });
+
+  it.each([
+    "seed", "run-it-back:free:2026-09-04:v1", "other:daily:2026-09-04:v1",
+    "run-it-back:daily:2026-09-04:v2", "run-it-back:daily:2026-09-04",
+    "run-it-back:daily:2026-9-4:v1", "run-it-back:daily:2026-09-04:v1\n",
+    "run-it-back:daily:2026-09-04:v1:extra", " run-it-back:daily:2026-09-04:v1",
+    "run-it-back:daily:2026-02-29:v1", "run-it-back:daily:1900-02-29:v1",
+    "run-it-back:daily:2026-04-31:v1", "run-it-back:daily:2026-13-01:v1",
+    "run-it-back:daily:2026-00-01:v1", "run-it-back:daily:2026-01-00:v1",
+  ])("rejects a malformed or impossible Daily seed: %s", seed => {
+    expect(() => dailyDateFromSeed(seed)).toThrow("Invalid Daily seed");
   });
 
   it("rejects invalid integer limits", () => {
