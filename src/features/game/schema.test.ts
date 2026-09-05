@@ -21,9 +21,11 @@ describe("game dataset schema", () => {
   it("rejects invalid role", () => rejects(d => d.cards[0].eligibleRoles = ["controller"], "Invalid option"));
   it("rejects missing player FK", () => rejects(d => Object.assign(d.cards[0], { playerId: "missing" }), "player ID"));
   it("rejects missing team FK", () => rejects(d => Object.assign(d.cards[0], { teamId: "missing" }), "team ID"));
-  it("rejects duplicate source, team, and player IDs", () => {
+  it("rejects duplicate source IDs", () => {
     const data = structuredClone(minimalDataset) as unknown as { sources: unknown[]; teams: unknown[]; players: unknown[] };
-    data.sources.push(data.sources[0]); data.teams.push(data.teams[0]); data.players.push(data.players[0]);
+    data.sources.push(data.sources[0]);
     expect(() => parseDataset(data)).toThrow("duplicate sources id");
   });
+  it("rejects duplicate team IDs", () => { const data = structuredClone(minimalDataset) as unknown as { teams: unknown[] }; data.teams.push(data.teams[0]); expect(() => parseDataset(data)).toThrow("duplicate teams id"); });
+  it("rejects duplicate player IDs", () => { const data = structuredClone(minimalDataset) as unknown as { players: unknown[] }; data.players.push(data.players[0]); expect(() => parseDataset(data)).toThrow("duplicate players id"); });
 });
