@@ -19,6 +19,6 @@ export function MediaMark({ src, alt, label }: { src: string | null; alt: string
     // Public game data points at local static assets; this native image enables a same-sized error fallback.
     // eslint-disable-next-line @next/next/no-img-element
     ? <img className="media-mark__image" style={fill} src={safeSrc} alt={alt} onError={() => setFailedSrc(safeSrc)} />
-    : <span className="media-mark__fallback" style={fill} role="img" aria-label={alt}>{text}</span>}
+    : alt ? <span className="media-mark__fallback" style={fill} role="img" aria-label={alt}>{text}</span> : <span className="media-mark__fallback" style={fill} aria-hidden="true">{text}</span>}
   </span>;
 }

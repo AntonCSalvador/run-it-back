@@ -11,7 +11,7 @@ export function RosterBar({ slots, onMove, canMove = true }: RosterBarIntegratio
       const occupant = slots[target];
       return target !== role && card.eligibleRoles.includes(target) && (!occupant || occupant.eligibleRoles.includes(role));
     }) : [];
-    const identity = card ? `${card.displayHandle} ${card.year} ${card.teamId}` : "";
+    const identity = card ? `${card.displayHandle} ${card.year}` : "";
     return <div key={role}><strong>{role}</strong>{card && <><span>{identity}</span>{canMove && <div aria-label={`Move ${identity}`}>{compatibleTargets.map(target => <button type="button" key={target} onClick={() => onMove(card.id, target)}>Move {identity} to {target}</button>)}</div>}</>}</div>;
   })}</section>;
 }

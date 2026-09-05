@@ -7,6 +7,7 @@ import { parseDataset } from "../schema";
 import { assetUrl } from "../asset-url";
 import { GameApp } from "./game-app";
 import { MediaMark } from "./media-mark";
+import { TeamOffer } from "./team-offer";
 
 const dataset = parseDataset(minimalDataset);
 const flexibleDataset = parseDataset({
@@ -61,10 +62,8 @@ describe("draft flow", () => {
   });
 
   it("keeps image fallback accessible and sized after an image error", async () => {
-    const user = userEvent.setup();
-    render(<GameApp dataset={{ ...dataset, teams: dataset.teams.map((team, index) => index ? team : { ...team, logo: "/assets/teams/loud.webp" }) }} />);
-    await user.click(screen.getByRole("button", { name: "Daily" }));
-    const image = screen.getByRole("img", { name: /LOUD 2022 logo/ });
+    render(<MediaMark src="/assets/teams/loud.webp" alt="LOUD 2022 logo" label="LOUD" />);
+    const image = screen.getByRole("img", { name: "LOUD 2022 logo" });
     const wrapper = image.parentElement as HTMLElement;
     expect(wrapper.style.display).toBe("inline-flex");
     expect(wrapper.style.width).toBe("48px");
@@ -96,6 +95,14 @@ describe("draft flow", () => {
     expect(screen.getByRole("img", { name: "player portrait" })).toHaveAttribute("src", "/assets/players/new.webp");
     expect(screen.getByRole("img", { name: "player portrait" })).toHaveStyle({ objectFit: "contain" });
   });
+
+  it("keeps decorative fallback media out of choice accessibility", () => {
+    const choose = vi.fn();
+    render(<TeamOffer teams={dataset.teams.slice(0, 3)} rerolls={3} canReroll={false} onChoose={choose} onReroll={vi.fn()} />);
+    const choice = screen.getByRole("button", { name: `${dataset.teams[0].name} ${dataset.teams[0].year}` });
+    expect(within(choice).queryByRole("img")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Reroll teams" })).toBeDisabled();
+  });
 });
 
 describe("assetUrl", () => {
@@ -110,4 +117,10 @@ describe("assetUrl", () => {
   });
   it.each(["/assets/%2e%2e/secret", "/assets/%252e%252e/secret", "/assets/a%2fb", "/assets/a%5cb", "/assets/a?x", "/assets/a#x"])("rejects hostile asset %s", path => expect(assetUrl(path)).toBeNull());
   it.each(["https://host", "//host", "/base/../x", "/base%2fhost"])("rejects hostile base %s", base => { vi.stubEnv("NEXT_PUBLIC_BASE_PATH", base); expect(assetUrl("/assets/a.webp")).toBeNull(); });
+  it("does not confuse /assets base with an already-prefixed asset", () => {
+    vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "/assets");
+    expect(assetUrl("/assets/logo.webp")).toBe("/assets/assets/logo.webp");
+    expect(assetUrl("/assets/assets/logo.webp")).toBe("/assets/assets/logo.webp");
+  });
+  it.each(["/assets/%00x", "/assets/a%3fx", "/assets/a%23x", "/assets/%253fx"])("rejects decoded hostile asset %s", path => expect(assetUrl(path)).toBeNull());
 });
