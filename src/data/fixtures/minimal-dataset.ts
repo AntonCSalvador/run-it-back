@@ -1,11 +1,11 @@
-export const minimalDataset = {
-  version: 1,
-  sources: [{ id: "source-1", url: "https://example.test/event", retrievedAt: "2026-09-04", usage: "facts" }],
-  teams: [{ id: "loud-2022", name: "LOUD", shortName: "LOUD", year: 2022, logo: null, sourceIds: ["source-1"] }],
-  players: [{ id: "aspas", canonicalHandle: "aspas", portrait: null, sourceIds: ["source-1"] }],
-  cards: [{
-    id: "aspas-loud-2022", playerId: "aspas", teamId: "loud-2022", year: 2022, displayHandle: "aspas",
-    mapsPlayed: 16, eligibleRoles: ["duelist"], historicalIgl: false,
-    traits: { firepower: 91, utility: 61, survival: 84, clutch: 87, consistency: 89, leadership: 35 }, sourceIds: ["source-1"]
-  }]
-} as const;
+const source = { id: "source-1", url: "https://example.test/event", retrievedAt: "2026-09-04", usage: "facts" as const };
+const teamNames = ["LOUD", "Fnatic", "PRX", "DRX", "Sentinels", "Paper Rex"] as const;
+const teams = teamNames.map((name, index) => ({ id: `team-${index + 1}-2022`, name, shortName: name, year: 2022 as const, logo: null, sourceIds: [source.id] }));
+const roles = [["smokes"], ["duelist"], ["initiator"], ["sentinel"], ["flex", "duelist"]] as const;
+const players = Array.from({ length: 30 }, (_, index) => ({ id: `player-${index + 1}`, canonicalHandle: `player${index + 1}`, portrait: null, sourceIds: [source.id] }));
+const cards = teams.flatMap((team, teamIndex) => Array.from({ length: 5 }, (_, slot) => {
+  const index = teamIndex * 5 + slot;
+  const playerId = index === 0 || index === 5 ? "aspas" : players[index].id;
+  return { id: `${playerId}-${team.id}`, playerId, teamId: team.id, year: 2022 as const, displayHandle: playerId, mapsPlayed: 16, eligibleRoles: [...roles[slot]], historicalIgl: slot === 0, traits: { firepower: 80, utility: 70, survival: 75, clutch: 70, consistency: 80, leadership: slot === 0 ? 80 : 40 }, sourceIds: [source.id] };
+}));
+export const minimalDataset = { version: 1, sources: [source], teams, players: [...players, { id: "aspas", canonicalHandle: "aspas", portrait: null, sourceIds: [source.id] }], cards };
