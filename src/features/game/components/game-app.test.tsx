@@ -51,7 +51,7 @@ describe("GameApp", () => {
     try {
       render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} storage={storage} />);
       act(() => {
-        fireEvent.click(screen.getByRole("button", { name: "Play current series" }));
+        fireEvent.click(screen.getByRole("button", { name: "Play series" }));
         fireEvent.click(screen.getByRole("button", { name: "Reset current run" }));
       });
       expect(screen.getByText("Current phase: mode")).toBeVisible();
@@ -71,7 +71,7 @@ describe("GameApp", () => {
     try {
       const view = render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
       act(() => {
-        fireEvent.click(screen.getByRole("button", { name: "Play current series" }));
+        fireEvent.click(screen.getByRole("button", { name: "Play series" }));
         view.unmount();
       });
       await act(async () => { await Promise.resolve(); });
@@ -125,21 +125,23 @@ describe("GameApp", () => {
   it("locks the actual series control and applies only one group result for two same-tick clicks", async () => {
     const gateway = gatewayFixture();
     render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
-    const button = screen.getByRole("button", { name: "Play current series" });
+    const button = screen.getByRole("button", { name: "Play series" });
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     expect(button).toBeDisabled();
     await act(async () => { await Promise.resolve(); });
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
     expect(gateway.playSeries).toHaveBeenCalledTimes(1);
     expect(gateway.generateOpponent).toHaveBeenCalledWith("seed", "group", lineup);
-    expect(screen.getByText("Current stage: quarterfinal")).toBeVisible();
-    expect(screen.getByText("Completed series: 1")).toBeVisible();
-    expect(button).toBeEnabled();
-    await userEvent.setup().click(button);
+    expect(screen.getByRole("heading", { name: "Group stage" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeVisible();
+    expect(button).not.toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
     expect(gateway.generateOpponent).toHaveBeenCalledTimes(2);
     expect(gateway.generateOpponent).toHaveBeenLastCalledWith("seed", "quarterfinal", lineup);
-    expect(screen.getByText("Current stage: semifinal")).toBeVisible();
-    expect(screen.getByText("Completed series: 2")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Quarterfinal" })).toBeVisible();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Play series" }));
+    await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
+    expect(screen.getByRole("heading", { name: "Semifinal" })).toBeVisible();
   });
 
   it("starts the selected mode when switching from an active run", async () => {
@@ -157,7 +159,8 @@ describe("GameApp", () => {
     const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
     try {
       render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
-      await userEvent.setup().click(screen.getByRole("button", { name: "Play current series" }));
+      await userEvent.setup().click(screen.getByRole("button", { name: "Play series" }));
+      await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
       expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
       await userEvent.setup().click(screen.getByRole("button", { name: "Restart run" }));
       expect(screen.getByText("Current phase: mode")).toBeVisible();
@@ -170,8 +173,8 @@ describe("GameApp", () => {
     const gateway = gatewayFixture();
     gateway[method].mockImplementation(() => { throw new Error("simulation failed"); });
     render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} storage={storage} />);
-    await user.click(screen.getByRole("button", { name: "Play current series" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Unable to play the current series");
+    if (method === "generateOpponent") expect(screen.getByRole("alert")).toHaveTextContent("No valid opponent is available");
+    else { await user.click(screen.getByRole("button", { name: "Play series" })); expect(screen.getByRole("alert")).toHaveTextContent("Unable to play the current series"); }
     await user.click(screen.getByRole("button", { name: "Reset current run" }));
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(screen.getByText("Current phase: mode")).toBeVisible();
@@ -184,11 +187,12 @@ describe("GameApp", () => {
   it("resets an active run immediately when the dataset identity changes", () => {
     const gateway = gatewayFixture();
     const view = render(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
-    expect(screen.getByRole("button", { name: "Play current series" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Play series" })).toBeVisible();
+    expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
     view.rerender(<GameApp dataset={parseDataset(minimalDataset)} initialState={activeState} gateway={gateway} />);
     expect(screen.getByText("Current phase: mode")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Play current series" })).not.toBeInTheDocument();
-    expect(gateway.generateOpponent).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Play series" })).not.toBeInTheDocument();
+    expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
     view.rerender(<GameApp dataset={dataset} initialState={activeState} gateway={gateway} />);
     expect(screen.getByText("Current phase: mode")).toBeVisible();
   });
