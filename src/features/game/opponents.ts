@@ -4,6 +4,8 @@ import { scopedRng, type SeededRng } from "./rng";
 
 export type Stage = "group" | "quarterfinal" | "semifinal" | "final";
 
+export const OPPONENT_ATTEMPT_LIMIT = 250;
+
 const STAGE_TARGETS: Record<Stage, readonly [number, number]> = {
   group: [50, 62],
   quarterfinal: [58, 70],
@@ -77,7 +79,7 @@ export function generateOpponent(seed: string, stage: Stage, userLineup: Lineup,
   const target = STAGE_TARGETS[stage];
   let closest: Candidate | undefined;
 
-  for (let attempt = 0; attempt < 250; attempt += 1) {
+  for (let attempt = 0; attempt < OPPONENT_ATTEMPT_LIMIT; attempt += 1) {
     const lineup = findLineup(candidates, scopedRng(seed, `opponent:${stage}:${attempt}`));
     if (!lineup) continue;
     const candidate = { lineup, strength: lineupStrength(lineup, dataset) };

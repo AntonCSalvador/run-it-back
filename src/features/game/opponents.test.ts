@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { GameDataset, Lineup, PlayerCard, Role } from "./domain";
 import { lineupStrength } from "./rating";
-import { generateOpponent } from "./opponents";
+import { generateOpponent, OPPONENT_ATTEMPT_LIMIT } from "./opponents";
 import { minimalDataset } from "../../data/fixtures/minimal-dataset";
 import { parseDataset } from "./schema";
 
@@ -104,6 +104,10 @@ describe("generateOpponent", () => {
     expect(first.strength).toBeLessThan(74);
   });
 
+  test("names the exact 250-attempt boundary used for bounded search", () => {
+    expect(OPPONENT_ATTEMPT_LIMIT).toBe(250);
+  });
+
   test("has strictly increasing average strength from groups through finals over deterministic seeds", () => {
     const data = dataset(); const user = userLineup(data);
     const stages = ["group", "quarterfinal", "semifinal", "final"] as const;
@@ -123,22 +127,30 @@ describe("generateOpponent", () => {
     expect(averages[2]).toBeLessThan(averages[3]);
   }, 15_000);
 
-  test("chooses the highest-leadership IGL and deterministically breaks tied leaders", () => {
+  test("chooses the unique highest-leadership card as IGL", () => {
     const data = dataset([60, 64]); const user = userLineup(data);
-    data.cards.forEach(card => { card.traits.leadership = card.id.endsWith("-64") ? 95 : 10; });
+    data.cards.forEach(card => { card.traits.leadership = 10; });
+    const unique = data.cards.find(card => card.id === "sentinel-64")!;
+    unique.traits.leadership = 99;
     const high = generateOpponent("leaders", "group", user, data);
-    expect(data.cards.find(card => card.id === high.lineup.iglCardId)?.traits.leadership).toBe(95);
+    expect(high.lineup.iglCardId).toBe(unique.id);
+  });
+
+  test("chooses a tied maximum IGL deterministically", () => {
+    const data = dataset([60, 64]); const user = userLineup(data);
     data.cards.forEach(card => { card.traits.leadership = card.id.endsWith("-64") ? 95 : 10; });
     const tied = generateOpponent("leaders", "group", user, data);
     expect(tied).toEqual(generateOpponent("leaders", "group", user, data));
-    expect(data.cards.find(card => card.id === tied.lineup.iglCardId)?.traits.leadership).toBe(95);
+    const tiedIds = tied.lineup.slots.map(slot => slot.cardId).filter(id => data.cards.find(card => card.id === id)?.traits.leadership === 95);
+    expect(tiedIds).toHaveLength(5);
+    expect(tiedIds).toContain(tied.lineup.iglCardId);
   });
 
   test("backtracks through a constrained multi-role pool instead of dead-ending greedily", () => {
     const data = dataset([40, 60]);
     const multi = data.cards.find(card => card.id === "smokes-60")!;
     const spare = { ...multi, id: "smokes-spare", playerId: "smokes-spare", eligibleRoles: ["smokes"] as Role[] };
-    data.cards = data.cards.map(card => card.id === "smokes-60" ? { ...card, eligibleRoles: ["smokes", "duelist"] } : card.id === "duelist-60" ? { ...card, eligibleRoles: ["initiator"] } : card).concat(spare);
+    data.cards = data.cards.map((card): PlayerCard => card.id === "smokes-60" ? { ...card, eligibleRoles: ["smokes", "duelist"] } : card.id === "duelist-60" ? { ...card, eligibleRoles: ["initiator"] } : card).concat(spare);
     data.players.push({ id: spare.playerId, canonicalHandle: spare.playerId, portrait: null, sourceIds: ["source"] });
     const user: Lineup = { slots: roles.map(role => ({ role, cardId: `${role}-40` })), iglCardId: "smokes-40" };
     const opponent = generateOpponent("backtrack", "group", user, data);
