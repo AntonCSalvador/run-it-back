@@ -1,9 +1,3 @@
-export default function Home() {
-  return (
-    <main>
-      <h1>Run It Back</h1>
-      <button type="button">Daily</button>
-      <button type="button">Free Play</button>
-    </main>
-  );
-}
+import { GameApp } from "@/features/game/components/game-app";
+
+export default function Home() { return <GameApp />; }
