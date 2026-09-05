@@ -32,7 +32,7 @@ Implementation order:
 14. Complete 2021-2025 historical dataset and assets
 15. Browser journeys and visual verification
 16. Static deployment automation
-17. GitHub/Vercel publication and release verification
+17. Release-candidate verification, integration, publication, and live checks
 
 ## File Map
 
@@ -1261,23 +1261,51 @@ git add .github scripts/smoke-static.mts package.json README.md
 git commit -m "ci: deploy static builds"
 ```
 
-## Task 17: Publish Repository and Production MVP
+## Task 17: Verify, Integrate, and Publish Production MVP
 
 **Files:**
-- Modify only if deployment reveals a verified issue
+- Modify only when final review or deployment exposes a verified issue
 
-- [ ] **Step 1: Rename default branch**
+- [ ] **Step 1: Verify feature-branch release candidate**
 
 Run:
+
+```powershell
+git status --short --branch
+npm run verify
+npm run test:e2e
+git log --oneline -10
+```
+
+Expected: all checks PASS, worktree clean, and every implementation task has a focused commit on `feature/run-it-back-mvp`.
+
+- [ ] **Step 2: Run final independent review**
+
+Dispatch one fresh final reviewer with the approved design, complete implementation diff, and verification output. Fix every spec or quality finding through the responsible implementation agent, rerun the relevant tests, then rerun final review until approved.
+
+- [ ] **Step 3: Integrate through branch-finishing workflow**
+
+Invoke `superpowers:finishing-a-development-branch`. Present its integration choices to the user. Do not publish from `feature/run-it-back-mvp`. After the user chooses local merge or pull-request integration and the primary branch contains the approved work, switch execution to the primary repository checkout and verify:
+
+```powershell
+git status --short --branch
+git log --oneline -5
+```
+
+Expected: clean integrated primary branch containing the MVP commits. Remove the feature worktree only through the finishing skill after integration is confirmed.
+
+- [ ] **Step 4: Rename integrated primary branch**
+
+Run from the primary checkout, not the feature worktree:
 
 ```powershell
 git branch -M main
 git status --short --branch
 ```
 
-Expected: clean `main` branch.
+Expected: clean `main` branch containing design, plan, and MVP implementation.
 
-- [ ] **Step 2: Authenticate external CLIs**
+- [ ] **Step 5: Authenticate external CLIs**
 
 Run:
 
@@ -1288,7 +1316,7 @@ vercel whoami
 
 Expected: authenticated GitHub and Vercel users. If either is unauthenticated, stop and ask user to complete that provider's interactive login; do not request tokens in chat.
 
-- [ ] **Step 3: Create and push GitHub repository**
+- [ ] **Step 6: Create and push GitHub repository**
 
 Run:
 
@@ -1299,7 +1327,7 @@ gh repo view --web
 
 Expected: public repository created, `origin` set, `main` pushed. If user chooses private visibility during execution, change `--public` to `--private` and note that Pages availability depends on account plan.
 
-- [ ] **Step 4: Enable GitHub Pages Actions source**
+- [ ] **Step 7: Enable GitHub Pages Actions source**
 
 Run:
 
@@ -1310,7 +1338,7 @@ gh run watch --workflow pages.yml --exit-status
 
 Expected: Pages workflow succeeds and returns project URL. If Pages already exists, use the corresponding PUT endpoint to set `build_type=workflow`.
 
-- [ ] **Step 5: Link and deploy Vercel**
+- [ ] **Step 8: Link and deploy Vercel**
 
 Run:
 
@@ -1321,11 +1349,11 @@ vercel --prod
 
 Expected: production deployment URL. Connect GitHub repository in Vercel dashboard so future `main` pushes deploy production and pull requests receive previews.
 
-- [ ] **Step 6: Perform production smoke tests**
+- [ ] **Step 9: Perform production smoke tests**
 
 Against both live URLs, verify HTTP 200, first screen, one complete Free Play run, local history after reload, asset fallback, mobile viewport, and reduced motion. Verify no source map or visible UI reveals hidden rating labels. Client logic remains inspectable by design; README warning must be present.
 
-- [ ] **Step 7: Run final local evidence suite**
+- [ ] **Step 10: Confirm local and remote state**
 
 Run:
 
@@ -1336,9 +1364,9 @@ git status --short --branch
 git log --oneline -10
 ```
 
-Expected: all tests PASS, repository clean, local `main` tracks `origin/main`.
+Expected: all tests PASS, repository clean, local `main` tracks `origin/main`, and both live URLs remain healthy.
 
-- [ ] **Step 8: Tag MVP release**
+- [ ] **Step 11: Tag MVP release**
 
 Run:
 
