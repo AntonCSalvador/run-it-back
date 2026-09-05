@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import type { GameDataset, Lineup, PlayerCard, Role } from "./domain";
-import { generateOpponent, type GeneratedOpponent, type Stage } from "./opponents";
+import { type GeneratedOpponent, type Stage } from "./opponents";
 import { lineupStrength } from "./rating";
-import { advanceTournament, MAP_POOL, playCurrentSeries, playSeries, startTournament } from "./tournament";
+import { advanceTournament, MAP_POOL, playCurrentSeries, playSeries, STAGE_ORDER, startTournament } from "./tournament";
 
 const roles: readonly Role[] = ["smokes", "duelist", "initiator", "sentinel", "flex"];
 const traits = (rating: number): PlayerCard["traits"] => ({ firepower: rating, utility: rating, survival: rating, clutch: rating, consistency: rating, leadership: rating });
@@ -62,5 +62,52 @@ describe("tournament simulation", () => {
 
   test("rejects stage or opponent mismatches and terminal advances cleanly", () => {
     const data = dataset(); const state = startTournament("bad", lineup(data)); expect(() => playCurrentSeries(state, data, opponent(data, "quarterfinal"))).toThrow(/stage/i); expect(() => playSeries("bad", "group", lineup(data), opponent(data, "quarterfinal"), data)).toThrow(/stage/i); expect(() => advanceTournament({ ...state, status: "champion" })).toThrow(/terminal/i);
+  });
+
+  test("rejects corrupt opponent strength and invalid opponent lineups", () => {
+    const data = dataset(); const foe = opponent(data, "group");
+    expect(() => playSeries("bad-strength", "group", lineup(data), { ...foe, strength: Number.NaN }, data)).toThrow(/strength/i);
+    expect(() => playSeries("bad-lineup", "group", lineup(data), { ...foe, lineup: { ...foe.lineup, slots: foe.lineup.slots.slice(0, 4) } }, data)).toThrow(/lineup/i);
+  });
+
+  test("rejects replayed, double-advanced, and terminal tournament states", () => {
+    const data = dataset(); const state = startTournament("state-guards", lineup(data)); const played = playCurrentSeries(state, data, opponent(data, "group"));
+    expect(() => playCurrentSeries(played, data, opponent(data, "group"))).toThrow(/resolved/i);
+    const advanced = advanceTournament(played);
+    expect(() => advanceTournament(advanced)).toThrow(/terminal/i);
+    expect(() => playCurrentSeries({ ...advanced, status: "champion" }, data, opponent(data, "quarterfinal"))).toThrow(/terminal/i);
+  });
+
+  test("rejects forged serialized series at the advancement boundary", () => {
+    const data = dataset(); const played = playCurrentSeries(startTournament("forged", lineup(data)), data, opponent(data, "group")); const valid = played.completedSeries[0];
+    const forged = (series: unknown) => ({ ...played, completedSeries: [series] } as never);
+    expect(() => advanceTournament(forged({ ...valid, userWins: 0, opponentWins: 0 }))).toThrow(/series|wins/i);
+    expect(() => advanceTournament(forged({ ...valid, stage: "final", bestOf: 5 }))).toThrow(/stage/i);
+    expect(() => advanceTournament(forged({ ...valid, bestOf: 5 }))).toThrow(/best/i);
+    expect(() => advanceTournament(forged({ ...valid, maps: valid.maps.slice(1) }))).toThrow(/maps|wins/i);
+    expect(() => advanceTournament(forged({ ...valid, maps: [{ ...valid.maps[0], winner: valid.maps[0].winner === "user" ? "opponent" : "user" }, ...valid.maps.slice(1)] }))).toThrow(/wins|winner/i);
+    expect(() => advanceTournament(forged({ ...valid, maps: [{ ...valid.maps[0], userScore: 13, opponentScore: 13 }, ...valid.maps.slice(1)] }))).toThrow(/score/i);
+    expect(() => advanceTournament(forged({ ...valid, maps: [{ ...valid.maps[0], probability: 2 }, ...valid.maps.slice(1)] }))).toThrow(/probability/i);
+    expect(() => advanceTournament(forged({ ...valid, maps: [{ ...valid.maps[0], roll: 1 }, ...valid.maps.slice(1)] }))).toThrow(/roll/i);
+  });
+
+  test("freezes stage order and deep tournament snapshots", () => {
+    const data = dataset(); const user = lineup(data, 85); const foe = opponent(data, "group", 45); const seed = Array.from({ length: 100 }, (_, index) => `frozen-${index}`).find(candidate => playSeries(candidate, "group", user, foe, data).userWins === 2)!; const initial = startTournament(seed, user);
+    expect(Object.isFrozen(STAGE_ORDER)).toBe(true); expect(() => ((STAGE_ORDER as unknown as Stage[])[0] = "final")).toThrow();
+    expect(Object.isFrozen(initial)).toBe(true); expect(Object.isFrozen(initial.userLineup)).toBe(true); expect(Object.isFrozen(initial.userLineup.slots)).toBe(true);
+    expect(() => ((initial.userLineup.slots as unknown as { cardId: string }[])[0].cardId = "changed")).toThrow();
+    const played = playCurrentSeries(initial, data, foe);
+    expect(Object.isFrozen(played.completedSeries)).toBe(true); expect(Object.isFrozen(played.completedSeries[0])).toBe(true); expect(Object.isFrozen(played.completedSeries[0].maps[0])).toBe(true);
+    expect(() => ((played.completedSeries as unknown as unknown[]).push({}))).toThrow();
+    expect(advanceTournament(played).currentStage).toBe("quarterfinal");
+  });
+
+  test("uses distinct scoped streams for different matchups and pins a golden result", () => {
+    const data = dataset(); const user = lineup(data); const first = playSeries("golden", "group", user, opponent(data, "group", 65), data); const second = playSeries("golden", "group", user, opponent(data, "group", 75), data);
+    expect(first.maps).not.toEqual(second.maps);
+    expect(first.maps).toEqual([
+      { map: "Abyss", userScore: 11, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.4752376093529165 },
+      { map: "Icebox", userScore: 10, opponentScore: 13, winner: "opponent", probability: 0.28905049737499594, roll: 0.6169319236651063 },
+    ]);
   });
 });
