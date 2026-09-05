@@ -32,13 +32,14 @@ function normalizeBasePath(basePath = "") {
 
 function localReference(raw: string) {
   const value = raw.trim();
-  if (value.includes("\\") || /^[a-zA-Z]:[\\/]/.test(value) || value.startsWith("\\\\")) {
+  if (/^[a-zA-Z]:[\\/]/.test(value) || value.startsWith("\\\\")) {
     throw new Error(`invalid local reference "${raw}"`);
   }
   if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value) || value.startsWith("//")) return null;
-  if (value === "" || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value)) return null;
+  if (value === "") return null;
   const separator = value.search(/[?#]/);
   const pathname = separator === -1 ? value : value.slice(0, separator);
+  if (pathname.includes("\\")) throw new Error(`invalid local reference "${raw}"`);
   let decoded: string;
   try {
     decoded = decodeURIComponent(pathname);
@@ -91,7 +92,7 @@ function assetPath(root: string, asset: string, label: string) {
   if (!local || !local.startsWith("/assets/")) throw new Error(`invalid dataset asset "${asset}"`);
   const target = resolve(root, `.${local}`);
   if (!contained(root, target)) throw new Error(`dataset asset escapes ${label} "${asset}"`);
-  return target;
+  return { local, target };
 }
 
 export function smokeStatic(outputDirectory: string, options: SmokeOptions = {}) {
@@ -113,9 +114,9 @@ export function smokeStatic(outputDirectory: string, options: SmokeOptions = {})
   const assets = datasetAssets(resolve(root, "src/data/champions"));
   for (const asset of assets) {
     const sourceAsset = assetPath(publicRoot, asset, "public");
-    const exportedAsset = outputPath(output, `${basePath}${asset}`, basePath);
-    if (!existsSync(sourceAsset)) missing.push(`public${asset}`);
-    if (!existsSync(exportedAsset)) missing.push(`${basePath}${asset}`);
+    const exportedAsset = outputPath(output, `${basePath}${sourceAsset.local}`, basePath);
+    if (!existsSync(sourceAsset.target)) missing.push(`public${sourceAsset.local}`);
+    if (!existsSync(exportedAsset)) missing.push(`${basePath}${sourceAsset.local}`);
   }
 
   if (missing.length > 0) throw new Error(`missing static files:\n${missing.map(path => `- ${path}`).join("\n")}`);

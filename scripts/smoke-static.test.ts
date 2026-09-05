@@ -69,6 +69,29 @@ describe("smokeStatic", () => {
     }
   });
 
+  it("ignores external URL metadata and local URL metadata after separating the pathname", () => {
+    const root = temporaryProject();
+    try {
+      writeFileSync(join(root, "out", "index.html"), '<script src="/app.js#\\"></script><script src="https://cdn.example/app.js?x=\\"></script><script src="//cdn.example/app.js?x=\\"></script><script src="data:text/javascript,\\"></script>');
+      writeFileSync(join(root, "out", "app.js"), "");
+      expect(smokeStatic(join(root, "out"), { projectRoot: root })).toMatchObject({ references: 4 });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects literal and encoded backslashes in local pathnames", () => {
+    const root = temporaryProject();
+    try {
+      writeFileSync(join(root, "out", "index.html"), '<script src="/app\\bad.js"></script>');
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("invalid local reference");
+      writeFileSync(join(root, "out", "index.html"), '<script src="/app%5Cbad.js"></script>');
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("invalid local reference");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it("rejects encoded traversal and base-prefix escapes", () => {
     const root = temporaryProject();
     try {
@@ -87,6 +110,32 @@ describe("smokeStatic", () => {
       writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [{ logo: "" }], players: [{ portrait: null }] }));
       writeFileSync(join(root, "out", "index.html"), "");
       expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow('invalid dataset asset ""');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("uses decoded asset pathnames for public and exported files", () => {
+    const root = temporaryProject();
+    try {
+      mkdirSync(join(root, "public", "assets"), { recursive: true });
+      mkdirSync(join(root, "out", "assets"), { recursive: true });
+      writeFileSync(join(root, "public", "assets", "team logo.svg"), "source");
+      writeFileSync(join(root, "out", "assets", "team logo.svg"), "exported");
+      writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [{ logo: "/assets/team%20logo.svg?version=1#credit" }], players: [] }));
+      writeFileSync(join(root, "out", "index.html"), "");
+      expect(smokeStatic(join(root, "out"), { projectRoot: root, basePath: "/run-it-back" })).toMatchObject({ assets: 1 });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects encoded traversal in dataset asset paths", () => {
+    const root = temporaryProject();
+    try {
+      writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [{ logo: "/assets/%2e%2e/escape.svg" }], players: [] }));
+      writeFileSync(join(root, "out", "index.html"), "");
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("invalid local reference");
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
