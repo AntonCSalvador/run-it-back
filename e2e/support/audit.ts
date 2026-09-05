@@ -84,8 +84,15 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
   const radios = page.locator('input[type="radio"]:not([disabled])');
   if (await radios.count()) {
     await radios.evaluateAll(elements => elements.forEach((element, index) => element.setAttribute("data-e2e-radio-index", String(index))));
-    await radios.first().focus();
-    const reachedRadios = new Set<number>([0]);
+    await page.evaluate(() => { document.body.tabIndex = -1; document.body.focus(); });
+    let firstRadio: number | null = null;
+    for (let index = 0; index < await controls.count() + 3; index += 1) {
+      await page.keyboard.press("Tab");
+      const marker = await page.evaluate(() => (document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-radio-index"));
+      if (typeof marker === "string" && /^\d+$/.test(marker)) { firstRadio = Number(marker); break; }
+    }
+    expect(firstRadio, "radio group has a genuine Tab stop").not.toBeNull();
+    const reachedRadios = new Set<number>([firstRadio!]);
     for (let index = 1; index < await radios.count(); index += 1) {
       await page.keyboard.press("ArrowDown");
       const marker = await page.evaluate(() => (document.activeElement as HTMLElement | null)?.getAttribute("data-e2e-radio-index"));

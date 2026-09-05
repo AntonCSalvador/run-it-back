@@ -1,6 +1,6 @@
 import { exec as execShell } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cp, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
+import { cp, mkdtemp, readFile, readdir, rename, rm, stat } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, resolve, sep } from "node:path";
@@ -51,14 +51,13 @@ test("GitHub Pages export serves prefixed navigation, data, and every discovered
   test.skip(testInfo.project.name !== "desktop", "One serial export check avoids rebuilding beneath the Pixel run.");
   expect(await readFile(join(process.cwd(), "next.config.ts"), "utf8")).toContain('process.env.PLAYWRIGHT_TEST_BUILD === "1"');
   const out = join(process.cwd(), "out");
-  const backupRoot = await mkdtemp(join(tmpdir(), "run-it-back-out-backup-"));
   const staticRoot = await mkdtemp(join(tmpdir(), "run-it-back-pages-"));
-  const backupOut = join(backupRoot, "out");
+  const backupOut = `${out}.e2e-backup-${process.pid}`;
   const hadOut = await exists(out);
   const originalOut = hadOut ? await treeDigest(out) : null;
   let server: Server | undefined;
   try {
-    if (hadOut) await cp(out, backupOut, { recursive: true });
+    if (hadOut) await rename(out, backupOut);
     await exec("npm run build", { env: inheritedEnv, windowsHide: true });
     expect(await bundleContains("e2e-seed")).toBe(false);
     await exec("npm run build", { env: { ...inheritedEnv, GITHUB_PAGES: "true", GITHUB_REPOSITORY: "owner/run-it-back", PLAYWRIGHT_TEST_BUILD: "1" }, windowsHide: true });
@@ -86,11 +85,10 @@ test("GitHub Pages export serves prefixed navigation, data, and every discovered
     if (server?.listening) await new Promise<void>((resolveClose, reject) => server!.close(error => error ? reject(error) : resolveClose()));
     expect(server?.listening ?? false, "in-process static server is closed").toBe(false);
     await rm(out, { recursive: true, force: true });
-    if (hadOut) await cp(backupOut, out, { recursive: true });
+    if (hadOut && await exists(backupOut)) await rename(backupOut, out);
     if (originalOut) expect(await treeDigest(out), "out file bytes and layout are restored exactly").toBe(originalOut);
     await rm(staticRoot, { recursive: true, force: true });
-    await rm(backupRoot, { recursive: true, force: true });
     expect(await exists(staticRoot), "temporary static directory is removed").toBe(false);
-    expect(await exists(backupRoot), "temporary backup directory is removed").toBe(false);
+    expect(await exists(backupOut), "atomic backup directory is consumed").toBe(false);
   }
 });
