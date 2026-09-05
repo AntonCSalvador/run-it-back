@@ -345,10 +345,11 @@ Visual verification uses desktop and mobile Playwright screenshots before releas
 
 ## Repository and Delivery
 
-The project begins as a local Git repository. Implementation setup will create the
-Next.js application, README, tests, and GitHub Actions workflow. After GitHub CLI
-authentication or equivalent user setup is available, create the remote repository,
-push the main branch, enable Pages, and connect the repository to Vercel.
+The public repository exists at
+`https://github.com/AntonCSalvador/run-it-back`, and local `main` tracks
+`origin/main`. Implementation setup will create the Next.js application, README,
+tests, and GitHub Actions workflow on a feature branch. After reviewed work is
+integrated into `main`, enable Pages and connect the repository to Vercel.
 
 ## MVP Acceptance Criteria
 

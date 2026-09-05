@@ -10,6 +10,16 @@
 
 ---
 
+## Current Repository State
+
+- Public remote: `https://github.com/AntonCSalvador/run-it-back.git`
+- Primary branch: `main`, tracking `origin/main`
+- GitHub account: `AntonCSalvador`
+- Commit identity: `Anton <antoncsalvador@gmail.com>`
+- Worktree root: ignored project-local `.worktrees/`
+- Vercel CLI: use `npx vercel@latest`; one-time user authorization may be required
+- Preserve the configured author identity and never add AI attribution trailers
+
 ## Scope and Sequence
 
 The approved spec contains several layers, but they are sequential rather than independent: UI requires a stable engine contract, and full historical data requires a stable schema. Keep one ordered plan so each task leaves the repository testable and later tasks do not invent parallel contracts.
@@ -1294,16 +1304,17 @@ git log --oneline -5
 
 Expected: clean integrated primary branch containing the MVP commits. Remove the feature worktree only through the finishing skill after integration is confirmed.
 
-- [ ] **Step 4: Rename integrated primary branch**
+- [ ] **Step 4: Confirm integrated primary checkout and remote**
 
 Run from the primary checkout, not the feature worktree:
 
 ```powershell
-git branch -M main
+git branch --show-current
+git remote get-url origin
 git status --short --branch
 ```
 
-Expected: clean `main` branch containing design, plan, and MVP implementation.
+Expected: branch `main`, remote `https://github.com/AntonCSalvador/run-it-back.git`, and clean tree containing design, plan, and MVP implementation.
 
 - [ ] **Step 5: Authenticate external CLIs**
 
@@ -1311,28 +1322,28 @@ Run:
 
 ```powershell
 gh auth status
-vercel whoami
+npx --yes vercel@latest whoami
 ```
 
-Expected: authenticated GitHub and Vercel users. If either is unauthenticated, stop and ask user to complete that provider's interactive login; do not request tokens in chat.
+Expected: GitHub authenticated as `AntonCSalvador` and a Vercel username returned. If Vercel is unauthenticated, stop and ask the user to complete `npx vercel@latest login`; do not request tokens in chat.
 
-- [ ] **Step 6: Create and push GitHub repository**
+- [ ] **Step 6: Push integrated main to existing GitHub repository**
 
 Run:
 
 ```powershell
-gh repo create run-it-back --public --source . --remote origin --push
-gh repo view --web
+git push -u origin main
+gh repo view AntonCSalvador/run-it-back --json nameWithOwner,isPrivate,defaultBranchRef,url
 ```
 
-Expected: public repository created, `origin` set, `main` pushed. If user chooses private visibility during execution, change `--public` to `--private` and note that Pages availability depends on account plan.
+Expected: public `AntonCSalvador/run-it-back`, default branch `main`, and integrated commits pushed with author `Anton`.
 
 - [ ] **Step 7: Enable GitHub Pages Actions source**
 
 Run:
 
 ```powershell
-gh api --method POST "repos/{owner}/{repo}/pages" -f build_type=workflow
+gh api --method POST "repos/AntonCSalvador/run-it-back/pages" -f build_type=workflow
 gh run watch --workflow pages.yml --exit-status
 ```
 
@@ -1343,8 +1354,8 @@ Expected: Pages workflow succeeds and returns project URL. If Pages already exis
 Run:
 
 ```powershell
-vercel link
-vercel --prod
+npx --yes vercel@latest link
+npx --yes vercel@latest --prod
 ```
 
 Expected: production deployment URL. Connect GitHub repository in Vercel dashboard so future `main` pushes deploy production and pull requests receive previews.
