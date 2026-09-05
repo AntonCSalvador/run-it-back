@@ -53,7 +53,7 @@ describe("parsed broadcast stylesheet", () => {
     const mobile = mediaFor(rules, "(max-width:44rem)");
     const track = ruleFor(mobile.cssRules, ".scroll-track").style;
     expect(track.getPropertyValue("grid-auto-flow")).toBe("column");
-    expect(track.getPropertyValue("grid-auto-columns")).toBe("minmax(15rem,82vw)");
+    expect(track.getPropertyValue("grid-auto-columns")).toBe("100%");
     expect(track.getPropertyValue("overflow-x")).toBe("auto");
     expect(track.getPropertyValue("scroll-behavior")).toBe("smooth");
     expect(track.getPropertyValue("scroll-snap-type")).toBe("x mandatory");

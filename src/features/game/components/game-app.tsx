@@ -8,7 +8,7 @@ import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
-import { DAILY_RECORD, readRecord } from "../storage";
+import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, prependFreePlayHistory, readRecord, writeRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 import { TeamOffer } from "./team-offer";
@@ -28,6 +28,14 @@ export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSee
 function browserStorage(): Storage | null {
   if (typeof window === "undefined") return null;
   try { return window.localStorage; } catch { return null; }
+}
+
+function playwrightQuerySeed(): string | null {
+  // `NEXT_PUBLIC_PLAYWRIGHT_TEST_BUILD` is a compile-time flag supplied only by
+  // playwright.config.ts. In normal production exports this entire branch is removed.
+  if (process.env.NEXT_PUBLIC_PLAYWRIGHT_TEST_BUILD !== "enabled" || typeof window === "undefined") return null;
+  const seed = new URLSearchParams(window.location.search).get("e2e-seed");
+  return seed && /^[a-z0-9-]{3,80}$/i.test(seed) ? seed : null;
 }
 
 export function restartCurrentRun(clearSimulationError: () => void, dispatch: (action: GameAction) => void, invalidatePendingSeries: () => void): void {
@@ -63,14 +71,42 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     seriesLock.current = null;
   }, []);
   const [streak, setStreak] = useState(0);
+  const [dailyHistoryCount, setDailyHistoryCount] = useState(0);
+  const persistedResult = useRef<string | null>(null);
   useEffect(() => {
     const adapter = storage === undefined ? browserStorage() : storage;
-    const update = (): void => { try { setStreak(readRecord(adapter, DAILY_RECORD).value.streak); } catch { setStreak(0); } };
+    const update = (): void => { try { const daily = readRecord(adapter, DAILY_RECORD).value; setStreak(daily.streak); setDailyHistoryCount(daily.completions.length); } catch { setStreak(0); setDailyHistoryCount(0); } };
     update();
     if (typeof window === "undefined") return undefined;
     window.addEventListener("storage", update);
     return () => window.removeEventListener("storage", update);
   }, [storage]);
+  const testSeed = useMemo(() => playwrightQuerySeed(), []);
+  useEffect(() => {
+    if (state.phase !== "results") return;
+    const adapter = storage === undefined ? browserStorage() : storage;
+    const completedAtUtc = state.mode === "daily" ? dailyDateFromSeed(state.tournament.seed) : new Date().toISOString().slice(0, 10);
+    const run = {
+      completedAtUtc,
+      stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage,
+      series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })),
+      rerollsUsed: 3 - state.draft.rerollsRemaining,
+      roster: state.tournament.userLineup.slots,
+    };
+    const signature = `${state.mode}:${JSON.stringify(run)}`;
+    if (persistedResult.current === signature) return;
+    persistedResult.current = signature;
+    if (state.mode === "daily") {
+      const current = readRecord(adapter, DAILY_RECORD).value;
+      const completion = { ...run, mode: "daily" as const, utcDate: dailyDateFromSeed(state.tournament.seed) };
+      const value = addDailyCompletion(current, completion);
+      writeRecord(adapter, DAILY_RECORD, { ...value, streak: Math.max(1, value.streak) });
+      window.dispatchEvent(new StorageEvent("storage", { key: DAILY_RECORD.key }));
+    } else {
+      const current = readRecord(adapter, HISTORY_RECORD).value;
+      writeRecord(adapter, HISTORY_RECORD, prependFreePlayHistory(current, { ...run, mode: "free" }));
+    }
+  }, [state, storage]);
   const gateway = useMemo(() => suppliedGateway ?? gatewayFactory?.(dataset) ?? new LocalSimulationGateway(dataset), [suppliedGateway, gatewayFactory, dataset]);
   const opponent = useMemo(() => {
     if (state.phase !== "tournament") return null;
@@ -131,11 +167,11 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(state.tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
   })() : "";
   return <main className={`game-shell ${actionFire.fireClass}`}>
-      <AppHeader mode={mode} streak={streak} onStart={value => {
+      <AppHeader mode={mode} streak={streak} dailyHistoryCount={dailyHistoryCount} onStart={value => {
         if (state.phase !== "mode") {
           resetState();
         }
-        dispatch(createStartAction(value, { now, freeSeedFactory }));
+        dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
       }} onRestart={restart} />
       <p className="phase-status" role="status" aria-live="polite">Current phase: {state.phase}</p>
       {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} canReroll={canRerollOffer(state.draft, dataset)} onChoose={teamId => { actionFire.trigger(); dispatch({ type: "choose-team", teamId }); }} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
@@ -144,7 +180,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {state.phase === "lineup" && <><RosterBar slots={rosterSlots} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); dispatch({ type: "enter-tournament" }); } }} /></>}
       {state.phase === "tournament" && !opponent && <p role="alert">No valid opponent is available. <button type="button" onClick={restart}>Restart run</button></p>}
       {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
-      {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory })); }} />}
+      {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
       {simulationError && <p role="alert">{simulationError}</p>}
     </main>;
 }
