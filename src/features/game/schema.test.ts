@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
+import { normalizeHandle } from "./handle";
 import { parseDataset } from "./schema";
 
 type MutableDataset = { cards: Array<{ id: string; mapsPlayed: number; eligibleRoles: string[]; traits: Record<string, number>; sourceIds: string[]; year: number }> };
@@ -39,6 +40,14 @@ describe("game dataset schema", () => {
     const spaced = clone() as unknown as { cards: Array<{ displayHandle: string }> }; spaced.cards[0].displayHandle = "  Caf\u0065\u0301!  ";
     expect(parseDataset(spaced).cards[0].displayHandle).toBe("Caf\u00e9!");
     for (const handle of ["bad\nname", "bad\u202Ename", "bad\u00adname", "\tname", "x".repeat(33)]) {
+      const data = clone() as unknown as { cards: Array<{ displayHandle: string }> }; data.cards[0].displayHandle = handle;
+      expect(() => parseDataset(data)).toThrow(/handle/i);
+    }
+  });
+  it("rejects line and paragraph separators in both schema and normalizer", () => {
+    expect(normalizeHandle("  Åce Player  ")).toBe("Åce Player");
+    for (const handle of ["line\u2028break", "paragraph\u2029break"]) {
+      expect(() => normalizeHandle(handle)).toThrow(/handle/i);
       const data = clone() as unknown as { cards: Array<{ displayHandle: string }> }; data.cards[0].displayHandle = handle;
       expect(() => parseDataset(data)).toThrow(/handle/i);
     }

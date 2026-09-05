@@ -1,4 +1,4 @@
-const unsafeHandle = /[\p{Cc}\p{Cf}]/u;
+const unsafeHandle = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u;
 export const MAX_HANDLE_LENGTH = 32;
 
 export function normalizeHandle(value: string): string {

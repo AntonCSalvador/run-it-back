@@ -19,6 +19,17 @@ function series(stage: "group" | "quarterfinal" | "semifinal" | "final", winners
 }
 const participants = new Map(dataset.cards.map(card => [card.id, card.displayHandle]));
 const idsFor = (lineup: Lineup) => new Set(lineup.slots.map(slot => slot.cardId));
+function expectedText(kind: HighlightKind, actor: string, target?: string): string {
+  switch (kind) {
+    case "ace": return `${actor} closes the simulated round with an ace.`;
+    case "clutch": return `${actor} wins a simulated late-round clutch over ${target!}.`;
+    case "ninja-defuse": return `${actor} slips in a simulated ninja defuse against ${target!}.`;
+    case "retake": return `${actor} leads a simulated retake past ${target!}.`;
+    case "eco": return `${actor} turns a simulated eco round against ${target!}.`;
+    case "failed-clutch": return `${actor}'s simulated clutch attempt falls short against ${target!}.`;
+    case "throw": return `${actor} lets a simulated advantage slip to ${target!}.`;
+  }
+}
 
 describe("createHighlights", () => {
   test("returns no detailed highlights for group and quarterfinal series", () => {
@@ -40,16 +51,18 @@ describe("createHighlights", () => {
     }
   });
 
-  test("only resolves actors, targets, and handles from the two current lineups", () => {
+  test("uses exact templates and card-resolved participant handles despite overlapping names", () => {
+    const textDataset = structuredClone(dataset); textDataset.cards.find(card => card.id === userLineup.slots[1].cardId)!.displayHandle = "player-1";
+    textDataset.cards.find(card => card.id === userLineup.slots[2].cardId)!.displayHandle = "player-1";
+    const textParticipants = new Map(textDataset.cards.map(card => [card.id, card.displayHandle]));
     const userIds = idsFor(userLineup); const opponentIds = idsFor(opponentLineup); const allowedIds = new Set([...userIds, ...opponentIds]);
-    for (const highlight of createHighlights("participants", series("semifinal", ["user", "opponent", "user"]), userLineup, opponentLineup, dataset)) {
+    for (const highlight of createHighlights("participants", series("semifinal", ["user", "opponent", "user"]), userLineup, opponentLineup, textDataset)) {
       const actorIds = highlight.side === "user" ? userIds : opponentIds; const targetIds = highlight.side === "user" ? opponentIds : userIds;
       expect(actorIds.has(highlight.actorCardId)).toBe(true);
       expect(highlight.targetCardId === undefined || targetIds.has(highlight.targetCardId)).toBe(true);
       expect(highlight.targetCardId).not.toBe(highlight.actorCardId);
-      expect(highlight.text).toContain(participants.get(highlight.actorCardId)!);
-      if (highlight.targetCardId) expect(highlight.text).toContain(participants.get(highlight.targetCardId)!);
-      for (const handle of participants.values()) if (!allowedIds.has([...participants.entries()].find(([, value]) => value === handle)?.[0] ?? "")) expect(highlight.text).not.toContain(handle);
+      expect(highlight.text).toBe(expectedText(highlight.kind, textParticipants.get(highlight.actorCardId)!, highlight.targetCardId ? textParticipants.get(highlight.targetCardId) : undefined));
+      expect(allowedIds.has(highlight.actorCardId)).toBe(true);
     }
   });
 
@@ -85,7 +98,7 @@ describe("createHighlights", () => {
     const input = series("semifinal", ["user", "opponent", "user"]); const ids = new Set<string>();
     const alternateUser: Lineup = { slots: roles.map((role, index) => ({ role, cardId: dataset.cards[index + 15].id })), iglCardId: dataset.cards[15].id };
     const alternateOpponent: Lineup = { slots: roles.map((role, index) => ({ role, cardId: dataset.cards[index + 20].id })), iglCardId: dataset.cards[20].id };
-    for (let index = 0; index < 80; index += 1) for (const highlight of createHighlights(`id-${index}`, input, index % 2 ? alternateUser : userLineup, index % 2 ? alternateOpponent : opponentLineup, dataset)) { expect(highlight.id).toMatch(/^hl-[a-z0-9]{16,}$/); expect(ids.has(highlight.id)).toBe(false); ids.add(highlight.id); }
+    for (let index = 0; index < 80; index += 1) for (const highlight of createHighlights(`id-${index}`, input, index % 2 ? alternateUser : userLineup, index % 2 ? alternateOpponent : opponentLineup, dataset)) { expect(highlight.id).toMatch(/^hl-[0-9a-f]{32}$/); expect(ids.has(highlight.id)).toBe(false); ids.add(highlight.id); }
     const broken = structuredClone(dataset); for (const card of broken.cards) card.traits = { firepower: Number.NaN, utility: Number.NaN, survival: Number.NaN, clutch: Number.NaN, consistency: Number.NaN, leadership: Number.NaN };
     expect(createHighlights("fallback", input, userLineup, opponentLineup, broken).length).toBeGreaterThan(0);
   });
