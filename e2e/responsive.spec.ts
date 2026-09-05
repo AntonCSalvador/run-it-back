@@ -53,7 +53,7 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await keyboardActivate(page, page.getByRole("button", { name: "2x" }));
   await keyboardActivate(page, page.getByRole("button", { name: "Skip" }));
   await keyboardActivate(page, page.getByRole("button", { name: "Continue" }));
-  const results = page.getByRole("region", { name: "Results" });
+  const results = page.getByRole("region", { name: "Results", exact: true });
   if (!await results.count()) {
     await keyboardActivate(page, page.getByRole("button", { name: "Play series" }));
     await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();

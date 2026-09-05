@@ -22,6 +22,7 @@ describe("draft flow", () => {
     render(<GameApp dataset={flexibleDataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
     await user.click(screen.getByRole("button", { name: "Daily" }));
     const offered = () => within(screen.getByRole("region", { name: "Choose a team" })).getAllByRole("button").filter(button => /202[12]/.test(button.textContent ?? ""));
+    expect(screen.getByText("Pick 1 of 5")).toBeVisible();
     expect(offered()).toHaveLength(3);
     expect(new Set(offered().map(button => button.textContent)).size).toBe(3);
     expect(new Set(offered().map(button => button.dataset.teamId)).size).toBe(3);
@@ -29,6 +30,7 @@ describe("draft flow", () => {
     const selectedTeam = offered().find(button => button.dataset.teamId === "team-2-2021")!;
     const selectedTeamId = selectedTeam.dataset.teamId!;
     await user.click(selectedTeam);
+    expect(screen.getByText("Pick 1 of 5")).toBeVisible();
     const selectedCard = flexibleDataset.cards.find(card => card.teamId === selectedTeamId)!;
     expect(within(screen.getByTestId(`player-card-${selectedCard.id}`)).getByRole("presentation")).toHaveAttribute("src", "/assets/players/test.webp");
     expect(document.querySelectorAll(".role-chip").length).toBeGreaterThan(0);
@@ -45,7 +47,9 @@ describe("draft flow", () => {
       const teamId = team.dataset.teamId!;
       const card = flexibleDataset.cards.find(candidate => candidate.teamId === teamId && !drafted.has(candidate.id) && candidate.eligibleRoles.includes(role))!;
       await user.click(team);
+      expect(screen.getByText(`Pick ${drafted.size + 1} of 5`)).toBeVisible();
       await user.click(screen.getByRole("button", { name: `${card.displayHandle} ${card.year}` }));
+      expect(screen.getByText(`Pick ${drafted.size + 1} of 5`)).toBeVisible();
       await user.click(within(screen.getByRole("group", { name: "Choose an open role" })).getByRole("button", { name: role }));
       drafted.add(card.id);
       if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();

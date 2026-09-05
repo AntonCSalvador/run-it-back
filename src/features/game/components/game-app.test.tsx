@@ -8,9 +8,11 @@ import type { Stage } from "../opponents";
 import { startTournament, type SeriesResult } from "../tournament";
 import { GameApp, restartCurrentRun } from "./game-app";
 import { type GameState } from "../machine";
+import { createDraft } from "../draft";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { parseDataset } from "../schema";
-import { STORAGE_KEYS } from "../storage";
+import { DAILY_RECORD, HISTORY_RECORD, STORAGE_KEYS, type DailyRun, type FreePlayRun, writeRecord } from "../storage";
+import { terminalState } from "./tournament-test-fixtures";
 
 const dataset = parseDataset(minimalDataset);
 const lineup: Lineup = {
@@ -37,7 +39,84 @@ function historyStorage() {
   return { length: 1, key: vi.fn(() => STORAGE_KEYS.history), getItem: vi.fn((key: string) => key === STORAGE_KEYS.history ? "keep-me" : null), setItem: vi.fn(), removeItem: vi.fn(), clear: vi.fn() };
 }
 
+function memoryStorage(initial: Record<string, string> = {}): Storage {
+  const values = new Map(Object.entries(initial));
+  return {
+    get length() { return values.size; }, clear() { values.clear(); }, key(index) { return [...values.keys()][index] ?? null; },
+    getItem(key) { return values.get(key) ?? null; }, setItem(key, value) { values.set(key, value); }, removeItem(key) { values.delete(key); },
+  };
+}
+
+function storedRun(mode: "daily"): DailyRun;
+function storedRun(mode: "free"): FreePlayRun;
+function storedRun(mode: "daily" | "free"): DailyRun | FreePlayRun {
+  const source = terminalState(false).tournament;
+  const common = {
+    completedAtUtc: "2026-09-05",
+    stageReached: "group" as const, outcome: "eliminated" as const, rerollsUsed: 1,
+    roster: source.userLineup.slots, iglCardId: source.userLineup.iglCardId,
+    series: source.completedSeries.map(result => ({ stage: result.stage, userWins: result.userWins, opponentWins: result.opponentWins, maps: result.maps.map(map => ({ map: map.map, userScore: map.userScore, opponentScore: map.opponentScore })) })),
+  };
+  return mode === "daily" ? { ...common, mode, utcDate: "2026-09-05" } : { ...common, mode };
+}
+
 describe("GameApp", () => {
+  it("shows saved Daily and Free Play results after reload", () => {
+    const storage = memoryStorage();
+    writeRecord(storage, DAILY_RECORD, { completions: [storedRun("daily")], streak: 1 });
+    writeRecord(storage, HISTORY_RECORD, { runs: [storedRun("free")] });
+    const first = render(<GameApp dataset={dataset} storage={storage} />);
+    expect(screen.getByRole("region", { name: "Recent results" })).toHaveTextContent("Daily");
+    expect(screen.getByRole("region", { name: "Recent results" })).toHaveTextContent("Free Play");
+    first.unmount();
+    render(<GameApp dataset={dataset} storage={storage} />);
+    expect(screen.getAllByRole("button", { name: /View .* result/ })).toHaveLength(2);
+    fireEvent.click(screen.getByRole("button", { name: "View Daily result" }));
+    expect(screen.getByRole("region", { name: "Daily result details" })).toHaveTextContent("Rerolls used: 1");
+  });
+
+  it("announces recovery and non-persistent saved-result storage states", () => {
+    const corrupt = memoryStorage({ [STORAGE_KEYS.daily]: "not-json" });
+    const corruptView = render(<GameApp dataset={dataset} storage={corrupt} />);
+    expect(screen.getByRole("status", { name: "Saved result storage status" })).toHaveTextContent("Saved results were recovered");
+    corruptView.unmount();
+    render(<GameApp dataset={dataset} storage={null} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+  });
+
+  it("warns when storage reads or result writes throw", () => {
+    const throwing: Storage = { get length() { return 0; }, clear() {}, key() { return null; }, getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); }, removeItem() {} };
+    const readView = render(<GameApp dataset={dataset} storage={throwing} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+    readView.unmount();
+    const writeFailing: Storage = { ...throwing, getItem() { return null; } };
+    render(<GameApp dataset={dataset} initialState={terminalState(false)} storage={writeFailing} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+  });
+
+  it("shows draft progress and recovers invalid player, role, and IGL phases", () => {
+    const draft = createDraft("bad-state", dataset);
+    const team = render(<GameApp dataset={dataset} initialState={{ phase: "team", mode: "daily", draft }} />);
+    expect(screen.getByText("Pick 1 of 5")).toBeVisible();
+    team.unmount();
+    const player = render(<GameApp dataset={dataset} initialState={{ phase: "player", mode: "daily", draft: { ...draft, selectedTeamId: "missing" } }} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Selected team is unavailable");
+    expect(screen.getByRole("button", { name: "Back to teams" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Back to teams" }));
+    expect(screen.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+    player.unmount();
+    const role = render(<GameApp dataset={dataset} initialState={{ phase: "role", mode: "daily", draft: { ...draft, selectedTeamId: draft.offeredTeamIds[0], pendingCardId: "missing" } }} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("No eligible role is available");
+    expect(screen.getByRole("button", { name: "Back to player selection" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Back to player selection" }));
+    expect(screen.getByRole("heading", { name: /Choose from/ })).toBeVisible();
+    role.unmount();
+    render(<GameApp dataset={dataset} initialState={{ phase: "lineup", mode: "daily", draft }} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Roster is incomplete");
+    expect(screen.getByRole("button", { name: "Restart draft" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Restart draft" }));
+    expect(screen.getByText("Current phase: mode")).toBeVisible();
+  });
   it("invalidates pending series work before clearing errors or resetting state", () => {
     const calls: string[] = [];
     restartCurrentRun(() => { calls.push("clear error"); }, () => { calls.push("reset state"); }, () => { calls.push("invalidate series"); });

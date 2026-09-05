@@ -112,7 +112,7 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
   await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
   await page.getByRole("button", { name: "Skip" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByRole("region", { name: "Results" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Results", exact: true })).toBeVisible();
   await assertNoPrivateModelData(page);
   await capture("results");
 });

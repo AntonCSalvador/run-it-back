@@ -32,7 +32,7 @@ export async function completeTournament(page: Page): Promise<string> {
     if (await skip.count()) await skip.click();
     await page.getByRole("button", { name: "Continue" }).click();
   }
-  const results = page.getByRole("region", { name: "Results" });
+  const results = page.getByRole("region", { name: "Results", exact: true });
   await expect(results).toBeVisible();
   return (await results.innerText()).replace(/\s+/g, " ");
 }

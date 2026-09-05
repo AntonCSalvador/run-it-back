@@ -18,6 +18,7 @@ export type GameAction =
   | { type: "choose-team"; teamId: string }
   | { type: "choose-card"; cardId: string }
   | { type: "back-to-teams" }
+  | { type: "back-to-player" }
   | { type: "assign-role"; role: Role }
   | { type: "move-card"; cardId: string; role: Role }
   | { type: "tag-igl"; cardId: string }
@@ -57,6 +58,7 @@ export function createGameReducer({ dataset }: GameReducerDependencies) {
         if (action.type === "choose-card") return draftState(state, chooseCard(state.draft, action.cardId, dataset), "role");
         return invalid(state, action);
       case "role":
+        if (action.type === "back-to-player") return draftState(state, { ...state.draft, pendingCardId: null }, "player");
         if (action.type !== "assign-role") return invalid(state, action);
         { const draft = assignPendingCard(state.draft, action.role, dataset); return draftState(state, draft, Object.keys(draft.slots).length === 5 ? "lineup" : "team"); }
       case "lineup":
