@@ -26,6 +26,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
   const byId = new Map(cards.map(card => [card.id, card]));
 
   useEffect(() => () => { activeShare.current = null; }, []);
+  useEffect(() => { if (tournament.status === "champion") trigger(); }, [tournament.status, trigger]);
 
   useEffect(() => {
     if (fallbackCount) { field.current?.focus(); field.current?.select(); }

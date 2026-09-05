@@ -179,7 +179,7 @@ describe("tournament presentation", () => {
     expect(screen.getByText("semifinal moment 3")).toBeVisible();
     expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
     next();
-    tick(0); // Flush jsdom's selectionchange tasks caused by the focus transition.
+    tick(650); // Let the finite win accent clean up after the focus transition.
     expect(vi.getTimerCount()).toBe(0);
     expect(screen.getByRole("heading", { name: "Final" })).toBeVisible();
     await play();
@@ -278,7 +278,7 @@ describe("terminal GameApp integration", () => {
     expect(container).not.toHaveTextContent(/strength|probability|\broll\b|traits|formula/iu);
     expect(expected).not.toMatch(/aspas|player-|seed|0\.6|0\.2/);
     expect(gateway.playSeries).toHaveBeenCalledTimes(champion ? 4 : 1);
-    tick(0); // Flush focus-related selectionchange events, without advancing reveals.
+    tick(650); // Let the finite win/champion accent clean up after focus changes.
     expect(vi.getTimerCount()).toBe(0);
   });
 

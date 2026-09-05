@@ -2,6 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Highlight } from "../narration";
+import { useFireAccent } from "./use-fire-accent";
+
+function HighlightRow({ item }: { item: Highlight }) {
+  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
+  const hot = item.kind === "clutch" || item.emphasis === "clutch" || item.emphasis === "decisive";
+  useEffect(() => { if (hot) trigger(); }, [hot, trigger]);
+  return <p className={hot ? fireClass : ""} onAnimationEnd={onAnimationEnd}>{item.text}</p>;
+}
 
 export interface HighlightFeedProps {
   highlights: readonly Highlight[];
@@ -44,7 +52,7 @@ function HighlightQueue({ highlights, onComplete, instant = false }: HighlightFe
     <h2>SIMULATED HIGHLIGHTS</h2>
     <p>Fantasy simulation moments from this series.</p>
     <div role="log" aria-label="Simulated series moments" aria-live="polite" aria-relevant="additions" aria-atomic="false">
-      {highlights.slice(0, count).map(item => <p key={item.id}>{item.text}</p>)}
+      {highlights.slice(0, count).map(item => <HighlightRow key={item.id} item={item} />)}
     </div>
     <div>
       <button type="button" aria-pressed={speed === "normal"} onClick={() => setSpeed("normal")}>1x</button>

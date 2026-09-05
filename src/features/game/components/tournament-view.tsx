@@ -13,14 +13,19 @@ function Roster({ label, lineup, cards }: { label: string; lineup: Lineup; cards
 }
 export interface TournamentViewProps { opponent: GeneratedOpponent; userLineup: Lineup; cards: readonly PlayerCard[]; result: SeriesResult | null; resolving?: boolean; onPlay(): void; onContinue(): void; continueDisabled?: boolean }
 export function TournamentView({ opponent, userLineup, cards, result, resolving = false, onPlay, onContinue, continueDisabled = false }: TournamentViewProps) {
-  const { fireClass, onAnimationEnd } = useFireAccent();
+  const { fireClass, trigger, onAnimationEnd } = useFireAccent();
   const stageHeading = useRef<HTMLHeadingElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const previousStage = useRef(opponent.stage);
+  const previousResult = useRef<SeriesResult | null>(null);
 
   useEffect(() => {
     if (result) resultHeading.current?.focus();
   }, [result]);
+  useEffect(() => {
+    if (result && result !== previousResult.current && result.userWins > result.opponentWins) trigger();
+    previousResult.current = result;
+  }, [result, trigger]);
   useEffect(() => {
     if (previousStage.current !== opponent.stage) stageHeading.current?.focus();
     previousStage.current = opponent.stage;

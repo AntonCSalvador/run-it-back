@@ -1,8 +1,12 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { StrictMode } from "react";
 import { AppHeader } from "./app-header";
 import { TeamOffer } from "./team-offer";
 import type { TeamAppearance } from "../domain";
+import { useFireAccent } from "./use-fire-accent";
+
+function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onAnimationEnd={fire.onAnimationEnd} onClick={fire.trigger}>ignite</button>; }
 
 const teams: TeamAppearance[] = [
   { id: "one", name: "One", shortName: "ONE", year: 2024, logo: null, sourceIds: [] },
@@ -30,6 +34,21 @@ describe("broadcast accessibility", () => {
     expect(button).not.toHaveClass("fire-accent");
 
     fireEvent.click(button);
+    expect(button).toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(650));
+    expect(button).not.toHaveClass("fire-accent");
+    vi.useRealTimers();
+  });
+
+  it("rearms a fire accent under StrictMode and ignores a stale animation end", () => {
+    vi.useFakeTimers();
+    render(<StrictMode><AccentProbe /></StrictMode>);
+    const button = screen.getByRole("button", { name: "ignite" });
+    fireEvent.click(button);
+    expect(button).toHaveClass("fire-accent");
+    fireEvent.click(button);
+    expect(button).not.toHaveClass("fire-accent");
+    act(() => vi.advanceTimersByTime(20));
     expect(button).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(650));
     expect(button).not.toHaveClass("fire-accent");
