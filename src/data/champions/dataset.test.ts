@@ -50,11 +50,15 @@ describe("Champions 2021–2025 dataset", () => {
     expect([...values]).toContain(50);
   });
 
+  it("keeps pinned clutch extraction golden samples", () => {
+    expect(evidence.find(entry => entry.cardId === "ade-crazy-raccoon-2021")?.clutchWins).toBe(2);
+    expect(evidence.reduce((sum, entry) => sum + entry.clutchWins, 0)).toBe(1375);
+  });
+
   it("keeps cited historical leadership and event-time team names", () => {
     const igls = championsDataset.cards.filter(card => card.historicalIgl);
-    expect(igls).toEqual([expect.objectContaining({ id: "boaster-fnatic-2023", traits: expect.objectContaining({ leadership: expect.any(Number) }) })]);
-    expect(igls[0].traits.leadership).toBeGreaterThan(50);
-    expect(igls[0].sourceIds).toContain("riot-vct-2023-awards");
+    expect(igls.map(card => card.id).sort()).toEqual(["boaster-fnatic-2023", "d4v41-paper-rex-2023", "finesse-nrg-2023", "redgar-team-liquid-2023", "saadhak-loud-2023", "stax-drx-2023"]);
+    expect(igls.every(card => card.traits.leadership === 75 && card.sourceIds.includes("riot-vct-2023-awards"))).toBe(true);
     expect(championsDataset.teams.some(team => /KIWOOM|Guangzhou Huadu/.test(team.name))).toBe(false);
     for (const item of [...championsDataset.teams, ...championsDataset.players]) expect(item.sourceIds.length).toBeGreaterThan(0);
   });

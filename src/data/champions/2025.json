@@ -925,7 +925,7 @@
         "firepower": 16,
         "utility": 40,
         "survival": 8,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 96,
         "leadership": 50
       },
@@ -949,7 +949,7 @@
         "firepower": 85,
         "utility": 28,
         "survival": 75,
-        "clutch": 17,
+        "clutch": 12,
         "consistency": 33,
         "leadership": 50
       },
@@ -973,7 +973,7 @@
         "firepower": 29,
         "utility": 17,
         "survival": 85,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 9,
         "leadership": 50
       },
@@ -1023,7 +1023,7 @@
         "firepower": 100,
         "utility": 22,
         "survival": 100,
-        "clutch": 29,
+        "clutch": 33,
         "consistency": 82,
         "leadership": 50
       },
@@ -1071,7 +1071,7 @@
         "firepower": 11,
         "utility": 96,
         "survival": 30,
-        "clutch": 50,
+        "clutch": 62,
         "consistency": 58,
         "leadership": 50
       },
@@ -1191,7 +1191,7 @@
         "firepower": 8,
         "utility": 92,
         "survival": 12,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 76,
         "leadership": 50
       },
@@ -1394,7 +1394,7 @@
         "firepower": 50,
         "utility": 92,
         "survival": 45,
-        "clutch": 75,
+        "clutch": 100,
         "consistency": 83,
         "leadership": 50
       },
@@ -1418,7 +1418,7 @@
         "firepower": 38,
         "utility": 48,
         "survival": 24,
-        "clutch": 17,
+        "clutch": 12,
         "consistency": 95,
         "leadership": 50
       },
@@ -1466,7 +1466,7 @@
         "firepower": 33,
         "utility": 66,
         "survival": 99,
-        "clutch": 8,
+        "clutch": 0,
         "consistency": 100,
         "leadership": 50
       },
@@ -1540,7 +1540,7 @@
         "firepower": 71,
         "utility": 31,
         "survival": 67,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 47,
         "leadership": 50
       },
@@ -1690,7 +1690,7 @@
         "firepower": 51,
         "utility": 55,
         "survival": 79,
-        "clutch": 29,
+        "clutch": 33,
         "consistency": 35,
         "leadership": 50
       },
@@ -1714,7 +1714,7 @@
         "firepower": 60,
         "utility": 32,
         "survival": 24,
-        "clutch": 57,
+        "clutch": 67,
         "consistency": 92,
         "leadership": 50
       },
@@ -1738,7 +1738,7 @@
         "firepower": 89,
         "utility": 69,
         "survival": 37,
-        "clutch": 86,
+        "clutch": 100,
         "consistency": 17,
         "leadership": 50
       },
@@ -1762,7 +1762,7 @@
         "firepower": 40,
         "utility": 8,
         "survival": 96,
-        "clutch": 14,
+        "clutch": 17,
         "consistency": 4,
         "leadership": 50
       },
@@ -1814,7 +1814,7 @@
         "firepower": 64,
         "utility": 100,
         "survival": 40,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 78,
         "leadership": 50
       },
@@ -1886,7 +1886,7 @@
         "firepower": 100,
         "utility": 48,
         "survival": 92,
-        "clutch": 57,
+        "clutch": 67,
         "consistency": 56,
         "leadership": 50
       },
@@ -1910,7 +1910,7 @@
         "firepower": 20,
         "utility": 8,
         "survival": 68,
-        "clutch": 29,
+        "clutch": 33,
         "consistency": 84,
         "leadership": 50
       },
@@ -2034,7 +2034,7 @@
         "firepower": 33,
         "utility": 5,
         "survival": 81,
-        "clutch": 8,
+        "clutch": 0,
         "consistency": 24,
         "leadership": 50
       },
@@ -2058,7 +2058,7 @@
         "firepower": 60,
         "utility": 52,
         "survival": 52,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 32,
         "leadership": 50
       },
@@ -2130,7 +2130,7 @@
         "firepower": 33,
         "utility": 25,
         "survival": 45,
-        "clutch": 43,
+        "clutch": 50,
         "consistency": 69,
         "leadership": 50
       },
@@ -2307,7 +2307,7 @@
         "firepower": 86,
         "utility": 81,
         "survival": 86,
-        "clutch": 14,
+        "clutch": 17,
         "consistency": 67,
         "leadership": 50
       },
@@ -2379,7 +2379,7 @@
         "firepower": 36,
         "utility": 72,
         "survival": 28,
-        "clutch": 14,
+        "clutch": 17,
         "consistency": 100,
         "leadership": 50
       },
@@ -2525,7 +2525,7 @@
         "firepower": 86,
         "utility": 86,
         "survival": 74,
-        "clutch": 71,
+        "clutch": 83,
         "consistency": 22,
         "leadership": 50
       },
@@ -2719,7 +2719,7 @@
         "firepower": 44,
         "utility": 20,
         "survival": 68,
-        "clutch": 33,
+        "clutch": 38,
         "consistency": 53,
         "leadership": 50
       },
@@ -2844,7 +2844,7 @@
         "firepower": 52,
         "utility": 96,
         "survival": 32,
-        "clutch": 29,
+        "clutch": 33,
         "consistency": 24,
         "leadership": 50
       },

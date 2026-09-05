@@ -4,5 +4,6 @@
   "sha256": "faa56883676dec0b89426c0ba36c65acad232f77d2fbbb5e03878a9522d53792",
   "eventIds": { "2021": 449, "2022": 1015, "2023": 1657, "2024": 2097, "2025": 2283 },
   "sql": "docs/champions-extraction.sql",
+  "transformCheck": "scripts/verify-champions-extraction.py --check",
   "auditEvidence": "src/data/champions/evidence.json"
 }

@@ -302,7 +302,8 @@
       "portrait": null,
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -645,7 +646,8 @@
       "portrait": null,
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -762,7 +764,8 @@
       "portrait": null,
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -816,7 +819,8 @@
       "portrait": null,
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -879,7 +883,8 @@
       "portrait": null,
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -917,7 +922,7 @@
         "firepower": 100,
         "utility": 4,
         "survival": 85,
-        "clutch": 15,
+        "clutch": 21,
         "consistency": 70,
         "leadership": 50
       },
@@ -1015,7 +1020,7 @@
         "firepower": 86,
         "utility": 42,
         "survival": 94,
-        "clutch": 80,
+        "clutch": 100,
         "consistency": 38,
         "leadership": 50
       },
@@ -1111,7 +1116,7 @@
         "firepower": 34,
         "utility": 49,
         "survival": 49,
-        "clutch": 20,
+        "clutch": 29,
         "consistency": 12,
         "leadership": 50
       },
@@ -1186,7 +1191,7 @@
         "firepower": 50,
         "utility": 54,
         "survival": 41,
-        "clutch": 10,
+        "clutch": 12,
         "consistency": 54,
         "leadership": 50
       },
@@ -1236,7 +1241,7 @@
         "firepower": 7,
         "utility": 15,
         "survival": 11,
-        "clutch": 10,
+        "clutch": 14,
         "consistency": 37,
         "leadership": 50
       },
@@ -1260,7 +1265,7 @@
         "firepower": 88,
         "utility": 70,
         "survival": 77,
-        "clutch": 20,
+        "clutch": 29,
         "consistency": 25,
         "leadership": 50
       },
@@ -1336,7 +1341,7 @@
         "firepower": 96,
         "utility": 74,
         "survival": 41,
-        "clutch": 25,
+        "clutch": 36,
         "consistency": 41,
         "leadership": 50
       },
@@ -1362,7 +1367,7 @@
         "firepower": 60,
         "utility": 95,
         "survival": 30,
-        "clutch": 30,
+        "clutch": 38,
         "consistency": 25,
         "leadership": 50
       },
@@ -1429,18 +1434,19 @@
       "eligibleRoles": [
         "initiator"
       ],
-      "historicalIgl": false,
+      "historicalIgl": true,
       "traits": {
         "firepower": 74,
         "utility": 93,
         "survival": 93,
-        "clutch": 40,
+        "clutch": 57,
         "consistency": 30,
-        "leadership": 50
+        "leadership": 75
       },
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -1534,7 +1540,7 @@
         "firepower": 45,
         "utility": 32,
         "survival": 100,
-        "clutch": 20,
+        "clutch": 25,
         "consistency": 76,
         "leadership": 50
       },
@@ -1584,7 +1590,7 @@
         "firepower": 71,
         "utility": 100,
         "survival": 82,
-        "clutch": 70,
+        "clutch": 100,
         "consistency": 63,
         "leadership": 50
       },
@@ -1630,18 +1636,19 @@
       "eligibleRoles": [
         "smokes"
       ],
-      "historicalIgl": false,
+      "historicalIgl": true,
       "traits": {
         "firepower": 31,
         "utility": 77,
         "survival": 37,
         "clutch": 50,
         "consistency": 69,
-        "leadership": 50
+        "leadership": 75
       },
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -1659,7 +1666,7 @@
         "firepower": 52,
         "utility": 65,
         "survival": 9,
-        "clutch": 20,
+        "clutch": 25,
         "consistency": 9,
         "leadership": 50
       },
@@ -1733,7 +1740,7 @@
         "firepower": 9,
         "utility": 9,
         "survival": 57,
-        "clutch": 30,
+        "clutch": 38,
         "consistency": 83,
         "leadership": 50
       },
@@ -1783,7 +1790,7 @@
         "firepower": 43,
         "utility": 91,
         "survival": 21,
-        "clutch": 10,
+        "clutch": 12,
         "consistency": 82,
         "leadership": 50
       },
@@ -1807,7 +1814,7 @@
         "firepower": 100,
         "utility": 78,
         "survival": 13,
-        "clutch": 20,
+        "clutch": 25,
         "consistency": 100,
         "leadership": 50
       },
@@ -1906,7 +1913,7 @@
         "firepower": 91,
         "utility": 65,
         "survival": 100,
-        "clutch": 35,
+        "clutch": 50,
         "consistency": 6,
         "leadership": 50
       },
@@ -2080,7 +2087,7 @@
         "firepower": 76,
         "utility": 86,
         "survival": 81,
-        "clutch": 30,
+        "clutch": 43,
         "consistency": 46,
         "leadership": 50
       },
@@ -2106,7 +2113,7 @@
         "firepower": 55,
         "utility": 5,
         "survival": 10,
-        "clutch": 10,
+        "clutch": 14,
         "consistency": 100,
         "leadership": 50
       },
@@ -2202,7 +2209,7 @@
         "firepower": 57,
         "utility": 38,
         "survival": 23,
-        "clutch": 35,
+        "clutch": 50,
         "consistency": 16,
         "leadership": 50
       },
@@ -2250,7 +2257,7 @@
         "firepower": 49,
         "utility": 79,
         "survival": 53,
-        "clutch": 10,
+        "clutch": 14,
         "consistency": 53,
         "leadership": 50
       },
@@ -2274,7 +2281,7 @@
         "firepower": 14,
         "utility": 14,
         "survival": 66,
-        "clutch": 20,
+        "clutch": 25,
         "consistency": 62,
         "leadership": 50
       },
@@ -2317,18 +2324,19 @@
       "eligibleRoles": [
         "smokes"
       ],
-      "historicalIgl": false,
+      "historicalIgl": true,
       "traits": {
         "firepower": 14,
         "utility": 63,
         "survival": 6,
         "clutch": 0,
         "consistency": 91,
-        "leadership": 50
+        "leadership": 75
       },
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -2393,18 +2401,19 @@
         "initiator",
         "flex"
       ],
-      "historicalIgl": false,
+      "historicalIgl": true,
       "traits": {
         "firepower": 62,
         "utility": 92,
         "survival": 66,
         "clutch": 25,
         "consistency": 59,
-        "leadership": 50
+        "leadership": 75
       },
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -2422,7 +2431,7 @@
         "firepower": 74,
         "utility": 22,
         "survival": 83,
-        "clutch": 40,
+        "clutch": 50,
         "consistency": 65,
         "leadership": 50
       },
@@ -2446,7 +2455,7 @@
         "firepower": 57,
         "utility": 91,
         "survival": 30,
-        "clutch": 10,
+        "clutch": 12,
         "consistency": 91,
         "leadership": 50
       },
@@ -2470,7 +2479,7 @@
         "firepower": 41,
         "utility": 70,
         "survival": 37,
-        "clutch": 40,
+        "clutch": 57,
         "consistency": 81,
         "leadership": 50
       },
@@ -2496,7 +2505,7 @@
         "firepower": 23,
         "utility": 60,
         "survival": 49,
-        "clutch": 30,
+        "clutch": 38,
         "consistency": 45,
         "leadership": 50
       },
@@ -2520,7 +2529,7 @@
         "firepower": 34,
         "utility": 74,
         "survival": 91,
-        "clutch": 50,
+        "clutch": 62,
         "consistency": 47,
         "leadership": 50
       },
@@ -2544,7 +2553,7 @@
         "firepower": 11,
         "utility": 30,
         "survival": 74,
-        "clutch": 5,
+        "clutch": 7,
         "consistency": 85,
         "leadership": 50
       },
@@ -2563,18 +2572,19 @@
       "eligibleRoles": [
         "initiator"
       ],
-      "historicalIgl": false,
+      "historicalIgl": true,
       "traits": {
         "firepower": 28,
         "utility": 58,
         "survival": 61,
-        "clutch": 25,
+        "clutch": 36,
         "consistency": 21,
-        "leadership": 50
+        "leadership": 75
       },
       "sourceIds": [
         "liquipedia-champions-2023",
-        "vct-reference-dataset"
+        "vct-reference-dataset",
+        "riot-vct-2023-awards"
       ]
     },
     {
@@ -2714,7 +2724,7 @@
         "firepower": 88,
         "utility": 44,
         "survival": 62,
-        "clutch": 10,
+        "clutch": 12,
         "consistency": 18,
         "leadership": 50
       },
@@ -2836,7 +2846,7 @@
         "firepower": 36,
         "utility": 49,
         "survival": 23,
-        "clutch": 40,
+        "clutch": 50,
         "consistency": 58,
         "leadership": 50
       },
@@ -2862,7 +2872,7 @@
         "firepower": 19,
         "utility": 100,
         "survival": 4,
-        "clutch": 20,
+        "clutch": 25,
         "consistency": 96,
         "leadership": 50
       },
