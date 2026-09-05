@@ -29,11 +29,21 @@ describe("validateAssetPath", () => {
   });
   it("rejects an assets root symlink escaping public", () => {
     const escapedRoot = mkdtempSync(join(tmpdir(), "asset-validation-escaped-"));
-    const outside = join(escapedRoot, "outside-assets"); mkdirSync(outside); writeFileSync(join(outside, "escape.svg"), "escape");
-    const publicDir = join(escapedRoot, "public"); mkdirSync(publicDir);
-    try { symlinkSync(outside, join(publicDir, "assets"), "junction"); }
-    catch (error) { if (error && typeof error === "object" && "code" in error && ["EPERM", "EACCES", "ENOTSUP"].includes(String(error.code))) { rmSync(escapedRoot, { recursive: true, force: true }); return; } throw error; }
-    expect(validateAssetPath("/assets/escape.svg", escapedRoot)).toMatch(/symlink|outside/);
-    rmSync(escapedRoot, { recursive: true, force: true });
+    try {
+      const outside = join(escapedRoot, "outside-assets"); mkdirSync(outside); writeFileSync(join(outside, "escape.svg"), "escape");
+      const publicDir = join(escapedRoot, "public"); mkdirSync(publicDir);
+      try { symlinkSync(outside, join(publicDir, "assets"), "junction"); }
+      catch (error) { if (error && typeof error === "object" && "code" in error && ["EPERM", "EACCES", "ENOTSUP"].includes(String(error.code))) return; throw error; }
+      expect(validateAssetPath("/assets/escape.svg", escapedRoot)).toMatch(/symlink|outside/);
+    } finally { rmSync(escapedRoot, { recursive: true, force: true }); }
+  });
+  it("rejects a public root symlink escaping the project", () => {
+    const escapedRoot = mkdtempSync(join(tmpdir(), "asset-validation-public-"));
+    try {
+      const outside = join(escapedRoot, "outside-public"); mkdirSync(join(outside, "assets"), { recursive: true }); writeFileSync(join(outside, "assets", "escape.svg"), "escape");
+      try { symlinkSync(outside, join(escapedRoot, "public"), "junction"); }
+      catch (error) { if (error && typeof error === "object" && "code" in error && ["EPERM", "EACCES", "ENOTSUP"].includes(String(error.code))) return; throw error; }
+      expect(validateAssetPath("/assets/escape.svg", escapedRoot)).toMatch(/public.*symlink|outside/);
+    } finally { rmSync(escapedRoot, { recursive: true, force: true }); }
   });
 });

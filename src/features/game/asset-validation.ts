@@ -12,9 +12,13 @@ export function validateAssetPath(asset: string | null, projectRoot: string): st
   const publicRoot = resolve(projectRoot, "public");
   const assetsRoot = resolve(publicRoot, "assets");
   if (!existsSync(publicRoot)) return "public directory is missing";
+  if (lstatSync(publicRoot).isSymbolicLink()) return "public directory must not be a symlink";
+  const realProjectRoot = realpathSync(resolve(projectRoot));
+  const realPublicRoot = realpathSync(publicRoot);
+  const expectedPublicRoot = resolve(realProjectRoot, "public");
+  if (realPublicRoot !== expectedPublicRoot) return "public directory resolves outside project root";
   if (!existsSync(assetsRoot)) return `public/assets is missing for "${asset}"`;
   if (lstatSync(assetsRoot).isSymbolicLink()) return "public/assets must not be a symlink";
-  const realPublicRoot = realpathSync(publicRoot);
   const realAssetsRoot = realpathSync(assetsRoot);
   if (!contained(realPublicRoot, realAssetsRoot)) return "public/assets resolves outside public";
   const target = resolve(publicRoot, `.${asset}`);
