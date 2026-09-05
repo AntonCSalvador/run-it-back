@@ -13,8 +13,8 @@ export function MediaMark({ src, alt, label }: { src: string | null; alt: string
   const [failed, setFailed] = useState(false);
   const safeSrc = assetUrl(src);
   const text = initials(label ?? alt);
-  const dimensions = { width: "48px", height: "48px", aspectRatio: "1 / 1" };
-  const fill = { width: "100%", height: "100%" };
+  const dimensions = { display: "inline-flex", width: "48px", height: "48px", aspectRatio: "1 / 1" };
+  const fill = { display: "block", width: "100%", height: "100%" };
   return <span className="media-mark" style={dimensions}>{safeSrc && !failed
     // Public game data points at local static assets; this native image enables a same-sized error fallback.
     // eslint-disable-next-line @next/next/no-img-element

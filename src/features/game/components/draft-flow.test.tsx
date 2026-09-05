@@ -64,16 +64,19 @@ describe("draft flow", () => {
     await user.click(screen.getByRole("button", { name: "Daily" }));
     const image = screen.getByRole("img", { name: /LOUD 2022 logo/ });
     const wrapper = image.parentElement as HTMLElement;
+    expect(wrapper.style.display).toBe("inline-flex");
     expect(wrapper.style.width).toBe("48px");
     expect(wrapper.style.height).toBe("48px");
     expect((image as HTMLImageElement).style.width).toBe("100%");
     expect((image as HTMLImageElement).style.height).toBe("100%");
+    expect((image as HTMLImageElement).style.display).toBe("block");
     fireEvent.error(image);
     expect(screen.getByRole("img", { name: "LOUD 2022 logo" })).toHaveTextContent("LO");
     const fallback = screen.getByRole("img", { name: "LOUD 2022 logo" }) as HTMLElement;
     expect(fallback.parentElement).toBe(wrapper);
     expect(fallback.style.width).toBe("100%");
     expect(fallback.style.height).toBe("100%");
+    expect(fallback.style.display).toBe("block");
   });
 
   it("keeps a portrait fallback accessible after its image fails", () => {
