@@ -34,8 +34,30 @@ const runBaseSchema = z.object({
   stageReached: stage, outcome: z.enum(["champion", "eliminated"]).optional(), series: z.array(persistedSeriesSchema).min(1).max(4),
   rerollsUsed: z.number().int().min(0).max(3), roster: z.array(rosterSlot).length(ROLES.length), iglCardId: z.string().min(1).max(128).optional(),
 });
-export const dailyRunSchema = runBaseSchema.extend({ mode: z.literal("daily"), utcDate }).strict().superRefine(runIssues);
-export const freePlayRunSchema = runBaseSchema.extend({ mode: z.literal("free") }).strict().superRefine(runIssues);
+function extendedRunIssues(run: z.infer<typeof runBaseSchema>, context: z.RefinementCtx): void {
+  runIssues(run, context);
+  if (run.iglCardId && !run.roster.some(slot => slot.cardId === run.iglCardId)) context.addIssue({ code: "custom", path: ["iglCardId"], message: "IGL must be rostered" });
+  const final = run.series.at(-1);
+  if (run.outcome && final) {
+    const champion = final.stage === "final" && final.userWins === 3;
+    if ((run.outcome === "champion") !== champion) context.addIssue({ code: "custom", path: ["outcome"], message: "Outcome contradicts final series" });
+  }
+  run.series.forEach((series, index) => {
+    if (!series.maps) return;
+    const needed = series.stage === "final" ? 3 : 2;
+    if (series.maps.length !== series.userWins + series.opponentWins) context.addIssue({ code: "custom", path: ["series", index, "maps"], message: "Map count must equal series wins" });
+    let user = 0; let opponent = 0;
+    series.maps.forEach((map, mapIndex) => {
+      const valid = (map.userScore === 13 && map.opponentScore <= 11) || (map.opponentScore === 13 && map.userScore <= 11) || (Math.max(map.userScore, map.opponentScore) >= 14 && Math.abs(map.userScore - map.opponentScore) === 2);
+      if (!valid || map.userScore === map.opponentScore) context.addIssue({ code: "custom", path: ["series", index, "maps", mapIndex], message: "Invalid decisive map score" });
+      if (map.userScore > map.opponentScore) user += 1; else opponent += 1;
+      if ((user >= needed || opponent >= needed) && mapIndex < series.maps!.length - 1) context.addIssue({ code: "custom", path: ["series", index, "maps"], message: "Map after clinch" });
+    });
+    if (user !== series.userWins || opponent !== series.opponentWins) context.addIssue({ code: "custom", path: ["series", index, "maps"], message: "Map wins contradict series" });
+  });
+}
+export const dailyRunSchema = runBaseSchema.extend({ mode: z.literal("daily"), utcDate }).strict().superRefine(extendedRunIssues);
+export const freePlayRunSchema = runBaseSchema.extend({ mode: z.literal("free") }).strict().superRefine(extendedRunIssues);
 type StoredRunBase = { readonly completedAtUtc: string; readonly stageReached: Stage; readonly outcome?: "champion" | "eliminated"; readonly series: readonly { readonly stage: Stage; readonly userWins: number; readonly opponentWins: number; readonly maps?: readonly { readonly map: string; readonly userScore: number; readonly opponentScore: number }[] }[]; readonly rerollsUsed: number; readonly roster: readonly { readonly role: Role; readonly cardId: string }[]; readonly iglCardId?: string };
 export type DailyRun = StoredRunBase & { readonly mode: "daily"; readonly utcDate: string };
 export type FreePlayRun = StoredRunBase & { readonly mode: "free" };
