@@ -12,8 +12,8 @@ const rejects = (mutate: (data: MutableDataset) => void, text: string) => {
 describe("game dataset schema", () => {
   it("accepts the valid minimal dataset", () => {
     const parsed = parseDataset(minimalDataset);
-    expect(parsed.teams.length).toBeGreaterThanOrEqual(6);
-    expect(parsed.cards.length).toBeGreaterThanOrEqual(6);
+    expect(parsed.teams).toHaveLength(6);
+    expect(parsed.cards).toHaveLength(30);
   });
   it("rejects duplicate card ID", () => rejects(d => d.cards.push({ ...d.cards[0] }), "duplicate cards id"));
   it("rejects mapsPlayed 0", () => rejects(d => d.cards[0].mapsPlayed = 0, "mapsPlayed"));
