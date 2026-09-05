@@ -51,6 +51,16 @@ describe("local run storage", () => {
     expect(readRecord(storage, HISTORY_RECORD)).toMatchObject({ persistent: false, value: { runs: [freeRun("dirty")] } });
   });
 
+  it("isolates memory by Storage identity and clears dirty state after a retry", () => {
+    let fail = true; let stored: string | null = null; const first: Storage = { get length() { return 0; }, clear() {}, key() { return null; }, removeItem() {}, getItem() { return stored; }, setItem(_key, value) { if (fail) throw new Error("quota"); stored = value; } };
+    const second = new MemoryStorage();
+    writeRecord(first, HISTORY_RECORD, { runs: [freeRun("first")] });
+    expect(readRecord(second, HISTORY_RECORD)).toMatchObject({ persistent: true, value: { runs: [] } });
+    expect(readRecord(null, HISTORY_RECORD).value.runs[0]?.roster[0].cardId).not.toBe("first");
+    fail = false; expect(writeRecord(first, HISTORY_RECORD, { runs: [freeRun("retry")] }).persistent).toBe(true);
+    expect(readRecord(first, HISTORY_RECORD)).toMatchObject({ persistent: true, value: { runs: [freeRun("retry")] } });
+  });
+
   it.each([
     ["duplicate roles", (run: FreePlayRun) => ({ ...run, roster: [...run.roster.slice(0, 4), { role: "sentinel" as const, cardId: "x" }] })],
     ["duplicate cards", (run: FreePlayRun) => ({ ...run, roster: run.roster.map((slot, index) => index === 1 ? { ...slot, cardId: run.roster[0].cardId } : slot) })],
@@ -64,6 +74,13 @@ describe("local run storage", () => {
     const value = addDailyCompletion({ completions: [dailyRun("2026-09-05")], streak: 1 }, dailyRun("2026-09-05", "final"));
     expect(value.completions).toHaveLength(1);
     expect(value.completions[0].stageReached).toBe("final");
+  });
+
+  it("caps Daily completions at 730 after deduping newest first", () => {
+    const completions = Array.from({ length: 730 }, (_, index) => dailyRun(`2024-01-${String((index % 28) + 1).padStart(2, "0")}`));
+    const distinct = completions.map((run, index) => ({ ...run, utcDate: `202${Math.floor(index / 365) + 4}-${String((index % 12) + 1).padStart(2, "0")}-01` }));
+    const result = addDailyCompletion({ completions: distinct, streak: 0 }, dailyRun("2027-12-31"));
+    expect(result.completions).toHaveLength(730); expect(result.completions[0].utcDate).toBe("2027-12-31");
   });
 
   it("does not accept a Free Play run in Daily completions", () => {
