@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 import { parseDataset } from "../src/features/game/schema";
 import { championsDataset } from "../src/data/champions";
+import evidence from "../src/data/champions/evidence.json";
+import { validateChampions } from "../src/data/champions/validation";
 import { validateAssetPath } from "../src/features/game/asset-validation";
 
 const root = resolve(import.meta.dirname, "..");
@@ -18,6 +20,7 @@ function checkAsset(owner: string, asset: string | null) {
 {
   try {
     const dataset = parseDataset(championsDataset);
+    validateChampions(dataset, evidence);
     for (const year of [2021, 2022, 2023, 2024, 2025]) {
       const count = dataset.teams.filter(team => team.year === year).length;
       if (count !== 16) diagnostics.push(`Year ${year} has ${count} team appearances; expected exactly 16`);

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { championsDataset } from "./index";
+import evidence from "./evidence.json";
 import { ROLES } from "@/features/game/domain";
+import type { Role } from "@/features/game/domain";
 
 describe("Champions 2021–2025 dataset", () => {
   it("contains one complete, sourced sixteen-team event for each year", () => {
@@ -24,6 +26,37 @@ describe("Champions 2021–2025 dataset", () => {
       expect(card.sourceIds.every(sourceId => sourceIds.has(sourceId))).toBe(true);
     }
     expect(new Set(championsDataset.cards.map(card => card.id)).size).toBe(championsDataset.cards.length);
+  });
+
+  it("has a one-to-one role evidence record and cites every below-threshold override", () => {
+    expect(evidence).toHaveLength(championsDataset.cards.length);
+    const cards = new Map(championsDataset.cards.map(card => [card.id, card]));
+    expect(new Set(evidence.map(entry => entry.cardId)).size).toBe(evidence.length);
+    for (const entry of evidence) {
+      const card = cards.get(entry.cardId);
+      expect(card?.mapsPlayed).toBe(entry.mapsPlayed);
+      expect(entry.threshold).toBe(Math.max(2, Math.ceil(entry.mapsPlayed * 0.2)));
+      for (const role of entry.finalEligibleRoles.filter(role => role !== "flex") as Exclude<Role, "flex">[]) {
+        const observed = entry.agentClassMaps[role];
+        expect(observed >= entry.threshold || (entry.override?.roles.includes(role) && entry.override.sourceIds.length > 0)).toBe(true);
+      }
+    }
+    expect(evidence.find(entry => entry.cardId === "lakia-vision-strikers-2021")?.override?.sourceIds.length).toBeGreaterThan(0);
+  });
+
+  it("has coverage-aware non-constant clutch traits", () => {
+    const values = new Set(championsDataset.cards.map(card => card.traits.clutch));
+    expect(values.size).toBeGreaterThan(1);
+    expect([...values]).toContain(50);
+  });
+
+  it("keeps cited historical leadership and event-time team names", () => {
+    const igls = championsDataset.cards.filter(card => card.historicalIgl);
+    expect(igls).toEqual([expect.objectContaining({ id: "boaster-fnatic-2023", traits: expect.objectContaining({ leadership: expect.any(Number) }) })]);
+    expect(igls[0].traits.leadership).toBeGreaterThan(50);
+    expect(igls[0].sourceIds).toContain("riot-vct-2023-awards");
+    expect(championsDataset.teams.some(team => /KIWOOM|Guangzhou Huadu/.test(team.name))).toBe(false);
+    for (const item of [...championsDataset.teams, ...championsDataset.players]) expect(item.sourceIds.length).toBeGreaterThan(0);
   });
 
   it("keeps TenZ historical event cards distinct and represents event-specific multi-role play", () => {

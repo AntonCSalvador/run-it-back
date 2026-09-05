@@ -79,3 +79,24 @@ Corrections should cite an event page or first-party match record, identify the
 year/team/player/card ID affected, and state whether they change participation,
 map count, agent class, identity alias, IGL evidence, or asset permission.
 Re-run `npm run validate:data` and the dataset test after every correction.
+
+## Audit evidence, clutch coverage, and reproducibility
+
+`src/data/champions/evidence.json` is the authoritative one-to-one working
+table for all 404 cards. It records observed class-map counts, threshold,
+suggested/final roles, every override and its sources, plus clutch wins and map
+coverage. Lakia's one-map 2021 Initiator card is the only below-threshold role;
+it is a manually reviewed short-event override citing the event Player
+Information source and VCT Reference.
+
+The old all-100 clutch output was rejected: the player-map clutch columns were
+zero-filled. Clutches now use `notables` events only, percentile-normalized
+within role when every event map has performance coverage; incomplete coverage
+is neutral 50. `docs/champions-extraction.sql` is the exact audit query and
+`docs/champions-provenance.json` pins its retrieval date, SHA-256, event IDs,
+and evidence artifact. Boaster's Fnatic 2023 card is the sole supported IGL
+record (source `riot-vct-2023-awards`, leadership 75); all others are false/50.
+
+Team identities use event-time DRX and Bilibili Gaming names, not the source's
+later sponsor labels. Stable player IDs resolve aliases; a handle collision is
+held for manual correction rather than automatically merged.

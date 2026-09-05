@@ -8,5 +8,7 @@
   { "id": "riot-champions-2023", "url": "https://valorantesports.com/en-GB/news/valorant-champions-2023-recap-evil-geniuses-end-their-roller-coaster-year-in-glory/", "retrievedAt": "2026-09-05", "usage": "facts" },
   { "id": "riot-champions-2024", "url": "https://valorantesports.com/es-MX/news/everything-you-need-to-know-champions-seoul", "retrievedAt": "2026-09-05", "usage": "facts" },
   { "id": "riot-champions-2025", "url": "https://playvalorant.com/en-us/news/esports/everything-you-need-to-know-champions-paris/", "retrievedAt": "2026-09-05", "usage": "facts" },
-  { "id": "vct-reference-dataset", "url": "https://vct-reference.com/dataset", "retrievedAt": "2026-09-05", "usage": "facts" }
+  { "id": "vct-reference-dataset", "url": "https://vct-reference.com/dataset", "retrievedAt": "2026-09-05", "usage": "facts" },
+  { "id": "liquipedia-champions-2021-player-information", "url": "https://liquipedia.net/valorant/VALORANT_Champions_Tour/2021/Champions/Player_Information", "retrievedAt": "2026-09-05", "usage": "facts" },
+  { "id": "riot-vct-2023-awards", "url": "https://valorantesports.com/en-US/news/valorant-champions-tour-2023-end-of-season-awards/", "retrievedAt": "2026-09-05", "usage": "facts" }
 ]

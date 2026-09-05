@@ -24,6 +24,7 @@ describe("game dataset schema", () => {
   it("rejects empty eligible role list", () => rejects(d => d.cards[0].eligibleRoles = [], "eligibleRoles"));
   it("rejects rating outside 0..100", () => rejects(d => d.cards[0].traits.firepower = 101, "firepower"));
   it("rejects missing source ID", () => rejects(d => d.cards[0].sourceIds = ["missing"], "source ID"));
+  it("rejects empty source references", () => rejects(d => d.cards[0].sourceIds = [], "sourceIds"));
   it("rejects team/card wrong event year", () => rejects(d => d.cards[0].year = 2023, "year"));
   it("rejects unknown fields", () => rejects(d => Object.assign(d.cards[0], { unexpected: true }), "Unrecognized key"));
   it("rejects invalid role", () => rejects(d => d.cards[0].eligibleRoles = ["controller"], "Invalid option"));

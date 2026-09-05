@@ -57,8 +57,8 @@
       ]
     },
     {
-      "id": "guangzhou-huadu-bilibili-gaming-2025",
-      "name": "Guangzhou Huadu Bilibili Gaming",
+      "id": "bilibili-gaming-2025",
+      "name": "Bilibili Gaming",
       "shortName": "BLG",
       "year": 2025,
       "logo": null,
@@ -68,8 +68,8 @@
       ]
     },
     {
-      "id": "kiwoom-drx-2025",
-      "name": "KIWOOM DRX",
+      "id": "drx-2025",
+      "name": "DRX",
       "shortName": "DRX",
       "year": 2025,
       "logo": null,
@@ -925,7 +925,7 @@
         "firepower": 16,
         "utility": 40,
         "survival": 8,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 96,
         "leadership": 50
       },
@@ -949,7 +949,7 @@
         "firepower": 85,
         "utility": 28,
         "survival": 75,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 33,
         "leadership": 50
       },
@@ -973,7 +973,7 @@
         "firepower": 29,
         "utility": 17,
         "survival": 85,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 9,
         "leadership": 50
       },
@@ -999,7 +999,7 @@
         "firepower": 88,
         "utility": 66,
         "survival": 59,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 23,
         "leadership": 50
       },
@@ -1023,7 +1023,7 @@
         "firepower": 100,
         "utility": 22,
         "survival": 100,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 82,
         "leadership": 50
       },
@@ -1047,7 +1047,7 @@
         "firepower": 6,
         "utility": 39,
         "survival": 52,
-        "clutch": 100,
+        "clutch": 8,
         "consistency": 36,
         "leadership": 50
       },
@@ -1071,7 +1071,7 @@
         "firepower": 11,
         "utility": 96,
         "survival": 30,
-        "clutch": 100,
+        "clutch": 50,
         "consistency": 58,
         "leadership": 50
       },
@@ -1081,9 +1081,9 @@
       ]
     },
     {
-      "id": "beyn-kiwoom-drx-2025",
+      "id": "beyn-drx-2025",
       "playerId": "player-4678",
-      "teamId": "kiwoom-drx-2025",
+      "teamId": "drx-2025",
       "year": 2025,
       "displayHandle": "BeYN",
       "mapsPlayed": 22,
@@ -1119,7 +1119,7 @@
         "firepower": 22,
         "utility": 59,
         "survival": 89,
-        "clutch": 100,
+        "clutch": 42,
         "consistency": 13,
         "leadership": 50
       },
@@ -1143,7 +1143,7 @@
         "firepower": 16,
         "utility": 98,
         "survival": 46,
-        "clutch": 100,
+        "clutch": 67,
         "consistency": 68,
         "leadership": 50
       },
@@ -1167,7 +1167,7 @@
         "firepower": 100,
         "utility": 75,
         "survival": 72,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 8,
         "leadership": 50
       },
@@ -1191,7 +1191,7 @@
         "firepower": 8,
         "utility": 92,
         "survival": 12,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 76,
         "leadership": 50
       },
@@ -1217,7 +1217,7 @@
         "firepower": 19,
         "utility": 76,
         "survival": 19,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 86,
         "leadership": 50
       },
@@ -1244,7 +1244,7 @@
         "firepower": 99,
         "utility": 37,
         "survival": 61,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 14,
         "leadership": 50
       },
@@ -1268,7 +1268,7 @@
         "firepower": 80,
         "utility": 55,
         "survival": 83,
-        "clutch": 100,
+        "clutch": 21,
         "consistency": 12,
         "leadership": 50
       },
@@ -1294,7 +1294,7 @@
         "firepower": 11,
         "utility": 100,
         "survival": 11,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 93,
         "leadership": 50
       },
@@ -1320,7 +1320,7 @@
         "firepower": 92,
         "utility": 45,
         "survival": 100,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 45,
         "leadership": 50
       },
@@ -1344,7 +1344,7 @@
         "firepower": 68,
         "utility": 50,
         "survival": 97,
-        "clutch": 100,
+        "clutch": 50,
         "consistency": 50,
         "leadership": 50
       },
@@ -1370,7 +1370,7 @@
         "firepower": 21,
         "utility": 29,
         "survival": 75,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 75,
         "leadership": 50
       },
@@ -1394,7 +1394,7 @@
         "firepower": 50,
         "utility": 92,
         "survival": 45,
-        "clutch": 100,
+        "clutch": 75,
         "consistency": 83,
         "leadership": 50
       },
@@ -1418,7 +1418,7 @@
         "firepower": 38,
         "utility": 48,
         "survival": 24,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 95,
         "leadership": 50
       },
@@ -1442,7 +1442,7 @@
         "firepower": 58,
         "utility": 85,
         "survival": 6,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 27,
         "leadership": 50
       },
@@ -1466,7 +1466,7 @@
         "firepower": 33,
         "utility": 66,
         "survival": 99,
-        "clutch": 100,
+        "clutch": 8,
         "consistency": 100,
         "leadership": 50
       },
@@ -1492,7 +1492,7 @@
         "firepower": 75,
         "utility": 90,
         "survival": 43,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 68,
         "leadership": 50
       },
@@ -1516,7 +1516,7 @@
         "firepower": 87,
         "utility": 81,
         "survival": 14,
-        "clutch": 100,
+        "clutch": 42,
         "consistency": 26,
         "leadership": 50
       },
@@ -1526,9 +1526,9 @@
       ]
     },
     {
-      "id": "flashback-kiwoom-drx-2025",
+      "id": "flashback-drx-2025",
       "playerId": "player-35013",
-      "teamId": "kiwoom-drx-2025",
+      "teamId": "drx-2025",
       "year": 2025,
       "displayHandle": "Flashback",
       "mapsPlayed": 22,
@@ -1540,7 +1540,7 @@
         "firepower": 71,
         "utility": 31,
         "survival": 67,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 47,
         "leadership": 50
       },
@@ -1564,7 +1564,7 @@
         "firepower": 36,
         "utility": 91,
         "survival": 3,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 85,
         "leadership": 50
       },
@@ -1590,7 +1590,7 @@
         "firepower": 55,
         "utility": 90,
         "survival": 72,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 37,
         "leadership": 50
       },
@@ -1600,9 +1600,9 @@
       ]
     },
     {
-      "id": "free1ng-kiwoom-drx-2025",
+      "id": "free1ng-drx-2025",
       "playerId": "player-1916",
-      "teamId": "kiwoom-drx-2025",
+      "teamId": "drx-2025",
       "year": 2025,
       "displayHandle": "free1ng",
       "mapsPlayed": 22,
@@ -1616,7 +1616,7 @@
         "firepower": 22,
         "utility": 36,
         "survival": 55,
-        "clutch": 100,
+        "clutch": 67,
         "consistency": 65,
         "leadership": 50
       },
@@ -1640,7 +1640,7 @@
         "firepower": 22,
         "utility": 59,
         "survival": 37,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 83,
         "leadership": 50
       },
@@ -1666,7 +1666,7 @@
         "firepower": 76,
         "utility": 86,
         "survival": 10,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 14,
         "leadership": 50
       },
@@ -1676,9 +1676,9 @@
       ]
     },
     {
-      "id": "hyunmin-kiwoom-drx-2025",
+      "id": "hyunmin-drx-2025",
       "playerId": "player-28400",
-      "teamId": "kiwoom-drx-2025",
+      "teamId": "drx-2025",
       "year": 2025,
       "displayHandle": "HYUNMIN",
       "mapsPlayed": 22,
@@ -1690,7 +1690,7 @@
         "firepower": 51,
         "utility": 55,
         "survival": 79,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 35,
         "leadership": 50
       },
@@ -1714,7 +1714,7 @@
         "firepower": 60,
         "utility": 32,
         "survival": 24,
-        "clutch": 100,
+        "clutch": 57,
         "consistency": 92,
         "leadership": 50
       },
@@ -1738,7 +1738,7 @@
         "firepower": 89,
         "utility": 69,
         "survival": 37,
-        "clutch": 100,
+        "clutch": 86,
         "consistency": 17,
         "leadership": 50
       },
@@ -1762,7 +1762,7 @@
         "firepower": 40,
         "utility": 8,
         "survival": 96,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 4,
         "leadership": 50
       },
@@ -1788,7 +1788,7 @@
         "firepower": 21,
         "utility": 86,
         "survival": 14,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 86,
         "leadership": 50
       },
@@ -1814,7 +1814,7 @@
         "firepower": 64,
         "utility": 100,
         "survival": 40,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 78,
         "leadership": 50
       },
@@ -1838,7 +1838,7 @@
         "firepower": 94,
         "utility": 27,
         "survival": 94,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 100,
         "leadership": 50
       },
@@ -1862,7 +1862,7 @@
         "firepower": 37,
         "utility": 97,
         "survival": 19,
-        "clutch": 100,
+        "clutch": 36,
         "consistency": 58,
         "leadership": 50
       },
@@ -1886,7 +1886,7 @@
         "firepower": 100,
         "utility": 48,
         "survival": 92,
-        "clutch": 100,
+        "clutch": 57,
         "consistency": 56,
         "leadership": 50
       },
@@ -1910,7 +1910,7 @@
         "firepower": 20,
         "utility": 8,
         "survival": 68,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 84,
         "leadership": 50
       },
@@ -1936,7 +1936,7 @@
         "firepower": 44,
         "utility": 36,
         "survival": 56,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 68,
         "leadership": 50
       },
@@ -1946,9 +1946,9 @@
       ]
     },
     {
-      "id": "knight-guangzhou-huadu-bilibili-gaming-2025",
+      "id": "knight-bilibili-gaming-2025",
       "playerId": "player-4774",
-      "teamId": "guangzhou-huadu-bilibili-gaming-2025",
+      "teamId": "bilibili-gaming-2025",
       "year": 2025,
       "displayHandle": "Knight",
       "mapsPlayed": 5,
@@ -1960,7 +1960,7 @@
         "firepower": 75,
         "utility": 21,
         "survival": 86,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 43,
         "leadership": 50
       },
@@ -1984,7 +1984,7 @@
         "firepower": 39,
         "utility": 39,
         "survival": 50,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 18,
         "leadership": 50
       },
@@ -2010,7 +2010,7 @@
         "firepower": 100,
         "utility": 68,
         "survival": 15,
-        "clutch": 100,
+        "clutch": 42,
         "consistency": 34,
         "leadership": 50
       },
@@ -2020,9 +2020,9 @@
       ]
     },
     {
-      "id": "levius-guangzhou-huadu-bilibili-gaming-2025",
+      "id": "levius-bilibili-gaming-2025",
       "playerId": "player-40845",
-      "teamId": "guangzhou-huadu-bilibili-gaming-2025",
+      "teamId": "bilibili-gaming-2025",
       "year": 2025,
       "displayHandle": "Levius",
       "mapsPlayed": 5,
@@ -2034,7 +2034,7 @@
         "firepower": 33,
         "utility": 5,
         "survival": 81,
-        "clutch": 100,
+        "clutch": 8,
         "consistency": 24,
         "leadership": 50
       },
@@ -2058,7 +2058,7 @@
         "firepower": 60,
         "utility": 52,
         "survival": 52,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 32,
         "leadership": 50
       },
@@ -2068,9 +2068,9 @@
       ]
     },
     {
-      "id": "mako-kiwoom-drx-2025",
+      "id": "mako-drx-2025",
       "playerId": "player-4462",
-      "teamId": "kiwoom-drx-2025",
+      "teamId": "drx-2025",
       "year": 2025,
       "displayHandle": "MaKo",
       "mapsPlayed": 22,
@@ -2082,7 +2082,7 @@
         "firepower": 58,
         "utility": 67,
         "survival": 91,
-        "clutch": 100,
+        "clutch": 75,
         "consistency": 24,
         "leadership": 50
       },
@@ -2106,7 +2106,7 @@
         "firepower": 71,
         "utility": 62,
         "survival": 5,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 38,
         "leadership": 50
       },
@@ -2130,7 +2130,7 @@
         "firepower": 33,
         "utility": 25,
         "survival": 45,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 69,
         "leadership": 50
       },
@@ -2156,7 +2156,7 @@
         "firepower": 24,
         "utility": 88,
         "survival": 92,
-        "clutch": 100,
+        "clutch": 17,
         "consistency": 40,
         "leadership": 50
       },
@@ -2180,7 +2180,7 @@
         "firepower": 68,
         "utility": 93,
         "survival": 25,
-        "clutch": 100,
+        "clutch": 21,
         "consistency": 14,
         "leadership": 50
       },
@@ -2206,7 +2206,7 @@
         "firepower": 52,
         "utility": 14,
         "survival": 67,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 5,
         "leadership": 50
       },
@@ -2216,9 +2216,9 @@
       ]
     },
     {
-      "id": "nephh-guangzhou-huadu-bilibili-gaming-2025",
+      "id": "nephh-bilibili-gaming-2025",
       "playerId": "player-10698",
-      "teamId": "guangzhou-huadu-bilibili-gaming-2025",
+      "teamId": "bilibili-gaming-2025",
       "year": 2025,
       "displayHandle": "nephh",
       "mapsPlayed": 5,
@@ -2232,7 +2232,7 @@
         "firepower": 43,
         "utility": 7,
         "survival": 100,
-        "clutch": 100,
+        "clutch": 8,
         "consistency": 54,
         "leadership": 50
       },
@@ -2256,7 +2256,7 @@
         "firepower": 32,
         "utility": 57,
         "survival": 7,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 29,
         "leadership": 50
       },
@@ -2280,7 +2280,7 @@
         "firepower": 61,
         "utility": 4,
         "survival": 21,
-        "clutch": 100,
+        "clutch": 21,
         "consistency": 32,
         "leadership": 50
       },
@@ -2307,7 +2307,7 @@
         "firepower": 86,
         "utility": 81,
         "survival": 86,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 67,
         "leadership": 50
       },
@@ -2331,7 +2331,7 @@
         "firepower": 14,
         "utility": 79,
         "survival": 29,
-        "clutch": 100,
+        "clutch": 7,
         "consistency": 79,
         "leadership": 50
       },
@@ -2355,7 +2355,7 @@
         "firepower": 27,
         "utility": 16,
         "survival": 45,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 41,
         "leadership": 50
       },
@@ -2379,7 +2379,7 @@
         "firepower": 36,
         "utility": 72,
         "survival": 28,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 100,
         "leadership": 50
       },
@@ -2403,7 +2403,7 @@
         "firepower": 97,
         "utility": 62,
         "survival": 40,
-        "clutch": 100,
+        "clutch": 50,
         "consistency": 26,
         "leadership": 50
       },
@@ -2413,9 +2413,9 @@
       ]
     },
     {
-      "id": "rushia-guangzhou-huadu-bilibili-gaming-2025",
+      "id": "rushia-bilibili-gaming-2025",
       "playerId": "player-48878",
-      "teamId": "guangzhou-huadu-bilibili-gaming-2025",
+      "teamId": "bilibili-gaming-2025",
       "year": 2025,
       "displayHandle": "rushia",
       "mapsPlayed": 5,
@@ -2427,7 +2427,7 @@
         "firepower": 3,
         "utility": 42,
         "survival": 42,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 39,
         "leadership": 50
       },
@@ -2451,7 +2451,7 @@
         "firepower": 68,
         "utility": 71,
         "survival": 28,
-        "clutch": 100,
+        "clutch": 42,
         "consistency": 80,
         "leadership": 50
       },
@@ -2501,7 +2501,7 @@
         "firepower": 97,
         "utility": 88,
         "survival": 9,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 97,
         "leadership": 50
       },
@@ -2525,7 +2525,7 @@
         "firepower": 86,
         "utility": 86,
         "survival": 74,
-        "clutch": 100,
+        "clutch": 71,
         "consistency": 22,
         "leadership": 50
       },
@@ -2549,7 +2549,7 @@
         "firepower": 76,
         "utility": 100,
         "survival": 4,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 40,
         "leadership": 50
       },
@@ -2573,7 +2573,7 @@
         "firepower": 4,
         "utility": 75,
         "survival": 4,
-        "clutch": 100,
+        "clutch": 14,
         "consistency": 96,
         "leadership": 50
       },
@@ -2597,7 +2597,7 @@
         "firepower": 51,
         "utility": 19,
         "survival": 62,
-        "clutch": 100,
+        "clutch": 43,
         "consistency": 62,
         "leadership": 50
       },
@@ -2621,7 +2621,7 @@
         "firepower": 29,
         "utility": 25,
         "survival": 32,
-        "clutch": 100,
+        "clutch": 7,
         "consistency": 100,
         "leadership": 50
       },
@@ -2645,7 +2645,7 @@
         "firepower": 71,
         "utility": 74,
         "survival": 40,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 74,
         "leadership": 50
       },
@@ -2669,7 +2669,7 @@
         "firepower": 84,
         "utility": 70,
         "survival": 98,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 52,
         "leadership": 50
       },
@@ -2695,7 +2695,7 @@
         "firepower": 61,
         "utility": 36,
         "survival": 54,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 71,
         "leadership": 50
       },
@@ -2719,7 +2719,7 @@
         "firepower": 44,
         "utility": 20,
         "survival": 68,
-        "clutch": 100,
+        "clutch": 33,
         "consistency": 53,
         "leadership": 50
       },
@@ -2729,9 +2729,9 @@
       ]
     },
     {
-      "id": "whzy-guangzhou-huadu-bilibili-gaming-2025",
+      "id": "whzy-bilibili-gaming-2025",
       "playerId": "player-4885",
-      "teamId": "guangzhou-huadu-bilibili-gaming-2025",
+      "teamId": "bilibili-gaming-2025",
       "year": 2025,
       "displayHandle": "whzy",
       "mapsPlayed": 5,
@@ -2743,7 +2743,7 @@
         "firepower": 4,
         "utility": 56,
         "survival": 44,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 56,
         "leadership": 50
       },
@@ -2770,7 +2770,7 @@
         "firepower": 58,
         "utility": 44,
         "survival": 53,
-        "clutch": 100,
+        "clutch": 58,
         "consistency": 49,
         "leadership": 50
       },
@@ -2794,7 +2794,7 @@
         "firepower": 41,
         "utility": 100,
         "survival": 93,
-        "clutch": 100,
+        "clutch": 25,
         "consistency": 96,
         "leadership": 50
       },
@@ -2820,7 +2820,7 @@
         "firepower": 29,
         "utility": 14,
         "survival": 81,
-        "clutch": 100,
+        "clutch": 8,
         "consistency": 19,
         "leadership": 50
       },
@@ -2844,7 +2844,7 @@
         "firepower": 52,
         "utility": 96,
         "survival": 32,
-        "clutch": 100,
+        "clutch": 29,
         "consistency": 24,
         "leadership": 50
       },
@@ -2870,7 +2870,7 @@
         "firepower": 5,
         "utility": 76,
         "survival": 33,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 90,
         "leadership": 50
       },
@@ -2894,7 +2894,7 @@
         "firepower": 92,
         "utility": 64,
         "survival": 20,
-        "clutch": 100,
+        "clutch": 0,
         "consistency": 12,
         "leadership": 50
       },
