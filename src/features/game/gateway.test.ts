@@ -11,6 +11,8 @@ describe("LocalSimulationGateway", () => {
     const opponent = gateway.generateOpponent("gateway", "semifinal", lineup); const controlOpponent = baseline.generateOpponent("gateway", "semifinal", lineup);
     const internal = (gateway as unknown as { dataset: typeof minimalDataset }).dataset;
     expect(Object.isFrozen(internal)).toBe(true); expect(Object.isFrozen(internal.cards)).toBe(true); expect(Object.isFrozen(internal.cards[0])).toBe(true); expect(Object.isFrozen(internal.cards[0].traits)).toBe(true);
+    expect(Object.isFrozen(internal.sources)).toBe(true); expect(Object.isFrozen(internal.teams)).toBe(true); expect(Object.isFrozen(internal.players)).toBe(true);
+    expect(Object.isFrozen(internal.teams[0].sourceIds)).toBe(true); expect(Object.isFrozen(internal.players[0].sourceIds)).toBe(true); expect(Object.isFrozen(internal.cards[0].sourceIds)).toBe(true); expect(Object.isFrozen(internal.cards[0].eligibleRoles)).toBe(true);
     expect(opponent).toEqual(controlOpponent);
     expect(opponent.lineup.slots.every(slot => !lineup.slots.some(own => own.cardId === slot.cardId))).toBe(true);
     const series = gateway.playSeries("gateway", "semifinal", lineup, opponent);

@@ -51,19 +51,20 @@ export const DAILY_RECORD: RecordAdapter<DailyStorage> = { key: STORAGE_KEYS.dai
 }), defaultValue: { completions: [], streak: 0 } };
 export const HISTORY_RECORD: RecordAdapter<HistoryStorage> = { key: STORAGE_KEYS.history, schema: z.object({ version: z.literal(1), runs: z.array(freePlayRunSchema).max(20) }).strict(), defaultValue: { runs: [] } };
 
-const storageMemory = new WeakMap<Storage, Map<string, unknown>>(); const nullMemory = new Map<string, unknown>(); const dirty = new WeakMap<Storage, Set<string>>();
+const storageMemory = new WeakMap<Storage, Map<string, unknown>>(); const nullMemory = new Map<string, unknown>(); const dirty = new WeakMap<Storage, Set<string>>(); const tombstones = new WeakMap<Storage, Set<string>>();
 function memoryFor(storage: Storage | null): Map<string, unknown> { if (!storage) return nullMemory; const values = storageMemory.get(storage) ?? new Map<string, unknown>(); storageMemory.set(storage, values); return values; }
 function dirtyKeys(storage: Storage): Set<string> { const keys = dirty.get(storage) ?? new Set<string>(); dirty.set(storage, keys); return keys; }
+function tombstoneKeys(storage: Storage): Set<string> { const keys = tombstones.get(storage) ?? new Set<string>(); tombstones.set(storage, keys); return keys; }
 function copy<T>(value: T): T { return structuredClone(value); }
 function unwrap<T>(value: { version: 1 } & T): T { const record = copy(value) as { version?: 1 } & T; delete record.version; return record as T; }
 function wrap<T>(value: T): { version: 1 } & T { return { version: 1, ...copy(value) }; }
 
 export function readRecord<T>(storage: Storage | null, record: RecordAdapter<T>): StorageResult<T> {
   const memory = memoryFor(storage);
-  if (!storage || dirty.get(storage)?.has(record.key)) return { value: copy((memory.get(record.key) as T | undefined) ?? record.defaultValue), recovered: false, persistent: false };
+  if (!storage || dirty.get(storage)?.has(record.key) || tombstones.get(storage)?.has(record.key)) return { value: copy((memory.get(record.key) as T | undefined) ?? record.defaultValue), recovered: false, persistent: false };
   let raw: string | null;
   try { raw = storage.getItem(record.key); } catch { return { value: copy((memory.get(record.key) as T | undefined) ?? record.defaultValue), recovered: false, persistent: false }; }
-  if (raw === null) return { value: copy((memory.get(record.key) as T | undefined) ?? record.defaultValue), recovered: false, persistent: true };
+  if (raw === null) { memory.delete(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: true }; }
   try {
     const parsed = record.schema.safeParse(JSON.parse(raw));
     if (!parsed.success) throw new Error("Invalid storage schema");
@@ -81,15 +82,15 @@ export function writeRecord<T>(storage: Storage | null, record: RecordAdapter<T>
   if (!parsed.success) throw new Error(`Cannot persist invalid ${record.key}`);
   const safe = unwrap(parsed.data); memoryFor(storage).set(record.key, copy(safe));
   if (!storage) return { value: copy(safe), recovered: false, persistent: false };
-  try { storage.setItem(record.key, JSON.stringify(wrap(safe))); dirtyKeys(storage).delete(record.key); return { value: copy(safe), recovered: false, persistent: true }; }
+  try { storage.setItem(record.key, JSON.stringify(wrap(safe))); dirtyKeys(storage).delete(record.key); tombstoneKeys(storage).delete(record.key); return { value: copy(safe), recovered: false, persistent: true }; }
   catch { dirtyKeys(storage).add(record.key); return { value: copy(safe), recovered: false, persistent: false }; }
 }
 
 export function removeRecord<T>(storage: Storage | null, record: RecordAdapter<T>): StorageResult<T> {
-  memoryFor(storage).delete(record.key); if (storage) dirtyKeys(storage).delete(record.key);
+  const memory = memoryFor(storage);
   if (!storage) return { value: copy(record.defaultValue), recovered: false, persistent: false };
-  try { storage.removeItem(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: true }; }
-  catch { return { value: copy(record.defaultValue), recovered: false, persistent: false }; }
+  try { storage.removeItem(record.key); memory.delete(record.key); dirtyKeys(storage).delete(record.key); tombstoneKeys(storage).delete(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: true }; }
+  catch { memory.set(record.key, copy(record.defaultValue)); dirtyKeys(storage).add(record.key); tombstoneKeys(storage).add(record.key); return { value: copy(record.defaultValue), recovered: false, persistent: false }; }
 }
 
 export function addDailyCompletion(current: DailyStorage, completion: DailyRun): DailyStorage {
