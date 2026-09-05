@@ -7,6 +7,7 @@ const cards = teams.flatMap((team, teamIndex) => Array.from({ length: 5 }, (_, s
   const index = teamIndex * 5 + slot;
   const playerId = index === 0 || index === 5 ? "aspas" : `player-${index + 1}`;
   const eligibleRoles = teamIndex === 1 && slot === 0 ? ["duelist", "flex"] : [...roles[slot]];
-  return { id: `${playerId}-${team.id}`, playerId, teamId: team.id, year: team.year, displayHandle: playerId, mapsPlayed: 16, eligibleRoles, historicalIgl: slot === 0, traits: { firepower: 80, utility: 70, survival: 75, clutch: 70, consistency: 80, leadership: slot === 0 ? 80 : 40 }, sourceIds: [source.id] };
+  const rating = 42 + teamIndex * 10;
+  return { id: `${playerId}-${team.id}`, playerId, teamId: team.id, year: team.year, displayHandle: playerId, mapsPlayed: 16, eligibleRoles, historicalIgl: slot === 0, traits: { firepower: rating, utility: rating, survival: rating, clutch: rating, consistency: rating, leadership: rating }, sourceIds: [source.id] };
 }));
 export const minimalDataset = { version: 1, sources: [source], teams, players: [...players, { id: "aspas", canonicalHandle: "aspas", portrait: null, sourceIds: [source.id] }], cards };

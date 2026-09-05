@@ -56,10 +56,13 @@ function distanceFromRange(value: number, range: readonly [number, number]): num
 }
 
 function opponentId(seed: string, stage: Stage, lineup: Lineup): string {
-  let hash = 2166136261;
+  let first = 2166136261;
+  let second = 2166136261;
   const input = `${seed}:${stage}:${lineup.slots.map(slot => `${slot.role}:${slot.cardId}`).join(",")}:${lineup.iglCardId}`;
-  for (let index = 0; index < input.length; index += 1) hash = Math.imul(hash ^ input.charCodeAt(index), 16777619);
-  return `opponent-${stage}-${(hash >>> 0).toString(36)}`;
+  const alternate = `opponent-id:v2:${input}`;
+  for (let index = 0; index < input.length; index += 1) first = Math.imul(first ^ input.charCodeAt(index), 16777619);
+  for (let index = 0; index < alternate.length; index += 1) second = Math.imul(second ^ alternate.charCodeAt(index), 16777619);
+  return `opponent-${stage}-${(first >>> 0).toString(16).padStart(8, "0")}${(second >>> 0).toString(16).padStart(8, "0")}`;
 }
 
 function generated(seed: string, stage: Stage, candidate: Candidate): GeneratedOpponent {
@@ -67,6 +70,8 @@ function generated(seed: string, stage: Stage, candidate: Candidate): GeneratedO
 }
 
 export function generateOpponent(seed: string, stage: Stage, userLineup: Lineup, dataset: GameDataset): GeneratedOpponent {
+  if (!Object.prototype.hasOwnProperty.call(STAGE_TARGETS, stage)) throw new Error(`Invalid stage: ${String(stage)}`);
+  lineupStrength(userLineup, dataset);
   const userCards = new Set(userLineup.slots.map(slot => slot.cardId));
   const candidates = dataset.cards.filter(card => !userCards.has(card.id));
   const target = STAGE_TARGETS[stage];
