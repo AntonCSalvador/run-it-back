@@ -1,8 +1,9 @@
 import { existsSync } from "node:fs";
-import { resolve, relative, isAbsolute } from "node:path";
+import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseDataset } from "../src/features/game/schema";
 import { minimalDataset } from "../src/data/fixtures/minimal-dataset";
+import { validateAssetPath } from "../src/features/game/asset-validation";
 
 const root = resolve(import.meta.dirname, "..");
 const mode = process.env.DATASET_MODE ?? "fixture";
@@ -13,8 +14,15 @@ async function loadDataset(): Promise<unknown> {
   if (mode !== "full") { diagnostics.push(`Unknown DATASET_MODE "${mode}" (expected fixture or full)`); return null; }
   const modulePath = resolve(root, "src/data/champions/index.ts");
   if (!existsSync(modulePath)) { diagnostics.push("Full dataset unavailable: src/data/champions/index.ts has not been added yet"); return null; }
-  const loaded = await import(pathToFileURL(modulePath).href);
-  return loaded.championsDataset ?? loaded.dataset ?? loaded.default;
+  try {
+    const loaded = await import(pathToFileURL(modulePath).href);
+    const dataset = loaded.championsDataset ?? loaded.dataset ?? loaded.default;
+    if (dataset === undefined) diagnostics.push("Full dataset module has no recognized export (expected championsDataset, dataset, or default)");
+    return dataset;
+  } catch (error) {
+    diagnostics.push(`Unable to load full dataset module: ${error instanceof Error ? error.message : String(error)}`);
+    return null;
+  }
 }
 
 function checkAsset(owner: string, asset: string | null) {
@@ -22,9 +30,8 @@ function checkAsset(owner: string, asset: string | null) {
   if (!asset.startsWith("/assets/") || asset.includes("\\") || asset.split("/").includes("..")) {
     diagnostics.push(`${owner} has invalid asset path "${asset}" (must begin /assets/ and contain no traversal)`); return;
   }
-  const target = resolve(root, "public", `.${asset}`);
-  const publicRoot = resolve(root, "public");
-  if (relative(publicRoot, target).startsWith("..") || isAbsolute(relative(publicRoot, target)) || !existsSync(target)) diagnostics.push(`${owner} references missing local asset "${asset}"`);
+  const error = validateAssetPath(asset, root);
+  if (error) diagnostics.push(`${owner} ${error}`);
 }
 
 const raw = await loadDataset();
