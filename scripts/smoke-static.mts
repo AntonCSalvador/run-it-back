@@ -113,12 +113,12 @@ function assetPath(root: string, asset: string, label: string) {
 }
 
 export function smokeStatic(outputDirectory: string, options: SmokeOptions = {}) {
+  const basePath = normalizeBasePath(options.basePath);
   const output = resolve(outputDirectory);
   const indexHtml = resolve(output, "index.html");
   if (!existsSync(indexHtml)) throw new Error(`index.html missing: ${indexHtml}`);
   const outputRoot = rootDirectory(output, "output directory");
   regularFile(outputRoot, indexHtml, "index.html");
-  const basePath = normalizeBasePath(options.basePath);
   const references: string[] = [];
   collectReferences(parse(readFileSync(indexHtml, "utf8")) as unknown as HtmlNode, references);
 
