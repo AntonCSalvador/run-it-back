@@ -8,6 +8,8 @@ read the [data methodology](data-methodology.md).
 ## Navigate this guide
 
 - [Start a review](#start-a-review)
+- [Report-only workflow (recommended)](#report-only-workflow-recommended)
+- [Cautious local workflow](#cautious-local-workflow)
 - [Glossary](#glossary)
 - [Keep factual review separate from balance tuning](#keep-factual-review-separate-from-balance-tuning)
 - [Review player role tags](#review-player-role-tags)
@@ -17,14 +19,15 @@ read the [data methodology](data-methodology.md).
 - [Algorithm change](#algorithm-change)
 - [How data reaches a map roll](#how-data-reaches-a-map-roll)
 - [Source-of-truth map](#source-of-truth-map)
+- [Common validation failures](#common-validation-failures)
+- [Final handoff checklist](#final-handoff-checklist)
 
 ## Start a review
 
-You can take any of these routes:
-
-1. Edit locally if you are comfortable working in the repository.
-2. Send a change request to the repository owner.
-3. Paste the request into Codex and ask it to prepare the change.
+The recommended default is to report the finding instead of editing files.
+Use the [report-only workflow](#report-only-workflow-recommended) unless the
+repository owner has asked you to make a local, scoped change. The cautious
+local option is documented below for that situation.
 
 For every player or team review, name both the **event year** and the exact
 **card ID**. A player name alone is not enough: the same person can have more
@@ -37,6 +40,87 @@ the [data methodology](data-methodology.md). Do not directly edit generated
 role or trait values in a yearly snapshot; they are regenerated from the raw
 data and reviewed overlays.
 
+## Report-only workflow (recommended)
+
+This path is enough to make a useful review. It is the right default for a
+factual correction, a player-tag concern, a proposed percentage/win-rate
+change, or anything involving overlays, checksums, derivation, or validation.
+
+1. Identify the exact player-event card and event year. For a simulation
+   request, identify the setting and the representative matchup or stage.
+2. Decide whether the request is a **factual correction** or **balance/model
+   change**. Keep separate requests if it is both.
+3. Copy the appropriate template: [Player tag correction](#player-tag-correction)
+   for one card's roles or [Algorithm change](#algorithm-change) for a global
+   rule, trait formula, lineup value, opponent band, map percentage, or series
+   rule.
+4. Fill in the required evidence: card/year and proposed result for a player
+   request; current and proposed behavior for an algorithm request; and VCT
+   sources or calculations for either. Include what you observed in
+   `evidence.json` or the raw event observations when available.
+5. Send the completed template to the repository owner, or paste it into Codex.
+   It is fine to leave technical fields blank while reporting a factual concern;
+   do not guess at a checksum, generated value, or source-file edit.
+
+Copy/paste handoff prompt:
+
+```text
+Please review and implement the request below in the VCT data repository.
+First confirm the exact card/year or affected gameplay rule, keep factual data
+separate from balance tuning, and identify the source-of-truth file. Do not
+edit generated snapshots, weaken validation, or change a checksum only to make
+a check pass. Explain the proposed diff, run the guide's required checks, and
+report the results with any blocker.
+
+[Paste the completed Player tag correction or Algorithm change template here]
+```
+
+## Cautious local workflow
+
+Use this only for an approved, small change. If the correct source file is not
+clear, stop and use the report-only workflow instead.
+
+1. From the repository root, confirm where you are and preserve any existing
+   work before proceeding:
+
+   ```powershell
+   Get-Location
+   git status --short
+   git branch --show-current
+   ```
+
+2. Create a descriptive branch with a name unique in your repository; for
+   example, `git switch -c review/vct-data-corrections`. Choose a different
+   suffix if that name already exists.
+3. Locate the exact card with `rg` and JSON inspection. Start with the commands
+   in [Find the exact card](#find-the-exact-card), then inspect the full audit
+   record and the raw observation rather than editing from a partial search
+   result.
+4. Use [Source-of-truth map](#source-of-truth-map) to identify the one allowed
+   source file. Edit only that source file. Do not edit generated yearly
+   snapshots or `evidence.json`.
+5. Run `npm run derive:data` only after an intentional derivation-rule change
+   or approved reviewed-overlay/source change. It rewrites generated files, so
+   never run it merely to inspect data.
+6. Validate the data and run the focused safety tests:
+
+   ```powershell
+   npm run validate:data
+   npx vitest run src/data/champions/derivation.test.ts src/features/game/rating.test.ts src/features/game/opponents.test.ts src/features/game/tournament.test.ts
+   ```
+
+7. Review exactly what will be handed off:
+
+   ```powershell
+   git diff
+   git diff --check
+   ```
+
+   Stop and report any error. Do not weaken validation, skip a failing check,
+   edit a generated output as a workaround, or change a checksum merely to
+   make the check pass. Hand off the command output, exact card/year or setting,
+   source URLs, and the diff instead.
+
 ## Glossary
 
 - **Player identity:** the canonical person record, shared across appearances.
@@ -44,16 +128,27 @@ data and reviewed overlays.
   with one team at one Champions event year.
 - **Card ID:** the exact identifier for a player-event card. Use it with the
   event year in every review request.
+- **Agent class:** the gameplay class assigned to the agent selected on a
+  recorded map. Agent classes are counted as role evidence for that event card.
 - **Role tag:** an eligible draft role such as `smokes`, `duelist`,
   `initiator`, `sentinel`, or `flex`. Tags describe algorithmic draft
   eligibility from observed agent classes; they do not necessarily claim one
   fixed, colloquial roster position.
+- **Flex:** an additional eligibility tag assigned when two or more non-Flex
+  role classes qualify. It is not a separate agent-class percentile cohort.
 - **Trait:** a simulation input such as firepower, utility, or leadership.
   Traits are generated/editorial inputs, not an objective ranking of a player.
 - **IGL:** an in-game leader decision recorded for an event card. It is a
   reviewed leadership decision, separate from the player identity.
 - **Snapshot:** one generated runtime file for a Champions year. Snapshots are
   loaded into the dataset the game uses.
+- **Lineup strength:** the game score calculated from five selected cards'
+  traits, chemistry, and selected IGL; it drives map odds.
+- **Map chance:** the simulated probability that the user's lineup wins one
+  map against an opponent. It is derived from the lineup-strength difference,
+  then capped.
+- **Series chance:** the chance of winning a BO3 or BO5 built from map chances;
+  it is not a recorded VCT statistic.
 
 ## Keep factual review separate from balance tuning
 
@@ -466,20 +561,27 @@ but the evidence alone does not make that decision.
 
 ## Player tag correction
 
-- Card ID:
-- Player / team / event year:
-- Current tags:
-- Proposed tags:
+Copy this template for an individual card concern, complete the required
+evidence, and send it through the [report-only workflow](#report-only-workflow-recommended):
+
+```markdown
+## Player tag correction
+- Card ID: [required]
+- Player / team / event year: [required]
+- Current tags: [required]
+- Proposed tags: [required]
 - Current agent-class map counts:
 - Are those counts correct? Yes / No / Unsure
-- Is this factual or a balance/modeling change?
-- VCT reasoning:
-- Supporting URLs:
+- Is this factual correction, individual exception, or balance/modeling change? [required]
+- VCT reasoning: [required]
+- Supporting URLs: [required]
 - Does the same problem affect other cards?
+```
 
-Technical fields may be blank while an SME is gathering them, but the
-card/year, proposed result, VCT reasoning, and supporting sources are required
-before review.
+The current agent-class counts are helpful but may be marked `Unsure` while
+you gather them. The card/year, current and proposed result, classification,
+VCT reasoning, and supporting sources are required before review. A request
+that affects several cards should instead use [Algorithm change](#algorithm-change).
 
 ### Implementation ownership
 
@@ -523,20 +625,57 @@ repository owner or Codex. Do not change a checksum merely to make validation
 pass; the underlying factual change, its source, and its generated output must
 be reviewed together.
 
-| File | Purpose and edit guidance |
-| --- | --- |
-| [raw-extraction.json](../src/data/champions/raw-extraction.json) | Pinned source observations. Do not casually edit it; use the documented extraction and review process. |
-| [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed teams, role exceptions, and IGL decisions. Propose factual changes with evidence; make overlay/checksum changes only through coordinated owner/Codex review. |
-| [evidence.json](../src/data/champions/evidence.json) | Generated audit view. Inspect it, but do not edit it directly. |
-| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated runtime snapshots. Inspect them, but do not edit derived role or trait fields; regenerate them after approved input changes. |
-| [derivation.ts](../src/data/champions/derivation.ts) | Global role and trait derivation rules. Request an owner/Codex change only when the global algorithm needs revision, then regenerate and validate the snapshots. |
-| [rating.ts](../src/features/game/rating.ts) | Trait weights, chemistry, IGL bonus, and map-win probability. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
-| [opponents.ts](../src/features/game/opponents.ts) | Stage bands and opponent construction. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
-| [tournament.ts](../src/features/game/tournament.ts) | Series, advancement, maps, and displayed scores. Ask the owner or Codex to change these game rules and test the resulting behavior. |
-| [draft.ts](../src/features/game/draft.ts) | Team offers, rerolls, card uniqueness, and role assignment. Ask the owner or Codex to change these draft rules and test the resulting behavior. |
-| [validation.ts](../src/data/champions/validation.ts) | Integrity rules and checksums for the Champions data. Do not weaken or update checksums alone; use coordinated owner/Codex review for any validation change. |
-| [player-picker.tsx](../src/features/game/components/player-picker.tsx) and [tournament-view.tsx](../src/features/game/components/tournament-view.tsx) | User-facing displayed role tags and tournament scores; calculated map probabilities are not currently displayed as percentages. Ask the owner or Codex to make and test display changes. |
+| File | Category | Purpose and edit guidance |
+| --- | --- | --- |
+| [raw-extraction.json](../src/data/champions/raw-extraction.json) | Source input | Pinned source observations. Do not casually edit it; use the documented extraction and review process. |
+| [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed override | Reviewed teams, role exceptions, and IGL decisions. Propose factual changes with evidence; make overlay/checksum changes only through coordinated owner/Codex review. |
+| [evidence.json](../src/data/champions/evidence.json) | Generated audit output | Inspect it, but do not edit it directly. |
+| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated runtime output | Inspect them, but do not edit derived role or trait fields; regenerate them after approved input changes. |
+| [derivation.ts](../src/data/champions/derivation.ts) | Derivation/configuration | Global role and trait derivation rules. Request an owner/Codex change only when the global algorithm needs revision, then regenerate and validate the snapshots. |
+| [rating.ts](../src/features/game/rating.ts) | Gameplay configuration | Trait weights, chemistry, IGL bonus, and map-win probability. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
+| [opponents.ts](../src/features/game/opponents.ts) | Gameplay configuration | Stage bands and opponent construction. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
+| [tournament.ts](../src/features/game/tournament.ts) | Gameplay configuration | Series, advancement, maps, and displayed scores. Ask the owner or Codex to change these game rules and test the resulting behavior. |
+| [draft.ts](../src/features/game/draft.ts) | Gameplay configuration | Team offers, rerolls, card uniqueness, and role assignment. Ask the owner or Codex to change these draft rules and test the resulting behavior. |
+| [validation.ts](../src/data/champions/validation.ts) | Validator | Integrity rules and checksums for the Champions data. Do not weaken or update checksums alone; use coordinated owner/Codex review for any validation change. |
+| [player-picker.tsx](../src/features/game/components/player-picker.tsx) and [tournament-view.tsx](../src/features/game/components/tournament-view.tsx) | UI | User-facing displayed role tags and tournament scores; calculated map probabilities are not currently displayed as percentages. Ask the owner or Codex to make and test display changes. |
+| [derivation.test.ts](../src/data/champions/derivation.test.ts), [rating.test.ts](../src/features/game/rating.test.ts), [opponents.test.ts](../src/features/game/opponents.test.ts), and [tournament.test.ts](../src/features/game/tournament.test.ts) | Focused tests | Update only when an approved behavior change changes their expectation; run them before handoff. |
+| [data-methodology.md](data-methodology.md) | Methodology reference | Explains the collection and derivation policy; update it when an approved data or derivation policy changes. |
 
 Use [the data validation script](../scripts/validate-data.mts) after a data
 change. It loads the dataset and runs the integrity checks before the game uses
 the information.
+
+## Common validation failures
+
+These errors are evidence that the source, overlay, derivation, and generated
+outputs disagree. Do not bypass them. Preserve the error text and hand it off
+with the exact card/year, source URLs, intended source-file edit, and `git diff`.
+
+| Error text | Likely mistaken edit | What to hand off |
+| --- | --- | --- |
+| `derived trait ...` | A generated trait was edited directly, a source statistic is incomplete/invalid, or a derivation change did not regenerate its snapshots. | Exact card/year and trait, raw map statistics, expected factual or model change, derivation output, and the failing command. |
+| `derived final roles ...` or another role failure | A yearly `eligibleRoles` field was edited, an unsupported overlay role was added, an agent class/count is wrong, or the threshold/validator no longer matches derivation. | Exact card/year, current and proposed roles, agent/map evidence, overlay entry if any, and whether the concern is a one-card exception or global rule. |
+| `reviewed overlays checksum mismatch` | An overlay changed without the owner-approved checksum/integrity update, or the wrong overlay content was edited. | The complete proposed overlay change, factual sources, expected generated roles/IGL effect, error text, and diff. Ask the owner/Codex to review the coordinated change. |
+| `source catalog ...` | A pinned raw source, source catalog entry, or its expected relationship was changed or is missing. | Exact source URL/identifier, event/card it supports, why it should be added or corrected, the changed source record, and the validation output. |
+
+If validation, derivation, or a focused test fails for another reason, make no
+workaround edit. Report the first error, the command used, the relevant source
+evidence, and the full diff to the repository owner or Codex.
+
+## Final handoff checklist
+
+Before sending a report or local branch for review, confirm all of the following:
+
+- The exact card ID and event year are named, or the exact gameplay setting and
+  representative stage/matchup are named.
+- The request clearly says whether it is factual VCT data or balance tuning.
+- Supporting VCT sources or calculations are included.
+- The predicted direction is stated: for example, whether the proposed change
+  should raise or lower a trait, lineup strength, map chance, or series chance.
+- The source-of-truth file is correct; generated snapshots and `evidence.json`
+  were not used as edit points.
+- Any regenerated outputs were intentionally reviewed after `npm run derive:data`.
+- `npm run validate:data`, the focused tests, and `git diff --check` passed, or
+  their failure output is included in the handoff.
+- `git diff` contains no unrelated changes, and no validation rule or checksum
+  was weakened merely to make a check pass.
