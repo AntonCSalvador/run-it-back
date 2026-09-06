@@ -53,7 +53,9 @@ change, or anything involving overlays, checksums, derivation, or validation.
 3. Copy the appropriate template: [Player tag correction](#player-tag-correction)
    for one card's roles or [Algorithm change](#algorithm-change) for a global
    rule, trait formula, lineup value, opponent band, map percentage, or series
-   rule.
+   rule. For an individual IGL, team/name, or raw-stat correction, adapt the
+   Player tag correction template: replace current/proposed tags with the
+   current/proposed fact and mark role-specific fields `Not applicable`.
 4. Fill in the required evidence: card/year and proposed result for a player
    request; current and proposed behavior for an algorithm request; and VCT
    sources or calculations for either. Include what you observed in
@@ -402,25 +404,6 @@ Changing either cap therefore also requires a coordinated tournament validation
 change and focused [tournament tests](../src/features/game/tournament.test.ts),
 not rating tests alone.
 
-### Seeded and reproducible runs
-
-The simulation's random-looking choices come from a seed. With the identical
-seed, lineup and other input choices, dataset, and code, a run is reproducible:
-it produces the same deterministic offers, opponents, maps, and outcomes.
-[rng.ts](../src/features/game/rng.ts) derives a Daily seed from the UTC date;
-Free Play normally starts with a new UUID seed. Its scoped RNG keeps draft
-offers, opponent construction, map order, and map outcomes in separate random
-streams, so one kind of choice does not consume another's sequence.
-
-For a simulation issue, report the seed (or the Daily UTC date), selected
-lineup, stage, and the exact behavior observed. Changing the RNG implementation
-or a scope string reshuffles deterministic outcomes, even when the seed stays
-the same. That is a game-behavior change: update and run the relevant
-[RNG](../src/features/game/rng.test.ts),
-[tournament](../src/features/game/tournament.test.ts),
-[opponent](../src/features/game/opponents.test.ts), and
-[draft](../src/features/game/draft.test.ts) tests as applicable.
-
 The table below applies that exact map formula. BO3 and BO5 values assume
 identical, independent per-map probability `p` and a first-to-two or
 first-to-three series, respectively.
@@ -474,6 +457,31 @@ score generator and `validateMap` accepted ranges must change together. Update
 focused [tournament tests](../src/features/game/tournament.test.ts) with that
 coordinated change. These are presentation constants, not data inputs, so they
 need no regeneration but do need documentation and focused tests.
+
+### Seeded and reproducible runs
+
+The simulation's random-looking choices come from a seed. With the identical
+seed, five card IDs with their assigned roles, selected IGL, other input
+choices, dataset, and code, a run is reproducible: it produces the same
+deterministic offers, opponents, maps, and outcomes. [rng.ts](../src/features/game/rng.ts)
+derives a Daily seed from the UTC date. Free Play normally creates a UUID seed,
+but the current player-facing flow does not display or preserve that seed for a
+report.
+
+For a simulation issue, report the Daily UTC date or the seed when available;
+for Free Play, write `Unknown / unavailable` if the UUID is not available. Also
+include the exact five card IDs with assigned roles, selected IGL, stage, and
+the exact behavior observed. Without a seed, an exact replay may be impossible.
+The scoped RNG separates draft offers, opponent construction, map order, and
+map outcomes into independent random streams, so one kind of choice does not
+consume another's sequence.
+
+Changing the RNG implementation or a scope string reshuffles deterministic
+outcomes, even when the seed stays the same. That is a game-behavior change:
+update and run the relevant [RNG](../src/features/game/rng.test.ts),
+[tournament](../src/features/game/tournament.test.ts),
+[opponent](../src/features/game/opponents.test.ts), and
+[draft](../src/features/game/draft.test.ts) tests as applicable.
 
 ## Algorithm change
 
@@ -694,8 +702,11 @@ known must not delay a factual report.
 - The predicted direction is stated: for example, whether the proposed change
   should raise or lower a trait, lineup strength, map chance, or series chance;
   write `Not applicable` when a direction does not apply.
-- For a simulation issue, include the seed (or Daily UTC date), lineup, stage,
-  and exact observed behavior.
+- For a simulation issue, include the Daily UTC date or seed when available;
+  for Free Play, write `Unknown / unavailable` if its UUID seed is not
+  available. Include the exact five card IDs with assigned roles, selected IGL,
+  stage, and exact observed behavior. Without a seed, exact replay may be
+  impossible.
 
 For a report-only handoff, write `Not run — report only` for source-file
 identification when it is unknown, and for derivation, validation, focused
