@@ -86,7 +86,7 @@ avoids treating a 2021 number as directly comparable with a 2025 number.
 
 | Trait | Current raw formula | What an SME should review |
 | --- | --- | --- |
-| Firepower | `0.65 * mean(rating) + 0.35 * mean(ACS) / 200` | Are the recorded ratings and ACS values complete and credible for this card? Raising either component raises the raw score; changing `0.65`, `0.35`, or `/ 200` changes the statistical model for every card. |
+| Firepower | `0.65 * mean(rating) + 0.35 * mean(ACS) / 200` | Are the recorded ratings and ACS values complete and credible for this card? Changing `0.65`, `0.35`, or `/ 200` changes the statistical model for every card. |
 | Utility | `mean(assists)` | Are assists complete and represented appropriately? More assists raise the raw score. |
 | Survival | `-mean(deaths)` | Are deaths complete? Fewer deaths produce a higher raw score because of the leading minus sign. |
 | Clutch | `clutchWins / mapsPlayed` | Are the counted clutches and map count correct? More clutch wins per map raise the score. |
@@ -95,6 +95,14 @@ avoids treating a 2021 number as directly comparable with a 2025 number.
 
 The formulas and their exact weights, divisor, and signs are in
 [the `scores` expression in derivation.ts](../src/data/champions/derivation.ts).
+For firepower specifically, raising **0.65** makes mean rating more influential
+and lowering it makes rating less influential. Raising **0.35** makes mean ACS
+more influential and lowering it makes ACS less influential. Raising the ACS
+divisor **200** reduces the scale of ACS's contribution; lowering it increases
+that scale. The `0.65` and `0.35` coefficients are independent, so changing
+either one changes the total firepower scale unless the coefficients are
+deliberately normalized together.
+
 Changing a map statistic or an IGL decision is a factual/data review; changing
 a formula, weight, divisor, cohort, or fallback is a statistical-modeling
 decision. Either kind of derivation change requires `npm run derive:data`,
@@ -145,9 +153,12 @@ Progression is a small editorial adjustment from recorded playoff rounds in
 any Playoffs appearance is **+1**; `Semifinals`, `Upper Semifinals`, `Upper
 Final`, `Lower Round 3`, or `Lower Final` is **+2**; a Grand Final loss is
 **+3**; and a Grand Final win is **+4**. Raising or lowering one of these
-levels changes the final trait of every affected event-card and should be
-treated as a statistical-modeling decision, with regeneration, data
-validation, derivation tests, and methodology review.
+levels changes the final trait of every affected event-card. A group-only card
+receives **0**. The highest reached level is the bonus: levels do **not** stack
+(for example, a Grand Final winner receives +4, not +1 +2 +4). The code applies
+no progression bonus to a missing-score trait that is kept at the neutral 50.
+This is a statistical-modeling decision, with regeneration, data validation,
+derivation tests, and methodology review.
 
 ### Trait review questions
 
@@ -155,10 +166,12 @@ For each requested card, answer these questions before asking for a change:
 
 - Is the exact card ID and event year correct, and are all maps present?
 - Are rating, ACS, assists, deaths, and clutch totals complete for every map?
+- Does each metric represent the VCT value this trait is intended to model?
 - If a trait is 50, is that the intentional missing-data fallback rather than a
   claim of average play?
 - Is the card's eligible-role evidence correct, including any reviewed role
   exception that determines its same-year percentile cohorts?
+- Are the same-year, eligible-role comparison cohorts fair for this card?
 - If the card is multi-role, should each non-Flex role continue to have equal
   percentile weight?
 - Did the team reach the recorded playoff level used by the +1/+2/+3/+4
@@ -201,16 +214,25 @@ reward. Raising the cap lets more shared-team pairs matter; lowering it limits
 their combined effect. These are balance constants, so no data regeneration is
 needed; update focused rating tests and this guide if behavior changes.
 
-Leadership is **75** for an evidenced historical IGL and neutral **50** for
-every other card in [derivation.ts](../src/data/champions/derivation.ts). The
-selected IGL adds `(leadership - 50) * 0.08` in
-[rating.ts](../src/features/game/rating.ts), so selecting a historical IGL
-currently gives a practical **+2** lineup-strength bonus: `(75 - 50) * .08`.
-Changing who is an IGL is a factual overlay/derivation review and needs
-regeneration, validation, derivation/validation tests, and methodology review.
-Changing `50`, `75`, or `.08` changes the balance treatment; it needs focused
-rating tests and documentation, but not data regeneration unless the
-leadership derivation itself changes.
+Leadership has two separate layers. The derivation layer gives an evidenced
+historical IGL **75** and every other card a neutral **50** in
+[derivation.ts](../src/data/champions/derivation.ts). Raising derived 75
+increases the leadership value of every historical IGL; lowering it reduces
+that value. Raising derived neutral 50 increases every non-IGL value; lowering
+it reduces it. Changing either derived value, or changing who is an IGL, is a
+factual overlay/derivation review and requires regeneration, validation
+coordination, derivation tests, and methodology review.
+
+Separately, the rating layer applies the selected IGL's
+`(leadership - 50) * 0.08` in
+[rating.ts](../src/features/game/rating.ts). Its **50** is the neutral offset:
+raising it reduces the bonus for leadership above neutral and increases the
+penalty below neutral; lowering it does the reverse. Its **.08** is the
+multiplier: raising it amplifies every leadership difference from neutral and
+lowering it shrinks those differences. With the current two layers, selecting
+a historical IGL gives a practical **+2** lineup-strength bonus:
+`(75 - 50) * .08`. Changing the rating offset or multiplier is game balance,
+so it needs focused rating tests and documentation, but not data regeneration.
 
 ## Tune opponents and map outcomes
 
@@ -266,7 +288,11 @@ underdogs; lowering it reduces that floor. Raising the `.92` ceiling makes
 favorites more dominant; lowering it limits favorite certainty. All four
 numbers are balance constants in [rating.ts](../src/features/game/rating.ts):
 change them with focused [rating tests](../src/features/game/rating.test.ts)
-and documentation updates, not data regeneration.
+and documentation updates, not data regeneration. The same `.08-.92` range is
+independently enforced by [`validateMap` in tournament.ts](../src/features/game/tournament.ts).
+Changing either cap therefore also requires a coordinated tournament validation
+change and focused [tournament tests](../src/features/game/tournament.test.ts),
+not rating tests alone.
 
 The table below applies that exact map formula. BO3 and BO5 values assume
 identical, independent per-map probability `p` and a first-to-two or
@@ -281,8 +307,10 @@ first-to-three series, respectively.
 
 [tournament.ts](../src/features/game/tournament.ts) plays a **BO3** at group,
 quarterfinal, and semifinal stages (first to two maps), then a **BO5** final
-(first to three maps). Changing the stage series lengths or required wins is a
-tournament-balance change: update focused
+(first to three maps). Under the table's identical, independent map-probability
+assumption, longer series favor the lineup with a map probability above 50%; at
+equal strengths, each series length remains 50%. Changing the stage series
+lengths or required wins is a tournament-balance change: update focused
 [tournament tests](../src/features/game/tournament.test.ts) and documentation,
 with no data regeneration.
 
@@ -320,9 +348,9 @@ a game-balance rule:
 - Current behavior:
 - Proposed behavior:
 - Is this VCT accuracy or game balance?
-- Why current behavior is inaccurate:
+- Why the current behavior is inaccurate:
 - Example players/series affected:
-- Expected effect on weak, average, strong lineups:
+- Expected effect on weak, average, and strong lineups:
 - Supporting URLs or calculations:
 ```
 
