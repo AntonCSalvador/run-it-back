@@ -127,6 +127,12 @@ with missing required performance data; changing the all-maps rule changes
 which cards use it. Both are derivation-model changes, so regenerate, validate,
 update derivation/validation tests, and review the methodology.
 
+For clutch specifically, [validation.ts](../src/data/champions/validation.ts)
+independently requires an incomplete-coverage card to have `clutch === 50`.
+An owner or Codex must therefore coordinate any clutch-fallback or
+coverage-rule change in the validator as well as the derivation, tests, and
+documentation; changing the derivation literal alone will be rejected.
+
 Before percentile comparisons, raw scores are quantized to **nine decimal
 places** (`Math.round(value * 1e9) / 1e9`) in
 [derivation.ts](../src/data/champions/derivation.ts). Equal quantized values
@@ -288,11 +294,15 @@ The actual `Math.min(0.92, Math.max(0.08, raw))` code supplies the `.08` and
 `.92` caps. A smaller **12** makes a strength gap more decisive; a larger 12
 makes outcomes more random. Raising the `.08` floor creates more upsets by
 underdogs; lowering it reduces that floor. Raising the `.92` ceiling makes
-favorites more dominant; lowering it limits favorite certainty. All four
+favorites more dominant; lowering it limits favorite certainty. All three
 numbers are balance constants in [rating.ts](../src/features/game/rating.ts):
 change them with focused [rating tests](../src/features/game/rating.test.ts)
-and documentation updates, not data regeneration. The same `.08-.92` range is
-independently enforced by [`validateMap` in tournament.ts](../src/features/game/tournament.ts).
+and documentation updates, not data regeneration. Changing the caps separately
+is asymmetric: the floor protects the user when the user is the underdog, while
+the ceiling protects the opponent when the user is the favorite. Complementary
+caps such as `.05` and `.95` preserve symmetric upset limits. The same
+`.08-.92` range is independently enforced by
+[`validateMap` in tournament.ts](../src/features/game/tournament.ts).
 Changing either cap therefore also requires a coordinated tournament validation
 change and focused [tournament tests](../src/features/game/tournament.test.ts),
 not rating tests alone.
@@ -327,17 +337,28 @@ regulation scores more common. This is presentation/balance tuning, not data
 work: update tournament tests and any displayed-score documentation without
 running derivation.
 
-The regulation losing-score expression in the same linked function is
-`3 + floor(max(0, 1 - min(abs(delta), 30) / 30) * 4)`, followed by a random
-value below **12**. The **3** is the minimum losing score for a very large
-strength gap: raising it makes such displayed losses less lopsided. The **4**
-adds up to four points for an even matchup: raising it makes close-match scores
-look closer. The two **30** values set the strength-delta distance over which
-that close-score adjustment falls away: raising them keeps close-looking scores
-at larger gaps. The exclusive **12** produces regulation losing scores through
-11; changing it also requires the matching score validator and focused
-tournament tests to be updated. These are presentation constants in
-[tournament.ts](../src/features/game/tournament.ts), not data inputs, so they
+The current regulation loser formula in the same
+[`scoreMap` expression in tournament.ts](../src/features/game/tournament.ts) is:
+
+```text
+minimum = 3 + floor(max(0, 1 - min(abs(delta), 30) / 30) * 4)
+low = minimum + rng.int(12 - minimum)
+```
+
+The **3** is the minimum losing score for a very large strength gap: raising it
+makes such displayed losses less lopsided. The **4** adds up to four points for
+an even matchup: raising it makes close-match scores look closer. The two
+**30** values set the strength-delta distance over which that close-score
+adjustment falls away: raising them keeps close-looking scores at larger gaps.
+The exclusive **12** produces regulation losing scores through 11.
+
+Do not change one score literal alone. Lowering `minimum` below **3** conflicts
+with the regulation loser range accepted by
+[`validateMap` in tournament.ts](../src/features/game/tournament.ts). Any
+change must keep `12 - minimum` a positive integer (`minimum <= 11`), and the
+score generator and `validateMap` accepted ranges must change together. Update
+focused [tournament tests](../src/features/game/tournament.test.ts) with that
+coordinated change. These are presentation constants, not data inputs, so they
 need no regeneration but do need documentation and focused tests.
 
 ## Algorithm change
