@@ -72,7 +72,7 @@ The game follows this path:
 1. Pinned raw observations are transformed by [trait and role derivation](../src/data/champions/derivation.ts), using reviewed exceptions where applicable.
 2. [The derivation script](../scripts/derive-champions.mts) writes generated fields into the 2021-2025 snapshots and the audit evidence view.
 3. [The dataset entry point](../src/data/champions/index.ts) combines those yearly snapshots into the runtime dataset.
-4. [Rating](../src/features/game/rating.ts) turns a completed lineup into a strength and a map-win probability.
+4. [Rating](../src/features/game/rating.ts) calculates each lineup's strength, then computes the user's map-win probability from user strength minus opponent strength.
 5. [Opponent generation](../src/features/game/opponents.ts) builds stage-banded opposing lineups.
 6. [Tournament simulation](../src/features/game/tournament.ts) rolls maps, series, and advancement from those inputs.
 
@@ -83,19 +83,24 @@ snapshots still agree with their inputs.
 
 ## Source-of-truth map
 
-| File | Status and purpose |
+Overlay or checksum-protected data changes require coordinated review with the
+repository owner or Codex. Do not change a checksum merely to make validation
+pass; the underlying factual change, its source, and its generated output must
+be reviewed together.
+
+| File | Purpose and edit guidance |
 | --- | --- |
-| [raw-extraction.json](../src/data/champions/raw-extraction.json) | Pinned source observations. Do not casually edit it. |
-| [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed teams, role exceptions, and IGL decisions. |
+| [raw-extraction.json](../src/data/champions/raw-extraction.json) | Pinned source observations. Do not casually edit it; use the documented extraction and review process. |
+| [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed teams, role exceptions, and IGL decisions. Propose factual changes with evidence; make overlay/checksum changes only through coordinated owner/Codex review. |
 | [evidence.json](../src/data/champions/evidence.json) | Generated audit view. Inspect it, but do not edit it directly. |
-| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated runtime snapshots. Inspect them, but do not edit derived role or trait fields. |
-| [derivation.ts](../src/data/champions/derivation.ts) | Global role and trait derivation rules. |
-| [rating.ts](../src/features/game/rating.ts) | Trait weights, chemistry, IGL bonus, and map-win probability. |
-| [opponents.ts](../src/features/game/opponents.ts) | Stage bands and opponent construction. |
-| [tournament.ts](../src/features/game/tournament.ts) | Series, advancement, maps, and displayed scores. |
-| [draft.ts](../src/features/game/draft.ts) | Team offers, rerolls, card uniqueness, and role assignment. |
-| [validation.ts](../src/data/champions/validation.ts) | Integrity rules and checksums for the Champions data. |
-| [player-picker.tsx](../src/features/game/components/player-picker.tsx) and [tournament-view.tsx](../src/features/game/components/tournament-view.tsx) | User-facing displayed role tags and tournament scores; calculated map probabilities are not currently displayed as percentages. |
+| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated runtime snapshots. Inspect them, but do not edit derived role or trait fields; regenerate them after approved input changes. |
+| [derivation.ts](../src/data/champions/derivation.ts) | Global role and trait derivation rules. Request an owner/Codex change only when the global algorithm needs revision, then regenerate and validate the snapshots. |
+| [rating.ts](../src/features/game/rating.ts) | Trait weights, chemistry, IGL bonus, and map-win probability. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
+| [opponents.ts](../src/features/game/opponents.ts) | Stage bands and opponent construction. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
+| [tournament.ts](../src/features/game/tournament.ts) | Series, advancement, maps, and displayed scores. Ask the owner or Codex to change these game rules and test the resulting behavior. |
+| [draft.ts](../src/features/game/draft.ts) | Team offers, rerolls, card uniqueness, and role assignment. Ask the owner or Codex to change these draft rules and test the resulting behavior. |
+| [validation.ts](../src/data/champions/validation.ts) | Integrity rules and checksums for the Champions data. Do not weaken or update checksums alone; use coordinated owner/Codex review for any validation change. |
+| [player-picker.tsx](../src/features/game/components/player-picker.tsx) and [tournament-view.tsx](../src/features/game/components/tournament-view.tsx) | User-facing displayed role tags and tournament scores; calculated map probabilities are not currently displayed as percentages. Ask the owner or Codex to make and test display changes. |
 
 Use [the data validation script](../scripts/validate-data.mts) after a data
 change. It loads the dataset and runs the integrity checks before the game uses
