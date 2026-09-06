@@ -10,6 +10,8 @@ read the [data methodology](data-methodology.md).
 - [Start a review](#start-a-review)
 - [Glossary](#glossary)
 - [Keep factual review separate from balance tuning](#keep-factual-review-separate-from-balance-tuning)
+- [Review player role tags](#review-player-role-tags)
+- [Player tag correction](#player-tag-correction)
 - [How data reaches a map roll](#how-data-reaches-a-map-roll)
 - [Source-of-truth map](#source-of-truth-map)
 
@@ -62,6 +64,103 @@ include trait weights, team chemistry, the IGL bonus, stage strength bands, or
 the chance that a lineup wins a map. These are subjective product decisions;
 they should not be presented as corrections to VCT history. Keep factual and
 balance requests separate, even when they concern the same card.
+
+## Review player role tags
+
+Role tags are based on the agents selected on the maps recorded for one
+player-event card. The [role derivation](../src/data/champions/derivation.ts)
+maps each agent to a class, counts the classes, and assigns every non-Flex
+class that reaches `max(2, ceil(20% of maps))`. When two or more non-Flex
+classes qualify, it also assigns `flex`. This is an eligibility rule for the
+game, not a declaration of a player's single primary roster role.
+
+### Find the exact card
+
+From the repository root, these PowerShell-compatible searches are safe first
+steps when an SME knows a player handle but not the card ID:
+
+```powershell
+rg -n -i 'crashies|victor' src/data/champions/evidence.json
+rg -n -i 'crashies|victor' src/data/champions -g '20*.json'
+```
+
+The first command finds generated audit rows; the second searches the yearly
+snapshots. Broad results can include different teams and event years, so narrow
+them to one exact player-event card and year before drawing a conclusion. For
+example, search the selected ID directly in the audit view:
+
+```powershell
+rg -n -C 12 'crashies-optic-gaming-2022' src/data/champions/evidence.json
+```
+
+Use [evidence.json](../src/data/champions/evidence.json) for the factual
+`mapsPlayed`, `agentClassMaps`, `threshold`, suggested roles, final roles, and
+any override. If the class totals need explanation, inspect the matching card
+in [raw-extraction.json](../src/data/champions/raw-extraction.json): each map
+records the selected agent. Treat the counts and agents as evidence; whether
+those tags best express an intended VCT role model is a separate interpretation.
+
+### Verified 2022 example: OpTic Gaming
+
+These audit facts illustrate the rule without deciding what an SME's final
+judgment should be:
+
+- `crashies-optic-gaming-2022` has 23 Initiator maps, a threshold of 5, and the
+  `initiator` tag. The raw map entries are Sova (10), Skye (5), KAY/O (3), and
+  Fade (5).
+- `victor-optic-gaming-2022` has 16 Duelist maps and 7 Initiator maps, a
+  threshold of 5, and the `duelist`, `initiator`, and `flex` tags. The raw
+  entries behind the Duelist count are Jett (4), Raze (5), Neon (4), and
+  Phoenix (3); KAY/O accounts for the seven Initiator maps.
+
+Both cards receive Initiator eligibility because their Initiator counts meet
+`max(2, ceil(20% of maps))`: `max(2, ceil(20% of 23)) = 5`. It is not because
+the system says crashies and Victor held the same primary roster role. An SME
+may use the evidence to recommend a different model or a documented exception,
+but the evidence alone does not make that decision.
+
+### Choose the remedy
+
+- **Wrong map or agent counts:** make a factual source-data correction. Supply
+  the event evidence showing which recorded map or agent is wrong; regenerate
+  the derived outputs after the source correction.
+- **Right counts, but the tag has the wrong meaning:** request an
+  algorithm/model change. Examples include defining a primary role, requiring a
+  higher secondary-role threshold, or adopting a primary/secondary role model.
+  This is not a correction to the recorded map history.
+- **A genuine one-event-card exception:** request a reviewed card-specific
+  override. It needs VCT reasoning and sources for why this card should differ
+  from the global rule.
+
+## Player tag correction
+
+- Card ID:
+- Player / team / event year:
+- Current tags:
+- Proposed tags:
+- Current agent-class map counts:
+- Are those counts correct? Yes / No / Unsure
+- Is this factual or a balance/modeling change?
+- VCT reasoning:
+- Supporting URLs:
+- Does the same problem affect other cards?
+
+Technical fields may be blank while an SME is gathering them, but the
+card/year, proposed result, VCT reasoning, and supporting sources are required
+before review.
+
+### Implementation ownership
+
+- **Global agent-class mapping or threshold:** edit
+  [derivation.ts](../src/data/champions/derivation.ts), regenerate the outputs,
+  update [derivation tests](../src/data/champions/derivation.test.ts) and the
+  [methodology](data-methodology.md), then validate the dataset.
+- **Individual exception:** add a reviewed, evidenced entry to
+  [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json).
+  Checksum and validator coordination requires the repository owner or Codex.
+- **Direct `eligibleRoles` edits in a yearly JSON snapshot:** do not use these
+  as a fix. They are temporary, rejected by validation, and overwritten by
+  derivation.
 
 ## How data reaches a map roll
 
