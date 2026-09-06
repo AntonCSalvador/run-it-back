@@ -4,13 +4,21 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      snapshot_candidate:
+        description: Generate Linux visual snapshot candidate artifacts
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.snapshot_candidate != true
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -37,4 +45,34 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report
+          if-no-files-found: ignore
+
+  snapshot-candidate:
+    if: github.event_name == 'workflow_dispatch' && inputs.snapshot_candidate == true
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+        env:
+          PLAYWRIGHT_TEST_BUILD: "1"
+      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey" --update-snapshots
+      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey"
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-snapshot-candidate
+          path: |
+            e2e/__screenshots__/linux/**
+            playwright-report
+            test-results
           if-no-files-found: ignore

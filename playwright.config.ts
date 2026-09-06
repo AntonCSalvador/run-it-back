@@ -11,7 +11,7 @@ export function webServerFor(prebuilt: boolean) {
 
 export default defineConfig({
   testDir: "./e2e",
-  snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
+  snapshotPathTemplate: "{testDir}/__screenshots__/{platform}/{projectName}/{arg}{ext}",
   timeout: 90_000,
   fullyParallel: false,
   workers: 1,

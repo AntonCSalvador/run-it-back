@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { assertNoPrivateModelData, firstSeriesOracle } from "./support/audit";
 import { completeTournament, draftRoster, start } from "./support/journey";
-import { normalizedMobileClipHeight, screenshotDiffRatio } from "./support/screenshot-tolerance";
 
 for (const [seed, expected, relation] of [["e2e-18", /group: 2–0/, "favorite"], ["e2e-4", /group: 2–1/, "underdog"]] as const) {
   test(`Free Play ${relation === "favorite" ? "favorite win" : "underdog upset"} completes without exposing ratings or probability`, async ({ page }) => {
@@ -50,7 +49,6 @@ test("the build-only seed query makes Free Play repeatable across isolated conte
 });
 
 test("captures the complete Free Play journey", async ({ page, isMobile }) => {
-  const maxDiffPixelRatio = screenshotDiffRatio();
   const capture = async (name: string) => {
     // Wait for real finite feedback to finish. Screenshot animation disabling
     // alone can restart a class whose animationend handler is still pending.
@@ -76,11 +74,11 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
       // Use document coordinates; locator screenshots scroll the element again,
       // introducing fractional crop offsets in Chromium's mobile emulation.
       const { x, y, width, height } = bounds[0];
-      const clip = { x: Math.floor(x), y: 0, width: Math.ceil(x + width) - Math.floor(x), height: normalizedMobileClipHeight(name, Math.ceil(y + height)) };
-      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, clip, animations: "disabled", maxDiffPixelRatio });
+      const clip = { x: Math.floor(x), y: 0, width: Math.ceil(x + width) - Math.floor(x), height: Math.ceil(y + height) };
+      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, clip, animations: "disabled", maxDiffPixelRatio: 0.01 });
       expect(await page.evaluate(() => window.scrollY), "capture preserves document origin").toBe(0);
     } else {
-      await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio });
+      await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio: 0.01 });
     }
   };
 

@@ -17,4 +17,17 @@ describe("workflow action versions", () => {
     expect(ci).toContain("key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}");
     expect(ci).toMatch(/if: failure\(\)[\s\S]*?if-no-files-found: ignore/);
   });
+
+  it("pins CI and makes Linux snapshot candidates manual-only", () => {
+    const ci = readFileSync(".github/workflows/ci.yml", "utf8");
+    expect(ci).toContain("runs-on: ubuntu-24.04");
+    expect(ci).toMatch(/workflow_dispatch:[\s\S]*?snapshot_candidate:[\s\S]*?type: boolean/);
+    const [normalCi, candidate] = ci.split("  snapshot-candidate:");
+    expect(normalCi).toMatch(/test:\s*\n\s*if: github\.event_name != 'workflow_dispatch' \|\| inputs\.snapshot_candidate != true/);
+    expect(normalCi).not.toContain("--update-snapshots");
+    expect(candidate).toMatch(/github\.event_name == 'workflow_dispatch'[\s\S]*?inputs\.snapshot_candidate == true/);
+    expect(candidate).toMatch(/test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey" --update-snapshots[\s\S]*?test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey"/);
+    expect(candidate).toMatch(/e2e\/__screenshots__\/linux\/\*\*/);
+    expect(candidate).not.toContain("git commit");
+  });
 });
