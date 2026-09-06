@@ -402,6 +402,25 @@ Changing either cap therefore also requires a coordinated tournament validation
 change and focused [tournament tests](../src/features/game/tournament.test.ts),
 not rating tests alone.
 
+### Seeded and reproducible runs
+
+The simulation's random-looking choices come from a seed. With the identical
+seed, lineup and other input choices, dataset, and code, a run is reproducible:
+it produces the same deterministic offers, opponents, maps, and outcomes.
+[rng.ts](../src/features/game/rng.ts) derives a Daily seed from the UTC date;
+Free Play normally starts with a new UUID seed. Its scoped RNG keeps draft
+offers, opponent construction, map order, and map outcomes in separate random
+streams, so one kind of choice does not consume another's sequence.
+
+For a simulation issue, report the seed (or the Daily UTC date), selected
+lineup, stage, and the exact behavior observed. Changing the RNG implementation
+or a scope string reshuffles deterministic outcomes, even when the seed stays
+the same. That is a game-behavior change: update and run the relevant
+[RNG](../src/features/game/rng.test.ts),
+[tournament](../src/features/game/tournament.test.ts),
+[opponent](../src/features/game/opponents.test.ts), and
+[draft](../src/features/game/draft.test.ts) tests as applicable.
+
 The table below applies that exact map formula. BO3 and BO5 values assume
 identical, independent per-map probability `p` and a first-to-two or
 first-to-three series, respectively.
@@ -664,18 +683,31 @@ evidence, and the full diff to the repository owner or Codex.
 
 ## Final handoff checklist
 
-Before sending a report or local branch for review, confirm all of the following:
+For every report, include these requirements. A technical detail that is not
+known must not delay a factual report.
 
 - The exact card ID and event year are named, or the exact gameplay setting and
   representative stage/matchup are named.
+- The current and proposed result are stated.
 - The request clearly says whether it is factual VCT data or balance tuning.
-- Supporting VCT sources or calculations are included.
+- VCT reasoning and supporting sources or calculations are included.
 - The predicted direction is stated: for example, whether the proposed change
-  should raise or lower a trait, lineup strength, map chance, or series chance.
+  should raise or lower a trait, lineup strength, map chance, or series chance;
+  write `Not applicable` when a direction does not apply.
+- For a simulation issue, include the seed (or Daily UTC date), lineup, stage,
+  and exact observed behavior.
+
+For a report-only handoff, write `Not run — report only` for source-file
+identification when it is unknown, and for derivation, validation, focused
+tests, and diff checks. Do not make up those details, and do not let their
+absence block a factual report.
+
+For a local change, also confirm all of the following:
+
 - The source-of-truth file is correct; generated snapshots and `evidence.json`
   were not used as edit points.
 - Any regenerated outputs were intentionally reviewed after `npm run derive:data`.
-- `npm run validate:data`, the focused tests, and `git diff --check` passed, or
-  their failure output is included in the handoff.
+- `npm run validate:data`, the focused tests, and `git diff --check` passed. If
+  any command fails, stop and include its failure output in the handoff.
 - `git diff` contains no unrelated changes, and no validation rule or checksum
   was weakened merely to make a check pass.
