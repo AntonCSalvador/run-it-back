@@ -12,6 +12,9 @@ read the [data methodology](data-methodology.md).
 - [Keep factual review separate from balance tuning](#keep-factual-review-separate-from-balance-tuning)
 - [Review player role tags](#review-player-role-tags)
 - [Player tag correction](#player-tag-correction)
+- [Review traits and lineup strength](#review-traits-and-lineup-strength)
+- [Tune opponents and map outcomes](#tune-opponents-and-map-outcomes)
+- [Algorithm change](#algorithm-change)
 - [How data reaches a map roll](#how-data-reaches-a-map-roll)
 - [Source-of-truth map](#source-of-truth-map)
 
@@ -65,6 +68,271 @@ the chance that a lineup wins a map. These are subjective product decisions;
 they should not be presented as corrections to VCT history. Keep factual and
 balance requests separate, even when they concern the same card.
 
+## Review traits and lineup strength
+
+Traits turn recorded event performance into game inputs. They are not a claim
+that one player is universally better than another, especially across different
+years, events, and roles. Start a trait review by identifying the exact
+card/year, the source data that may be wrong, and whether the request is about
+**VCT accuracy** (the inputs or the derivation model) or **game balance** (how
+the game uses a correct trait).
+
+### Trait derivation: factual/statistical modeling
+
+The current formulas live in [derivation.ts](../src/data/champions/derivation.ts).
+They first calculate a raw score for each player-event card, then compare that
+score only with eligible cards from the **same event year** and role. This
+avoids treating a 2021 number as directly comparable with a 2025 number.
+
+| Trait | Current raw formula | What an SME should review |
+| --- | --- | --- |
+| Firepower | `0.65 * mean(rating) + 0.35 * mean(ACS) / 200` | Are the recorded ratings and ACS values complete and credible for this card? Raising either component raises the raw score; changing `0.65`, `0.35`, or `/ 200` changes the statistical model for every card. |
+| Utility | `mean(assists)` | Are assists complete and represented appropriately? More assists raise the raw score. |
+| Survival | `-mean(deaths)` | Are deaths complete? Fewer deaths produce a higher raw score because of the leading minus sign. |
+| Clutch | `clutchWins / mapsPlayed` | Are the counted clutches and map count correct? More clutch wins per map raise the score. |
+| Consistency | `-sqrt(mean((rating - mean(rating))^2))` | Are all map ratings present? Less spread in map ratings produces a higher score because of the leading minus sign. |
+| Leadership | `75` for a reviewed historical IGL, otherwise `50` | Is the event-card IGL decision evidenced? This is an editorial event fact, not a performance percentile. |
+
+The formulas and their exact weights, divisor, and signs are in
+[the `scores` expression in derivation.ts](../src/data/champions/derivation.ts).
+Changing a map statistic or an IGL decision is a factual/data review; changing
+a formula, weight, divisor, cohort, or fallback is a statistical-modeling
+decision. Either kind of derivation change requires `npm run derive:data`,
+then `npm run validate:data`, updates to
+[derivation tests](../src/data/champions/derivation.test.ts), and a review of
+[the methodology](data-methodology.md). Update
+[validator tests](../src/data/champions/validation.test.ts) too if the data
+shape, evidence, or integrity rule changes. Never edit the generated yearly
+snapshots or [evidence.json](../src/data/champions/evidence.json) to change a
+trait: derivation overwrites them and validation can reject them.
+
+#### Coverage, cohorts, and rounding
+
+For a card to receive a performance-derived firepower, utility, survival,
+clutch, or consistency score, performance data must be available for **every**
+map and the formula's required numeric fields must be finite. The coverage rule
+and `performanceAvailableMaps` count are in
+[derivation.ts](../src/data/champions/derivation.ts). If coverage is incomplete,
+the corresponding trait is set to the neutral fallback **50**, not inferred
+from a partial sample. Raising or lowering this fallback affects only cards
+with missing required performance data; changing the all-maps rule changes
+which cards use it. Both are derivation-model changes, so regenerate, validate,
+update derivation/validation tests, and review the methodology.
+
+Before percentile comparisons, raw scores are quantized to **nine decimal
+places** (`Math.round(value * 1e9) / 1e9`) in
+[derivation.ts](../src/data/champions/derivation.ts). Equal quantized values
+share the midpoint of their tied percentile positions; the percentile formula
+is `100 * (count below + count equal / 2) / cohort size`. This makes ties
+repeatable rather than dependent on tiny floating-point differences. Increasing
+the precision makes fewer scores tie; decreasing it makes more scores tie.
+This is a statistical-modeling adjustment and follows the same
+regenerate/validate/tests/methodology path.
+
+Each non-leadership trait is the mean of the card's percentiles across its
+eligible non-`flex` roles, then its progression bonus is added, rounded to an
+integer, and clamped to **0-100**. The role cohort is same-year cards eligible
+for that role with a non-missing score; multi-role cards receive equal weight
+from every qualifying non-Flex role. `flex` never creates its own percentile
+cohort. This is implemented in [the percentile loop in
+derivation.ts](../src/data/champions/derivation.ts). A change to eligible roles
+can therefore alter a card's trait cohort, but assigned roles only validate
+draft eligibility: there is **no direct role-versus-role matchup modifier** in
+[rating.ts](../src/features/game/rating.ts).
+
+Progression is a small editorial adjustment from recorded playoff rounds in
+[the `progression` function in derivation.ts](../src/data/champions/derivation.ts):
+any Playoffs appearance is **+1**; `Semifinals`, `Upper Semifinals`, `Upper
+Final`, `Lower Round 3`, or `Lower Final` is **+2**; a Grand Final loss is
+**+3**; and a Grand Final win is **+4**. Raising or lowering one of these
+levels changes the final trait of every affected event-card and should be
+treated as a statistical-modeling decision, with regeneration, data
+validation, derivation tests, and methodology review.
+
+### Trait review questions
+
+For each requested card, answer these questions before asking for a change:
+
+- Is the exact card ID and event year correct, and are all maps present?
+- Are rating, ACS, assists, deaths, and clutch totals complete for every map?
+- If a trait is 50, is that the intentional missing-data fallback rather than a
+  claim of average play?
+- Is the card's eligible-role evidence correct, including any reviewed role
+  exception that determines its same-year percentile cohorts?
+- If the card is multi-role, should each non-Flex role continue to have equal
+  percentile weight?
+- Did the team reach the recorded playoff level used by the +1/+2/+3/+4
+  progression rule?
+- Is a 75 leadership value supported by a reviewed historical-IGL decision?
+
+A direct one-player trait edit in a yearly JSON snapshot is not an accepted
+remedy: it is regenerated, can be rejected by validation, and will be
+overwritten. Submit the evidence and requested outcome instead. A future
+balance-override layer could support intentional per-card adjustments, but no
+such layer exists now.
+
+### Lineup strength: game-balance use of traits
+
+Once traits are generated, the game uses the following balance formula in
+[rating.ts](../src/features/game/rating.ts):
+
+```text
+card baseline = .35 firepower + .20 utility + .15 survival + .15 clutch + .15 consistency
+
+lineup strength = average five baselines
+                + 2 per same-team/year pair, capped at 8
+                + (selected IGL leadership - 50) * .08
+```
+
+The five baseline weights are `0.35`, `0.20`, `0.15`, `0.15`, and `0.15` in
+[`TRAIT_WEIGHTS`](../src/features/game/rating.ts). Raising a weight makes that
+trait matter more to every card baseline; lowering it makes it matter less.
+The weights currently total 1, so changing one without compensating elsewhere
+also changes the baseline scale. This is game balance, not a correction to VCT
+data: it does **not** need `npm run derive:data`, but does need focused
+[rating tests](../src/features/game/rating.test.ts) and an update to this guide
+or other player-facing documentation when the explanation changes.
+
+For chemistry, each pair of selected cards sharing both `teamId` and `year`
+adds **2**, and the total is capped at **8**, as implemented in
+[the chemistry loop in rating.ts](../src/features/game/rating.ts). Increasing
+the pair bonus rewards historical team cores more; lowering it weakens that
+reward. Raising the cap lets more shared-team pairs matter; lowering it limits
+their combined effect. These are balance constants, so no data regeneration is
+needed; update focused rating tests and this guide if behavior changes.
+
+Leadership is **75** for an evidenced historical IGL and neutral **50** for
+every other card in [derivation.ts](../src/data/champions/derivation.ts). The
+selected IGL adds `(leadership - 50) * 0.08` in
+[rating.ts](../src/features/game/rating.ts), so selecting a historical IGL
+currently gives a practical **+2** lineup-strength bonus: `(75 - 50) * .08`.
+Changing who is an IGL is a factual overlay/derivation review and needs
+regeneration, validation, derivation/validation tests, and methodology review.
+Changing `50`, `75`, or `.08` changes the balance treatment; it needs focused
+rating tests and documentation, but not data regeneration unless the
+leadership derivation itself changes.
+
+## Tune opponents and map outcomes
+
+Opponent selection and tournament presentation are balance controls. They do
+not revise recorded VCT history and do not need `npm run derive:data`. Changes
+belong in the linked game files, need focused tests, and should update this
+guide or other player-facing documentation when the player-visible behavior
+changes.
+
+### Opponent construction
+
+[opponents.ts](../src/features/game/opponents.ts) tries at most **250** legal
+lineups (`OPPONENT_ATTEMPT_LIMIT = 250`) for each stage. It excludes the exact
+cards the user selected, requires the five draft roles and distinct cards, and
+sets the opponent IGL to a randomly selected card among those with the highest
+leadership in that opponent lineup. Raising 250 searches more candidate
+lineups before accepting the closest fallback; lowering it makes a fallback
+more likely. Changing the exclusion, role, uniqueness, or highest-leadership
+IGL rule changes opponent construction. None require data regeneration, but
+each needs focused [opponent tests](../src/features/game/opponents.test.ts) and
+an updated explanation if player-visible behavior changes.
+
+The fixed, not user-scaled, strength targets in
+[`STAGE_TARGETS`](../src/features/game/opponents.ts) are:
+
+| Stage | Target lineup strength |
+| --- | --- |
+| Group | 50-62 |
+| Quarterfinal | 58-70 |
+| Semifinal | 66-78 |
+| Final | 74-90 |
+
+Raising either end of a band tends to create stronger opponents at that stage;
+lowering it tends to create weaker ones. Widening a band accepts more generated
+lineups, while narrowing it makes the 250-attempt fallback more relevant.
+These targets are deliberately not scaled to user strength, so a weaker or
+stronger user lineup faces the same stage bands. Treat every target edit as
+balance tuning: update opponent tests and this guide, with no regeneration.
+
+### Map and series odds
+
+For each map, [the map-roll expression in rating.ts](../src/features/game/rating.ts)
+is exactly:
+
+```text
+clamp(.08,.92, 1/(1+exp(-(userStrength-opponentStrength)/12)))
+```
+
+The actual `Math.min(0.92, Math.max(0.08, raw))` code supplies the `.08` and
+`.92` caps. A smaller **12** makes a strength gap more decisive; a larger 12
+makes outcomes more random. Raising the `.08` floor creates more upsets by
+underdogs; lowering it reduces that floor. Raising the `.92` ceiling makes
+favorites more dominant; lowering it limits favorite certainty. All four
+numbers are balance constants in [rating.ts](../src/features/game/rating.ts):
+change them with focused [rating tests](../src/features/game/rating.test.ts)
+and documentation updates, not data regeneration.
+
+The table below applies that exact map formula. BO3 and BO5 values assume
+identical, independent per-map probability `p` and a first-to-two or
+first-to-three series, respectively.
+
+| User strength minus opponent strength | Map win | BO3 win | BO5 win |
+| ---: | ---: | ---: | ---: |
+| -12 | 26.9% | 17.8% | 12.4% |
+| 0 | 50.0% | 50.0% | 50.0% |
+| +6 | 62.2% | 68.0% | 72.1% |
+| +12 | 73.1% | 82.2% | 87.6% |
+
+[tournament.ts](../src/features/game/tournament.ts) plays a **BO3** at group,
+quarterfinal, and semifinal stages (first to two maps), then a **BO5** final
+(first to three maps). Changing the stage series lengths or required wins is a
+tournament-balance change: update focused
+[tournament tests](../src/features/game/tournament.test.ts) and documentation,
+with no data regeneration.
+
+Scores are generated only after the map winner is chosen. In
+[the `scoreMap` expression in tournament.ts](../src/features/game/tournament.ts),
+the **12%** (`rng.next() < 0.12`) overtime branch produces 14-12, 15-13, or
+16-14; otherwise the winner gets 13 and the losing score is based partly on
+the absolute strength delta. Therefore scores never change the already rolled
+winner. Raising 12% makes displayed overtime more common; lowering it makes
+regulation scores more common. This is presentation/balance tuning, not data
+work: update tournament tests and any displayed-score documentation without
+running derivation.
+
+The regulation losing-score expression in the same linked function is
+`3 + floor(max(0, 1 - min(abs(delta), 30) / 30) * 4)`, followed by a random
+value below **12**. The **3** is the minimum losing score for a very large
+strength gap: raising it makes such displayed losses less lopsided. The **4**
+adds up to four points for an even matchup: raising it makes close-match scores
+look closer. The two **30** values set the strength-delta distance over which
+that close-score adjustment falls away: raising them keeps close-looking scores
+at larger gaps. The exclusive **12** produces regulation losing scores through
+11; changing it also requires the matching score validator and focused
+tournament tests to be updated. These are presentation constants in
+[tournament.ts](../src/features/game/tournament.ts), not data inputs, so they
+need no regeneration but do need documentation and focused tests.
+
+## Algorithm change
+
+Use this exact template for a request that changes a global derivation model or
+a game-balance rule:
+
+```markdown
+## Algorithm change
+- Setting or formula:
+- Current behavior:
+- Proposed behavior:
+- Is this VCT accuracy or game balance?
+- Why current behavior is inaccurate:
+- Example players/series affected:
+- Expected effect on weak, average, strong lineups:
+- Supporting URLs or calculations:
+```
+
+For a VCT-accuracy or statistical-modeling request, include the event evidence
+and expect derivation regeneration, data validation, derivation tests, and
+methodology review. For a rating, opponent, or tournament-balance request,
+include calculations or series examples and expect focused game tests plus the
+relevant documentation update. The local workflow guide can provide the
+repository commands when an owner or Codex is implementing an approved change.
+
 ## Review player role tags
 
 Role tags are based on the agents selected on the maps recorded for one
@@ -73,6 +341,15 @@ maps each agent to a class, counts the classes, and assigns every non-Flex
 class that reaches `max(2, ceil(20% of maps))`. When two or more non-Flex
 classes qualify, it also assigns `flex`. This is an eligibility rule for the
 game, not a declaration of a player's single primary roster role.
+
+The **2-map** floor and **20%** share are derivation thresholds in the linked
+expression. Raising either makes secondary eligibility rarer; lowering either
+makes it more common. Changing the two-qualified-role rule similarly changes
+how often `flex` is assigned. These are global VCT modeling rules, not
+per-card fixes: regenerate with `npm run derive:data`, validate with
+`npm run validate:data`, update the derivation and validator tests, and review
+the [data methodology](data-methodology.md). They do not create a role matchup
+bonus; role tags only decide whether a card can fill a draft slot.
 
 ### Find the exact card
 
