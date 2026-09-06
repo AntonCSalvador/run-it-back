@@ -11,5 +11,6 @@ export default defineConfig([
     "coverage/**",
     "playwright-report/**",
     ".worktrees/**",
+    ".superpowers/**",
   ]),
 ]);

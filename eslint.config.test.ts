@@ -12,4 +12,9 @@ describe("workspace boundaries", () => {
     const config = readFileSync(resolve(process.cwd(), "vitest.config.mts"), "utf8");
     expect(config).toMatch(/exclude:\s*\[[\s\S]*?["']\.worktrees\/\*\*["']/);
   });
+
+  it("ignores agent diagnostics beneath the primary checkout", () => {
+    const config = readFileSync(resolve(process.cwd(), "eslint.config.mjs"), "utf8");
+    expect(config).toMatch(/globalIgnores\(\s*\[[\s\S]*?["']\.superpowers\/\*\*["']/);
+  });
 });
