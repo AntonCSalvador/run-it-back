@@ -86,11 +86,14 @@ rg -n -i 'crashies|victor' src/data/champions -g '20*.json'
 
 The first command finds generated audit rows; the second searches the yearly
 snapshots. Broad results can include different teams and event years, so narrow
-them to one exact player-event card and year before drawing a conclusion. For
-example, search the selected ID directly in the audit view:
+them to one exact player-event card and year before drawing a conclusion. Then
+print the complete matching audit record, rather than relying on lines around a
+search result:
 
 ```powershell
-rg -n -C 12 'crashies-optic-gaming-2022' src/data/champions/evidence.json
+$records = Get-Content -Raw 'src/data/champions/evidence.json' | ConvertFrom-Json
+$record = for ($i = 0; $i -lt $records.Count; $i++) { if ($records[$i].cardId -eq 'crashies-optic-gaming-2022') { $records[$i] } }
+$record | ConvertTo-Json -Depth 10
 ```
 
 Use [evidence.json](../src/data/champions/evidence.json) for the factual
@@ -153,8 +156,12 @@ before review.
 
 - **Global agent-class mapping or threshold:** edit
   [derivation.ts](../src/data/champions/derivation.ts), regenerate the outputs,
-  update [derivation tests](../src/data/champions/derivation.test.ts) and the
-  [methodology](data-methodology.md), then validate the dataset.
+  and update both [derivation tests](../src/data/champions/derivation.test.ts)
+  and [validator tests](../src/data/champions/validation.test.ts). Coordinate
+  with the repository owner or Codex to change the matching threshold,
+  suggested-role, and Flex rules in [validation.ts](../src/data/champions/validation.ts),
+  then update the [methodology](data-methodology.md) and validate the dataset.
+  Keep the validator aligned with the derivation; do not bypass it.
 - **Individual exception:** add a reviewed, evidenced entry to
   [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json).
   Checksum and validator coordination requires the repository owner or Codex.
