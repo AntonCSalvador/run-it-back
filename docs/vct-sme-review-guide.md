@@ -219,9 +219,12 @@ historical IGL **75** and every other card a neutral **50** in
 [derivation.ts](../src/data/champions/derivation.ts). Raising derived 75
 increases the leadership value of every historical IGL; lowering it reduces
 that value. Raising derived neutral 50 increases every non-IGL value; lowering
-it reduces it. Changing either derived value, or changing who is an IGL, is a
-factual overlay/derivation review and requires regeneration, validation
-coordination, derivation tests, and methodology review.
+it reduces it. Changing **who** is a historical IGL is a factual overlay review
+that requires regeneration, validation coordination, derivation tests, and
+methodology review. Changing the derived **75** or **50** calibration is not a
+historical-fact correction: it is a statistical-model/game-balance change that
+requires the same regeneration, validation coordination, derivation tests, and
+methodology review.
 
 Separately, the rating layer applies the selected IGL's
 `(leadership - 50) * 0.08` in
