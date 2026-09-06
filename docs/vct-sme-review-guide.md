@@ -79,8 +79,9 @@ report the results with any blocker.
 
 ## Cautious local workflow
 
-Use this only for an approved, small change. If the correct source file is not
-clear, stop and use the report-only workflow instead.
+Use this only for an approved, supported derivation-rule or game-tuning change.
+If the correct source file is not clear, or the correction changes the identity
+or participation of a card, stop and use the report-only workflow instead.
 
 1. From the repository root, confirm where you are and preserve any existing
    work before proceeding:
@@ -101,14 +102,30 @@ clear, stop and use the report-only workflow instead.
 4. Use [Source-of-truth map](#source-of-truth-map) to identify the one allowed
    source file. Edit only that source file. Do not edit generated yearly
    snapshots or `evidence.json`.
-5. Run `npm run derive:data` only after an intentional derivation-rule change
-   or approved reviewed-overlay/source change. It rewrites generated files, so
+5. Run `npm run derive:data` only after an intentional, supported derivation
+   rule or approved reviewed-overlay change. It rewrites generated files, so
    never run it merely to inspect data.
+
+   The derivation script preserves snapshot teams and players. For existing
+   cards, it rewrites only `traits`, `eligibleRoles`, `historicalIgl`, and
+   `sourceIds` (plus generated `evidence.json`). Therefore a team/name/identity,
+   card-ID, membership, `mapsPlayed`, or participation correction is **not** a
+   safe simple local-derive change. Send it to the owner or Codex for
+   coordinated work, which may need to extend generator/materialization,
+   update snapshots, and update validation. Generated roles and traits still
+   must never be hand-edited as source of truth.
 6. Validate the data and run the focused safety tests:
 
    ```powershell
    npm run validate:data
    npx vitest run src/data/champions/derivation.test.ts src/features/game/rating.test.ts src/features/game/opponents.test.ts src/features/game/tournament.test.ts
+   ```
+
+   If the change touches data integrity, overlays/checksums, team/name/identity/
+   participation, or validator rules, also run:
+
+   ```powershell
+   npx vitest run src/data/champions/validation.test.ts
    ```
 
 7. Review exactly what will be handed off:
@@ -522,8 +539,10 @@ makes it more common. Changing the two-qualified-role rule similarly changes
 how often `flex` is assigned. These are global VCT modeling rules, not
 per-card fixes: regenerate with `npm run derive:data`, validate with
 `npm run validate:data`, update the derivation and validator tests, and review
-the [data methodology](data-methodology.md). They do not create a role matchup
-bonus; role tags only decide whether a card can fill a draft slot.
+the [data methodology](data-methodology.md). In the runtime match simulation,
+role tags only decide draft-slot assignment; there is no direct role-versus-role
+matchup bonus. During derivation, however, eligible roles decide same-year
+percentile cohorts, so changing a role tag can also change regenerated traits.
 
 ### Find the exact card
 
