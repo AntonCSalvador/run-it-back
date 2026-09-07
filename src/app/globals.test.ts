@@ -273,6 +273,26 @@ describe("parsed broadcast stylesheet", () => {
     expect(ruleFor(mobile.cssRules, ".highlight-feed__controls > button").style.getPropertyValue("flex")).toBe("1 1 9rem");
   });
 
+  it("composes the recap as an outcome-first broadcast sheet with achievement-only gold", () => {
+    expect(ruleFor(rules, ".results-view").style.getPropertyValue("display")).toBe("grid");
+    const outcome = ruleFor(rules, ".results-view__outcome").style;
+    expect(outcome.getPropertyValue("border-block-end")).toBe("1px solid var(--rib-line-strong)");
+    expect(ruleFor(rules, ".results-view__outcome h2").style.getPropertyValue("font-size")).toBe("var(--rib-type-outcome-size)");
+    expect(ruleFor(rules, ".results-view--champion .results-view__outcome h2").style.getPropertyValue("color")).toBe("var(--rib-gold)");
+    expect(ruleFor(rules, ".results-view--eliminated .results-view__outcome h2").style.getPropertyValue("color")).toBe("var(--rib-text-primary)");
+    expect(exactRuleFor(rules, ".results-view__path ol").style.getPropertyValue("grid-template-columns")).toBe("repeat(4,minmax(0,1fr))");
+    expect(ruleFor(rules, '.results-view__path li[data-result="lost"]').style.getPropertyValue("border-color")).toBe("var(--rib-red)");
+    expect(exactRuleFor(rules, ".results-view__lineup ol").style.getPropertyValue("grid-template-columns")).toBe("repeat(5,minmax(0,1fr))");
+    expect(ruleFor(rules, ".results-view__moments li[data-heat=\"true\"]").style.getPropertyValue("border-color")).toBe("var(--rib-gold)");
+    expect(ruleFor(rules, ".results-view__maps summary").style.getPropertyValue("min-height")).toBe("44px");
+    expect(ruleFor(rules, ".results-view__secondary-actions").style.getPropertyValue("display")).toBe("flex");
+
+    const mobile = mediaFor(rules, "(max-width:44rem)");
+    expect(ruleFor(mobile.cssRules, ".results-view__path ol").style.getPropertyValue("grid-template-columns")).toBe("repeat(2,minmax(0,1fr))");
+    expect(ruleFor(mobile.cssRules, ".results-view__lineup ol").style.getPropertyValue("grid-template-columns")).toBe("minmax(0,1fr)");
+    expect(ruleFor(mobile.cssRules, ".results-view__secondary-actions > *").style.getPropertyValue("width")).toBe("100%");
+  });
+
   it("keeps page scrolling immediate while mobile decision tracks reveal the next option", () => {
     expect(exactRuleFor(rules, "html").style.getPropertyValue("scroll-behavior")).toBe("");
     const mobile = mediaFor(rules, "(max-width:44rem)");

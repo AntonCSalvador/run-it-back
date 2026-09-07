@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
 import { ROLES, type Lineup } from "../domain";
-import { LocalSimulationGateway } from "../gateway";
+import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import type { Stage } from "../opponents";
 import { startTournament, type SeriesResult } from "../tournament";
 import { GameApp, restartCurrentRun } from "./game-app";
@@ -12,7 +12,7 @@ import { createDraft } from "../draft";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { parseDataset } from "../schema";
 import { DAILY_RECORD, HISTORY_RECORD, STORAGE_KEYS, type DailyRun, type FreePlayRun, writeRecord } from "../storage";
-import { terminalState } from "./tournament-test-fixtures";
+import { activeState as tournamentState, series, terminalState } from "./tournament-test-fixtures";
 import { dailySeed } from "../rng";
 
 const dataset = parseDataset(minimalDataset);
@@ -33,7 +33,7 @@ function gatewayFixture() {
   return {
     generateOpponent: vi.fn(local.generateOpponent.bind(local)),
     playSeries: vi.fn((_seed: string, stage: Stage) => winningSeries(stage)),
-    createHighlights: vi.fn(() => []),
+    createHighlights: vi.fn<SimulationGateway["createHighlights"]>(() => []),
   };
 }
 function historyStorage() {
@@ -62,6 +62,72 @@ function storedRun(mode: "daily" | "free"): DailyRun | FreePlayRun {
 }
 
 describe("GameApp", () => {
+  it.each([
+    ["daily", "daily", STORAGE_KEYS.daily, "Start Daily"],
+    ["Free Play", "free-play", STORAGE_KEYS.history, "Start Free Play"],
+  ] as const)("does not persist or share a malformed %s terminal result", (_, mode, storageKey, recoveryLabel) => {
+    const storage = memoryStorage();
+    const valid = terminalState(false);
+    const initialState: GameState = {
+      ...valid,
+      mode,
+      tournament: {
+        ...valid.tournament,
+        completedSeries: valid.tournament.completedSeries.map(result => ({ ...result, bestOf: 5 })),
+      },
+    };
+
+    render(<GameApp dataset={dataset} initialState={initialState} storage={storage} />);
+
+    expect(screen.getByRole("heading", { name: "Tournament recap unavailable" })).toHaveFocus();
+    expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent("Recap unavailable");
+    expect(screen.getByRole("navigation", { name: "Run progress" })).not.toHaveTextContent("Run complete");
+    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Share result" })).not.toBeInTheDocument();
+    expect(storage.getItem(storageKey)).toBeNull();
+    expect(storage.getItem(STORAGE_KEYS.daily)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: recoveryLabel }));
+    expect(screen.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
+  });
+
+  it("recovers without sharing or persistence when an injected terminal run has a non-array series collection", () => {
+    const storage = memoryStorage();
+    const valid = terminalState(false);
+    const initialState = {
+      ...valid,
+      tournament: { ...valid.tournament, completedSeries: null },
+    } as unknown as GameState;
+
+    expect(() => render(<GameApp dataset={dataset} initialState={initialState} storage={storage} />)).not.toThrow();
+    expect(screen.getByRole("heading", { name: "Tournament recap unavailable" })).toHaveFocus();
+    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+    expect(storage.getItem(STORAGE_KEYS.daily)).toBeNull();
+  });
+
+  it("carries retained significant moments into the recap and keeps saved history below it", async () => {
+    const gateway = gatewayFixture();
+    const clutch = {
+      id: "clutch", kind: "clutch" as const, actorCardId: lineup.iglCardId, side: "user" as const,
+      text: "Repository-authored clutch moment.", emphasis: "clutch" as const, map: "Ascent" as const, mapIndex: 0,
+    };
+    const normal = { ...clutch, id: "normal", kind: "ace" as const, text: "Routine narration.", emphasis: "normal" as const };
+    gateway.playSeries.mockImplementation((_seed, stage) => series(stage, false));
+    gateway.createHighlights.mockImplementation(() => [normal, clutch]);
+    render(<GameApp dataset={dataset} initialState={tournamentState("semifinal")} gateway={gateway} storage={memoryStorage()} />);
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Play semifinal" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip to result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue to results" }));
+
+    const recap = screen.getByRole("region", { name: "Results" });
+    expect(within(recap).getByText("Repository-authored clutch moment.")).toBeVisible();
+    expect(within(recap).getByText("Semifinal · Clutch · Ascent")).toBeVisible();
+    expect(within(recap).queryByText("Routine narration.")).not.toBeInTheDocument();
+    const history = screen.getByRole("region", { name: "Recent results" });
+    expect(recap.compareDocumentPosition(history) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(history).getByRole("button", { name: "Show saved results" })).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("explains Daily and Free Play from a Daily-first opening", () => {
     render(<GameApp dataset={dataset} now={() => new Date("2026-09-05T23:59:59Z")} />);
 

@@ -13,6 +13,7 @@ import { activeState } from "./tournament-test-fixtures";
 import { dataset as fixtureDataset, lineup, series, terminalState } from "./tournament-test-fixtures";
 import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
+import { projectTerminalResult } from "../result-projection";
 import { RosterBar } from "./roster-bar";
 import { RunProgress } from "./run-progress";
 import { IglPicker } from "./igl-picker";
@@ -257,7 +258,7 @@ describe("broadcast accessibility", () => {
     expect(screen.getByRole("heading", { name: "Series result: Win, 2–1" }).parentElement).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(200));
     const champion = terminalState(true);
-    render(<ResultsView mode="daily" tournament={champion.tournament} cards={fixtureDataset.cards} rerollsUsed={0} shareText="share" onRunAgain={vi.fn()} onModeChange={vi.fn()} />);
+    render(<ResultsView mode="daily" result={projectTerminalResult(champion.tournament)} cards={fixtureDataset.cards} highlights={[]} rerollsUsed={0} shareText="share" onRunAgain={vi.fn()} onModeChange={vi.fn()} />);
     expect(screen.getByRole("region", { name: "Results" })).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(200));
     vi.useRealTimers();

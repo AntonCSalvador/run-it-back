@@ -224,9 +224,9 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   }
   await expect(results).toBeVisible();
   await auditPhase(page);
-  await keyboardActivate(page, page.getByRole("button", { name: "Share" }));
+  await keyboardActivate(page, page.getByRole("button", { name: "Share result" }));
   await expect(page.getByRole("textbox", { name: "Share result" })).toBeVisible();
-  await page.getByRole("button", { name: "Run again" }).focus();
+  await page.getByRole("button", { name: "Run another Free Play" }).focus();
   await page.keyboard.press("Space");
   await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 });

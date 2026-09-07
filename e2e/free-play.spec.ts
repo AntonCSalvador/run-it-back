@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { assertNoPrivateModelData, firstSeriesOracle } from "./support/audit";
 import { completeTournament, draftRoster, start } from "./support/journey";
 
-for (const [seed, expected, relation] of [["e2e-18", /group: 2–0/, "favorite"], ["e2e-4", /group: 2–1/, "underdog"]] as const) {
+for (const [seed, expected, relation] of [["e2e-18", /Group stage Won 2–0/, "favorite"], ["e2e-4", /Group stage Won 2–1/, "underdog"]] as const) {
   test(`Free Play ${relation === "favorite" ? "favorite win" : "underdog upset"} completes without exposing ratings or probability`, async ({ page }) => {
     const oracle = firstSeriesOracle(seed);
     if (relation === "favorite") expect(oracle.userStrength).toBeGreaterThan(oracle.opponentStrength);
@@ -15,6 +15,33 @@ for (const [seed, expected, relation] of [["e2e-18", /group: 2–0/, "favorite"]
     const results = await completeTournament(page);
     expect(results).toMatch(expected);
     await assertNoPrivateModelData(page);
+  });
+}
+
+test("privacy audit permits public clutch moment copy", async ({ page }) => {
+  await page.setContent(`<main>
+    <section class="highlight-feed" aria-label="SIMULATED HIGHLIGHTS">
+      <article class="highlight-feed__moment">
+        <span class="highlight-feed__tag">Clutch</span>
+        <p>Player wins a simulated late-round clutch over Rival.</p>
+      </article>
+    </section>
+    <section class="results-view__moments" aria-label="Key moments">
+      <ol><li><p>Semifinal<!-- --> · <!-- -->Clutch<!-- --> · <!-- -->Pearl</p><p>Player wins a simulated late-round clutch over Rival.</p></li></ol>
+    </section>
+  </main>`);
+
+  await assertNoPrivateModelData(page);
+});
+
+for (const [name, content] of [
+  ["metric copy", `<main><p>Clutch rating: 84</p></main>`],
+  ["private attribute", `<main><p data-clutch="84">Player</p></main>`],
+  ["serialized field", `<main><script type="application/json">{"clutch":84}</script></main>`],
+] as const) {
+  test(`privacy audit still rejects ${name}`, async ({ page }) => {
+    await page.setContent(content);
+    await expect(assertNoPrivateModelData(page)).rejects.toThrow(/private model term leaked/i);
   });
 }
 
@@ -33,7 +60,7 @@ test("private model fields never enter serialized, hidden, or accessible content
   await start(page, "Free Play");
   await completeTournament(page);
   await assertNoPrivateModelData(page);
-  const share = page.getByRole("button", { name: "Share" });
+  const share = page.getByRole("button", { name: "Share result" });
   if (await share.count()) { await share.click(); await assertNoPrivateModelData(page); }
 });
 

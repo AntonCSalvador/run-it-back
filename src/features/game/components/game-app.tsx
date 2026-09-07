@@ -17,11 +17,11 @@ import { RosterBar } from "./roster-bar";
 import { IglPicker } from "./igl-picker";
 import { TournamentView } from "./tournament-view";
 import { HighlightFeed } from "./highlight-feed";
-import { ResultsView } from "./results-view";
+import { ResultsView, type StagedHighlight } from "./results-view";
 import { useFireAccent } from "./use-fire-accent";
 import type { Highlight } from "../narration";
 import type { Stage } from "../opponents";
-import type { SeriesResult } from "../tournament";
+import { STAGE_ORDER, type SeriesResult } from "../tournament";
 import { formatDailyShare, formatFreePlayShare } from "../share";
 import { dailyDateFromSeed, dailySeed } from "../rng";
 import { ModeSelection } from "./mode-selection";
@@ -30,6 +30,7 @@ import { ExitRunDialog } from "./exit-run-dialog";
 import type { MacroStage } from "./run-progress";
 import { humanRole, RolePicker } from "./role-picker";
 import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
+import { projectTerminalResult } from "../result-projection";
 
 export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
 export function significantHighlights(highlights: readonly Highlight[]): readonly Highlight[] {
@@ -39,6 +40,9 @@ export function significantHighlights(highlights: readonly Highlight[]): readonl
     seen.add(item.id);
     return true;
   });
+}
+function resultHighlights(highlights: Partial<Record<Stage, readonly Highlight[]>>): readonly StagedHighlight[] {
+  return STAGE_ORDER.flatMap(stage => (highlights[stage] ?? []).map(highlight => ({ ...highlight, stage })));
 }
 function browserStorage(): Storage | null {
   if (typeof window === "undefined") return null;
@@ -99,7 +103,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const prefersReducedMotion = usePrefersReducedMotion();
   const seriesLock = useRef<string | null>(null);
   const runGeneration = useRef(0);
-  const runHighlights = useRef<Partial<Record<Stage, readonly Highlight[]>>>({});
+  const [runHighlights, setRunHighlights] = useState<Partial<Record<Stage, readonly Highlight[]>>>({});
   useEffect(() => () => {
     runGeneration.current += 1;
     seriesLock.current = null;
@@ -138,25 +142,26 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     return () => window.clearTimeout(timer);
   }, [now, state.phase, today]);
   const testSeed = useMemo(() => playwrightQuerySeed(), []);
+  const terminalResult = useMemo(() => state.phase === "results" ? projectTerminalResult(state.tournament) : null, [state]);
   useEffect(() => {
-    if (state.phase !== "results") return;
-    const completedAtUtc = state.mode === "daily" ? dailyDateFromSeed(state.tournament.seed) : new Date().toISOString().slice(0, 10);
-    const outcome: "champion" | "eliminated" = state.tournament.status === "champion" ? "champion" : "eliminated";
+    if (state.phase !== "results" || terminalResult?.status !== "valid") return;
+    const tournament = terminalResult.tournament;
+    const completedAtUtc = state.mode === "daily" ? dailyDateFromSeed(tournament.seed) : new Date().toISOString().slice(0, 10);
     const run = {
       completedAtUtc,
-      stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage,
-      outcome,
-      series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins, maps: series.maps.map(map => ({ map: map.map, userScore: map.userScore, opponentScore: map.opponentScore })) })),
+      stageReached: terminalResult.stageReached,
+      outcome: terminalResult.outcome,
+      series: tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins, maps: series.maps.map(map => ({ map: map.map, userScore: map.userScore, opponentScore: map.opponentScore })) })),
       rerollsUsed: 3 - state.draft.rerollsRemaining,
-      roster: state.tournament.userLineup.slots,
-      iglCardId: state.tournament.userLineup.iglCardId,
+      roster: tournament.userLineup.slots,
+      iglCardId: tournament.userLineup.iglCardId,
     };
     const signature = `${state.mode}:${JSON.stringify(run)}`;
     if (persistedResult.current === signature) return;
     persistedResult.current = signature;
     if (state.mode === "daily") {
       const current = readRecord(adapter, DAILY_RECORD).value;
-      const completion = { ...run, mode: "daily" as const, utcDate: dailyDateFromSeed(state.tournament.seed) };
+      const completion = { ...run, mode: "daily" as const, utcDate: dailyDateFromSeed(tournament.seed) };
       const value = addDailyCompletion(current, completion);
       writeRecord(adapter, DAILY_RECORD, { ...value, streak: nextDailyStreak(current.completions, completion.utcDate, current.streak) });
       // Storage events are intentionally cross-document only. Refresh this
@@ -167,7 +172,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       writeRecord(adapter, HISTORY_RECORD, prependFreePlayHistory(current, { ...run, mode: "free" }));
       refreshSavedResults.current();
     }
-  }, [state, adapter]);
+  }, [state, adapter, terminalResult]);
   const gateway = useMemo(() => suppliedGateway ?? gatewayFactory?.(dataset) ?? new LocalSimulationGateway(dataset), [suppliedGateway, gatewayFactory, dataset]);
   const opponentState = useMemo(() => {
     void opponentRevision;
@@ -191,7 +196,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         ? gateway.createHighlights(state.tournament.seed, series, toLineup(state.draft), opponent.lineup)
         : null;
       if (runGeneration.current === generation && seriesLock.current === lock) {
-        if (highlights) runHighlights.current[series.stage] = significantHighlights(highlights);
+        if (highlights) setRunHighlights(current => ({ ...current, [series.stage]: significantHighlights(highlights) }));
         setLockedStage(null);
         setPresentedHighlights(highlights);
         setPresentedSeries(series);
@@ -214,11 +219,17 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     setPresentedHighlights(null);
     setHighlightsComplete(false);
     setFocusTournamentOnMount(false);
-    runHighlights.current = {};
+    setRunHighlights({});
   };
   const resetState = (): void => {
     setDraftAnnouncement("");
     restartCurrentRun(() => setSimulationError(null), dispatch, invalidatePendingSeries);
+  };
+  const beginAnotherRun = (mode: GameMode): void => {
+    setRecentResultsOpen(false);
+    setSelectedResultKey(null);
+    resetState();
+    dispatch(createStartAction(mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
   };
   const restart = (): void => { resetState(); onRestart(); };
   const teams = new Map(dataset.teams.map(team => [team.id, team]));
@@ -234,7 +245,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     if (state.phase === "mode") return null;
     if (state.phase === "lineup") return { stage: "igl", detail: "Choose your IGL" };
     if (state.phase === "tournament") return { stage: "tournament", detail: `Round ${state.tournament.completedSeries.length + 1} of 4 · ${tournamentStageLabels[state.tournament.currentStage]}` };
-    if (state.phase === "results") return { stage: "recap", detail: "Run complete" };
+    if (state.phase === "results") return { stage: "recap", detail: terminalResult?.status === "valid" ? "Run complete" : "Recap unavailable" };
     const task = state.phase === "team" ? "Choose a team to scout" : state.phase === "player" ? "Choose a player" : "Assign an open role";
     return { stage: "draft", detail: `Pick ${draftPick} of ${ROLES.length} · ${task}` };
   })();
@@ -253,9 +264,10 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     dispatch({ type: "resolve-series", series: presentedSeries });
     setLockedStage(null); setPresentedSeries(null); setPresentedHighlights(null); setHighlightsComplete(false);
   };
-  const resultShare = state.phase === "results" ? (() => {
-    const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage, series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: state.tournament.userLineup.slots };
-    return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(state.tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
+  const resultShare = state.phase === "results" && terminalResult?.status === "valid" ? (() => {
+    const tournament = terminalResult.tournament;
+    const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: terminalResult.stageReached, series: tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: tournament.userLineup.slots };
+    return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
   })() : "";
   return <>
       <a className="skip-link" href="#game-content">Skip to current decision</a>
@@ -301,7 +313,10 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       })()}
       {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatch({ type: "enter-tournament" }); } }} /></>)}
       {state.phase === "tournament" && <TournamentView tournament={state.tournament} opponent={opponent} cards={dataset.cards} result={highlightsComplete ? presentedSeries : null} revealComplete={highlightsComplete} resolving={lockedStage === state.tournament.currentStage} error={opponentState.error ?? simulationError} focusOnMount={focusTournamentOnMount} reveal={presentedHighlights !== null ? <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} instant={prefersReducedMotion} focusOnMount /> : null} onPlay={playSeries} onRetryOpponent={() => { setSimulationError(null); setOpponentRevision(value => value + 1); }} onRetrySeries={() => void playSeries()} onContinue={continueTournament} />}
-      {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
+      {state.phase === "results" && terminalResult && <>
+        <ResultsView mode={state.mode} result={terminalResult} cards={dataset.cards} highlights={resultHighlights(runHighlights)} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => beginAnotherRun(state.mode)} onModeChange={beginAnotherRun} />
+        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
+      </>}
       </main>
       <ExitRunDialog open={exitDialogOpen} onCancel={() => setExitDialogOpen(false)} onConfirm={() => {
         setExitDialogOpen(false);

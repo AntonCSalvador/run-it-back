@@ -1,12 +1,18 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ROLES } from "../domain";
-import { ResultsView } from "./results-view";
-import { dataset, lineup, terminalState } from "./tournament-test-fixtures";
+import { ResultsView, type StagedHighlight } from "./results-view";
+import type { Highlight } from "../narration";
+import { projectTerminalResult } from "../result-projection";
+import { activeState, dataset, lineup, series, terminalState } from "./tournament-test-fixtures";
+import { advanceTournament } from "../tournament";
 
 const shareText = "Run It Back — Daily 2026-09-05\nStage: group\nSeries: L 1-2\nRerolls: 1\nRun It Back";
 const originalShare = Object.getOwnPropertyDescriptor(navigator, "share");
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+const stageLabel = (stage: "group" | "quarterfinal" | "semifinal" | "final") => ({
+  group: "Group stage", quarterfinal: "Quarterfinal", semifinal: "Semifinal", final: "Final",
+})[stage];
 function browserApis(share?: ReturnType<typeof vi.fn>, writeText?: ReturnType<typeof vi.fn>) {
   Object.defineProperty(navigator, "share", { configurable: true, value: share });
   Object.defineProperty(navigator, "clipboard", { configurable: true, value: writeText ? { writeText } : undefined });
@@ -19,15 +25,15 @@ afterEach(() => {
   }
   vi.restoreAllMocks();
 });
-function renderResult(champion = false) {
+function renderResult(champion = false, options: { mode?: "daily" | "free-play"; tournament?: ReturnType<typeof terminalState>["tournament"]; highlights?: readonly StagedHighlight[] } = {}) {
   const onRunAgain = vi.fn();
   const onModeChange = vi.fn();
   const state = terminalState(champion);
-  const view = render(<ResultsView mode="daily" tournament={state.tournament} cards={dataset.cards} rerollsUsed={1}
+  const view = render(<ResultsView mode={options.mode ?? "daily"} result={projectTerminalResult(options.tournament ?? state.tournament)} cards={dataset.cards} highlights={options.highlights ?? []} rerollsUsed={1}
     shareText={shareText} onRunAgain={onRunAgain} onModeChange={onModeChange} />);
-  return { ...view, state, onRunAgain, onModeChange };
+  return { ...view, state: { ...state, tournament: options.tournament ?? state.tournament }, onRunAgain, onModeChange };
 }
-const clickShare = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
+const clickShare = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share result" })); });
 function deferred() {
   let resolve!: () => void;
   let reject!: (reason: unknown) => void;
@@ -36,13 +42,150 @@ function deferred() {
 }
 
 describe("ResultsView", () => {
+  it.each(["active", "empty eliminated"] as const)("uses recovery content for an unavailable %s recap", status => {
+    const active = activeState("group").tournament;
+    const tournament = status === "active" ? active : { ...active, status: "eliminated" as const };
+    const { container, onRunAgain } = renderResult(false, { tournament });
+
+    const heading = screen.getByRole("heading", { name: "Tournament recap unavailable" });
+    expect(heading).toHaveFocus();
+    expect(screen.getByText("No completed series are available for this run.")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Start Daily" })).toBeVisible();
+    expect(container).not.toHaveTextContent(/Tournament champion|Eliminated|0–0/);
+    expect(screen.queryByRole("region", { name: "Tournament path" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Start Daily" }));
+    expect(onRunAgain).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not claim zero completed series when a nonterminal series is awaiting progression", () => {
+    const active = activeState("group").tournament;
+    renderResult(false, { tournament: { ...active, completedSeries: [series("group")] } });
+
+    expect(screen.getByRole("heading", { name: "Tournament recap unavailable" })).toHaveFocus();
+    expect(screen.getByText("A completed tournament outcome is not available for this run.")).toBeVisible();
+    expect(screen.queryByText("No completed series are available for this run.")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["group win threshold", () => {
+      const active = activeState("group").tournament;
+      const lost = series("group", false);
+      return { ...active, status: "eliminated" as const, completedSeries: [{ ...lost, userWins: 0, opponentWins: 1, maps: lost.maps.slice(0, 1) }] };
+    }],
+    ["group best-of", () => {
+      const active = activeState("group").tournament;
+      return { ...active, status: "eliminated" as const, completedSeries: [{ ...series("group", false), bestOf: 5 as const }] };
+    }],
+    ["final win threshold", () => {
+      const active = activeState("final").tournament;
+      const won = series("final");
+      return { ...active, status: "champion" as const, completedSeries: [...active.completedSeries, { ...won, userWins: 1, opponentWins: 0, maps: won.maps.slice(0, 1) }] };
+    }],
+    ["map winner and score", () => {
+      const active = activeState("group").tournament;
+      const lost = series("group", false);
+      const maps = lost.maps.map((map, index) => index === 0 ? { ...map, userScore: 13, opponentScore: 7 } : map);
+      return { ...active, status: "eliminated" as const, completedSeries: [{ ...lost, maps }] };
+    }],
+  ] as const)("recovers instead of presenting a structurally invalid %s terminal series", (_, tournament) => {
+    const { container } = renderResult(false, { tournament: tournament() });
+
+    expect(screen.getByRole("heading", { name: "Tournament recap unavailable" })).toHaveFocus();
+    expect(container).not.toHaveTextContent(/Tournament champion|Eliminated/);
+    expect(screen.queryByRole("region", { name: "Tournament path" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+  });
+
+  it("leads a champion recap with the outcome, record, and one Daily replay action", () => {
+    const { container } = renderResult(true);
+    const outcome = screen.getByRole("heading", { name: "Tournament champion" });
+    const replay = screen.getByRole("button", { name: "Run another Daily" });
+    const path = screen.getByRole("region", { name: "Tournament path" });
+
+    expect(outcome).toHaveFocus();
+    expect(screen.getByText("Reached the final · Series record 4–0")).toBeVisible();
+    expect(container.querySelector(".results-view")).toHaveClass("results-view--champion");
+    expect(container.querySelectorAll(".action-button")).toHaveLength(1);
+    expect(outcome.compareDocumentPosition(replay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(replay.compareDocumentPosition(path) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("names the exact elimination stage without champion treatment and leads into Free Play replay", () => {
+    const semifinal = activeState("semifinal");
+    const tournament = advanceTournament({
+      ...semifinal.tournament,
+      completedSeries: [...semifinal.tournament.completedSeries, series("semifinal", false)],
+    });
+    const { container } = renderResult(false, { mode: "free-play", tournament });
+
+    expect(screen.getByRole("heading", { name: "Eliminated in the semifinal" })).toHaveFocus();
+    expect(screen.getByText("Reached the semifinal · Series record 2–1")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Run another Free Play" })).toHaveClass("action-button");
+    expect(container.querySelector(".results-view")).toHaveClass("results-view--eliminated");
+    expect(container.querySelector(".results-view")).not.toHaveClass("results-view--champion");
+  });
+
+  it("shows all five ordered lineup roles with one visible IGL marker", () => {
+    renderResult(true);
+    const lineupRegion = screen.getByRole("region", { name: "Drafted lineup" });
+    const slots = within(lineupRegion).getAllByRole("listitem");
+
+    expect(slots).toHaveLength(5);
+    expect(slots.map(slot => slot.textContent)).toEqual(ROLES.map((role, index) =>
+      `${role[0].toUpperCase()}${role.slice(1)}${dataset.cards[index].displayHandle}${dataset.cards[index].year}${index === 0 ? "IGL" : ""}`));
+    expect(within(lineupRegion).getAllByText("IGL")).toHaveLength(1);
+  });
+
+  it("renders retained moment text verbatim with truthful stage and type metadata", () => {
+    const text = "aspas wins the simulated late-round clutch over player-6.";
+    const highlight = {
+      id: "semifinal-clutch", kind: "clutch", actorCardId: lineup.iglCardId, side: "user",
+      text, emphasis: "clutch", map: "Ascent", mapIndex: 0, stage: "semifinal",
+    } as const;
+    renderResult(false, { highlights: [highlight] });
+    const moments = screen.getByRole("region", { name: "Key moments" });
+
+    expect(within(moments).getByText(text)).toBeVisible();
+    expect(within(moments).getByText("Semifinal · Clutch · Ascent")).toBeVisible();
+  });
+
+  it("requires explicit stages when identical map positions occur in different series", () => {
+    const shared = {
+      kind: "clutch", actorCardId: lineup.iglCardId, side: "user", emphasis: "clutch", map: "Ascent", mapIndex: 0,
+    } as const;
+    const bare = { ...shared, id: "bare", text: "Ambiguous moment." } satisfies Highlight;
+    // @ts-expect-error Recap highlights must identify their tournament stage.
+    bare satisfies StagedHighlight;
+    const highlights: readonly StagedHighlight[] = [
+      { ...shared, id: "group-clutch", stage: "group", text: "The retained group moment." },
+      { ...shared, id: "final-clutch", stage: "final", text: "The retained final moment." },
+    ];
+
+    renderResult(true, { highlights });
+
+    expect(screen.getByText("Group stage · Clutch · Ascent")).toBeVisible();
+    expect(screen.getByText("Final · Clutch · Ascent")).toBeVisible();
+  });
+
+  it("uses an honest empty-moment recovery and keeps map scores collapsed after the route", () => {
+    renderResult(false);
+    const path = screen.getByRole("region", { name: "Tournament path" });
+    expect(within(path).getAllByRole("listitem")).toHaveLength(4);
+    expect(screen.getByText("No narrated moments before elimination.")).toBeVisible();
+    const mapDetails = screen.getByText("Map-by-map scores").closest("details");
+    expect(mapDetails).not.toHaveAttribute("open");
+    expect(path.compareDocumentPosition(mapDetails!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("locks Share synchronously through a pending native share and unlocks after one final status", async () => {
     const pending = deferred();
     const share = vi.fn(() => pending.promise);
     const writeText = vi.fn();
     browserApis(share, writeText);
     renderResult();
-    const button = screen.getByRole("button", { name: "Share" });
+    const button = screen.getByRole("button", { name: "Share result" });
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     expect(share).toHaveBeenCalledExactlyOnceWith({ text: shareText });
     expect(button).toBeDisabled();
@@ -65,7 +208,7 @@ describe("ResultsView", () => {
     const writeText = vi.fn(() => clipboard.promise);
     browserApis(share, writeText);
     renderResult();
-    const button = screen.getByRole("button", { name: "Share" });
+    const button = screen.getByRole("button", { name: "Share result" });
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     expect(share).toHaveBeenCalledTimes(1);
     await act(async () => { native.reject(new Error("Unavailable")); });
@@ -85,7 +228,7 @@ describe("ResultsView", () => {
     browserApis(phase === "native" ? vi.fn(() => pending.promise) : undefined, writeText);
     const view = renderResult();
     const focus = vi.spyOn(HTMLTextAreaElement.prototype, "focus");
-    fireEvent.click(screen.getByRole("button", { name: "Share" }));
+    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
     view.unmount();
     await act(async () => { pending.reject(new Error("Denied")); });
     expect(writeText).toHaveBeenCalledTimes(phase === "clipboard" ? 1 : 0);
@@ -95,21 +238,20 @@ describe("ResultsView", () => {
 
   it.each([false, true])("shows exact terminal result, scores, roster and rerolls (champion %s)", champion => {
     const { state, container } = renderResult(champion);
-    expect(screen.getByRole("heading", { name: champion ? "Champion" : "Eliminated" })).toBeVisible();
-    expect(screen.getByText(`Stage reached: ${champion ? "final" : "group"}`)).toBeVisible();
-    const results = within(screen.getByRole("region", { name: "Results" }));
-    const seriesRows = within(results.getAllByRole("list")[0]).getAllByRole("listitem").filter(row => row.querySelector("ul"));
+    expect(screen.getByRole("heading", { name: champion ? "Tournament champion" : "Eliminated in the group stage" })).toBeVisible();
+    expect(screen.getByText(`Reached the ${champion ? "final" : "group stage"} · Series record ${champion ? "4–0" : "0–1"}`)).toBeVisible();
+    fireEvent.click(screen.getByText("Map-by-map scores"));
+    const details = screen.getByText("Map-by-map scores").closest("details")!;
+    const seriesRows = within(details).getAllByRole("list")[0].children;
     expect(seriesRows).toHaveLength(champion ? 4 : 1);
     state.tournament.completedSeries.forEach((result, index) => {
-      expect(seriesRows[index].firstChild?.textContent).toBe(result.stage);
-      expect(seriesRows[index]).toHaveTextContent(`${result.stage}: ${result.userWins}–${result.opponentWins}`);
-      expect(within(seriesRows[index]).getAllByRole("listitem").map(row => row.textContent)).toEqual(
+      const row = seriesRows[index] as HTMLElement;
+      expect(row).toHaveTextContent(`${stageLabel(result.stage)} · ${result.userWins}–${result.opponentWins}`);
+      expect(within(row).getAllByRole("listitem").map(mapRow => mapRow.textContent)).toEqual(
         result.maps.map(map => `${map.map} ${map.userScore}–${map.opponentScore}`));
     });
-    const roster = screen.getByRole("region", { name: "Drafted roster" });
-    expect(roster.children).toHaveLength(5);
-    expect(Array.from(roster.children, row => row.textContent)).toEqual(ROLES.map((role, index) =>
-      `${role}: ${dataset.cards[index].displayHandle} ${dataset.cards[index].year}${dataset.cards[index].id === lineup.iglCardId ? " · IGL" : ""}`));
+    const roster = screen.getByRole("region", { name: "Drafted lineup" });
+    expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
     expect(screen.getByText("Rerolls used: 1")).toBeVisible();
     expect(container).not.toHaveTextContent(/strength|probability|\broll\b|traits|firepower|formula|0\.6|0\.2/iu);
   });
@@ -164,9 +306,9 @@ describe("ResultsView", () => {
     expect(screen.getByText("Select and copy your result.")).toHaveAttribute("aria-live", "polite");
   });
 
-  it("calls Run again and both mode callbacks with native controls", () => {
+  it("calls replay and both mode callbacks with native controls", () => {
     const { onRunAgain, onModeChange } = renderResult();
-    fireEvent.click(screen.getByRole("button", { name: "Run again" }));
+    fireEvent.click(screen.getByRole("button", { name: "Run another Daily" }));
     expect(onRunAgain).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("button", { name: "Daily" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Free Play" })).toHaveAttribute("aria-pressed", "false");

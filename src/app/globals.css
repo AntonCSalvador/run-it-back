@@ -392,6 +392,71 @@ article,
 .highlight-feed__tag { display: inline-block; margin-block-end: var(--rib-space-1); color: var(--rib-gold); font-size: var(--rib-type-caption-size); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .highlight-feed__controls { display: flex; flex-wrap: wrap; gap: var(--rib-space-2); margin-block-start: var(--rib-space-4); }
 
+.results-view {
+  display: grid;
+  gap: var(--rib-space-8);
+  padding-block-end: var(--rib-space-8);
+}
+
+.results-view__outcome {
+  display: grid;
+  justify-items: start;
+  gap: var(--rib-space-4);
+  border-block-end: 1px solid var(--rib-line-strong);
+  padding-block: var(--rib-space-8) var(--rib-space-12);
+}
+
+.results-view__outcome h2 {
+  max-width: 18ch;
+  margin: 0;
+  font-size: var(--rib-type-outcome-size);
+  line-height: var(--rib-type-outcome-leading);
+}
+
+.results-view--champion .results-view__outcome h2 { color: var(--rib-gold); }
+.results-view--eliminated .results-view__outcome h2 { color: var(--rib-text-primary); }
+.results-view__outcome p { margin: 0; color: var(--rib-text-secondary); font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.results-view h3 { margin-block: 0 var(--rib-space-4); }
+
+.results-view__path ol,
+.results-view__lineup ol,
+.results-view__moments ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.results-view__path ol { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); }
+.results-view__path li { display: grid; gap: var(--rib-space-2); min-width: 0; border-block-start: 2px solid var(--rib-line-strong); padding: var(--rib-space-3) var(--rib-space-3) 0; }
+.results-view__path li:first-child { padding-inline-start: 0; }
+.results-view__path li:last-child { padding-inline-end: 0; }
+.results-view__path li[data-result="lost"] { border-color: var(--rib-red); }
+.results-view__path li[data-result="not-reached"] { border-color: var(--rib-line-subtle); color: var(--rib-text-dim); }
+.results-view__path strong { font-family: var(--font-rib-display), "Barlow Condensed", "Arial Narrow", sans-serif; font-size: var(--rib-type-section-size); line-height: var(--rib-type-section-leading); }
+.results-view__path span { color: inherit; font-size: var(--rib-type-meta-size); font-variant-numeric: tabular-nums; }
+
+.results-view__lineup ol { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: var(--rib-space-2); }
+.results-view__lineup li { display: grid; align-content: start; gap: var(--rib-space-1); min-width: 0; border-block-start: 1px solid var(--rib-line-strong); padding-block-start: var(--rib-space-3); }
+.results-view__lineup li > span:first-child { color: var(--rib-text-secondary); font-size: var(--rib-type-caption-size); font-weight: 600; text-transform: uppercase; }
+.results-view__lineup li > span:not(:first-child) { color: var(--rib-text-secondary); font-size: var(--rib-type-meta-size); font-variant-numeric: tabular-nums; }
+.results-view__lineup strong { overflow-wrap: anywhere; font-family: var(--font-rib-display), "Barlow Condensed", "Arial Narrow", sans-serif; font-size: var(--rib-type-section-size); line-height: var(--rib-type-section-leading); }
+.results-view__lineup .results-view__igl { justify-self: start; border: 1px solid var(--rib-red); border-radius: var(--rib-radius-sm); padding-inline: var(--rib-space-2); color: var(--rib-text-primary); font-weight: 700; letter-spacing: 0.04em; }
+
+.results-view__moments ol { display: grid; gap: var(--rib-space-2); }
+.results-view__moments li { border-block-start: 1px solid var(--rib-line-subtle); padding-block-start: var(--rib-space-3); }
+.results-view__moments li[data-heat="true"] { border-color: var(--rib-gold); }
+.results-view__moments li p { margin: 0; }
+.results-view__moments li p:first-child { margin-block-end: var(--rib-space-1); color: var(--rib-text-secondary); font-size: var(--rib-type-caption-size); font-weight: 600; text-transform: uppercase; }
+.results-view__moments > p { margin: 0; color: var(--rib-text-secondary); }
+
+.results-view__maps { border-block: 1px solid var(--rib-line-subtle); }
+.results-view__maps summary { display: flex; align-items: center; min-height: 44px; padding-block: var(--rib-space-2); font-weight: 600; cursor: pointer; }
+.results-view__maps > ol { display: grid; gap: var(--rib-space-4); margin-block: 0 var(--rib-space-4); padding-inline-start: var(--rib-space-6); }
+.results-view__maps > ol > li::marker { color: var(--rib-red); }
+.results-view__maps ol ol { display: flex; flex-wrap: wrap; gap: var(--rib-space-1) var(--rib-space-4); margin-block-start: var(--rib-space-2); color: var(--rib-text-secondary); font-variant-numeric: tabular-nums; }
+.results-view__rerolls { margin: calc(var(--rib-space-6) * -1) 0 0; color: var(--rib-text-secondary); font-variant-numeric: tabular-nums; }
+.results-view__secondary-actions { display: flex; flex-wrap: wrap; gap: var(--rib-space-2); border-block-start: 1px solid var(--rib-line-subtle); padding-block-start: var(--rib-space-4); }
+
 .player-card button {
   display: flex;
   align-items: center;
@@ -609,6 +674,17 @@ textarea {
   .tournament-view__rosters { grid-template-columns: minmax(0,1fr); }
   .tournament-roster__slots { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .highlight-feed__controls > button { flex: 1 1 9rem; }
+
+  .results-view { gap: var(--rib-space-6); }
+  .results-view__outcome { padding-block: var(--rib-space-6) var(--rib-space-8); }
+  .results-view__path ol { grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--rib-space-4) 0; }
+  .results-view__path li:nth-child(odd) { padding-inline-start: 0; }
+  .results-view__path li:nth-child(even) { padding-inline-end: 0; }
+  .results-view__lineup ol { grid-template-columns: minmax(0,1fr); gap: var(--rib-space-3); }
+  .results-view__lineup li { grid-template-columns: minmax(5.5rem,0.8fr) minmax(0,1.4fr) auto; align-items: baseline; gap: var(--rib-space-2); }
+  .results-view__lineup .results-view__igl { grid-column: 2 / -1; }
+  .results-view__secondary-actions { flex-direction: column; }
+  .results-view__secondary-actions > * { width: 100%; }
 
   .scroll-track > * { scroll-snap-align: start; }
   .scroll-track > .team-card:focus-visible { outline-offset: -6px; box-shadow: inset 0 0 0 3px var(--rib-red); }
