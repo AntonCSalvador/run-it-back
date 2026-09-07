@@ -221,39 +221,74 @@ ul { padding-inline-start: 1.4rem; }
   text-transform: uppercase;
 }
 
+.draft-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(16rem,20rem);
+  gap: var(--rib-space-8);
+  align-items: start;
+}
+
+.draft-layout > .roster-bar { position: sticky; top: var(--rib-space-6); align-self: start; }
+.draft-layout .roster-bar__slots { grid-template-columns: minmax(0,1fr); }
+
+.decision-heading {
+  margin-block-end: var(--rib-space-6);
+  border-block-end: 1px solid var(--rib-line-subtle);
+  padding-block-end: var(--rib-space-4);
+}
+
+.decision-heading h2 { margin-block-start: 0; }
+.decision-heading p { margin: var(--rib-space-2) 0 0; color: var(--rib-text-secondary); }
+
 .team-offer__cards {
   display: grid;
   grid-template-columns: repeat(3,minmax(0,1fr));
   grid-auto-flow: row;
   grid-auto-columns: auto;
-  gap: 0.75rem;
-  margin-block-end: 0.75rem;
+  gap: var(--rib-space-3);
+  margin-block-end: var(--rib-space-4);
   overflow: visible;
 }
 
 .team-card {
   display: grid;
-  align-content: center;
-  justify-items: center;
-  min-height: 9rem;
-  gap: 0.5rem;
-  border-radius: 6px;
-  text-align: center;
+  grid-template-columns: minmax(0,1fr) auto;
+  grid-template-areas: "year position" "mark mark" "name name" "cue cue";
+  align-content: start;
+  justify-items: start;
+  min-height: 15rem;
+  gap: var(--rib-space-3);
+  border-radius: var(--rib-radius-lg);
+  padding: var(--rib-space-4);
+  text-align: start;
 }
 
+.team-card__year { grid-area: year; color: var(--rib-text-secondary); font-size: var(--rib-type-meta-size); font-variant-numeric: tabular-nums; font-weight: 600; }
+.team-card__position { grid-area: position; color: var(--rib-text-dim); font-size: var(--rib-type-caption-size); font-variant-numeric: tabular-nums; }
+.team-card .media-mark { grid-area: mark; width: 64px !important; height: 64px !important; margin-block: var(--rib-space-2); }
+.team-card__name { grid-area: name; font-family: var(--font-rib-display), "Barlow Condensed", "Arial Narrow", sans-serif; font-size: var(--rib-type-section-size); line-height: var(--rib-type-section-leading); }
+.team-card__cue { grid-area: cue; color: var(--rib-red); font-size: var(--rib-type-meta-size); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.team-offer__reroll { display: flex; align-items: center; flex-wrap: wrap; gap: var(--rib-space-3); }
+.team-offer__reroll p { margin: 0; color: var(--rib-text-secondary); font-size: var(--rib-type-caption-size); line-height: var(--rib-type-caption-leading); }
+
 .media-mark { flex: none; }
-.media-mark__fallback { display: grid !important; place-items: center; background: var(--rib-surface-2); color: var(--rib-text-secondary); }
+.media-mark__fallback { display: grid !important; place-items: center; border: 1px solid var(--rib-line-strong); background: var(--rib-surface-2); color: var(--rib-text-secondary); font-family: var(--font-rib-display), "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 700; }
 
 .roster-bar {
+  display: block;
+}
+
+.roster-bar__slots {
   display: grid;
   grid-template-columns: repeat(5,minmax(0,1fr));
-  grid-auto-flow: row;
-  grid-auto-columns: auto;
-  gap: 0.55rem;
+  gap: var(--rib-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
   overflow: visible;
 }
 
-.roster-bar > div,
+.roster-bar__slots > li,
 article,
 .role-chip,
 .player-card {
@@ -263,8 +298,13 @@ article,
   background: var(--rib-surface-1);
 }
 
-.roster-bar strong { display: block; color: var(--rib-text-primary); }
-.role-chip { display: inline-block; margin: 0.15rem; padding: 0.2rem 0.4rem; }
+.roster-bar h3 { margin: 0 0 var(--rib-space-3); }
+.roster-bar strong { display: block; color: var(--rib-text-primary); text-transform: capitalize; }
+.roster-bar__slots > li { display: grid; gap: var(--rib-space-1); min-width: 0; }
+.roster-bar__slots > li > span { color: var(--rib-text-secondary); }
+.roster-bar__slots > li[data-state="open"] { border-style: dashed; }
+.roster-bar__slots > li[data-state="filled"] { border-color: var(--rib-red); background: var(--rib-surface-2); }
+.role-chip { display: inline-block; margin: var(--rib-space-1) var(--rib-space-1) var(--rib-space-1) 0; border-radius: var(--rib-radius-sm); padding: var(--rib-space-1) var(--rib-space-2); color: var(--rib-text-secondary); font-size: var(--rib-type-caption-size); line-height: var(--rib-type-caption-leading); text-transform: capitalize; }
 
 .action-button {
   border-color: var(--rib-red);
@@ -285,6 +325,15 @@ article,
   gap: 0.5rem;
   text-align: start;
 }
+
+.player-picker__cards > .player-card { padding: 0; overflow: hidden; }
+.player-card__choice { border: 0; border-radius: 0; padding: var(--rib-space-3); background: transparent; }
+.player-card__choice:hover:not(:disabled) { background: var(--rib-surface-2); }
+.player-card__identity { display: grid; min-width: 0; gap: var(--rib-space-1); }
+.player-card__identity > span { color: var(--rib-text-secondary); font-size: var(--rib-type-caption-size); line-height: var(--rib-type-caption-leading); font-variant-numeric: tabular-nums; }
+.player-card__handle { overflow-wrap: anywhere; word-break: break-word; font-family: var(--font-rib-display), "Barlow Condensed", "Arial Narrow", sans-serif; font-size: var(--rib-type-section-size); line-height: var(--rib-type-section-leading); }
+.player-card__roles { display: block; border-block-start: 1px solid var(--rib-line-subtle); padding: var(--rib-space-2) var(--rib-space-3); }
+.player-card__role-summary { text-transform: none; }
 
 textarea {
   width: 100%;
@@ -451,10 +500,12 @@ textarea {
   .exit-run-dialog__actions { flex-direction: column; }
   .exit-run-dialog__actions > * { width: 100%; }
 
+  .draft-layout { grid-template-columns: minmax(0,1fr); gap: var(--rib-space-4); }
+  .draft-layout > .roster-bar { position: static; }
+
   .scroll-track {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 100%;
     overflow-x: auto;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
@@ -465,11 +516,19 @@ textarea {
   }
 
   .team-offer__cards,
-  .roster-bar,
-  .player-picker__cards { grid-template-columns: none; }
+  .player-picker__cards {
+    grid-template-columns: none;
+    grid-auto-columns: 88%;
+  }
+
+  .roster-bar__slots {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    overflow-x: visible;
+  }
 
   .scroll-track > * { scroll-snap-align: start; }
   .scroll-track > .team-card:focus-visible { outline-offset: -6px; box-shadow: inset 0 0 0 3px var(--rib-red); }
+  .player-card__choice:focus-visible { outline-offset: -6px; box-shadow: inset 0 0 0 3px var(--rib-red); }
 }
 
 @media (prefers-reduced-motion: reduce) {

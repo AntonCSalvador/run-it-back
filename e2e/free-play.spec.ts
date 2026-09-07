@@ -56,7 +56,13 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
     await expect(page.locator(".fire-accent")).toHaveCount(0);
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-    const bounds = await page.locator("main").evaluate(async element => {
+    const captureTarget = page.locator("body");
+    const capturedRegions = await captureTarget.evaluate(element => ({
+      banner: Boolean(element.querySelector("header[role='banner'], header.app-banner")),
+      main: element.matches("main") || Boolean(element.querySelector("main")),
+    }));
+    expect(capturedRegions, "the visual capture includes the complete banner and main shell").toEqual({ banner: true, main: true });
+    const layout = await captureTarget.evaluate(async element => {
       const sample = () => {
         const { x, y, width, height } = element.getBoundingClientRect();
         return { x, y, width, height };
@@ -66,21 +72,24 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
         frames.push(sample());
       }
-      return frames;
+      const banner = document.querySelector("header[role='banner'], header.app-banner")?.getBoundingClientRect();
+      const main = document.querySelector("main")?.getBoundingClientRect();
+      return {
+        frames,
+        banner: banner ? { top: banner.top, bottom: banner.bottom } : null,
+        main: main ? { top: main.top, bottom: main.bottom } : null,
+        pageOverflows: document.documentElement.scrollWidth > innerWidth,
+      };
     });
-    expect(bounds[0].y, "main starts at document top before capture").toBe(0);
+    const bounds = layout.frames;
+    expect(layout.banner, "the banner remains outside main").not.toBeNull();
+    expect(layout.main, "the main region remains in the full-shell capture").not.toBeNull();
+    expect(layout.main!.top, "main begins at or below the banner without overlap").toBeGreaterThanOrEqual(layout.banner!.bottom);
+    expect(layout.pageOverflows, "the shell does not create page-level horizontal overflow").toBe(false);
     expect(bounds[1]).toEqual(bounds[0]);
     expect(bounds[2]).toEqual(bounds[0]);
-    if (isMobile) {
-      // Use document coordinates; locator screenshots scroll the element again,
-      // introducing fractional crop offsets in Chromium's mobile emulation.
-      const { x, y, width, height } = bounds[0];
-      const clip = { x: Math.floor(x), y: 0, width: Math.ceil(x + width) - Math.floor(x), height: Math.ceil(y + height) };
-      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, clip, animations: "disabled", maxDiffPixelRatio: 0.01 });
-      expect(await page.evaluate(() => window.scrollY), "capture preserves document origin").toBe(0);
-    } else {
-      await expect(page.locator("main")).toHaveScreenshot(`${name}.png`, { animations: "disabled", maxDiffPixelRatio: 0.01 });
-    }
+    await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, animations: "disabled", maxDiffPixelRatio: 0.01 });
+    if (isMobile) expect(await page.evaluate(() => window.scrollY), "capture preserves document origin").toBe(0);
   };
 
   await page.goto("/?e2e-seed=e2e-164");

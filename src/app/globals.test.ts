@@ -210,20 +210,54 @@ describe("parsed broadcast stylesheet", () => {
     expect(stylesheet).not.toMatch(/\[data-testid[^\]]*player-card/);
   });
 
-  it("keeps page scrolling immediate while mobile tracks opt into smooth motion", () => {
+  it("lets long repository handles wrap without widening player decisions", () => {
+    const identity = ruleFor(rules, ".player-card__identity").style;
+    expect(identity.getPropertyValue("min-width")).toBe("0px");
+    const handle = ruleFor(rules, ".player-card__handle").style;
+    expect(handle.getPropertyValue("overflow-wrap")).toBe("anywhere");
+    expect(handle.getPropertyValue("word-break")).toBe("break-word");
+  });
+
+  it("anchors roster context beside desktop draft decisions and stacks it on mobile", () => {
+    const layout = ruleFor(rules, ".draft-layout").style;
+    expect(layout.getPropertyValue("display")).toBe("grid");
+    expect(layout.getPropertyValue("grid-template-columns")).toBe("minmax(0,1fr) minmax(16rem,20rem)");
+    const roster = ruleFor(rules, ".draft-layout > .roster-bar").style;
+    expect(roster.getPropertyValue("position")).toBe("sticky");
+    expect(roster.getPropertyValue("align-self")).toBe("start");
+    const mobile = mediaFor(rules, "(max-width:44rem)");
+    expect(ruleFor(mobile.cssRules, ".draft-layout").style.getPropertyValue("grid-template-columns")).toBe("minmax(0,1fr)");
+    expect(ruleFor(mobile.cssRules, ".draft-layout > .roster-bar").style.getPropertyValue("position")).toBe("static");
+  });
+
+  it("keeps draft actions and roster states visibly distinct without hover disclosure", () => {
+    expect(ruleFor(rules, ".team-card__cue").style.getPropertyValue("color")).toBe("var(--rib-red)");
+    expect(ruleFor(rules, '.roster-bar__slots > li[data-state="open"]').style.getPropertyValue("border-style")).toBe("dashed");
+    expect(ruleFor(rules, '.roster-bar__slots > li[data-state="filled"]').style.getPropertyValue("border-color")).toBe("var(--rib-red)");
+    const choice = ruleFor(rules, ".player-card__choice").style;
+    expect(choice.getPropertyValue("border")).toBe("0px");
+    expect(choice.getPropertyValue("background")).toBe("transparent");
+    expect(stylesheet).not.toMatch(/\.team-card:hover[^}]+(?:display|visibility|opacity)\s*:/);
+  });
+
+  it("keeps page scrolling immediate while mobile decision tracks reveal the next option", () => {
     expect(exactRuleFor(rules, "html").style.getPropertyValue("scroll-behavior")).toBe("");
     const mobile = mediaFor(rules, "(max-width:44rem)");
     const track = ruleFor(mobile.cssRules, ".scroll-track").style;
     expect(track.getPropertyValue("grid-auto-flow")).toBe("column");
-    expect(track.getPropertyValue("grid-auto-columns")).toBe("100%");
+    expect(track.getPropertyValue("grid-auto-columns")).toBe("");
     expect(track.getPropertyValue("overflow-x")).toBe("auto");
     expect(track.getPropertyValue("scroll-behavior")).toBe("smooth");
     expect(track.getPropertyValue("scroll-snap-type")).toBe("x mandatory");
     expect(track.getPropertyValue("overscroll-behavior-inline")).toBe("contain");
     expect(ruleFor(mobile.cssRules, ".scroll-track > *").style.getPropertyValue("scroll-snap-align")).toBe("start");
-    for (const selector of [".team-offer__cards", ".roster-bar", ".player-picker__cards"]) {
+    for (const selector of [".team-offer__cards", ".player-picker__cards"]) {
       expect(ruleFor(mobile.cssRules, selector).style.getPropertyValue("grid-template-columns")).toBe("none");
+      expect(ruleFor(mobile.cssRules, selector).style.getPropertyValue("grid-auto-columns")).toBe("88%");
     }
+    const roster = ruleFor(mobile.cssRules, ".roster-bar__slots").style;
+    expect(roster.getPropertyValue("grid-template-columns")).toBe("repeat(2,minmax(0,1fr))");
+    expect(roster.getPropertyValue("overflow-x")).toBe("visible");
     const reduced = mediaFor(rules, "(prefers-reduced-motion: reduce)");
     expect(ruleFor(reduced.cssRules, "*").style.getPropertyValue("scroll-behavior")).toBe("auto");
     expect(ruleFor(reduced.cssRules, "*").style.getPropertyPriority("scroll-behavior")).toBe("important");

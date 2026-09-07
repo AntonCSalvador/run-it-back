@@ -73,18 +73,18 @@ describe("broadcast accessibility", () => {
     expect(ended.mock.calls[0][0].nativeEvent.animationName).toBe("ignite-a");
   });
   it("exposes the selected game mode and draft progress semantically", () => {
-    render(<><AppHeader mode="daily" stage="draft" detail="Pick 2 of 5 · Choose a team to scout" onExit={vi.fn()} /><TeamOffer teams={teams} rerolls={2} onChoose={vi.fn()} onReroll={vi.fn()} /></>);
+    render(<><AppHeader mode="daily" stage="draft" detail="Pick 2 of 5 · Choose a team to scout" onExit={vi.fn()} /><TeamOffer teams={teams} rerolls={2} canReroll onChoose={vi.fn()} onReroll={vi.fn()} /></>);
     expect(screen.getByLabelText("Current mode")).toHaveTextContent("Daily");
     expect(screen.getByText("Draft").closest("li")).toHaveAttribute("aria-current", "step");
     expect(screen.getByRole("button", { name: "Exit run" })).toBeVisible();
-    expect(screen.getByText("2 rerolls remaining")).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByText("This replaces every team in the current offer.")).toHaveAttribute("aria-live", "polite");
   });
 
   it("gives a successful reroll a finite, retriggerable fire accent", () => {
     vi.useFakeTimers();
     const reroll = vi.fn();
-    render(<TeamOffer teams={teams} rerolls={2} onChoose={vi.fn()} onReroll={reroll} />);
-    const button = screen.getByRole("button", { name: /reroll teams/i });
+    render(<TeamOffer teams={teams} rerolls={2} canReroll onChoose={vi.fn()} onReroll={reroll} />);
+    const button = screen.getByRole("button", { name: "Replace all 3 teams · 2 left" });
 
     fireEvent.click(button);
     expect(reroll).toHaveBeenCalledOnce();
@@ -172,20 +172,13 @@ describe("broadcast accessibility", () => {
     } finally { vi.useRealTimers(); }
   });
 
-  it("lets CSS choose keyboard scroll motion and prevents arrow-key page scrolling", () => {
+  it("keeps the complete roster out of a horizontal keyboard scroller", () => {
     render(<RosterBar slots={{}} onMove={vi.fn()} canMove={false} />);
-    const roster = screen.getByRole("region", { name: "Roster" });
-    const scrollBy = vi.fn();
-    Object.defineProperty(roster, "scrollBy", { configurable: true, value: scrollBy });
-    roster.focus();
-    expect(roster).toHaveFocus();
-    expect(fireEvent.keyDown(roster, { key: "ArrowRight" })).toBe(false);
-    expect(scrollBy).toHaveBeenLastCalledWith({ left: 260 });
-    expect(fireEvent.keyDown(roster, { key: "ArrowLeft" })).toBe(false);
-    expect(scrollBy).toHaveBeenLastCalledWith({ left: -260 });
-    expect(fireEvent.keyDown(roster, { key: "Enter" })).toBe(true);
-    expect(fireEvent.keyDown(screen.getByText("duelist"), { key: "ArrowRight" })).toBe(true);
-    expect(scrollBy).toHaveBeenCalledTimes(2);
+    const roster = screen.getByRole("region", { name: "Roster · 0 of 5 filled" });
+    expect(roster).not.toHaveAttribute("tabindex");
+    expect(roster).not.toHaveClass("scroll-track");
+    expect(fireEvent.keyDown(roster, { key: "ArrowRight" })).toBe(true);
+    expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
   });
 
   it("uses purposeful progress language without exposing reducer phases", () => {
@@ -199,6 +192,20 @@ describe("broadcast accessibility", () => {
     expect(within(progress).getByText("Draft").closest("li")).toHaveAttribute("aria-current", "step");
     expect(within(progress).getByRole("status")).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
     expect(screen.queryByText(/Current phase:/)).not.toBeInTheDocument();
+  });
+
+  it("moves focus to each new drafting decision without adding it to the tab order", async () => {
+    const user = userEvent.setup();
+    render(<GameApp dataset={parseDataset(minimalDataset)} freeSeedFactory={() => "focus-draft"} />);
+    await user.click(screen.getByRole("button", { name: "Start Free Play" }));
+    const teamHeading = screen.getByRole("heading", { name: "Choose a team to scout" });
+    expect(teamHeading).toHaveFocus();
+    expect(teamHeading).toHaveAttribute("tabindex", "-1");
+
+    await user.click(document.querySelector<HTMLElement>("[data-team-id]")!);
+    const playerHeading = screen.getByRole("heading", { name: /Choose from/ });
+    expect(playerHeading).toHaveFocus();
+    expect(playerHeading).toHaveAttribute("tabindex", "-1");
   });
 
   it("fires the persistent shell after player and tournament lock-ins", () => {

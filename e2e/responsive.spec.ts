@@ -83,12 +83,91 @@ test("mobile tracked team focus ring remains fully visible", async ({ page }, te
   }
 });
 
+test("390px player choice keeps its complete focus treatment inside the clipped card", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "pixel-7", "The player decision track clips card media only on mobile.");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?e2e-seed=e2e-player-focus");
+  await start(page, "Free Play");
+  await keyboardActivate(page, page.locator(".team-card").first());
+  await expect(page.locator(".fire-accent")).toHaveCount(0);
+
+  const playerChoice = page.locator('[data-testid^="player-card-"]').first().getByRole("button");
+  for (let tabs = 0; tabs < 8 && !await playerChoice.evaluate(element => document.activeElement === element); tabs += 1) {
+    await page.keyboard.press("Tab");
+  }
+  await expect(playerChoice).toBeFocused();
+
+  const focus = await playerChoice.evaluate(element => {
+    const card = element.parentElement!;
+    const choiceRect = element.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const outlineWidth = Number.parseFloat(style.outlineWidth);
+    const outlineOffset = Number.parseFloat(style.outlineOffset);
+    const outwardExtent = Math.max(0, outlineWidth + outlineOffset);
+    return {
+      boxShadow: style.boxShadow,
+      outlineColor: style.outlineColor,
+      outlineOffset: style.outlineOffset,
+      outlineWidth: style.outlineWidth,
+      clipped: {
+        blockEnd: choiceRect.bottom + outwardExtent > cardRect.bottom,
+        blockStart: choiceRect.top - outwardExtent < cardRect.top,
+        inlineEnd: choiceRect.right + outwardExtent > cardRect.right,
+        inlineStart: choiceRect.left - outwardExtent < cardRect.left,
+      },
+      pageOverflows: document.documentElement.scrollWidth > innerWidth,
+    };
+  });
+  expect(focus.outlineWidth).toBe("3px");
+  expect(focus.outlineColor).toBe("rgb(242, 237, 227)");
+  expect(focus.outlineOffset).toBe("-6px");
+  expect(focus.boxShadow).toContain("rgb(232, 75, 66) 0px 0px 0px 3px inset");
+  for (const [edge, clipped] of Object.entries(focus.clipped)) expect(clipped, `${edge} clipping`).toBe(false);
+  expect(focus.pageOverflows).toBe(false);
+});
+
+test("390px team track shows position, a next-card edge, and the full roster outside it", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "pixel-7", "The horizontal decision track is a mobile composition.");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?e2e-seed=e2e-team-track");
+  await start(page, "Free Play");
+
+  const track = page.locator(".team-offer__cards");
+  const cards = track.locator(".team-card");
+  await expect(cards).toHaveCount(3);
+  await expect(cards.first()).toContainText("Team 1 of 3");
+  await expect(cards.nth(1)).toContainText("Team 2 of 3");
+  const geometry = await page.evaluate(() => {
+    const track = document.querySelector<HTMLElement>(".team-offer__cards")!;
+    const first = track.querySelector<HTMLElement>(".team-card")!;
+    const second = track.querySelectorAll<HTMLElement>(".team-card")[1];
+    const roster = document.querySelector<HTMLElement>(".roster-bar")!;
+    const trackRect = track.getBoundingClientRect();
+    const firstRect = first.getBoundingClientRect();
+    const secondRect = second.getBoundingClientRect();
+    return {
+      ratio: firstRect.width / trackRect.width,
+      nextEdgeVisible: secondRect.left < trackRect.right && secondRect.right > trackRect.right,
+      snap: getComputedStyle(first).scrollSnapAlign,
+      rosterInTrack: Boolean(roster.closest(".scroll-track")),
+      pageOverflows: document.documentElement.scrollWidth > innerWidth,
+    };
+  });
+  expect(geometry.ratio).toBeGreaterThanOrEqual(0.86);
+  expect(geometry.ratio).toBeLessThanOrEqual(0.9);
+  expect(geometry.nextEdgeVisible).toBe(true);
+  expect(geometry.snap).toBe("start");
+  expect(geometry.rosterInTrack).toBe(false);
+  expect(geometry.pageOverflows).toBe(false);
+});
+
 test("every phase keeps rendered controls in the viewport and reachable by keyboard", async ({ page }) => {
   await page.goto("/?e2e-seed=e2e-164");
   await auditPhase(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Start Free Play", exact: true }));
   await auditPhase(page);
-  await keyboardActivate(page, page.getByRole("button", { name: "Reroll teams" }));
+  await keyboardActivate(page, page.getByRole("button", { name: /Replace all 3 teams/ }));
   await auditPhase(page);
   await keyboardActivate(page, page.locator(".team-card").first());
   await auditPhase(page);
@@ -100,7 +179,7 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog", { name: "Exit this run?" })).toBeHidden();
   await expect(exitRun).toBeFocused();
-  await expect(page.getByRole("button", { name: "Reroll teams" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Replace all 3 teams/ })).toBeVisible();
   await keyboardActivate(page, exitRun);
   await keyboardActivate(page, page.getByRole("button", { name: "Exit run and lose progress" }));
   await keyboardActivate(page, page.getByRole("button", { name: "Start Free Play", exact: true }));
@@ -166,7 +245,7 @@ test("mobile tracks animate to a snap boundary and reduced motion suppresses vis
   await expect.poll(() => track.evaluate(element => Array.from(element.children, child => (child as HTMLElement).offsetLeft - (element as HTMLElement).offsetLeft).some(boundary => Math.abs(element.scrollLeft - boundary) <= 3))).toBe(true);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(track).toHaveCSS("scroll-behavior", "auto");
-  await page.getByRole("button", { name: "Reroll teams" }).click();
+  await page.getByRole("button", { name: /Replace all 3 teams/ }).click();
   const reduced = await page.locator(".game-shell").evaluate(element => {
     const accent = document.querySelector(".fire-accent") ?? element;
     const pseudo = getComputedStyle(accent, "::before");
@@ -211,8 +290,8 @@ test("forced colors pair primary and exhausted actions with internally consisten
     return { backgroundColor: style.backgroundColor, borderTopColor: style.borderTopColor, color: style.color, forcedColorAdjust: style.forcedColorAdjust };
   });
   await daily.click();
-  const reroll = page.getByRole("button", { name: "Reroll teams" });
-  for (let rerolls = 0; rerolls < 3; rerolls += 1) await reroll.click();
+  for (let rerolls = 3; rerolls > 0; rerolls -= 1) await page.getByRole("button", { name: `Replace all 3 teams · ${rerolls} left` }).click();
+  const reroll = page.getByRole("button", { name: "Replace all 3 teams · 0 left" });
   await expect(reroll).toBeDisabled();
 
   const disabledStates = await page.evaluate(() => {
@@ -233,7 +312,7 @@ test("forced colors pair primary and exhausted actions with internally consisten
       element.remove();
       return style;
     };
-    const disabledElement = document.querySelector(".action-button:disabled")!;
+    const disabledElement = document.querySelector("button:disabled")!;
     return {
       disabled: read(disabledElement),
       reference: {

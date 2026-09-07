@@ -1,23 +1,22 @@
 "use client";
 
-import type { KeyboardEvent } from "react";
+import { useId } from "react";
 import { ROLES, type PlayerCard, type Role } from "../domain";
 
 export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; onMove(cardId: string, role: Role): void }
 type RosterBarIntegrationProps = RosterBarProps & { canMove?: boolean };
 export function RosterBar({ slots, onMove, canMove = true }: RosterBarIntegrationProps) {
-  const scroll = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.target !== event.currentTarget || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
-    event.preventDefault();
-    event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 260 : -260 });
-  };
-  return <section aria-label="Roster" role="region" tabIndex={0} onKeyDown={scroll} className="roster-bar scroll-track">{ROLES.map(role => {
+  const headingId = useId();
+  const filledCount = ROLES.filter(role => Boolean(slots[role])).length;
+  return <section aria-labelledby={headingId} role="region" className="roster-bar">
+    <h3 id={headingId}>Roster · {filledCount} of 5 filled</h3>
+    <ul className="roster-bar__slots">{ROLES.map(role => {
     const card = slots[role];
     const compatibleTargets = card ? ROLES.filter(target => {
       const occupant = slots[target];
       return target !== role && card.eligibleRoles.includes(target) && (!occupant || occupant.eligibleRoles.includes(role));
     }) : [];
     const identity = card ? `${card.displayHandle} ${card.year}` : "";
-    return <div key={role} aria-label={`${role} slot`}><strong>{role}</strong>{card && <><span>{identity}</span>{canMove && <div aria-label={`Move ${identity}`}>{compatibleTargets.map(target => <button type="button" key={target} onClick={() => onMove(card.id, target)}>Move {identity} to {target}</button>)}</div>}</>}</div>;
-  })}</section>;
+    return <li key={role} aria-label={`${role} slot`} data-state={card ? "filled" : "open"}><strong>{role}</strong>{card ? <><span>{identity}</span>{canMove && <div aria-label={`Move ${identity}`}>{compatibleTargets.map(target => <button type="button" key={target} onClick={() => onMove(card.id, target)}>Move {identity} to {target}</button>)}</div>}</> : <span>Open</span>}</li>;
+  })}</ul></section>;
 }
