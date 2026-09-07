@@ -3,7 +3,7 @@
 import type { GameMode } from "../machine";
 
 export function AppHeader({ mode, streak, dailyHistoryCount = 0, onStart, onRestart }: { mode: GameMode | null; streak: number; dailyHistoryCount?: number; onStart: (mode: GameMode) => void; onRestart: () => void }) {
-  return <header>
+  return <header className="app-banner">
     <h1>Run It Back</h1>
     <div role="group" aria-label="Game mode">
       <button type="button" aria-pressed={mode === "daily"} onClick={() => onStart("daily")}>Daily</button>

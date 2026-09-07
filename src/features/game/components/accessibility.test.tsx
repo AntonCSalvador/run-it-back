@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
 import { AppHeader } from "./app-header";
@@ -13,6 +14,7 @@ import { dataset as fixtureDataset, lineup, series, terminalState } from "./tour
 import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
 import { RosterBar } from "./roster-bar";
+import { RunProgress } from "./run-progress";
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onClick={fire.trigger}>ignite</button>; }
 function animationEnd(target: HTMLElement, animationName: string): void {
@@ -32,6 +34,37 @@ const teams: TeamAppearance[] = [
 ];
 
 describe("broadcast accessibility", () => {
+  it("starts with a skip link and keeps one main landmark after the banner", async () => {
+    const user = userEvent.setup();
+    render(<GameApp dataset={parseDataset(minimalDataset)} />);
+
+    await user.tab();
+    const skipLink = screen.getByRole("link", { name: "Skip to current decision" });
+    expect(skipLink).toHaveFocus();
+    expect(skipLink).toHaveAttribute("href", "#game-content");
+    const mains = screen.getAllByRole("main");
+    expect(mains).toHaveLength(1);
+    expect(mains[0]).toHaveAttribute("id", "game-content");
+    expect(screen.getByRole("banner").closest("main")).toBeNull();
+  });
+
+  it("announces the current stage and detail in an ordered run progress", () => {
+    render(<RunProgress stage="igl" detail="Pick 2 of 5" />);
+
+    const progress = screen.getByRole("navigation", { name: "Run progress" });
+    const list = within(progress).getByRole("list");
+    expect(list.tagName).toBe("OL");
+    expect(within(list).getAllByRole("listitem").map(item => item.textContent)).toEqual([
+      "Draft",
+      "IGL",
+      "Tournament",
+      "Recap",
+    ]);
+    expect(within(progress).getByText("IGL").closest("li")).toHaveAttribute("aria-current", "step");
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByRole("status")).toHaveTextContent("Pick 2 of 5");
+  });
+
   it("delivers simulated animation-end events through React", () => {
     const ended = vi.fn();
     render(<button onAnimationEnd={ended}>event delivery</button>);
@@ -54,12 +87,12 @@ describe("broadcast accessibility", () => {
     fireEvent.click(button);
     expect(reroll).toHaveBeenCalledOnce();
     expect(button).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     expect(button).not.toHaveClass("fire-accent");
 
     fireEvent.click(button);
     expect(button).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     expect(button).not.toHaveClass("fire-accent");
     vi.useRealTimers();
   });
@@ -82,7 +115,7 @@ describe("broadcast accessibility", () => {
     fireEvent.click(button);
     act(() => vi.advanceTimersByTime(20));
     expect(button).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     expect(button).not.toHaveClass("fire-accent");
     vi.useRealTimers();
   });
@@ -101,7 +134,7 @@ describe("broadcast accessibility", () => {
       expect(button).toHaveClass(`fire-accent--${firstName.at(-1)}`);
       animationEnd(button, firstName);
       expect(button).toHaveClass("fire-accent");
-      act(() => vi.advanceTimersByTime(649));
+      act(() => vi.advanceTimersByTime(199));
       expect(button).toHaveClass("fire-accent");
       act(() => vi.advanceTimersByTime(1));
       expect(button).not.toHaveClass("fire-accent");
@@ -114,10 +147,10 @@ describe("broadcast accessibility", () => {
       render(<AccentProbe />);
       const button = screen.getByRole("button", { name: "ignite" });
       fireEvent.click(button);
-      act(() => vi.advanceTimersByTime(400));
+      act(() => vi.advanceTimersByTime(120));
       fireEvent.click(button);
       act(() => vi.advanceTimersToNextFrame());
-      act(() => vi.advanceTimersByTime(649));
+      act(() => vi.advanceTimersByTime(199));
       expect(button).toHaveClass("fire-accent");
       act(() => vi.advanceTimersByTime(1));
       expect(button).not.toHaveClass("fire-accent");
@@ -170,12 +203,12 @@ describe("broadcast accessibility", () => {
     const first = render(<GameApp dataset={dataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
     fireEvent.click(screen.getByRole("button", { name: "Daily" }));
     fireEvent.click(screen.getAllByRole("button").find(button => button.dataset.teamId)!);
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     fireEvent.click(screen.getAllByRole("button").find(button => button.closest("[data-testid]") !== null)!);
     const shell = document.querySelector("main")!;
     expect(screen.getByRole("heading", { name: /Assign/ })).toBeVisible();
     expect(shell).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     expect(shell).not.toHaveClass("fire-accent");
     first.unmount();
 
@@ -184,7 +217,7 @@ describe("broadcast accessibility", () => {
     fireEvent.click(screen.getByRole("radio", { checked: true }));
     fireEvent.click(screen.getByRole("button", { name: "Start tournament" }));
     expect(document.querySelector("main")).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     vi.useRealTimers();
   });
 
@@ -194,11 +227,11 @@ describe("broadcast accessibility", () => {
     void opponent;
     render(<TournamentView opponent={{ id: "opponent", stage: "group", lineup, strength: 60 }} userLineup={lineup} cards={fixtureDataset.cards} result={series("group", true)} onPlay={vi.fn()} onContinue={vi.fn()} />);
     expect(screen.getByRole("status", { name: "Series result announcement" })).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     const champion = terminalState(true);
     render(<ResultsView mode="daily" tournament={champion.tournament} cards={fixtureDataset.cards} rerollsUsed={0} shareText="share" onRunAgain={vi.fn()} onModeChange={vi.fn()} />);
     expect(screen.getByRole("region", { name: "Results" })).toHaveClass("fire-accent");
-    act(() => vi.advanceTimersByTime(650));
+    act(() => vi.advanceTimersByTime(200));
     vi.useRealTimers();
   });
 });

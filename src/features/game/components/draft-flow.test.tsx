@@ -32,7 +32,9 @@ describe("draft flow", () => {
     await user.click(selectedTeam);
     expect(screen.getByText("Pick 1 of 5")).toBeVisible();
     const selectedCard = flexibleDataset.cards.find(card => card.teamId === selectedTeamId)!;
-    expect(within(screen.getByTestId(`player-card-${selectedCard.id}`)).getByRole("presentation")).toHaveAttribute("src", "/assets/players/test.webp");
+    const playerCard = screen.getByTestId(`player-card-${selectedCard.id}`);
+    expect(playerCard).toHaveClass("player-card");
+    expect(within(playerCard).getByRole("presentation")).toHaveAttribute("src", "/assets/players/test.webp");
     expect(document.querySelectorAll(".role-chip").length).toBeGreaterThan(0);
     await user.click(screen.getByRole("button", { name: "Back to teams" }));
     expect(offered().map(button => button.textContent).join("|")).toBe(before);

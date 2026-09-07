@@ -1,15 +1,35 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const ribUi = localFont({
+  src: [
+    { path: "./fonts/Barlow-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/Barlow-Medium.ttf", weight: "500", style: "normal" },
+    { path: "./fonts/Barlow-SemiBold.ttf", weight: "600", style: "normal" },
+  ],
+  variable: "--font-rib-ui",
+  display: "swap",
+});
+
+const ribDisplay = localFont({
+  src: [
+    { path: "./fonts/BarlowCondensed-SemiBold.ttf", weight: "600", style: "normal" },
+    { path: "./fonts/BarlowCondensed-Bold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-rib-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Run It Back",
-  description: "Draft Champions players and run the bracket.",
+  description: "Draft event-specific Champions player cards, choose an IGL, and run a fantasy tournament.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${ribUi.variable} ${ribDisplay.variable}`}>{children}</body>
     </html>
   );
 }

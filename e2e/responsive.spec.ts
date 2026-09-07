@@ -13,6 +13,76 @@ async function auditPhase(page: Page): Promise<void> {
   await assertAllEnabledActionsReachableByTab(page);
 }
 
+function contrastRatio(foreground: string, background: string): number {
+  const channels = (value: string): number[] => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+  const luminance = (value: string): number => {
+    const [red, green, blue] = channels(value).map(channel => {
+      const normalized = channel / 255;
+      return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    return (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
+  };
+  const lighter = Math.max(luminance(foreground), luminance(background));
+  const darker = Math.min(luminance(foreground), luminance(background));
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+test("skip link moves focus to the current decision", async ({ page }) => {
+  await page.goto("/");
+
+  await page.keyboard.press("Tab");
+  const skipLink = page.getByRole("link", { name: "Skip to current decision" });
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("main#game-content")).toBeFocused();
+});
+
+test("mobile tracked team focus ring remains fully visible", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "pixel-7", "Only the mobile layout clips direct-child track focus rings.");
+
+  for (const width of [390, 412]) {
+    await page.setViewportSize({ width, height: 840 });
+    await page.goto("/");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+
+    const teamCard = page.locator(".scroll-track > .team-card").first();
+    for (let tabs = 0; tabs < 8 && !await teamCard.evaluate(element => document.activeElement === element); tabs += 1) {
+      await page.keyboard.press("Tab");
+    }
+    await expect(teamCard).toBeFocused();
+
+    const focus = await teamCard.evaluate(element => {
+      const track = element.parentElement!;
+      const cardRect = element.getBoundingClientRect();
+      const trackRect = track.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        boxShadow: style.boxShadow,
+        outlineColor: style.outlineColor,
+        outlineOffset: style.outlineOffset,
+        outlineWidth: style.outlineWidth,
+        clipped: {
+          blockEnd: cardRect.bottom > trackRect.bottom,
+          blockStart: cardRect.top < trackRect.top,
+          inlineEnd: cardRect.right > trackRect.right,
+          inlineStart: cardRect.left < trackRect.left,
+        },
+        pageOverflows: document.documentElement.scrollWidth > innerWidth,
+      };
+    });
+    expect(focus.outlineWidth, `${width}px warm-white ring width`).toBe("3px");
+    expect(focus.outlineColor, `${width}px warm-white ring color`).toBe("rgb(242, 237, 227)");
+    expect(focus.outlineOffset, `${width}px inset warm-white ring`).toBe("-6px");
+    expect(focus.boxShadow, `${width}px inset red companion ring`).toContain("rgb(232, 75, 66) 0px 0px 0px 3px inset");
+    for (const [edge, clipped] of Object.entries(focus.clipped)) {
+      expect(clipped, `${width}px ${edge} clipping`).toBe(false);
+    }
+    expect(focus.pageOverflows, `${width}px page overflow`).toBe(false);
+  }
+});
+
 test("every phase keeps rendered controls in the viewport and reachable by keyboard", async ({ page }) => {
   await page.goto("/?e2e-seed=e2e-164");
   await auditPhase(page);
@@ -98,4 +168,58 @@ test("mobile tracks animate to a snap boundary and reduced motion suppresses vis
   expect(Number.parseFloat(reduced.transition)).toBeLessThanOrEqual(0.00001);
   expect(reduced.animation).toBe("none");
   expect(reduced.duration).toBe("0s");
+});
+
+test("forced colors pair selected and exhausted actions with internally consistent system colors", async ({ page }, testInfo) => {
+  await page.emulateMedia({ forcedColors: "active" });
+  await page.goto("/?e2e-seed=e2e-forced-colors");
+
+  const daily = page.getByRole("button", { name: "Daily", exact: true });
+  await daily.click();
+  await expect(daily).toHaveAttribute("aria-pressed", "true");
+  const reroll = page.getByRole("button", { name: "Reroll teams" });
+  for (let rerolls = 0; rerolls < 3; rerolls += 1) await reroll.click();
+  await expect(reroll).toBeDisabled();
+
+  const states = await page.evaluate(() => {
+    const read = (element: Element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderTopColor: style.borderTopColor,
+        color: style.color,
+        forcedColorAdjust: style.forcedColorAdjust,
+      };
+    };
+    const probe = (cssText: string) => {
+      const element = document.createElement("button");
+      element.style.cssText = `position:fixed;${cssText}`;
+      document.body.append(element);
+      const style = read(element);
+      element.remove();
+      return style;
+    };
+    const selectedElement = document.querySelector('[aria-pressed="true"]')!;
+    const disabledElement = document.querySelector(".action-button:disabled")!;
+    return {
+      selected: read(selectedElement),
+      unselected: read(document.querySelector('[aria-pressed="false"]')!),
+      disabled: read(disabledElement),
+      reference: {
+        selected: probe("forced-color-adjust:none;color:HighlightText;background:Highlight;border:1px solid Highlight"),
+        disabled: probe("forced-color-adjust:none;color:GrayText;background:Canvas;border:1px solid GrayText"),
+      },
+    };
+  });
+  await testInfo.attach("forced-color-computed-states", {
+    body: JSON.stringify(states, null, 2),
+    contentType: "application/json",
+  });
+
+  expect(states.selected, JSON.stringify(states)).toEqual(states.reference.selected);
+  expect(states.disabled, JSON.stringify(states)).toEqual(states.reference.disabled);
+  expect(contrastRatio(states.selected.color, states.selected.backgroundColor)).toBeGreaterThanOrEqual(4.5);
+  expect(contrastRatio(states.selected.backgroundColor, states.unselected.backgroundColor)).toBeGreaterThanOrEqual(3);
+  expect(contrastRatio(states.disabled.color, states.disabled.backgroundColor)).toBeGreaterThanOrEqual(4.5);
+  expect(contrastRatio(states.disabled.borderTopColor, states.disabled.backgroundColor)).toBeGreaterThanOrEqual(3);
 });

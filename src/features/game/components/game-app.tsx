@@ -211,13 +211,15 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     const run = { completedAtUtc: new Date().toISOString().slice(0, 10), stageReached: state.tournament.completedSeries.at(-1)?.stage ?? state.tournament.currentStage, series: state.tournament.completedSeries.map(series => ({ stage: series.stage, userWins: series.userWins, opponentWins: series.opponentWins })), rerollsUsed: 3 - state.draft.rerollsRemaining, roster: state.tournament.userLineup.slots };
     return state.mode === "daily" ? formatDailyShare({ ...run, mode: "daily", utcDate: dailyDateFromSeed(state.tournament.seed) }) : formatFreePlayShare({ ...run, mode: "free" }, dataset);
   })() : "";
-  return <main className={`game-shell ${actionFire.fireClass}`}>
+  return <>
+      <a className="skip-link" href="#game-content">Skip to current decision</a>
       <AppHeader mode={mode} streak={streak} dailyHistoryCount={dailyHistoryCount} onStart={value => {
         if (state.phase !== "mode") {
           resetState();
         }
         dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
       }} onRestart={restart} />
+      <main id="game-content" tabIndex={-1} className={`game-shell ${actionFire.fireClass}`}>
       {storageState.recovered && <p role="status" aria-label="Saved result storage status">Saved results were recovered from invalid storage.</p>}
       {!storageState.persistent && <p role="alert">Results cannot persist in this browser session.</p>}
       <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} />
@@ -231,5 +233,6 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
       {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
       {simulationError && <p role="alert">{simulationError}</p>}
-    </main>;
+      </main>
+    </>;
 }
