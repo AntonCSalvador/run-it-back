@@ -1,7 +1,7 @@
 # Run It Back UX Audit
 
-Date: 2026-09-06  
-Scope: mode selection through results, desktop and Pixel 7 baselines  
+Date: 2026-09-06
+Scope: mode selection through results, desktop and Pixel 7 baselines
 Method: parallel `/evaluate` + `/journey`, Impeccable visual critique, and
 `/include` + `/fortify` reviews, reconciled against source and tests
 

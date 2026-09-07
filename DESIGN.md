@@ -1,9 +1,8 @@
 # Run It Back Design System
 
-Date: 2026-09-06  
-Visual direction selected: 2026-09-07  
-Status: Live Results Desk selected; awaiting design-specification approval
-before implementation planning
+Date: 2026-09-06
+Visual direction selected: 2026-09-07
+Status: Approved for implementation planning
 
 ## Direction
 
@@ -54,7 +53,7 @@ provenance
 | `--rib-surface-1` | `#171B20` | Primary interactive surfaces |
 | `--rib-surface-2` | `#1D2228` | Selected/detail surfaces |
 | `--rib-line-subtle` | `#30363D` | Dividers and passive boundaries |
-| `--rib-line-strong` | `#59616B` | Control boundaries and disabled structure |
+| `--rib-line-strong` | `#626A74` | Control boundaries and disabled structure |
 | `--rib-text-primary` | `#F2EDE3` | Main text |
 | `--rib-text-secondary` | `#B9B4AA` | Supporting text |
 | `--rib-text-dim` | `#8D8982` | Tertiary metadata after contrast validation |
@@ -125,6 +124,7 @@ shrinking type.
 ### Buttons
 
 - One filled red primary action per decision zone.
+- Filled red actions use near-black text so normal-size labels exceed 4.5:1.
 - Secondary buttons use warm text, a strong graphite border, and surface fill.
 - Tertiary actions are text/quiet-border controls, never low-contrast links.
 - Minimum target: 44×44px; adjacent targets maintain at least 8px separation.

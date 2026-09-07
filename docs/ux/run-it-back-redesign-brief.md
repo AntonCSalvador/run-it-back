@@ -1,8 +1,8 @@
 # Run It Back Redesign Brief
 
-Date: 2026-09-06  
-Visual direction selected: 2026-09-07  
-Status: Live Results Desk selected; awaiting final design approval
+Date: 2026-09-06
+Visual direction selected: 2026-09-07
+Status: Approved by the user on 2026-09-07
 
 ## Design intent
 
@@ -52,7 +52,7 @@ turning utilities into competing calls to action.
 
 ### 3. Team offer
 
-Heading: **Choose a team to scout**  
+Heading: **Choose a team to scout**
 Instruction: **Open an event roster, then draft one eligible player.**
 
 - Preserve three team-year options and the existing offer when returning.
