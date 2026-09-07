@@ -44,13 +44,18 @@ export async function assertNoPrivateModelData(page: Page): Promise<void> {
 }
 
 export async function assertRenderedControlsFit(page: Page): Promise<void> {
-  const controls = page.locator("button, input, textarea, select, [role=button]");
+  const controls = page.locator("button:visible, input:visible, textarea:visible, select:visible, [role=button]:visible");
   const count = await controls.count();
   expect(count).toBeGreaterThan(0);
   for (let index = 0; index < count; index += 1) {
     const control = controls.nth(index);
     await control.evaluate(element => element.scrollIntoView({ block: "center", inline: "center", behavior: "auto" }));
     await expect(control).toBeVisible();
+    await expect.poll(async () => {
+      const box = await control.boundingBox();
+      const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+      return Boolean(box && box.x >= -1 && box.x + box.width <= viewport.width + 1 && box.y >= -1 && box.y + box.height <= viewport.height + 1);
+    }, { message: `control ${index} settles inside the viewport` }).toBe(true);
     const box = await control.boundingBox();
     const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
     expect(box, `control ${index} has a bounding box`).not.toBeNull();
@@ -67,7 +72,7 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
   // A native radio group deliberately has one Tab stop; its individual options
   // are reached with arrow keys. Treat it as such instead of demanding a
   // non-standard five-stop tab sequence.
-  const controls = page.locator("button:not([disabled]), input:not([disabled]):not([type=radio]), textarea:not([disabled])");
+  const controls = page.locator("button:not([disabled]):visible, input:not([disabled]):not([type=radio]):visible, textarea:not([disabled]):visible");
   const expected = await controls.evaluateAll(elements => elements.map((element, index) => {
     element.setAttribute("data-e2e-tab-index", String(index));
     return index;
@@ -81,7 +86,7 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
   }
   expect([...reached].sort((a, b) => a - b), "every enabled action must be keyboard reachable").toEqual(expected);
   await controls.evaluateAll(elements => elements.forEach(element => element.removeAttribute("data-e2e-tab-index")));
-  const radios = page.locator('input[type="radio"]:not([disabled])');
+  const radios = page.locator('input[type="radio"]:not([disabled]):visible');
   if (await radios.count()) {
     await radios.evaluateAll(elements => elements.forEach((element, index) => element.setAttribute("data-e2e-radio-index", String(index))));
     await page.evaluate(() => { document.body.tabIndex = -1; document.body.focus(); });

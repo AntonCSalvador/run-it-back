@@ -75,7 +75,7 @@ test("GitHub Pages export serves prefixed navigation, data, and every discovered
     await page.goto(`${listening.origin}/run-it-back/`);
     await expect(page.getByRole("heading", { name: "Run It Back" })).toBeVisible();
     await start(page, "Free Play");
-    await expect(page.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
     await page.locator(".team-card").first().click();
     await expect(page.locator('[data-testid^="player-card-"]').first()).toBeVisible();
     const urls = await page.locator('script[src], link[href], img[src], source[src]').evaluateAll(elements => elements.map(element => element.getAttribute(element.tagName === "LINK" ? "href" : "src")).filter((url): url is string => url !== null && !url.startsWith("data:"))) as string[];

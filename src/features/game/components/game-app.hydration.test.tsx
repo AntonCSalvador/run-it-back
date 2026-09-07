@@ -25,10 +25,10 @@ describe("GameApp storage hydration", () => {
     try {
       container.innerHTML = renderToString(<HydrationProbe />);
       expect(storage.getItem).not.toHaveBeenCalled();
-      expect(container).toHaveTextContent("Streak: 0");
+      expect(container).toHaveTextContent("Current streak: 0");
       await act(async () => { root = hydrateRoot(container, <HydrationProbe />, { onRecoverableError: recoverable }); });
-      expect(firstHydration).toHaveBeenCalledWith(0, expect.stringContaining("Streak: 0"));
-      expect(container).toHaveTextContent("Streak: 7");
+      expect(firstHydration).toHaveBeenCalledWith(0, expect.stringContaining("Current streak: 0"));
+      expect(container).toHaveTextContent("Current streak: 7");
       expect(recoverable).not.toHaveBeenCalled();
       expect(errors).not.toHaveBeenCalled();
     } finally {
@@ -46,9 +46,9 @@ describe("GameApp storage hydration", () => {
       return JSON.stringify({ version: 1, completions: [], streak: 4 });
     });
     render(<GameApp storage={storage} />);
-    expect(screen.getByLabelText("Daily streak")).toHaveTextContent("Streak: 0");
+    expect(screen.getByLabelText("Daily streak")).toHaveTextContent("Current streak: 0");
     blocked = false;
     act(() => window.dispatchEvent(new Event("storage")));
-    expect(screen.getByLabelText("Daily streak")).toHaveTextContent("Streak: 4");
+    expect(screen.getByLabelText("Daily streak")).toHaveTextContent("Current streak: 4");
   });
 });

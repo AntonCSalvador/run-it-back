@@ -86,7 +86,7 @@ test("mobile tracked team focus ring remains fully visible", async ({ page }, te
 test("every phase keeps rendered controls in the viewport and reachable by keyboard", async ({ page }) => {
   await page.goto("/?e2e-seed=e2e-164");
   await auditPhase(page);
-  await keyboardActivate(page, page.getByRole("button", { name: "Free Play", exact: true }));
+  await keyboardActivate(page, page.getByRole("button", { name: "Start Free Play", exact: true }));
   await auditPhase(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Reroll teams" }));
   await auditPhase(page);
@@ -94,8 +94,16 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await auditPhase(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Back to teams" }));
   await auditPhase(page);
-  await keyboardActivate(page, page.getByRole("button", { name: "Reset current run" }));
-  await keyboardActivate(page, page.getByRole("button", { name: "Free Play", exact: true }));
+  const exitRun = page.getByRole("button", { name: "Exit run" });
+  await keyboardActivate(page, exitRun);
+  await expect(page.getByRole("button", { name: "Keep this run" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog", { name: "Exit this run?" })).toBeHidden();
+  await expect(exitRun).toBeFocused();
+  await expect(page.getByRole("button", { name: "Reroll teams" })).toBeVisible();
+  await keyboardActivate(page, exitRun);
+  await keyboardActivate(page, page.getByRole("button", { name: "Exit run and lose progress" }));
+  await keyboardActivate(page, page.getByRole("button", { name: "Start Free Play", exact: true }));
   await auditPhase(page);
   for (let index = 0; index < 5; index += 1) {
     await keyboardActivate(page, page.locator(".team-card").first());
@@ -136,7 +144,7 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await expect(page.getByRole("textbox", { name: "Share result" })).toBeVisible();
   await page.getByRole("button", { name: "Run again" }).focus();
   await page.keyboard.press("Space");
-  await expect(page.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 });
 
 test("mobile tracks animate to a snap boundary and reduced motion suppresses visual motion", async ({ page }, testInfo) => {
@@ -170,18 +178,44 @@ test("mobile tracks animate to a snap boundary and reduced motion suppresses vis
   expect(reduced.duration).toBe("0s");
 });
 
-test("forced colors pair selected and exhausted actions with internally consistent system colors", async ({ page }, testInfo) => {
+test("the opening reflows at 390px with keyboard-reachable mode actions", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?e2e-seed=e2e-onboarding");
+
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+  await expect(page.getByText("One shared draft each UTC day.")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth === innerWidth)).toBe(true);
+
+  for (const label of ["Start today's Daily", "Start Free Play"]) {
+    const action = page.getByRole("button", { name: label, exact: true });
+    await action.focus();
+    await expect(action).toBeFocused();
+    const box = await action.boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+    expect(box?.x).toBeGreaterThanOrEqual(0);
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(390);
+  }
+});
+
+test("forced colors pair primary and exhausted actions with internally consistent system colors", async ({ page }, testInfo) => {
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("/?e2e-seed=e2e-forced-colors");
 
-  const daily = page.getByRole("button", { name: "Daily", exact: true });
+  const daily = page.getByRole("button", { name: "Start today's Daily", exact: true });
+  const primary = await daily.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { backgroundColor: style.backgroundColor, borderTopColor: style.borderTopColor, color: style.color, forcedColorAdjust: style.forcedColorAdjust };
+  });
+  const secondary = await page.getByRole("button", { name: "Start Free Play", exact: true }).evaluate(element => {
+    const style = getComputedStyle(element);
+    return { backgroundColor: style.backgroundColor, borderTopColor: style.borderTopColor, color: style.color, forcedColorAdjust: style.forcedColorAdjust };
+  });
   await daily.click();
-  await expect(daily).toHaveAttribute("aria-pressed", "true");
   const reroll = page.getByRole("button", { name: "Reroll teams" });
   for (let rerolls = 0; rerolls < 3; rerolls += 1) await reroll.click();
   await expect(reroll).toBeDisabled();
 
-  const states = await page.evaluate(() => {
+  const disabledStates = await page.evaluate(() => {
     const read = (element: Element) => {
       const style = getComputedStyle(element);
       return {
@@ -199,11 +233,8 @@ test("forced colors pair selected and exhausted actions with internally consiste
       element.remove();
       return style;
     };
-    const selectedElement = document.querySelector('[aria-pressed="true"]')!;
     const disabledElement = document.querySelector(".action-button:disabled")!;
     return {
-      selected: read(selectedElement),
-      unselected: read(document.querySelector('[aria-pressed="false"]')!),
       disabled: read(disabledElement),
       reference: {
         selected: probe("forced-color-adjust:none;color:HighlightText;background:Highlight;border:1px solid Highlight"),
@@ -211,6 +242,7 @@ test("forced colors pair selected and exhausted actions with internally consiste
       },
     };
   });
+  const states = { selected: primary, unselected: secondary, ...disabledStates };
   await testInfo.attach("forced-color-computed-states", {
     body: JSON.stringify(states, null, 2),
     contentType: "application/json",

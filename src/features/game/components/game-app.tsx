@@ -8,7 +8,7 @@ import { ROLES, type PlayerCard, type Role } from "../domain";
 import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
-import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, type DailyRun, type FreePlayRun, type StoredRunResult, writeRecord } from "../storage";
+import { addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, type DailyRun, type FreePlayRun, writeRecord } from "../storage";
 import { AppHeader } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 import { TeamOffer } from "./team-offer";
@@ -22,7 +22,11 @@ import { useFireAccent } from "./use-fire-accent";
 import type { Highlight } from "../narration";
 import type { SeriesResult } from "../tournament";
 import { formatDailyShare, formatFreePlayShare } from "../share";
-import { dailyDateFromSeed } from "../rng";
+import { dailyDateFromSeed, dailySeed } from "../rng";
+import { ModeSelection } from "./mode-selection";
+import { RecentResults } from "./recent-results";
+import { ExitRunDialog } from "./exit-run-dialog";
+import type { MacroStage } from "./run-progress";
 
 export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
 function browserStorage(): Storage | null {
@@ -44,32 +48,19 @@ export function restartCurrentRun(clearSimulationError: () => void, dispatch: (a
   dispatch({ type: "restart" });
 }
 
-function RecentResults({ daily, free, cards }: { daily: readonly DailyRun[]; free: readonly FreePlayRun[]; cards: readonly PlayerCard[] }) {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
-  const byId = new Map(cards.map(card => [card.id, card]));
-  const runs = [...daily.slice(0, 3).map(run => ({ key: `daily-${run.utcDate}`, label: "Daily", run })), ...free.slice(0, 3).map((run, index) => ({ key: `free-${index}-${run.completedAtUtc}`, label: "Free Play", run }))];
-  if (!runs.length) return null;
-  const selectedRun = runs.find(item => item.key === selected);
-  const outcome = (run: StoredRunResult): "Champion" | "Eliminated" | "Completed" => {
-    if (run.outcome === "champion") return "Champion";
-    if (run.outcome === "eliminated") return "Eliminated";
-    const final = run.series.at(-1);
-    if (final?.stage === "final" && final.userWins === 3) return "Champion";
-    if (final && final.opponentWins > final.userWins) return "Eliminated";
-    return "Completed";
-  };
-  return <section aria-label="Recent results">
-    <h2>Recent results</h2>
-    <button type="button" aria-expanded={open} onClick={() => setOpen(value => { if (value) setSelected(null); return !value; })}>{open ? "Hide" : "Show"} saved results</button>
-    {open && <><ul>{runs.map(({ key, label, run }) => <li key={key}><button type="button" aria-expanded={selected === key} onClick={() => setSelected(current => current === key ? null : key)}>View {label} result</button> — {outcome(run)}, {run.stageReached}</li>)}</ul>
-    {selectedRun && <section aria-label={`${selectedRun.label} result details`}>
-      <h3>{selectedRun.label} result</h3>
-      <p>{outcome(selectedRun.run)} at {selectedRun.run.stageReached}. Rerolls used: {selectedRun.run.rerollsUsed}</p>
-      <ul>{selectedRun.run.roster.map(slot => { const card = byId.get(slot.cardId); return <li key={slot.role}>{slot.role}: {card?.displayHandle ?? "Unknown"} {card?.year ?? ""}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</li>; })}</ul>
-      <ol>{selectedRun.run.series.map(series => <li key={series.stage}>{series.stage}: {series.userWins}–{series.opponentWins}</li>)}</ol>
-    </section>}</>}
-  </section>;
+const tournamentStageLabels = {
+  group: "Group stage",
+  quarterfinal: "Quarterfinal",
+  semifinal: "Semifinal",
+  final: "Final",
+} as const;
+
+function sampleNow(now?: () => Date): Date {
+  return new Date((now?.() ?? new Date()).getTime());
+}
+
+function millisecondsToNextUtcDay(value: Date): number {
+  return Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate() + 1) - value.getTime();
 }
 
 export function GameApp(props: GameAppProps) {
@@ -99,9 +90,11 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     seriesLock.current = null;
   }, []);
   const [streak, setStreak] = useState(0);
-  const [dailyHistoryCount, setDailyHistoryCount] = useState(0);
   const [savedDaily, setSavedDaily] = useState<readonly DailyRun[]>([]);
   const [savedFree, setSavedFree] = useState<readonly FreePlayRun[]>([]);
+  const [recentResultsOpen, setRecentResultsOpen] = useState(false);
+  const [selectedResultKey, setSelectedResultKey] = useState<string | null>(null);
+  const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [storageState, setStorageState] = useState({ recovered: false, persistent: true });
   const refreshSavedResults = useRef<() => void>(() => undefined);
   const persistedResult = useRef<string | null>(null);
@@ -110,7 +103,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     const update = (): void => {
       const daily = readRecord(adapter, DAILY_RECORD);
       const free = readRecord(adapter, HISTORY_RECORD);
-      setStreak(daily.value.streak); setDailyHistoryCount(daily.value.completions.length);
+      setStreak(daily.value.streak);
       setSavedDaily(daily.value.completions); setSavedFree(free.value.runs);
       setStorageState({ recovered: daily.recovered || free.recovered, persistent: daily.persistent && free.persistent });
     };
@@ -120,6 +113,14 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     window.addEventListener("storage", update);
     return () => window.removeEventListener("storage", update);
   }, [adapter]);
+  const [today, setToday] = useState(() => sampleNow(now));
+  const todayUtc = useMemo(() => dailyDateFromSeed(dailySeed(today)), [today]);
+  const todayDaily = savedDaily.find(run => run.utcDate === todayUtc);
+  useEffect(() => {
+    if (state.phase !== "mode") return undefined;
+    const timer = window.setTimeout(() => setToday(sampleNow(now)), Math.max(1, millisecondsToNextUtcDay(today)));
+    return () => window.clearTimeout(timer);
+  }, [now, state.phase, today]);
   const testSeed = useMemo(() => playwrightQuerySeed(), []);
   useEffect(() => {
     if (state.phase !== "results") return;
@@ -157,7 +158,6 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     try { return gateway.generateOpponent(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft)); }
     catch { return null; }
   }, [gateway, state]);
-  const mode: GameMode | null = state.phase === "mode" ? null : state.mode;
   const playSeries = async (): Promise<void> => {
     if (state.phase !== "tournament") return;
     const lock = state.tournament.currentStage;
@@ -200,6 +200,21 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   }));
   const draftedCards = ROLES.flatMap(role => rosterSlots[role] ? [rosterSlots[role]] : []);
   const draftPick = state.phase === "team" || state.phase === "player" || state.phase === "role" ? Math.min(Object.keys(state.draft.slots).length + 1, ROLES.length) : null;
+  const progress: { stage: MacroStage; detail: string } | null = (() => {
+    if (state.phase === "mode") return null;
+    if (state.phase === "lineup") return { stage: "igl", detail: "Choose your in-game leader" };
+    if (state.phase === "tournament") return { stage: "tournament", detail: `Round ${state.tournament.completedSeries.length + 1} of 4 · ${tournamentStageLabels[state.tournament.currentStage]}` };
+    if (state.phase === "results") return { stage: "recap", detail: "Run complete" };
+    const task = state.phase === "team" ? "Choose a team to scout" : state.phase === "player" ? "Choose a player" : "Assign an open role";
+    return { stage: "draft", detail: `Pick ${draftPick} of ${ROLES.length} · ${task}` };
+  })();
+  const startMode = (value: GameMode): void => {
+    if (state.phase !== "mode") return;
+    const startedAt = sampleNow(now);
+    setRecentResultsOpen(false);
+    setSelectedResultKey(null);
+    dispatch(createStartAction(value, { now: () => startedAt, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
+  };
   const continueTournament = (): void => {
     if (state.phase !== "tournament" || !presentedSeries || !highlightsComplete || seriesLock.current !== state.tournament.currentStage) return;
     // Consume the presentation synchronously, including two clicks in one task.
@@ -213,18 +228,19 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   })() : "";
   return <>
       <a className="skip-link" href="#game-content">Skip to current decision</a>
-      <AppHeader mode={mode} streak={streak} dailyHistoryCount={dailyHistoryCount} onStart={value => {
-        if (state.phase !== "mode") {
-          resetState();
-        }
-        dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
-      }} onRestart={restart} />
+      {state.phase === "mode"
+        ? <header className="app-banner app-banner--entry"><h1>Run It Back</h1><p>Fantasy Champions draft</p></header>
+        : <AppHeader mode={state.mode} stage={progress!.stage} detail={progress!.detail} onExit={state.phase === "results" ? undefined : () => setExitDialogOpen(true)} />}
       <main id="game-content" tabIndex={-1} className={`game-shell ${actionFire.fireClass}`}>
       {storageState.recovered && <p role="status" aria-label="Saved result storage status">Saved results were recovered from invalid storage.</p>}
       {!storageState.persistent && <p role="alert">Results cannot persist in this browser session.</p>}
-      <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} />
-      <p className="phase-status" role="status" aria-live="polite">Current phase: {state.phase}</p>
-      {draftPick !== null && <p aria-live="polite">Pick {draftPick} of {ROLES.length}</p>}
+      {state.phase === "mode" && <>
+        <ModeSelection dailyState={todayDaily ? "completed" : "available"} streak={streak} onStart={startMode} onViewDailyResult={() => {
+          setRecentResultsOpen(true);
+          setSelectedResultKey(`daily-${todayUtc}`);
+        }} />
+        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
+      </>}
       {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} canReroll={canRerollOffer(state.draft, dataset)} onChoose={teamId => { actionFire.trigger(); dispatch({ type: "choose-team", teamId }); }} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
       {state.phase === "player" && (() => { const team = teams.get(state.draft.selectedTeamId ?? ""); const available = selectableCards(state.draft, dataset); return !team ? <p role="alert">Selected team is unavailable. <button type="button" onClick={() => dispatch({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : !available.length ? <p role="alert">No eligible players are available. <button type="button" onClick={() => dispatch({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : <><PlayerPicker team={team} cards={available} portraitForPlayer={playerId => players.get(playerId)?.portrait ?? null} onChoose={cardId => { actionFire.trigger(); dispatch({ type: "choose-card", cardId }); }} onBack={() => dispatch({ type: "back-to-teams" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></>; })()}
       {state.phase === "role" && (() => { const card = cards.get(state.draft.pendingCardId ?? ""); const roles = card?.eligibleRoles.filter(role => !state.draft.slots[role]) ?? []; return !card || !roles.length ? <p role="alert">No eligible role is available. <button type="button" onClick={() => dispatch({ type: "back-to-player" })}>Back to player selection</button> <button type="button" onClick={restart}>Restart draft</button></p> : <><section><h2>Assign {card.displayHandle}</h2><div role="group" aria-label="Choose an open role">{roles.map(role => <button type="button" key={role} onClick={() => { actionFire.trigger(); dispatch({ type: "assign-role", role }); }}>{role}</button>)}</div></section><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></>; })()}
@@ -234,5 +250,9 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
       {simulationError && <p role="alert">{simulationError}</p>}
       </main>
+      <ExitRunDialog open={exitDialogOpen} onCancel={() => setExitDialogOpen(false)} onConfirm={() => {
+        setExitDialogOpen(false);
+        resetState();
+      }} />
     </>;
 }

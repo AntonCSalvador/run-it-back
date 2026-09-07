@@ -28,7 +28,8 @@ test("private model fields never enter serialized, hidden, or accessible content
   await assertNoPrivateModelData(page);
   await page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first().click();
   await assertNoPrivateModelData(page);
-  await page.getByRole("button", { name: "Reset current run" }).click();
+  await page.getByRole("button", { name: "Exit run" }).click();
+  await page.getByRole("button", { name: "Exit run and lose progress" }).click();
   await start(page, "Free Play");
   await completeTournament(page);
   await assertNoPrivateModelData(page);

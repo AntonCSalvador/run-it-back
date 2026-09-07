@@ -20,9 +20,9 @@ describe("draft flow", () => {
   it("drafts a complete roster through its accessible controls", async () => {
     const user = userEvent.setup();
     render(<GameApp dataset={flexibleDataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
-    await user.click(screen.getByRole("button", { name: "Daily" }));
-    const offered = () => within(screen.getByRole("region", { name: "Choose a team" })).getAllByRole("button").filter(button => /202[12]/.test(button.textContent ?? ""));
-    expect(screen.getByText("Pick 1 of 5")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Start today's Daily" }));
+    const offered = () => within(screen.getByRole("region", { name: "Choose a team to scout" })).getAllByRole("button").filter(button => /202[12]/.test(button.textContent ?? ""));
+    expect(screen.getByRole("status")).toHaveTextContent("Pick 1 of 5");
     expect(offered()).toHaveLength(3);
     expect(new Set(offered().map(button => button.textContent)).size).toBe(3);
     expect(new Set(offered().map(button => button.dataset.teamId)).size).toBe(3);
@@ -30,7 +30,7 @@ describe("draft flow", () => {
     const selectedTeam = offered().find(button => button.dataset.teamId === "team-2-2021")!;
     const selectedTeamId = selectedTeam.dataset.teamId!;
     await user.click(selectedTeam);
-    expect(screen.getByText("Pick 1 of 5")).toBeVisible();
+    expect(screen.getByRole("status")).toHaveTextContent("Pick 1 of 5");
     const selectedCard = flexibleDataset.cards.find(card => card.teamId === selectedTeamId)!;
     const playerCard = screen.getByTestId(`player-card-${selectedCard.id}`);
     expect(playerCard).toHaveClass("player-card");
@@ -49,9 +49,9 @@ describe("draft flow", () => {
       const teamId = team.dataset.teamId!;
       const card = flexibleDataset.cards.find(candidate => candidate.teamId === teamId && !drafted.has(candidate.id) && candidate.eligibleRoles.includes(role))!;
       await user.click(team);
-      expect(screen.getByText(`Pick ${drafted.size + 1} of 5`)).toBeVisible();
+      expect(screen.getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
       await user.click(screen.getByRole("button", { name: `${card.displayHandle} ${card.year}` }));
-      expect(screen.getByText(`Pick ${drafted.size + 1} of 5`)).toBeVisible();
+      expect(screen.getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
       await user.click(within(screen.getByRole("group", { name: "Choose an open role" })).getByRole("button", { name: role }));
       drafted.add(card.id);
       if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("draft flow", () => {
     await user.click(screen.getByRole("radio", { name: cardLabelFromMove(move) }));
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Start tournament" }));
-    expect(screen.getByText("Current phase: tournament")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Round 1 of 4 · Group stage");
     expect(screen.getByRole("button", { name: "Play series" })).toBeVisible();
     expect(screen.queryByText(/firepower|utility|survival|clutch|consistency|leadership|probability/i)).not.toBeInTheDocument();
   });

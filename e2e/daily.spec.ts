@@ -36,10 +36,11 @@ test("Daily completion survives reload and repeatable choices produce the same r
   expect(completion.stageReached).toBe(terminal.stage);
   expect(completion.outcome).toBe(terminal.stage === "final" && terminal.userWins === 3 ? "champion" : "eliminated");
   await page.reload();
-  await expect(page.getByLabel("Daily history")).toHaveText("Daily history: 1");
+  await expect(page.getByText("Completed today", { exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("run-it-back:daily:v1") ?? "{}")?.completions?.length)).toBe(1);
-  await expect(page.getByText("Streak: 1", { exact: true })).toBeVisible();
-  await start(page, "Daily");
+  await expect(page.getByLabel("Daily streak")).toHaveText("Current streak: 1");
+  await page.getByRole("button", { name: "Replay today's Daily", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
   await completeTournament(page);
   const replayed = await page.evaluate(() => JSON.parse(localStorage.getItem("run-it-back:daily:v1") ?? "null"));
   expect(replayed.completions).toHaveLength(1);

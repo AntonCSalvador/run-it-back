@@ -1,8 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
 export async function start(page: Page, mode: "Daily" | "Free Play"): Promise<void> {
-  await page.getByRole("button", { name: mode, exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+  const label = mode === "Daily" ? "Start today's Daily" : "Start Free Play";
+  await page.getByRole("button", { name: label, exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 }
 
 export async function draftRoster(page: Page): Promise<void> {

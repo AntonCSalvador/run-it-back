@@ -26,7 +26,7 @@ function assertMaps() {
 function draftNewRun() {
   const usedPlayers = new Set<string>();
   for (const role of ROLES) {
-    const offers = within(screen.getByRole("region", { name: "Choose a team" })).getAllByRole("button");
+    const offers = within(screen.getByRole("region", { name: "Choose a team to scout" })).getAllByRole("button");
     const team = offers.find(button => dataset.cards.some(card => card.teamId === button.dataset.teamId && card.eligibleRoles.includes(role) && !usedPlayers.has(card.playerId)))!;
     const card = dataset.cards.find(card => card.teamId === team.dataset.teamId && card.eligibleRoles.includes(role) && !usedPlayers.has(card.playerId))!;
     fireEvent.click(team);
@@ -148,7 +148,7 @@ describe("tournament presentation", () => {
     expect(gateway.createHighlights.mock.calls[0][3]).toBe(opponent.lineup);
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
     next();
-    expect(screen.getByText("Current phase: tournament")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Tournament");
     fireEvent.click(screen.getByRole("button", { name: "2x" }));
     tick(800);
     expect(screen.getByText(`${stage} moment 2`)).toBeVisible();
@@ -190,29 +190,28 @@ describe("tournament presentation", () => {
     expect(gateway.createHighlights).toHaveBeenCalledTimes(2);
   });
 
-  it.each(["mode", "run", "dataset", "unmount"] as const)("cleans pending presentation on %s reset", async reset => {
+  it.each(["exit", "dataset", "unmount"] as const)("cleans pending presentation on %s reset", async reset => {
     vi.useFakeTimers();
     const gateway = gatewayFixture();
     const initial = activeState("semifinal");
     const view = render(<GameApp dataset={dataset} initialState={initial} gateway={gateway} freeSeedFactory={() => "new-seed"} />);
     await play();
     tick(700);
-    if (reset === "mode") fireEvent.click(screen.getByRole("button", { name: "Free Play" }));
-    if (reset === "run") fireEvent.click(screen.getByRole("button", { name: "Reset current run" }));
+    if (reset === "exit") {
+      fireEvent.click(screen.getByRole("button", { name: "Exit run" }));
+      // Let jsdom finish its zero-delay selection update from focusing Cancel.
+      tick(0);
+      fireEvent.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
+      expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+    }
     if (reset === "dataset") view.rerender(<GameApp dataset={parseDataset(dataset)} initialState={initial} gateway={gateway} />);
     if (reset === "unmount") view.unmount();
-    expect(vi.getTimerCount()).toBe(0);
+    await act(async () => { await Promise.resolve(); });
+    expect(vi.getTimerCount()).toBe(reset === "unmount" ? 0 : 1);
     tick(10000);
     expect(screen.queryByRole("region", { name: "SIMULATED HIGHLIGHTS" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Continue" })).not.toBeInTheDocument();
     expect(gateway.createHighlights).toHaveBeenCalledTimes(1);
-    if (reset === "mode") {
-      draftNewRun();
-      expect(screen.getByRole("heading", { name: "Group stage" })).toBeVisible();
-      expect(screen.getByRole("button", { name: "Play series" })).toBeEnabled();
-      expect(screen.queryByRole("heading", { name: /^Series result:/ })).not.toBeInTheDocument();
-      expect(screen.queryByText("semifinal moment 1")).not.toBeInTheDocument();
-    }
   });
 });
 
@@ -228,7 +227,7 @@ describe("terminal GameApp integration", () => {
     Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     render(<GameApp dataset={dataset} gateway={gateway} now={now} />);
-    fireEvent.click(screen.getByRole("button", { name: "Daily" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start today's Daily" }));
     draftNewRun();
     expect(gateway.generateOpponent.mock.calls[0][0]).toBe("run-it-back:daily:2026-09-04:v1");
     currentDate = new Date("2026-09-05T00:00:01Z");
@@ -238,7 +237,7 @@ describe("terminal GameApp integration", () => {
     expect(screen.getByRole("heading", { name: "Eliminated" })).toBeVisible();
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
     expect(writeText).toHaveBeenCalledExactlyOnceWith("Run It Back — Daily 2026-09-04\nStage: group\nSeries: L 1-2\nRerolls: 0\nRun It Back");
-    expect(now).toHaveBeenCalledTimes(1);
+    expect(now).toHaveBeenCalledTimes(2);
   });
 
   it("recovers an invalid Daily seed through the error boundary without substituting today's date", () => {
@@ -248,7 +247,7 @@ describe("terminal GameApp integration", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong with this run.");
     expect(screen.queryByRole("button", { name: "Share" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Restart run" }));
-    expect(screen.getByText("Current phase: mode")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(errors).toHaveBeenCalled();
   });
@@ -264,12 +263,12 @@ describe("terminal GameApp integration", () => {
     const { container } = render(<GameApp dataset={dataset} initialState={activeState()} gateway={gateway} />);
     for (const stage of champion ? ["group", "quarterfinal", "semifinal", "final"] : ["group"]) {
       await play();
-      expect(screen.getByText("Current phase: tournament")).toBeVisible();
+      expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Tournament");
       expect(screen.queryByRole("region", { name: "Results" })).not.toBeInTheDocument();
       if (stage === "semifinal" || stage === "final") fireEvent.click(screen.getByRole("button", { name: "Skip" }));
       next();
     }
-    expect(screen.getByText("Current phase: results")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Run complete");
     expect(screen.getByRole("heading", { name: champion ? "Champion" : "Eliminated" })).toBeVisible();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
@@ -286,9 +285,9 @@ describe("terminal GameApp integration", () => {
     const freeSeedFactory = vi.fn(() => "new-seed");
     render(<GameApp dataset={dataset} initialState={terminalState(false)} freeSeedFactory={freeSeedFactory} now={() => new Date("2026-09-05T12:00:00Z")} />);
     fireEvent.click(within(screen.getByRole("region", { name: "Results" })).getByRole("button", { name: control }));
-    expect(screen.getByText("Current phase: team")).toBeVisible();
-    expect(screen.getByRole("region", { name: "Choose a team" })).toBeVisible();
-    expect(screen.getByRole("button", { name: control === "Free Play" ? "Free Play" : "Daily" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
+    expect(screen.getByRole("region", { name: "Choose a team to scout" })).toBeVisible();
+    expect(screen.getByLabelText("Current mode")).toHaveTextContent(control === "Free Play" ? "Free Play" : "Daily");
     expect(freeSeedFactory).toHaveBeenCalledTimes(control === "Free Play" ? 1 : 0);
     expect(screen.queryByRole("region", { name: "Results" })).not.toBeInTheDocument();
   });

@@ -73,8 +73,10 @@ describe("broadcast accessibility", () => {
     expect(ended.mock.calls[0][0].nativeEvent.animationName).toBe("ignite-a");
   });
   it("exposes the selected game mode and draft progress semantically", () => {
-    render(<><AppHeader mode="daily" streak={2} onStart={vi.fn()} onRestart={vi.fn()} /><TeamOffer teams={teams} rerolls={2} onChoose={vi.fn()} onReroll={vi.fn()} /></>);
-    expect(screen.getByRole("button", { name: "Daily" })).toHaveAttribute("aria-pressed", "true");
+    render(<><AppHeader mode="daily" stage="draft" detail="Pick 2 of 5 · Choose a team to scout" onExit={vi.fn()} /><TeamOffer teams={teams} rerolls={2} onChoose={vi.fn()} onReroll={vi.fn()} /></>);
+    expect(screen.getByLabelText("Current mode")).toHaveTextContent("Daily");
+    expect(screen.getByText("Draft").closest("li")).toHaveAttribute("aria-current", "step");
+    expect(screen.getByRole("button", { name: "Exit run" })).toBeVisible();
     expect(screen.getByText("2 rerolls remaining")).toHaveAttribute("aria-live", "polite");
   });
 
@@ -186,22 +188,24 @@ describe("broadcast accessibility", () => {
     expect(scrollBy).toHaveBeenCalledTimes(2);
   });
 
-  it("allows keyboard focus and changes a live phase status from mode to team", () => {
+  it("uses purposeful progress language without exposing reducer phases", () => {
     render(<GameApp dataset={parseDataset(minimalDataset)} now={() => new Date("2026-09-05T12:00:00Z")} />);
-    const daily = screen.getByRole("button", { name: "Daily" });
+    expect(screen.queryByText(/Current phase:/)).not.toBeInTheDocument();
+    const daily = screen.getByRole("button", { name: "Start today's Daily" });
     daily.focus();
     expect(document.activeElement).toBe(daily);
-    const status = screen.getByRole("status");
-    expect(status).toHaveTextContent("Current phase: mode");
     fireEvent.click(daily);
-    expect(status).toHaveTextContent("Current phase: team");
+    const progress = screen.getByRole("navigation", { name: "Run progress" });
+    expect(within(progress).getByText("Draft").closest("li")).toHaveAttribute("aria-current", "step");
+    expect(within(progress).getByRole("status")).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
+    expect(screen.queryByText(/Current phase:/)).not.toBeInTheDocument();
   });
 
   it("fires the persistent shell after player and tournament lock-ins", () => {
     vi.useFakeTimers();
     const dataset = parseDataset(minimalDataset);
     const first = render(<GameApp dataset={dataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
-    fireEvent.click(screen.getByRole("button", { name: "Daily" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start today's Daily" }));
     fireEvent.click(screen.getAllByRole("button").find(button => button.dataset.teamId)!);
     act(() => vi.advanceTimersByTime(200));
     fireEvent.click(screen.getAllByRole("button").find(button => button.closest("[data-testid]") !== null)!);
