@@ -26,7 +26,7 @@ test("private model fields never enter serialized, hidden, or accessible content
   await assertNoPrivateModelData(page);
   await page.locator('[data-testid^="player-card-"]').first().getByRole("button").click();
   await assertNoPrivateModelData(page);
-  await page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first().click();
+  await page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first().click();
   await assertNoPrivateModelData(page);
   await page.getByRole("button", { name: "Exit run" }).click();
   await page.getByRole("button", { name: "Exit run and lose progress" }).click();
@@ -103,7 +103,7 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
   await draftRoster(page);
   await assertNoPrivateModelData(page);
   await capture("complete-roster");
-  await page.getByRole("radiogroup", { name: "Choose in-game leader" }).getByRole("radio").first().check();
+  await page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first().check();
   await page.getByRole("button", { name: "Start tournament" }).click();
   await assertNoPrivateModelData(page);
   for (const stage of ["group", "quarterfinal"]) {

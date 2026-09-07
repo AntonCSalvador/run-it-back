@@ -15,6 +15,7 @@ import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
 import { RosterBar } from "./roster-bar";
 import { RunProgress } from "./run-progress";
+import { IglPicker } from "./igl-picker";
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onClick={fire.trigger}>ignite</button>; }
 function animationEnd(target: HTMLElement, animationName: string): void {
@@ -181,6 +182,22 @@ describe("broadcast accessibility", () => {
     expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
   });
 
+  it("explains why tournament start is disabled until a valid IGL is selected", () => {
+    const cards = parseDataset(minimalDataset).cards.slice(0, 5);
+    const view = render(<IglPicker cards={cards} selectedId="stale" onSelect={vi.fn()} onStart={vi.fn()} />);
+    const start = screen.getByRole("button", { name: "Start tournament" });
+    const guidance = screen.getByText("Choose an IGL to enter the tournament.");
+
+    expect(guidance).toBeVisible();
+    expect(start).toBeDisabled();
+    expect(start).toHaveAccessibleDescription("Choose an IGL to enter the tournament.");
+
+    view.rerender(<IglPicker cards={cards} selectedId={cards[0].id} onSelect={vi.fn()} onStart={vi.fn()} />);
+    expect(screen.queryByText("Choose an IGL to enter the tournament.")).not.toBeInTheDocument();
+    expect(start).toBeEnabled();
+    expect(start).not.toHaveAttribute("aria-describedby");
+  });
+
   it("uses purposeful progress language without exposing reducer phases", () => {
     render(<GameApp dataset={parseDataset(minimalDataset)} now={() => new Date("2026-09-05T12:00:00Z")} />);
     expect(screen.queryByText(/Current phase:/)).not.toBeInTheDocument();
@@ -217,7 +234,7 @@ describe("broadcast accessibility", () => {
     act(() => vi.advanceTimersByTime(200));
     fireEvent.click(screen.getAllByRole("button").find(button => button.closest("[data-testid]") !== null)!);
     const shell = document.querySelector("main")!;
-    expect(screen.getByRole("heading", { name: /Assign/ })).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Where should .* play\?/ })).toBeVisible();
     expect(shell).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(200));
     expect(shell).not.toHaveClass("fire-accent");

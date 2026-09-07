@@ -72,7 +72,7 @@ export async function assertAllEnabledActionsReachableByTab(page: Page): Promise
   // A native radio group deliberately has one Tab stop; its individual options
   // are reached with arrow keys. Treat it as such instead of demanding a
   // non-standard five-stop tab sequence.
-  const controls = page.locator("button:not([disabled]):visible, input:not([disabled]):not([type=radio]):visible, textarea:not([disabled]):visible");
+  const controls = page.locator("button:not([disabled]):visible, input:not([disabled]):not([type=radio]):visible, textarea:not([disabled]):visible, summary:visible");
   const expected = await controls.evaluateAll(elements => elements.map((element, index) => {
     element.setAttribute("data-e2e-tab-index", String(index));
     return index;

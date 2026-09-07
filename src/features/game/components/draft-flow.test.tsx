@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { StrictMode } from "react";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { ROLES, type Role } from "../domain";
 import { parseDataset } from "../schema";
@@ -10,6 +11,8 @@ import { MediaMark } from "./media-mark";
 import { TeamOffer, type TeamOfferProps } from "./team-offer";
 import { PlayerPicker } from "./player-picker";
 import { RosterBar } from "./roster-bar";
+import { RolePicker } from "./role-picker";
+import { IglPicker } from "./igl-picker";
 
 const dataset = parseDataset(minimalDataset);
 const flexibleDataset = parseDataset({
@@ -123,13 +126,152 @@ describe("draft flow", () => {
   it("names roster progress from the five canonical roles and keeps every slot visible", () => {
     const view = render(<RosterBar slots={{}} onMove={vi.fn()} canMove={false} />);
     let roster = screen.getByRole("region", { name: "Roster · 0 of 5 filled" });
-    expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
+    const emptyList = within(roster).getByRole("list", { name: "Five-player roster" });
+    expect(emptyList.tagName).toBe("OL");
+    expect(within(emptyList).getAllByRole("listitem").map(item => item.dataset.role)).toEqual([...ROLES]);
     for (const role of ROLES) expect(within(roster).getByLabelText(`${role} slot`)).toHaveTextContent("Open");
 
     view.rerender(<RosterBar slots={{ smokes: dataset.cards[0] }} onMove={vi.fn()} canMove={false} />);
     roster = screen.getByRole("region", { name: "Roster · 1 of 5 filled" });
     expect(within(roster).getByLabelText("smokes slot")).toHaveTextContent(`${dataset.cards[0].displayHandle} ${dataset.cards[0].year}`);
     expect(within(roster).queryByRole("button", { name: /Move/ })).not.toBeInTheDocument();
+  });
+
+  it("marks the selected IGL in the ordered roster", () => {
+    const card = dataset.cards[0];
+    render(<RosterBar slots={{ smokes: card }} iglCardId={card.id} onMove={vi.fn()} canMove={false} />);
+
+    const slot = screen.getByLabelText("smokes slot");
+    expect(slot).toHaveTextContent(`${card.displayHandle} ${card.year}`);
+    expect(within(slot).getByText("IGL")).toBeVisible();
+  });
+
+  it("offers only compatible lineup swaps as keyboard-operable actions", async () => {
+    const user = userEvent.setup();
+    const onMove = vi.fn();
+    const source = { ...dataset.cards[0], eligibleRoles: ["smokes", "duelist"] as Role[] };
+    const target = { ...dataset.cards[1], eligibleRoles: ["smokes", "duelist"] as Role[] };
+    render(<RosterBar slots={{ smokes: source, duelist: target }} onMove={onMove} />);
+
+    const sourceSlot = screen.getByLabelText("smokes slot");
+    const disclosure = within(sourceSlot).getByText("Compatible swaps");
+    expect(disclosure.tagName).toBe("SUMMARY");
+    await user.click(disclosure);
+    const swap = within(sourceSlot).getByRole("button", { name: `Move ${source.displayHandle} ${source.year} to duelist` });
+    swap.focus();
+    await user.keyboard("{Enter}");
+    expect(onMove).toHaveBeenCalledWith(source.id, "duelist");
+    expect(within(sourceSlot).queryByRole("button", { name: /initiator/ })).not.toBeInTheDocument();
+  });
+
+  it("shows every role in canonical order with persistent availability reasons", () => {
+    const card = { ...dataset.cards[0], eligibleRoles: ["smokes", "flex"] as Role[] };
+    render(<RolePicker
+      card={card}
+      teamName="LOUD"
+      roles={ROLES.map(role => role === "smokes"
+        ? { role, available: true }
+        : { role, available: false, reason: role === "duelist" ? "Duelist is filled by rival 2022." : `${card.displayHandle} is not eligible for ${role[0].toUpperCase()}${role.slice(1)}.` })}
+      onAssign={vi.fn()}
+      onBack={vi.fn()}
+    />);
+
+    expect(screen.getByRole("heading", { name: `Where should ${card.displayHandle} play?` })).toHaveFocus();
+    expect(screen.getByText(`Selected from LOUD · ${card.year}. Choose one role for this card.`)).toBeVisible();
+    expect(screen.getByRole("button", { name: "Back to LOUD players" })).toBeVisible();
+    const roleList = screen.getByRole("list", { name: "Role assignment options" });
+    expect(within(roleList).getAllByRole("listitem").map(item => item.dataset.role)).toEqual([...ROLES]);
+    expect(within(roleList).getByRole("button", { name: "smokes" })).toBeEnabled();
+    const unavailable = within(roleList).getByRole("button", { name: "duelist" });
+    expect(unavailable).toBeDisabled();
+    expect(unavailable).toHaveAccessibleDescription("Duelist is filled by rival 2022.");
+    expect(screen.getByText("Duelist is filled by rival 2022.")).toBeVisible();
+  });
+
+  it("presents IGL selection as native radios with consequence and visible selection", async () => {
+    const user = userEvent.setup();
+    const cards = dataset.cards.slice(0, 5);
+    const onSelect = vi.fn();
+    const view = render(<IglPicker cards={cards} selectedId={null} onSelect={onSelect} onStart={vi.fn()} />);
+
+    expect(screen.getByRole("heading", { name: "Choose your IGL" })).toHaveFocus();
+    const group = screen.getByRole("group", { name: "Choose your IGL" });
+    expect(group.tagName).toBe("FIELDSET");
+    expect(within(group).getByText("Any drafted player can lead. Your choice affects the simulation.")).toBeVisible();
+    const first = within(group).getAllByRole("radio")[0];
+    await user.click(first);
+    expect(onSelect).toHaveBeenCalledWith(cards[0].id);
+
+    view.rerender(<IglPicker cards={cards} selectedId={cards[0].id} onSelect={onSelect} onStart={vi.fn()} />);
+    expect(within(group).getAllByRole("radio")[0]).toBeChecked();
+    expect(within(group).getByTestId(`igl-choice-${cards[0].id}`)).toHaveTextContent("Selected");
+    expect(view.container.querySelectorAll(".action-button")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Start tournament" })).toBeEnabled();
+  });
+
+  it("does not accept an IGL selection that is absent from the drafted cards", () => {
+    const cards = dataset.cards.slice(0, 5);
+    render(<IglPicker cards={cards} selectedId="stale" onSelect={vi.fn()} onStart={vi.fn()} />);
+
+    expect(screen.getAllByRole("radio").every(radio => !(radio as HTMLInputElement).checked)).toBe(true);
+    expect(screen.getByRole("button", { name: "Start tournament" })).toBeDisabled();
+  });
+
+  it("derives role availability, returns to the same team, and preserves spent rerolls", async () => {
+    const user = userEvent.setup();
+    const team = flexibleDataset.teams[0];
+    const pending = flexibleDataset.cards.find(card => card.teamId === team.id)!;
+    const occupant = flexibleDataset.cards.find(card => card.teamId !== team.id && card.id !== pending.id)!;
+    const initialState = {
+      phase: "role" as const,
+      mode: "free-play" as const,
+      draft: {
+        seed: "role-state",
+        offerIndex: 1,
+        rerollsRemaining: 2,
+        offeredTeamIds: flexibleDataset.teams.slice(0, 3).map(candidate => candidate.id),
+        selectedTeamId: team.id,
+        pendingCardId: pending.id,
+        slots: { smokes: occupant.id },
+        iglCardId: null,
+      },
+    };
+    render(<GameApp dataset={flexibleDataset} initialState={initialState} />);
+
+    expect(screen.getByRole("heading", { name: `Where should ${pending.displayHandle} play?` })).toBeVisible();
+    const smokes = screen.getByRole("button", { name: "smokes" });
+    expect(smokes).toBeDisabled();
+    expect(smokes).toHaveAccessibleDescription(`Smokes is filled by ${occupant.displayHandle} ${occupant.year}.`);
+    await user.click(screen.getByRole("button", { name: `Back to ${team.name} players` }));
+    expect(screen.getByRole("heading", { name: `Choose from ${team.name}` })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Back to teams" }));
+    expect(screen.getByRole("button", { name: /Replace all 3 teams .* 2 left/ })).toBeVisible();
+  });
+
+  it("announces a completed assignment once with human role and roster count", async () => {
+    const user = userEvent.setup();
+    const team = flexibleDataset.teams[0];
+    const pending = flexibleDataset.cards.find(card => card.teamId === team.id)!;
+    const initialState = {
+      phase: "role" as const,
+      mode: "free-play" as const,
+      draft: {
+        seed: "announcement",
+        offerIndex: 1,
+        rerollsRemaining: 3,
+        offeredTeamIds: flexibleDataset.teams.slice(0, 3).map(candidate => candidate.id),
+        selectedTeamId: team.id,
+        pendingCardId: pending.id,
+        slots: {},
+        iglCardId: null,
+      },
+    };
+    render(<StrictMode><GameApp dataset={flexibleDataset} initialState={initialState} /></StrictMode>);
+
+    await user.click(screen.getByRole("button", { name: "smokes" }));
+    const announcement = screen.getByRole("status", { name: "Draft update" });
+    expect(announcement).toHaveTextContent(`${pending.displayHandle} added as Smokes. 1 of 5 drafted.`);
+    expect(screen.getAllByText(`${pending.displayHandle} added as Smokes. 1 of 5 drafted.`)).toHaveLength(1);
   });
 
   it("keeps the five-role roster beside the active draft decision", async () => {
@@ -150,7 +292,7 @@ describe("draft flow", () => {
     render(<GameApp dataset={flexibleDataset} now={() => new Date("2026-09-05T12:00:00Z")} />);
     await user.click(screen.getByRole("button", { name: "Start today's Daily" }));
     const offered = () => within(screen.getByRole("region", { name: "Choose a team to scout" })).getAllByRole("button").filter(button => /202[12]/.test(button.textContent ?? ""));
-    expect(screen.getByRole("status")).toHaveTextContent("Pick 1 of 5");
+    expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent("Pick 1 of 5");
     expect(offered()).toHaveLength(3);
     expect(new Set(offered().map(button => button.textContent)).size).toBe(3);
     expect(new Set(offered().map(button => button.dataset.teamId)).size).toBe(3);
@@ -158,7 +300,7 @@ describe("draft flow", () => {
     const selectedTeam = offered().find(button => button.dataset.teamId === "team-2-2021")!;
     const selectedTeamId = selectedTeam.dataset.teamId!;
     await user.click(selectedTeam);
-    expect(screen.getByRole("status")).toHaveTextContent("Pick 1 of 5");
+    expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent("Pick 1 of 5");
     const selectedCard = flexibleDataset.cards.find(card => card.teamId === selectedTeamId)!;
     const playerCard = screen.getByTestId(`player-card-${selectedCard.id}`);
     expect(playerCard).toHaveClass("player-card");
@@ -176,27 +318,30 @@ describe("draft flow", () => {
       const teamId = team.dataset.teamId!;
       const card = flexibleDataset.cards.find(candidate => candidate.teamId === teamId && !drafted.has(candidate.id) && candidate.eligibleRoles.includes(role))!;
       await user.click(team);
-      expect(screen.getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
+      expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
       await user.click(within(screen.getByTestId(`player-card-${card.id}`)).getByRole("button"));
-      expect(screen.getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
+      expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
       await user.click(within(screen.getByRole("group", { name: "Choose an open role" })).getByRole("button", { name: role }));
       drafted.add(card.id);
       if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
     }
     expect(screen.getByRole("region", { name: "Roster · 5 of 5 filled" })).toBeVisible();
+    expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent("Choose your IGL");
     const sourceRole = "smokes";
     const targetRole = "duelist";
     const sourceCard = "player-21 2022";
     const displacedCard = "player-16 2022";
     expect(screen.getByLabelText(`${sourceRole} slot`)).toHaveTextContent(sourceCard);
     expect(screen.getByLabelText(`${targetRole} slot`)).toHaveTextContent(displacedCard);
+    await user.click(within(screen.getByLabelText(`${sourceRole} slot`)).getByText("Compatible swaps"));
     const move = screen.getByRole("button", { name: `Move ${sourceCard} to ${targetRole}` });
     await user.click(move);
     expect(screen.getByLabelText(`${targetRole} slot`)).toHaveTextContent(sourceCard);
     expect(screen.getByLabelText(`${sourceRole} slot`)).toHaveTextContent(displacedCard);
-    expect(screen.getByRole("radiogroup", { name: "Choose in-game leader" })).toBeVisible();
+    expect(screen.getByRole("group", { name: "Choose your IGL" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeDisabled();
-    await user.click(screen.getByRole("radio", { name: cardLabelFromMove(move) }));
+    await user.click(screen.getByRole("radio", { name: sourceCard }));
+    expect(within(screen.getByLabelText(`${targetRole} slot`)).getByText("IGL")).toBeVisible();
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Start tournament" }));
     expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Round 1 of 4 · Group stage");
@@ -251,8 +396,6 @@ describe("draft flow", () => {
     expect(onReroll).not.toHaveBeenCalled();
   });
 });
-
-function cardLabelFromMove(move: HTMLElement): string { return move.textContent!.replace(/^Move\s+/, "").replace(/\s+to\s+\w+$/, ""); }
 
 describe("assetUrl", () => {
   afterEach(() => vi.unstubAllEnvs());

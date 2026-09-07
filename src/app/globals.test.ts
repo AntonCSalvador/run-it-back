@@ -240,6 +240,21 @@ describe("parsed broadcast stylesheet", () => {
     expect(stylesheet).not.toMatch(/\.team-card:hover[^}]+(?:display|visibility|opacity)\s*:/);
   });
 
+  it("styles role decisions, roster swaps, and IGL radios as persistent touch-safe controls", () => {
+    const roleOptions = ruleFor(rules, ".role-picker__options").style;
+    expect(roleOptions.getPropertyValue("display")).toBe("grid");
+    expect(roleOptions.getPropertyValue("list-style")).toBe("none");
+    expect(ruleFor(rules, '.role-picker__options > li[data-state="unavailable"] p').style.getPropertyValue("display")).not.toBe("none");
+    expect(ruleFor(rules, ".roster-bar__swaps").style.getPropertyValue("display")).toBe("grid");
+    expect(ruleFor(rules, ".roster-bar__igl").style.getPropertyValue("color")).toBe("var(--rib-text-primary)");
+    const iglChoice = ruleFor(rules, ".igl-picker__choice").style;
+    expect(iglChoice.getPropertyValue("display")).toBe("grid");
+    expect(iglChoice.getPropertyValue("min-height")).toBe("44px");
+    expect(ruleFor(rules, '.igl-picker__choice[data-selected="true"]').style.getPropertyValue("border-color")).toBe("var(--rib-red)");
+    expect(ruleFor(rules, ".sr-only").style.getPropertyValue("position")).toBe("absolute");
+    expect(stylesheet).not.toMatch(/(?:role-picker|igl-picker|roster-bar)[^}]*:hover[^}]+(?:display|visibility|opacity)\s*:/);
+  });
+
   it("keeps page scrolling immediate while mobile decision tracks reveal the next option", () => {
     expect(exactRuleFor(rules, "html").style.getPropertyValue("scroll-behavior")).toBe("");
     const mobile = mediaFor(rules, "(max-width:44rem)");

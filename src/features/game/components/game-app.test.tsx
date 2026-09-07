@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
@@ -212,7 +212,7 @@ describe("GameApp", () => {
   it("shows draft progress and recovers invalid player, role, and IGL phases", () => {
     const draft = createDraft("bad-state", dataset);
     const team = render(<GameApp dataset={dataset} initialState={{ phase: "team", mode: "daily", draft }} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
+    expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
     team.unmount();
     const player = render(<GameApp dataset={dataset} initialState={{ phase: "player", mode: "daily", draft: { ...draft, selectedTeamId: "missing" } }} />);
     expect(screen.getByRole("alert")).toHaveTextContent("Selected team is unavailable");

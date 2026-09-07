@@ -11,14 +11,14 @@ export async function draftRoster(page: Page): Promise<void> {
     await page.locator(".team-card").first().click();
     await expect(page.getByRole("heading", { name: /Choose from/ })).toBeVisible();
     await page.locator('[data-testid^="player-card-"]').first().getByRole("button").click();
-    await page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first().click();
+    await page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first().click();
   }
   await expect(page.getByRole("button", { name: "Start tournament" })).toBeDisabled();
 }
 
 export async function reachTournament(page: Page): Promise<void> {
   await draftRoster(page);
-  await page.getByRole("radiogroup", { name: "Choose in-game leader" }).getByRole("radio").first().check();
+  await page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first().check();
   await expect(page.getByRole("button", { name: "Start tournament" })).toBeEnabled();
   await page.getByRole("button", { name: "Start tournament" }).click();
   await expect(page.getByRole("region", { name: "Tournament" })).toBeVisible();

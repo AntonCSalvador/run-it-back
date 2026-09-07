@@ -189,10 +189,10 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
     await auditPhase(page);
     await keyboardActivate(page, page.locator('[data-testid^="player-card-"]').first().getByRole("button"));
     await auditPhase(page);
-    await keyboardActivate(page, page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first());
+    await keyboardActivate(page, page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first());
     await auditPhase(page);
   }
-  await keyboardActivate(page, page.getByRole("radiogroup", { name: "Choose in-game leader" }).getByRole("radio").first());
+  await keyboardActivate(page, page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first());
   await auditPhase(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Start tournament" }));
   await auditPhase(page);
