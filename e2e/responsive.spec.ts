@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { assertAllEnabledActionsReachableByTab, assertRenderedControlsFit } from "./support/audit";
-import { start } from "./support/journey";
+import { draftRoster, start } from "./support/journey";
 
 async function keyboardActivate(page: Page, control: Locator): Promise<void> {
   await control.focus();
@@ -197,25 +197,30 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await keyboardActivate(page, page.getByRole("button", { name: "Start tournament" }));
   await auditPhase(page);
   for (const stage of ["group", "quarterfinal"]) {
-    await keyboardActivate(page, page.getByRole("button", { name: "Play series" }));
+    await keyboardActivate(page, page.getByRole("button", { name: /^Play / }));
     await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
     await auditPhase(page);
-    await keyboardActivate(page, page.getByRole("button", { name: "Continue" }));
-    await expect(page.getByText(stage === "group" ? "Quarterfinal" : "Semifinal", { exact: true })).toBeVisible();
+    await keyboardActivate(page, page.getByRole("button", { name: /^Continue to / }));
+    await expect(page.getByText(new RegExp(`^${stage === "group" ? "Quarterfinal" : "Semifinal"} · Round`))).toBeVisible();
     await auditPhase(page);
   }
-  await keyboardActivate(page, page.getByRole("button", { name: "Play series" }));
+  await keyboardActivate(page, page.getByRole("button", { name: /^Play / }));
   await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
+  const highlightDecisionPrecedesRoster = await page.getByRole("button", { name: "Skip to result" }).evaluate(action => {
+    const roster = document.querySelector<HTMLElement>('section[aria-label="Your roster"]');
+    return Boolean(roster && (action.compareDocumentPosition(roster) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(highlightDecisionPrecedesRoster).toBe(true);
   await auditPhase(page);
   await keyboardActivate(page, page.getByRole("button", { name: "2x" }));
-  await keyboardActivate(page, page.getByRole("button", { name: "Skip" }));
-  await keyboardActivate(page, page.getByRole("button", { name: "Continue" }));
+  await keyboardActivate(page, page.getByRole("button", { name: "Skip to result" }));
+  await keyboardActivate(page, page.getByRole("button", { name: /^Continue to / }));
   const results = page.getByRole("region", { name: "Results", exact: true });
   if (!await results.count()) {
-    await keyboardActivate(page, page.getByRole("button", { name: "Play series" }));
+    await keyboardActivate(page, page.getByRole("button", { name: /^Play / }));
     await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
-    await keyboardActivate(page, page.getByRole("button", { name: "Skip" }));
-    await keyboardActivate(page, page.getByRole("button", { name: "Continue" }));
+    await keyboardActivate(page, page.getByRole("button", { name: "Skip to result" }));
+    await keyboardActivate(page, page.getByRole("button", { name: /^Continue to / }));
   }
   await expect(results).toBeVisible();
   await auditPhase(page);
@@ -224,6 +229,35 @@ test("every phase keeps rendered controls in the viewport and reachable by keybo
   await page.getByRole("button", { name: "Run again" }).focus();
   await page.keyboard.press("Space");
   await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
+});
+
+test("tournament transitions restore natural focus after controls leave the page", async ({ page }) => {
+  await page.goto("/?e2e-seed=e2e-164");
+  await start(page, "Free Play");
+  await draftRoster(page);
+  await page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first().check();
+  await page.getByRole("button", { name: "Start tournament" }).click();
+  await expect(page.getByRole("heading", { name: "Your roster vs. Challenger roster" })).toBeFocused();
+
+  for (const [playLabel, nextRound] of [
+    ["Play group stage", /^Quarterfinal · Round 2 of 4$/],
+    ["Play quarterfinal", /^Semifinal · Round 3 of 4$/],
+  ] as const) {
+    await page.getByRole("button", { name: playLabel }).click();
+    await expect(page.getByRole("heading", { name: /^Series result: Win, \d–\d$/ })).toBeFocused();
+    await page.getByRole("button", { name: /^Continue to / }).click();
+    await expect(page.getByText(nextRound)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your roster vs. Challenger roster" })).toBeFocused();
+  }
+
+  await page.getByRole("button", { name: "Play semifinal" }).click();
+  await expect(page.getByRole("heading", { name: "SIMULATED HIGHLIGHTS" })).toBeFocused();
+  const speed = page.getByRole("button", { name: "2x" });
+  await speed.click();
+  await expect(page.getByRole("log", { name: "Simulated series moments" }).getByRole("article")).toHaveCount(2);
+  await expect(speed).toBeFocused();
+  await page.getByRole("button", { name: "Skip to result" }).click();
+  await expect(page.getByRole("heading", { name: /^Series result: Win, \d–\d$/ })).toBeFocused();
 });
 
 test("mobile tracks animate to a snap boundary and reduced motion suppresses visual motion", async ({ page }, testInfo) => {

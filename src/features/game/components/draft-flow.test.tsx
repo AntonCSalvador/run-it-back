@@ -345,7 +345,7 @@ describe("draft flow", () => {
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Start tournament" }));
     expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Round 1 of 4 · Group stage");
-    expect(screen.getByRole("button", { name: "Play series" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Play group stage" })).toBeVisible();
     expect(screen.queryByText(/firepower|utility|survival|clutch|consistency|leadership|probability/i)).not.toBeInTheDocument();
   });
 

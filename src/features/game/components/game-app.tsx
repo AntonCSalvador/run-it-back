@@ -20,6 +20,7 @@ import { HighlightFeed } from "./highlight-feed";
 import { ResultsView } from "./results-view";
 import { useFireAccent } from "./use-fire-accent";
 import type { Highlight } from "../narration";
+import type { Stage } from "../opponents";
 import type { SeriesResult } from "../tournament";
 import { formatDailyShare, formatFreePlayShare } from "../share";
 import { dailyDateFromSeed, dailySeed } from "../rng";
@@ -28,8 +29,17 @@ import { RecentResults } from "./recent-results";
 import { ExitRunDialog } from "./exit-run-dialog";
 import type { MacroStage } from "./run-progress";
 import { humanRole, RolePicker } from "./role-picker";
+import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
 
 export interface GameAppProps { dataset?: GameDataset; now?: () => Date; freeSeedFactory?: () => string; gateway?: SimulationGateway; gatewayFactory?: (dataset: GameDataset) => SimulationGateway; storage?: Storage | null; initialState?: GameState }
+export function significantHighlights(highlights: readonly Highlight[]): readonly Highlight[] {
+  const seen = new Set<string>();
+  return highlights.filter(item => {
+    if (seen.has(item.id) || !(item.kind === "clutch" || item.emphasis === "clutch" || item.emphasis === "decisive")) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
 function browserStorage(): Storage | null {
   if (typeof window === "undefined") return null;
   try { return window.localStorage; } catch { return null; }
@@ -79,13 +89,17 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? championsDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset }), [dataset]);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [focusTournamentOnMount, setFocusTournamentOnMount] = useState(false);
   const [simulationError, setSimulationError] = useState<string | null>(null);
+  const [opponentRevision, setOpponentRevision] = useState(0);
   const [lockedStage, setLockedStage] = useState<string | null>(null);
   const [presentedSeries, setPresentedSeries] = useState<SeriesResult | null>(null);
   const [presentedHighlights, setPresentedHighlights] = useState<readonly Highlight[] | null>(null);
   const [highlightsComplete, setHighlightsComplete] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const seriesLock = useRef<string | null>(null);
   const runGeneration = useRef(0);
+  const runHighlights = useRef<Partial<Record<Stage, readonly Highlight[]>>>({});
   useEffect(() => () => {
     runGeneration.current += 1;
     seriesLock.current = null;
@@ -155,11 +169,13 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     }
   }, [state, adapter]);
   const gateway = useMemo(() => suppliedGateway ?? gatewayFactory?.(dataset) ?? new LocalSimulationGateway(dataset), [suppliedGateway, gatewayFactory, dataset]);
-  const opponent = useMemo(() => {
-    if (state.phase !== "tournament") return null;
-    try { return gateway.generateOpponent(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft)); }
-    catch { return null; }
-  }, [gateway, state]);
+  const opponentState = useMemo(() => {
+    void opponentRevision;
+    if (state.phase !== "tournament") return { opponent: null, error: null };
+    try { return { opponent: gateway.generateOpponent(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft)), error: null }; }
+    catch { return { opponent: null, error: "We couldn't build a valid opponent for this round. Your roster is safe." }; }
+  }, [gateway, opponentRevision, state]);
+  const opponent = opponentState.opponent;
   const playSeries = async (): Promise<void> => {
     if (state.phase !== "tournament") return;
     const lock = state.tournament.currentStage;
@@ -169,19 +185,26 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     try {
       setSimulationError(null);
       if (!opponent) throw new Error("Opponent unavailable");
-      const series = gateway.playSeries(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft), opponent);
+      const series = await Promise.resolve(gateway.playSeries(state.tournament.seed, state.tournament.currentStage, toLineup(state.draft), opponent));
+      if (runGeneration.current !== generation || seriesLock.current !== lock) return;
       const highlights = series.stage === "semifinal" || series.stage === "final"
         ? gateway.createHighlights(state.tournament.seed, series, toLineup(state.draft), opponent.lineup)
         : null;
-      // Commit the disabled control before revealing the next stage.
-      await Promise.resolve();
       if (runGeneration.current === generation && seriesLock.current === lock) {
+        if (highlights) runHighlights.current[series.stage] = significantHighlights(highlights);
+        setLockedStage(null);
         setPresentedHighlights(highlights);
         setPresentedSeries(series);
         setHighlightsComplete(highlights === null);
       }
     }
-    catch { seriesLock.current = null; setLockedStage(null); setSimulationError("Unable to play the current series. Please restart the run."); }
+    catch {
+      if (runGeneration.current !== generation || seriesLock.current !== lock) return;
+      seriesLock.current = null;
+      setLockedStage(null);
+      const label = lock === "group" ? "group stage" : lock;
+      setSimulationError(`The ${label} couldn't be simulated. Your draft and round are unchanged.`);
+    }
   };
   const invalidatePendingSeries = (): void => {
     runGeneration.current += 1;
@@ -190,6 +213,8 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     setPresentedSeries(null);
     setPresentedHighlights(null);
     setHighlightsComplete(false);
+    setFocusTournamentOnMount(false);
+    runHighlights.current = {};
   };
   const resetState = (): void => {
     setDraftAnnouncement("");
@@ -274,11 +299,9 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
             dispatch({ type: "assign-role", role });
           }} onBack={() => dispatch({ type: "back-to-player" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></div>;
       })()}
-      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); dispatch({ type: "enter-tournament" }); } }} /></>)}
-      {state.phase === "tournament" && !opponent && <p role="alert">No valid opponent is available. <button type="button" onClick={restart}>Restart run</button></p>}
-      {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
+      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatch({ type: "enter-tournament" }); } }} /></>)}
+      {state.phase === "tournament" && <TournamentView tournament={state.tournament} opponent={opponent} cards={dataset.cards} result={highlightsComplete ? presentedSeries : null} revealComplete={highlightsComplete} resolving={lockedStage === state.tournament.currentStage} error={opponentState.error ?? simulationError} focusOnMount={focusTournamentOnMount} reveal={presentedHighlights !== null ? <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} instant={prefersReducedMotion} focusOnMount /> : null} onPlay={playSeries} onRetryOpponent={() => { setSimulationError(null); setOpponentRevision(value => value + 1); }} onRetrySeries={() => void playSeries()} onContinue={continueTournament} />}
       {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
-      {simulationError && <p role="alert">{simulationError}</p>}
       </main>
       <ExitRunDialog open={exitDialogOpen} onCancel={() => setExitDialogOpen(false)} onConfirm={() => {
         setExitDialogOpen(false);

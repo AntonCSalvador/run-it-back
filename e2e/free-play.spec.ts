@@ -107,21 +107,22 @@ test("captures the complete Free Play journey", async ({ page, isMobile }) => {
   await page.getByRole("button", { name: "Start tournament" }).click();
   await assertNoPrivateModelData(page);
   for (const stage of ["group", "quarterfinal"]) {
-    await page.getByRole("button", { name: "Play series" }).click();
+    await page.getByRole("button", { name: /^Play / }).click();
     await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
-    await page.getByRole("button", { name: "Continue" }).click();
-    await expect(page.getByText(stage === "group" ? "Quarterfinal" : "Semifinal", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: /^Continue to / }).click();
+    const nextRound = stage === "group" ? /^Quarterfinal · Round 2 of 4$/ : /^Semifinal · Round 3 of 4$/;
+    await expect(page.getByText(nextRound)).toBeVisible();
   }
-  await page.getByRole("button", { name: "Play series" }).click();
+  await page.getByRole("button", { name: /^Play / }).click();
   await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
   await assertNoPrivateModelData(page);
   await capture("semifinal-highlights");
-  await page.getByRole("button", { name: "Skip" }).click();
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByRole("button", { name: "Play series" }).click();
+  await page.getByRole("button", { name: "Skip to result" }).click();
+  await page.getByRole("button", { name: /^Continue to / }).click();
+  await page.getByRole("button", { name: /^Play / }).click();
   await expect(page.getByRole("region", { name: "SIMULATED HIGHLIGHTS" })).toBeVisible();
-  await page.getByRole("button", { name: "Skip" }).click();
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Skip to result" }).click();
+  await page.getByRole("button", { name: /^Continue to / }).click();
   await expect(page.getByRole("region", { name: "Results", exact: true })).toBeVisible();
   await assertNoPrivateModelData(page);
   await capture("results");

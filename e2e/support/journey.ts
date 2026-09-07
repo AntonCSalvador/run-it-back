@@ -26,12 +26,13 @@ export async function reachTournament(page: Page): Promise<void> {
 
 export async function completeTournament(page: Page): Promise<string> {
   await reachTournament(page);
-  while (await page.getByRole("button", { name: "Play series" }).count()) {
-    await page.getByRole("button", { name: "Play series" }).click();
-    await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
-    const skip = page.getByRole("button", { name: "Skip" });
+  const play = page.getByRole("button", { name: /^Play (?:group stage|quarterfinal|semifinal|final)$/ });
+  while (await play.count()) {
+    await play.click();
+    const skip = page.getByRole("button", { name: "Skip to result" });
     if (await skip.count()) await skip.click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
+    await page.getByRole("button", { name: /^Continue to / }).click();
   }
   const results = page.getByRole("region", { name: "Results", exact: true });
   await expect(results).toBeVisible();

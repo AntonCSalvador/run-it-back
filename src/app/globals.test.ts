@@ -255,6 +255,24 @@ describe("parsed broadcast stylesheet", () => {
     expect(stylesheet).not.toMatch(/(?:role-picker|igl-picker|roster-bar)[^}]*:hover[^}]+(?:display|visibility|opacity)\s*:/);
   });
 
+  it("composes the tournament as a responsive broadcast rundown with touch-safe playback", () => {
+    const rail = ruleFor(rules, ".tournament-stage-rail ol").style;
+    expect(rail.getPropertyValue("display")).toBe("grid");
+    expect(rail.getPropertyValue("grid-template-columns")).toBe("repeat(4,minmax(0,1fr))");
+    expect(ruleFor(rules, '.tournament-stage-rail li[data-state="current"]').style.getPropertyValue("border-color")).toBe("var(--rib-red)");
+    expect(ruleFor(rules, '.tournament-stage-rail li[data-state="future"]').style.getPropertyValue("color")).toBe("var(--rib-text-dim)");
+    expect(ruleFor(rules, '.tournament-stage-rail li[data-state="locked"]').style.getPropertyValue("color")).toBe("var(--rib-text-dim)");
+    expect(ruleFor(rules, ".tournament-view__rosters").style.getPropertyValue("grid-template-columns")).toBe("repeat(2,minmax(0,1fr))");
+    expect(ruleFor(rules, ".highlight-feed__controls").style.getPropertyValue("gap")).toBe("var(--rib-space-2)");
+    const heatTag = ruleFor(rules, ".highlight-feed__tag").style;
+    expect(heatTag.getPropertyValue("display")).toBe("inline-block");
+    expect(heatTag.getPropertyValue("color")).toBe("var(--rib-gold)");
+
+    const mobile = mediaFor(rules, "(max-width:44rem)");
+    expect(ruleFor(mobile.cssRules, ".tournament-view__rosters").style.getPropertyValue("grid-template-columns")).toBe("minmax(0,1fr)");
+    expect(ruleFor(mobile.cssRules, ".highlight-feed__controls > button").style.getPropertyValue("flex")).toBe("1 1 9rem");
+  });
+
   it("keeps page scrolling immediate while mobile decision tracks reveal the next option", () => {
     expect(exactRuleFor(rules, "html").style.getPropertyValue("scroll-behavior")).toBe("");
     const mobile = mediaFor(rules, "(max-width:44rem)");

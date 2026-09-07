@@ -253,8 +253,8 @@ describe("broadcast accessibility", () => {
     vi.useFakeTimers();
     const opponent = { generateOpponent: () => null };
     void opponent;
-    render(<TournamentView opponent={{ id: "opponent", stage: "group", lineup, strength: 60 }} userLineup={lineup} cards={fixtureDataset.cards} result={series("group", true)} onPlay={vi.fn()} onContinue={vi.fn()} />);
-    expect(screen.getByRole("status", { name: "Series result announcement" })).toHaveClass("fire-accent");
+    render(<TournamentView tournament={activeState().tournament} opponent={{ id: "opponent", stage: "group", lineup, strength: 60 }} cards={fixtureDataset.cards} result={series("group", true)} revealComplete resolving={false} error={null} onPlay={vi.fn()} onRetryOpponent={vi.fn()} onRetrySeries={vi.fn()} onContinue={vi.fn()} />);
+    expect(screen.getByRole("heading", { name: "Series result: Win, 2–1" }).parentElement).toHaveClass("fire-accent");
     act(() => vi.advanceTimersByTime(200));
     const champion = terminalState(true);
     render(<ResultsView mode="daily" tournament={champion.tournament} cards={fixtureDataset.cards} rerollsUsed={0} shareText="share" onRunAgain={vi.fn()} onModeChange={vi.fn()} />);
