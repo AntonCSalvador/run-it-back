@@ -83,8 +83,21 @@ test("confirmed exit clears only the active run", async ({ page }) => {
   await expect.poll(() => page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active)).not.toBeNull();
   await page.getByRole("button", { name: "Exit run" }).click();
   await page.getByRole("button", { name: "Exit run and lose progress" }).click();
-  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
   expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active)).toBeNull();
+});
+
+test("error recovery restores the saved task and focuses its heading", async ({ page }) => {
+  await page.goto("/?e2e-seed=restore-boundary-e2e");
+  await start(page, "Free Play");
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeFocused();
+
+  await page.goto("/?e2e-seed=restore-boundary-e2e&e2e-error-boundary=once");
+  await expect(page.getByRole("alert").filter({ hasText: "Something went wrong with this run" })).toBeVisible();
+  await page.getByRole("button", { name: "Recover run" }).click();
+
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeFocused();
+  await expect(page.getByRole("status", { name: "Active run restoration status" })).toContainText("Saved run restored");
 });
 
 test("corrupt active data is isolated and storage failure keeps the run playable", async ({ page }) => {

@@ -64,6 +64,20 @@ export function restartCurrentRun(clearSimulationError: () => void, dispatch: (a
   dispatch({ type: "restart" });
 }
 
+function triggerPlaywrightErrorBoundaryOnce(): void {
+  if (process.env.NEXT_PUBLIC_PLAYWRIGHT_TEST_BUILD !== "enabled" || typeof window === "undefined") return;
+  if (new URLSearchParams(window.location.search).get("e2e-error-boundary") !== "once") return;
+  throw new Error("Playwright error-boundary probe");
+}
+
+function clearPlaywrightErrorBoundaryProbe(): void {
+  if (process.env.NEXT_PUBLIC_PLAYWRIGHT_TEST_BUILD !== "enabled" || typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has("e2e-error-boundary")) return;
+  url.searchParams.delete("e2e-error-boundary");
+  window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
 const tournamentStageLabels = {
   group: "Group stage",
   quarterfinal: "Quarterfinal",
@@ -80,16 +94,20 @@ function millisecondsToNextUtcDay(value: Date): number {
 }
 
 export function GameApp(props: GameAppProps) {
-  const [session, setSession] = useState(() => ({ dataset: props.dataset, revision: 0, initialState: props.initialState }));
+  const [session, setSession] = useState(() => ({ dataset: props.dataset, revision: 0, initialState: props.initialState, focusModeOnMount: false }));
   // Discard the old run before children render with a different dataset.
   if (session.dataset !== props.dataset) {
-    setSession({ dataset: props.dataset, revision: session.revision + 1, initialState: initialGameState });
+    setSession({ dataset: props.dataset, revision: session.revision + 1, initialState: initialGameState, focusModeOnMount: false });
   }
-  const restart = (): void => setSession(value => ({ ...value, revision: value.revision + 1, initialState: initialGameState }));
-  return <ErrorBoundary key={session.revision} onRestart={restart}><GameAppCore {...props} initialState={session.initialState} onRestart={restart} /></ErrorBoundary>;
+  const restart = (): void => {
+    clearPlaywrightErrorBoundaryProbe();
+    setSession(value => ({ ...value, revision: value.revision + 1, initialState: initialGameState, focusModeOnMount: true }));
+  };
+  return <ErrorBoundary key={session.revision} onRestart={restart}><GameAppCore {...props} initialState={session.initialState} focusModeOnMount={session.focusModeOnMount} onRestart={restart} /></ErrorBoundary>;
 }
 
-export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, onRestart }: GameAppProps & { onRestart: () => void }) {
+export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, focusModeOnMount = false, onRestart }: GameAppProps & { focusModeOnMount?: boolean; onRestart: () => void }) {
+  triggerPlaywrightErrorBoundaryOnce();
   const actionFire = useFireAccent();
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? championsDataset), [suppliedDataset]);
   const reducer = useMemo(() => createGameReducer({ dataset }), [dataset]);
@@ -119,6 +137,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const [recentResultsOpen, setRecentResultsOpen] = useState(false);
   const [selectedResultKey, setSelectedResultKey] = useState<string | null>(null);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
+  const [focusModeAfterExit, setFocusModeAfterExit] = useState(false);
   const [draftAnnouncement, setDraftAnnouncement] = useState("");
   const [resultStorageState, setResultStorageState] = useState({ recovered: false, persistent: true });
   const [activeStorageState, setActiveStorageState] = useState({ recovered: false, persistent: true });
@@ -307,6 +326,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     setDraftAnnouncement("");
     setRecentResultsOpen(false);
     setSelectedResultKey(null);
+    setFocusModeAfterExit(false);
     dispatchGame(createStartAction(value, { now: () => startedAt, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) }));
   };
   const continueTournament = (): void => {
@@ -338,7 +358,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {restoreNotice && <p role="status" aria-label="Active run restoration status">{restoreNotice}</p>}
       {!storageState.persistent && <p role="alert">Local progress cannot persist in this browser session. You can keep playing while this page stays open.</p>}
       {state.phase === "mode" && <>
-        <ModeSelection dailyState={todayDaily ? "completed" : "available"} streak={streak} onStart={startMode} onViewDailyResult={() => {
+        <ModeSelection dailyState={todayDaily ? "completed" : "available"} streak={streak} focusOnMount={focusModeOnMount || focusModeAfterExit} onStart={startMode} onViewDailyResult={() => {
           setRecentResultsOpen(true);
           setSelectedResultKey(`daily-${todayUtc}`);
         }} />
@@ -370,7 +390,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
             dispatchGame({ type: "assign-role", role });
           }} onBack={() => dispatchGame({ type: "back-to-player" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></div>;
       })()}
-      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} onMove={(cardId, role) => dispatchGame({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatchGame({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatchGame({ type: "enter-tournament" }); } }} /></>)}
+      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} headingLevel={2} onMove={(cardId, role) => dispatchGame({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatchGame({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatchGame({ type: "enter-tournament" }); } }} /></>)}
       {state.phase === "tournament" && <TournamentView tournament={state.tournament} opponent={opponent} cards={dataset.cards} result={highlightsComplete ? presentedSeries : null} revealComplete={highlightsComplete} resolving={lockedStage === state.tournament.currentStage} error={opponentState.error ?? simulationError} focusOnMount={focusTournamentOnMount} reveal={presentedHighlights !== null ? <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} instant={prefersReducedMotion} focusOnMount /> : null} onPlay={playSeries} onRetryOpponent={() => { setSimulationError(null); setOpponentRevision(value => value + 1); }} onRetrySeries={() => void playSeries()} onContinue={continueTournament} />}
       {state.phase === "results" && terminalResult && <>
         <ResultsView mode={state.mode} result={terminalResult} cards={dataset.cards} highlights={resultHighlights(runHighlights)} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => beginAnotherRun(state.mode)} onModeChange={beginAnotherRun} />
@@ -379,6 +399,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       </main>
       <ExitRunDialog open={exitDialogOpen} onCancel={() => setExitDialogOpen(false)} onConfirm={() => {
         setExitDialogOpen(false);
+        setFocusModeAfterExit(true);
         resetState();
       }} />
     </>;

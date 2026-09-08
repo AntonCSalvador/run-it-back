@@ -1,20 +1,24 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import type { GameMode } from "../machine";
 
 export interface ModeSelectionProps {
   dailyState: "available" | "completed";
   streak: number;
+  focusOnMount?: boolean;
   onStart(mode: GameMode): void;
   onViewDailyResult(): void;
 }
 
-export function ModeSelection({ dailyState, streak, onStart, onViewDailyResult }: ModeSelectionProps) {
+export function ModeSelection({ dailyState, streak, focusOnMount = false, onStart, onViewDailyResult }: ModeSelectionProps) {
   const completed = dailyState === "completed";
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { if (focusOnMount) heading.current?.focus(); }, [focusOnMount]);
 
   return <section className="mode-selection" aria-labelledby="mode-selection-title">
     <div className="mode-selection__intro">
-      <h2 id="mode-selection-title">Draft history. Rewrite the bracket.</h2>
+      <h2 id="mode-selection-title" ref={heading} tabIndex={-1}>Draft history. Rewrite the bracket.</h2>
       <p className="mode-selection__lede">Build a five-player Champions roster, assign every role, choose an IGL, and play through four tournament rounds.</p>
     </div>
 

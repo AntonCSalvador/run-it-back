@@ -117,6 +117,8 @@ shrinking type.
 - Desktop content width is 1180–1240px. Draft screens use a decision field plus
   roster rail. Mobile becomes one column with a compact all-role summary.
 - `Exit run` is subordinate and confirmed only when progress would be lost.
+- Cancelling exit returns focus to its trigger. Confirming exit and error
+  recovery move focus to the newly restored task heading.
 - Recent results never appear above the current run result.
 
 ## Core component patterns
@@ -270,7 +272,11 @@ Captures are full-page with animations disabled. The former ambiguous
 
 Linux baselines remain unchanged and retain the pre-redesign screenshot
 inventory, including `results.png`; they were not captured or fabricated from
-Win32 output. Cross-platform regeneration must be performed on Linux before
-enforcing those visuals there. Current automated browser coverage is Chromium;
-real-device, screen-reader, and multi-browser manual validation remain release
-follow-ups rather than completed evidence.
+Win32 output. Ubuntu CI continues to run every nonvisual E2E journey and skips
+only the two visual capture tests while the four native Linux outcome images
+are absent. A manual Ubuntu candidate workflow captures and verifies both
+visual journeys; normal CI automatically enables the full visual suite once
+reviewed desktop and Pixel 7 `results-eliminated.png` and
+`results-champion.png` baselines are committed. Current automated browser
+coverage is Chromium; real-device, screen-reader, and multi-browser manual
+validation remain release follow-ups rather than completed evidence.

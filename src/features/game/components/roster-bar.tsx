@@ -3,13 +3,15 @@
 import { useId } from "react";
 import { ROLES, type PlayerCard, type Role } from "../domain";
 
-export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; iglCardId?: string | null; onMove(cardId: string, role: Role): void }
+export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; iglCardId?: string | null; headingLevel?: 2 | 3; onMove(cardId: string, role: Role): void }
 type RosterBarIntegrationProps = RosterBarProps & { canMove?: boolean };
-export function RosterBar({ slots, iglCardId = null, onMove, canMove = true }: RosterBarIntegrationProps) {
+export function RosterBar({ slots, iglCardId = null, headingLevel = 3, onMove, canMove = true }: RosterBarIntegrationProps) {
   const headingId = useId();
   const filledCount = ROLES.filter(role => Boolean(slots[role])).length;
   return <section aria-labelledby={headingId} role="region" className="roster-bar">
-    <h3 id={headingId}>Roster · {filledCount} of 5 filled</h3>
+    {headingLevel === 2
+      ? <h2 id={headingId}>Roster · {filledCount} of 5 filled</h2>
+      : <h3 id={headingId}>Roster · {filledCount} of 5 filled</h3>}
     <ol className="roster-bar__slots" aria-label="Five-player roster">{ROLES.map(role => {
     const card = slots[role];
     const compatibleTargets = card ? ROLES.filter(target => {

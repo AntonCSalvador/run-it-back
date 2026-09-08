@@ -98,18 +98,26 @@ describe("ResultsView", () => {
     expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
   });
 
-  it("leads a champion recap with the outcome, record, and one Daily replay action", () => {
-    const { container } = renderResult(true);
+  it("leads a Daily recap with Free Play and keeps deterministic Daily replay subordinate", () => {
+    const { container, onRunAgain, onModeChange } = renderResult(true);
     const outcome = screen.getByRole("heading", { name: "Tournament champion" });
-    const replay = screen.getByRole("button", { name: "Run another Daily" });
+    const primary = screen.getByRole("button", { name: "Try Free Play" });
+    const replay = screen.getByRole("button", { name: "Replay today's Daily" });
     const path = screen.getByRole("region", { name: "Tournament path" });
 
     expect(outcome).toHaveFocus();
     expect(screen.getByText("Reached the final · Series record 4–0")).toBeVisible();
     expect(container.querySelector(".results-view")).toHaveClass("results-view--champion");
     expect(container.querySelectorAll(".action-button")).toHaveLength(1);
-    expect(outcome.compareDocumentPosition(replay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(replay.compareDocumentPosition(path) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(outcome.compareDocumentPosition(primary) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(primary.compareDocumentPosition(path) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(path.compareDocumentPosition(replay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(primary).not.toHaveAttribute("aria-pressed");
+    expect(replay).not.toHaveAttribute("aria-pressed");
+    fireEvent.click(primary);
+    fireEvent.click(replay);
+    expect(onModeChange).toHaveBeenCalledExactlyOnceWith("free-play");
+    expect(onRunAgain).toHaveBeenCalledOnce();
   });
 
   it("names the exact elimination stage without champion treatment and leads into Free Play replay", () => {
@@ -123,6 +131,7 @@ describe("ResultsView", () => {
     expect(screen.getByRole("heading", { name: "Eliminated in the semifinal" })).toHaveFocus();
     expect(screen.getByText("Reached the semifinal · Series record 2–1")).toBeVisible();
     expect(screen.getByRole("button", { name: "Run another Free Play" })).toHaveClass("action-button");
+    expect(screen.getByRole("button", { name: "Try Daily" })).not.toHaveAttribute("aria-pressed");
     expect(container.querySelector(".results-view")).toHaveClass("results-view--eliminated");
     expect(container.querySelector(".results-view")).not.toHaveClass("results-view--champion");
   });
@@ -337,14 +346,16 @@ describe("ResultsView", () => {
     expect(screen.getByText("Select and copy your result.")).toHaveAttribute("aria-live", "polite");
   });
 
-  it("calls replay and both mode callbacks with native controls", () => {
-    const { onRunAgain, onModeChange } = renderResult();
-    fireEvent.click(screen.getByRole("button", { name: "Run another Daily" }));
+  it("keeps Free Play replay primary and offers Daily as a subordinate action", () => {
+    const { onRunAgain, onModeChange } = renderResult(false, { mode: "free-play" });
+    const replay = screen.getByRole("button", { name: "Run another Free Play" });
+    const daily = screen.getByRole("button", { name: "Try Daily" });
+    expect(replay).toHaveClass("action-button");
+    expect(replay).not.toHaveAttribute("aria-pressed");
+    expect(daily).not.toHaveAttribute("aria-pressed");
+    fireEvent.click(replay);
+    fireEvent.click(daily);
     expect(onRunAgain).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole("button", { name: "Daily" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Free Play" })).toHaveAttribute("aria-pressed", "false");
-    fireEvent.click(screen.getByRole("button", { name: "Free Play" }));
-    fireEvent.click(screen.getByRole("button", { name: "Daily" }));
-    expect(onModeChange.mock.calls).toEqual([["free-play"], ["daily"]]);
+    expect(onModeChange).toHaveBeenCalledExactlyOnceWith("daily");
   });
 });

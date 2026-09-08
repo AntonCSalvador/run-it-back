@@ -46,6 +46,11 @@ test("Daily completion survives reload and repeatable choices produce the same r
   const terminal = completion.series.at(-1);
   expect(completion.stageReached).toBe(terminal.stage);
   expect(completion.outcome).toBe(terminal.stage === "final" && terminal.userWins === 3 ? "champion" : "eliminated");
+  await page.getByRole("button", { name: "Try Free Play" }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeFocused();
+  await expect(page.getByLabel("Current mode")).toHaveText("Free Play");
+  await page.getByRole("button", { name: "Exit run" }).click();
+  await page.getByRole("button", { name: "Exit run and lose progress" }).click();
   await page.reload();
   await expect(page.getByText("Completed today", { exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("run-it-back:daily:v1") ?? "{}")?.completions?.length)).toBe(1);

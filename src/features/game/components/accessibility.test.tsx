@@ -185,6 +185,18 @@ describe("broadcast accessibility", () => {
     expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
   });
 
+  it("uses peer h2 headings for the completed lineup and IGL decision", () => {
+    const active = activeState();
+    render(<GameApp dataset={fixtureDataset} initialState={{ phase: "lineup", mode: "daily", draft: active.draft }} />);
+    const roster = screen.getByRole("region", { name: "Roster · 5 of 5 filled" });
+    const rosterHeading = within(roster).getByRole("heading", { name: "Roster · 5 of 5 filled" });
+    const iglHeading = screen.getByRole("heading", { name: "Choose your IGL" });
+
+    expect(rosterHeading.tagName).toBe("H2");
+    expect(iglHeading.tagName).toBe("H2");
+    expect(rosterHeading.compareDocumentPosition(iglHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("explains why tournament start is disabled until a valid IGL is selected", () => {
     const cards = parseDataset(minimalDataset).cards.slice(0, 5);
     const view = render(<IglPicker cards={cards} selectedId="stale" onSelect={vi.fn()} onStart={vi.fn()} />);

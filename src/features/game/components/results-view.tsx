@@ -114,12 +114,14 @@ export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shar
   const { tournament, stageReached: reachedStage } = result;
   const wins = tournament.completedSeries.filter(series => series.userWins > series.opponentWins).length;
   const losses = tournament.completedSeries.length - wins;
+  const primaryLabel = mode === "daily" ? "Try Free Play" : "Run another Free Play";
+  const runPrimary = (): void => mode === "daily" ? onModeChange("free-play") : onRunAgain();
 
   return <section aria-label="Results" className={`results-view results-view--${champion ? "champion" : "eliminated"} ${champion ? fireClass : ""}`}>
     <div className="results-view__outcome">
       <h2 ref={outcomeHeading} tabIndex={-1}>{champion ? "Tournament champion" : `Eliminated in the ${stageLabels[reachedStage].sentence}`}</h2>
       <p>Reached the {stageLabels[reachedStage].sentence} · Series record {wins}–{losses}</p>
-      <button className="action-button" type="button" onClick={onRunAgain}>Run another {mode === "daily" ? "Daily" : "Free Play"}</button>
+      <button className="action-button" type="button" onClick={runPrimary}>{primaryLabel}</button>
     </div>
     <section aria-label="Tournament path" className="results-view__path">
       <h3>Tournament path</h3>
@@ -164,8 +166,9 @@ export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shar
     <p className="results-view__rerolls">Rerolls used: {rerollsUsed}</p>
     <div className="results-view__secondary-actions">
       <button type="button" disabled={sharing} onClick={share}>Share result</button>
-      <button type="button" aria-pressed={mode === "daily"} onClick={() => onModeChange("daily")}>Daily</button>
-      <button type="button" aria-pressed={mode === "free-play"} onClick={() => onModeChange("free-play")}>Free Play</button>
+      {mode === "daily"
+        ? <button type="button" onClick={onRunAgain}>Replay today&apos;s Daily</button>
+        : <button type="button" onClick={() => onModeChange("daily")}>Try Daily</button>}
     </div>
     {fallbackCount > 0 && <textarea ref={field} readOnly value={shareText} aria-label="Share result" />}
     <p role="status" aria-label="Share status" aria-live="polite">{message}</p>

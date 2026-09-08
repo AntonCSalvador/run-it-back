@@ -208,7 +208,7 @@ describe("GameApp", () => {
 
     await user.click(exit);
     await user.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
-    expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toHaveFocus();
   });
 
   it("shows saved Daily and Free Play results after reload", () => {
@@ -449,7 +449,7 @@ describe("GameApp", () => {
       await userEvent.setup().click(screen.getByRole("button", { name: "Continue to quarterfinal" }));
       expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
       await userEvent.setup().click(screen.getByRole("button", { name: "Recover run" }));
-      expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+      expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toHaveFocus();
     } finally { errors.mockRestore(); }
   });
 

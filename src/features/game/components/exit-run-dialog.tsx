@@ -12,12 +12,14 @@ export function ExitRunDialog({ open, onCancel, onConfirm }: ExitRunDialogProps)
   const dialog = useRef<HTMLDialogElement>(null);
   const cancelButton = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const confirmed = useRef(false);
   const wasOpen = useRef(false);
 
   useLayoutEffect(() => {
     const node = dialog.current;
     if (!node) return;
     if (open && !wasOpen.current) {
+      confirmed.current = false;
       returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       if (typeof node.showModal === "function") node.showModal();
       else node.setAttribute("open", "");
@@ -25,7 +27,7 @@ export function ExitRunDialog({ open, onCancel, onConfirm }: ExitRunDialogProps)
     } else if (!open && wasOpen.current) {
       if (typeof node.close === "function") node.close();
       else node.removeAttribute("open");
-      returnFocus.current?.focus();
+      if (!confirmed.current) returnFocus.current?.focus();
     }
     wasOpen.current = open;
   }, [open]);
@@ -40,7 +42,7 @@ export function ExitRunDialog({ open, onCancel, onConfirm }: ExitRunDialogProps)
     <p>Your current draft and tournament progress will be lost. Saved results stay in your history.</p>
     <div className="exit-run-dialog__actions">
       <button ref={cancelButton} type="button" onClick={onCancel}>Keep this run</button>
-      <button className="action-button" type="button" onClick={onConfirm}>Exit run and lose progress</button>
+      <button className="action-button" type="button" onClick={() => { confirmed.current = true; onConfirm(); }}>Exit run and lose progress</button>
     </div>
   </dialog>;
 }

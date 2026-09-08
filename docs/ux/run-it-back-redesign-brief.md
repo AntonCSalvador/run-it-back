@@ -112,7 +112,7 @@ Heading: **Where should BeYN 2025 play?** using the selected repository player.
 
 - First viewport: `Champion` or `Eliminated`, stage reached, compact series
   record, and one decisive replay action.
-- Free Play primary: `Draft a new roster`.
+- Free Play primary: `Run another Free Play`; `Try Daily` remains secondary.
 - Completed Daily primary after result: `Try Free Play`; `Replay today's Daily`
   remains secondary.
 - Then show tournament path, drafted roster and IGL, important simulated
@@ -252,6 +252,8 @@ Voice is **confident, concise, and match-aware—not macho, cute, or cryptic**.
   responsive, and screenshot journeys remain valid.
 - Tests cover active-run persistence and invalid-record isolation.
 - Tests cover confirm/cancel/Escape/focus return for unfinished-run exit.
+- Confirmed exit and error recovery focus the new or restored task heading;
+  initial page load does not move focus unexpectedly.
 - Tests assert focus after every phase transition and once-only announcements.
 - Exact 390px and 320px checks show no page-level horizontal overflow.
 - Tests cover long labels, missing media, exhausted/no-alternative rerolls,
@@ -304,7 +306,11 @@ roster/IGL, semifinal highlights, eliminated recap (`e2e-164`), and champion
 recap (`e2e-560`). The previous `results.png` was removed on Win32 only after
 both outcome-specific captures were inspected. Linux folders were intentionally
 left untouched and are stale relative to the redesign; they require native Linux
-capture rather than copied images.
+capture rather than copied images. Ubuntu CI retains all nonvisual journeys and
+skips only the two visual capture tests until a manual candidate run produces
+reviewable desktop and Pixel 7 eliminated/champion images. Once all four native
+Linux outcome baselines are reviewed and committed, normal CI automatically
+runs the complete visual suite.
 
 ### Known validation limits
 

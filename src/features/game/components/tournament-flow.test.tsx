@@ -579,6 +579,8 @@ describe("tournament presentation", () => {
       tick(0);
       fireEvent.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
       expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
+      // Let jsdom finish its zero-delay selection update from focusing the new task.
+      tick(0);
     }
     if (reset === "dataset") view.rerender(<GameApp dataset={parseDataset(dataset)} initialState={initial} gateway={gateway} />);
     if (reset === "unmount") view.unmount();
@@ -657,14 +659,17 @@ describe("terminal GameApp integration", () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
-  it.each(["Run another Daily", "Daily", "Free Play"])("%s on results starts a real fresh draft", control => {
+  it.each([
+    ["Replay today's Daily", "Daily", 0],
+    ["Try Free Play", "Free Play", 1],
+  ] as const)("%s on results starts a real fresh draft", (control, expectedMode, expectedFreeSeeds) => {
     const freeSeedFactory = vi.fn(() => "new-seed");
     render(<GameApp dataset={dataset} initialState={terminalState(false)} freeSeedFactory={freeSeedFactory} now={() => new Date("2026-09-05T12:00:00Z")} />);
     fireEvent.click(within(screen.getByRole("region", { name: "Results" })).getByRole("button", { name: control }));
     expect(screen.getByRole("navigation", { name: "Run progress" })).toHaveTextContent("Pick 1 of 5 · Choose a team to scout");
     expect(screen.getByRole("region", { name: "Choose a team to scout" })).toBeVisible();
-    expect(screen.getByLabelText("Current mode")).toHaveTextContent(control === "Free Play" ? "Free Play" : "Daily");
-    expect(freeSeedFactory).toHaveBeenCalledTimes(control === "Free Play" ? 1 : 0);
+    expect(screen.getByLabelText("Current mode")).toHaveTextContent(expectedMode);
+    expect(freeSeedFactory).toHaveBeenCalledTimes(expectedFreeSeeds);
     expect(screen.queryByRole("region", { name: "Results" })).not.toBeInTheDocument();
   });
 
@@ -679,14 +684,14 @@ describe("terminal GameApp integration", () => {
     expect(writeText.mock.calls[0][0]).not.toMatch(/seed|strength|probability|\broll\b|traits|formula|firepower|0\.6/);
   });
 
-  it("Run another Daily after a played loss clears presentation through the next actual draft", async () => {
+  it("Replay today's Daily after a played loss clears presentation through the next actual draft", async () => {
     const gateway = gatewayFixture();
     gateway.playSeries.mockImplementation((_seed, stage) => series(stage, false));
     render(<GameApp dataset={dataset} initialState={activeState()} gateway={gateway} now={() => new Date("2026-09-05T12:00:00Z")} />);
     await play();
     next();
     expect(screen.getByRole("heading", { name: "Eliminated in the group stage" })).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "Run another Daily" }));
+    fireEvent.click(screen.getByRole("button", { name: "Replay today's Daily" }));
     draftNewRun();
     expect(screen.getByText("Group stage · Round 1 of 4")).toBeVisible();
     expect(screen.getByRole("button", { name: "Play group stage" })).toBeEnabled();
