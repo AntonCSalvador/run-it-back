@@ -18,7 +18,7 @@ test("mobile saved history stays collapsed, bounded, and keyboard-accessible", a
   await page.getByRole("button", { name: "Hide saved results" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("button", { name: /View Free Play result/ })).toHaveCount(0);
-  await page.getByRole("button", { name: "Free Play", exact: true }).focus();
+  await page.getByRole("button", { name: "Start Free Play", exact: true }).focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 });

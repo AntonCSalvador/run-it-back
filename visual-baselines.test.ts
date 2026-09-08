@@ -1,22 +1,23 @@
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const approvedWindowsBlobs = {
-  "desktop/complete-roster.png": "eadc15495e5c3f9a461268fcefa37d12c20c47c0",
-  "desktop/mode-selection.png": "0e31848491e30b87f7bbae01520018c65e4b6a73",
-  "desktop/player-picker.png": "ce0b9c75df03983298470391a5975ea68bff5e8d",
-  "desktop/results.png": "2a372c1df9cc2e466da998b63646f5e54b5e99fe",
-  "desktop/semifinal-highlights.png": "43de172d1a6c687ff7fb1f8404c632f1d8cd9dbe",
-  "desktop/three-team-offer.png": "13ddda1b54a988be5b58daff79a2b728e0d5efcd",
-  "pixel-7/complete-roster.png": "51d5c266767ca5a9d93c0f0ae08f433914b14dbe",
-  "pixel-7/mode-selection.png": "951638a6ee990b72489b6ae73ac3282ddd5a1922",
-  "pixel-7/player-picker.png": "1698008f91ae3c980fa75476ae44d4c8fa27bc5d",
-  "pixel-7/results.png": "3ac078c75b3f445e55f991ac5a420753016a4259",
-  "pixel-7/semifinal-highlights.png": "0bcc8344cfe6182b9eb0853b3abf99d1c2fd91a7",
-  "pixel-7/three-team-offer.png": "4468842667b21cb718c5e579d66b8ca8402a548c",
+  "desktop/complete-roster.png": "4bdc39aa0226e5a3fc6ea0371211c602377ff3ab",
+  "desktop/mode-selection.png": "3e16da1a0be7504aec1767bcc01e52b44872a834",
+  "desktop/player-picker.png": "ed92995bc37d5aa3c6d3148bdf8be7dddf216f20",
+  "desktop/results-champion.png": "56564f776ac7d9a7658fc0390f622054da350242",
+  "desktop/results-eliminated.png": "87f53080fc2156300518e1e502cb1aa16bb31a4d",
+  "desktop/semifinal-highlights.png": "9ebe99eb53258f380cc260f376d3f7d041d37baf",
+  "desktop/three-team-offer.png": "afb8d5a3d70fdc9ec4e476a3b0117bbc26f5194c",
+  "pixel-7/complete-roster.png": "bfdbc461fe322fc25ec24eb47d4884852d1790b2",
+  "pixel-7/mode-selection.png": "0bdf3a0fca075e036fbeb84e2d191fd48d971079",
+  "pixel-7/player-picker.png": "d7c91b5df9f867ae3108f425c683c76f1f548398",
+  "pixel-7/results-champion.png": "ce857bb6a7a0d6f42d70de50aa3169bfacd6b70b",
+  "pixel-7/results-eliminated.png": "9a7b847f0134e09c027918a457b271e1d1701ec9",
+  "pixel-7/semifinal-highlights.png": "a90e07607db53f4d5d174e283971a99f89a23d89",
+  "pixel-7/three-team-offer.png": "d5b63ff8fba45695212fba4798a5cf28bd0e7163",
 } as const;
 
 const approvedLinuxBaselines = {
@@ -34,7 +35,18 @@ const approvedLinuxBaselines = {
   "pixel-7/three-team-offer.png": ["a40684a95b1effa563b0cebc930d023fd9bc65ba0380d5663419b65c84f83f35", [412, 580]],
 } as const;
 
+function gitBlobSha1(content: Uint8Array): string {
+  return createHash("sha1")
+    .update(`blob ${content.byteLength}\0`)
+    .update(content)
+    .digest("hex");
+}
+
 describe("platform visual baselines", () => {
+  it("computes Git blob object IDs in-process", () => {
+    expect(gitBlobSha1(Buffer.alloc(0))).toBe("e69de29bb2d1d6434b8b29ae775ad8c2e48c5391");
+  });
+
   it("stores snapshots by platform and keeps all captures strictly compared", () => {
     const config = readFileSync(resolve(process.cwd(), "playwright.config.ts"), "utf8");
     const journey = readFileSync(resolve(process.cwd(), "e2e/free-play.spec.ts"), "utf8");
@@ -45,11 +57,11 @@ describe("platform visual baselines", () => {
   });
 
   it("preserves every approved Windows baseline byte-for-byte", () => {
-    expect(Object.keys(approvedWindowsBlobs)).toHaveLength(12);
+    expect(Object.keys(approvedWindowsBlobs)).toHaveLength(14);
     for (const [relativePath, approvedBlob] of Object.entries(approvedWindowsBlobs)) {
       const path = resolve(process.cwd(), "e2e/__screenshots__/win32", relativePath);
       expect(existsSync(path), relativePath).toBe(true);
-      expect(execFileSync("git", ["hash-object", path], { encoding: "utf8" }).trim(), relativePath).toBe(approvedBlob);
+      expect(gitBlobSha1(readFileSync(path)), relativePath).toBe(approvedBlob);
     }
   });
 

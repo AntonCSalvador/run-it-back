@@ -1,8 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
 export async function start(page: Page, mode: "Daily" | "Free Play"): Promise<void> {
-  await page.getByRole("button", { name: mode, exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Choose a team" })).toBeVisible();
+  const label = mode === "Daily" ? "Start today's Daily" : "Start Free Play";
+  await page.getByRole("button", { name: label, exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 }
 
 export async function draftRoster(page: Page): Promise<void> {
@@ -10,14 +11,14 @@ export async function draftRoster(page: Page): Promise<void> {
     await page.locator(".team-card").first().click();
     await expect(page.getByRole("heading", { name: /Choose from/ })).toBeVisible();
     await page.locator('[data-testid^="player-card-"]').first().getByRole("button").click();
-    await page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first().click();
+    await page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first().click();
   }
   await expect(page.getByRole("button", { name: "Start tournament" })).toBeDisabled();
 }
 
 export async function reachTournament(page: Page): Promise<void> {
   await draftRoster(page);
-  await page.getByRole("radiogroup", { name: "Choose in-game leader" }).getByRole("radio").first().check();
+  await page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first().check();
   await expect(page.getByRole("button", { name: "Start tournament" })).toBeEnabled();
   await page.getByRole("button", { name: "Start tournament" }).click();
   await expect(page.getByRole("region", { name: "Tournament" })).toBeVisible();
@@ -25,12 +26,13 @@ export async function reachTournament(page: Page): Promise<void> {
 
 export async function completeTournament(page: Page): Promise<string> {
   await reachTournament(page);
-  while (await page.getByRole("button", { name: "Play series" }).count()) {
-    await page.getByRole("button", { name: "Play series" }).click();
-    await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
-    const skip = page.getByRole("button", { name: "Skip" });
+  const play = page.getByRole("button", { name: /^Play (?:group stage|quarterfinal|semifinal|final)$/ });
+  while (await play.count()) {
+    await play.click();
+    const skip = page.getByRole("button", { name: "Skip to result" });
     if (await skip.count()) await skip.click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("heading", { name: /Series result:/ })).toBeVisible();
+    await page.getByRole("button", { name: /^Continue to / }).click();
   }
   const results = page.getByRole("region", { name: "Results", exact: true });
   await expect(results).toBeVisible();
