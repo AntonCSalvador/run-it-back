@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
 import { AppHeader } from "./app-header";
 import { TeamOffer } from "./team-offer";
@@ -17,6 +17,8 @@ import { projectTerminalResult } from "../result-projection";
 import { RosterBar } from "./roster-bar";
 import { RunProgress } from "./run-progress";
 import { IglPicker } from "./igl-picker";
+
+afterEach(() => window.localStorage.clear());
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onClick={fire.trigger}>ignite</button>; }
 function animationEnd(target: HTMLElement, animationName: string): void {

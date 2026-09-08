@@ -622,7 +622,7 @@ describe("terminal GameApp integration", () => {
     render(<GameApp dataset={dataset} initialState={{ ...initial, tournament: { ...initial.tournament, seed: "invalid-daily-seed" } }} />);
     expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong with this run.");
     expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Restart run" }));
+    fireEvent.click(screen.getByRole("button", { name: "Recover run" }));
     expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(errors).toHaveBeenCalled();

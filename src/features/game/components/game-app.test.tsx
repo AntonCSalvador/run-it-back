@@ -262,17 +262,17 @@ describe("GameApp", () => {
     expect(screen.getByRole("status", { name: "Saved result storage status" })).toHaveTextContent("Saved results were recovered");
     corruptView.unmount();
     render(<GameApp dataset={dataset} storage={null} />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+    expect(screen.getByRole("alert")).toHaveTextContent("Local progress cannot persist");
   });
 
   it("warns when storage reads or result writes throw", () => {
     const throwing: Storage = { get length() { return 0; }, clear() {}, key() { return null; }, getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); }, removeItem() {} };
     const readView = render(<GameApp dataset={dataset} storage={throwing} />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+    expect(screen.getByRole("alert")).toHaveTextContent("Local progress cannot persist");
     readView.unmount();
     const writeFailing: Storage = { ...throwing, getItem() { return null; } };
     render(<GameApp dataset={dataset} initialState={terminalState(false)} storage={writeFailing} />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Results cannot persist");
+    expect(screen.getByRole("alert")).toHaveTextContent("Local progress cannot persist");
   });
 
   it("shows draft progress and recovers invalid player, role, and IGL phases", () => {
@@ -321,7 +321,7 @@ describe("GameApp", () => {
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
       expect(gateway.generateOpponent).toHaveBeenCalledTimes(1);
       expect(gateway.playSeries).toHaveBeenCalledTimes(1);
-      expect(storage.removeItem).not.toHaveBeenCalled();
+      expect(storage.removeItem).not.toHaveBeenCalledWith(STORAGE_KEYS.history);
       expect(errors).not.toHaveBeenCalled();
     } finally { errors.mockRestore(); }
   });
@@ -372,14 +372,40 @@ describe("GameApp", () => {
       render(<GameApp dataset={dataset} initialState={activeState} storage={storage} gatewayFactory={factory} />);
       expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
       broken = false;
-      await user.click(screen.getByRole("button", { name: "Restart run" }));
+      await user.click(screen.getByRole("button", { name: "Recover run" }));
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
       expect(screen.getByRole("heading", { name: "Run It Back", level: 1 })).toBeVisible();
       expect(screen.getByRole("button", { name: "Start today's Daily" })).toBeVisible();
       expect(screen.getByRole("button", { name: "Start Free Play" })).toBeVisible();
       expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
-      expect(storage.removeItem).not.toHaveBeenCalled();
+      expect(storage.removeItem).not.toHaveBeenCalledWith(STORAGE_KEYS.history);
       expect(storage.getItem(STORAGE_KEYS.history)).toBe("keep-me");
+    } finally { errors.mockRestore(); }
+  });
+
+  it("remounts through the error boundary and restores the last saved decision", async () => {
+    const user = userEvent.setup();
+    const storage = memoryStorage();
+    let broken = false;
+    const healthyFactory = () => gatewayFixture();
+    const recoverableFactory = () => {
+      if (broken) throw new Error("gateway initialization failed");
+      return gatewayFixture();
+    };
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      const view = render(<GameApp dataset={dataset} storage={storage} gatewayFactory={healthyFactory} freeSeedFactory={() => "recoverable-seed"} />);
+      await user.click(screen.getByRole("button", { name: "Start Free Play" }));
+      expect(storage.getItem(STORAGE_KEYS.active)).toContain("recoverable-seed");
+
+      broken = true;
+      view.rerender(<GameApp dataset={dataset} storage={storage} gatewayFactory={recoverableFactory} freeSeedFactory={() => "recoverable-seed"} />);
+      expect(screen.getByRole("alert")).toHaveTextContent("If a saved checkpoint is available");
+
+      broken = false;
+      await user.click(screen.getByRole("button", { name: "Recover run" }));
+      expect(screen.getByRole("heading", { name: "Choose a team to scout" })).toHaveFocus();
+      expect(screen.getByRole("status", { name: "Active run restoration status" })).toHaveTextContent("Saved run restored");
     } finally { errors.mockRestore(); }
   });
 
@@ -422,7 +448,7 @@ describe("GameApp", () => {
       await userEvent.setup().click(screen.getByRole("button", { name: "Play group stage" }));
       await userEvent.setup().click(screen.getByRole("button", { name: "Continue to quarterfinal" }));
       expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong");
-      await userEvent.setup().click(screen.getByRole("button", { name: "Restart run" }));
+      await userEvent.setup().click(screen.getByRole("button", { name: "Recover run" }));
       expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeVisible();
     } finally { errors.mockRestore(); }
   });

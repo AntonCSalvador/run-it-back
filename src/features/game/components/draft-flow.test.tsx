@@ -21,6 +21,8 @@ const flexibleDataset = parseDataset({
   cards: minimalDataset.cards.map(card => ({ ...card, eligibleRoles: [...ROLES] })),
 });
 
+afterEach(() => window.localStorage.clear());
+
 describe("draft flow", () => {
   it("presents each team-year offer as a numbered scouting decision", () => {
     const view = render(<TeamOffer teams={dataset.teams.slice(0, 3)} rerolls={3} canReroll onChoose={vi.fn()} onReroll={vi.fn()} />);

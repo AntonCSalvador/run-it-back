@@ -396,6 +396,13 @@ describe("parsed broadcast stylesheet", () => {
     }
   });
 
+  it("gives the active-run restoration state a stable centered reading region", () => {
+    const shell = ruleFor(rules, ".restoration-shell").style;
+    expect(shell.getPropertyValue("display")).toBe("grid");
+    expect(shell.getPropertyValue("place-items")).toBe("center");
+    expect(shell.getPropertyValue("min-height")).toContain("50vh");
+  });
+
   it("preserves focus, action, disabled, and state boundaries in forced colors", () => {
     const forced = mediaFor(rules, "(forced-colors: active)");
     const focus = ruleFor(forced.cssRules, ":focus-visible").style;

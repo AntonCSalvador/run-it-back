@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { assertAllEnabledActionsReachableByTab, assertRenderedControlsFit } from "./support/audit";
-import { draftRoster, start } from "./support/journey";
+import { assertAllEnabledActionsReachableByTab, assertComputedContrastMatrix, assertMinimumPointerTargets, assertRenderedControlsFit, contrastRatio } from "./support/audit";
+import { completeTournament, draftRoster, start } from "./support/journey";
 
 async function keyboardActivate(page: Page, control: Locator): Promise<void> {
   await control.focus();
@@ -13,18 +13,14 @@ async function auditPhase(page: Page): Promise<void> {
   await assertAllEnabledActionsReachableByTab(page);
 }
 
-function contrastRatio(foreground: string, background: string): number {
-  const channels = (value: string): number[] => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
-  const luminance = (value: string): number => {
-    const [red, green, blue] = channels(value).map(channel => {
-      const normalized = channel / 255;
-      return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-    });
-    return (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
-  };
-  const lighter = Math.max(luminance(foreground), luminance(background));
-  const darker = Math.min(luminance(foreground), luminance(background));
-  return (lighter + 0.05) / (darker + 0.05);
+async function auditNarrowPhase(page: Page, heading: Locator): Promise<void> {
+  await expect(heading).toBeFocused();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth === innerWidth)).toBe(true);
+  await assertRenderedControlsFit(page);
+  await assertMinimumPointerTargets(page);
+  await assertAllEnabledActionsReachableByTab(page);
+  const roster = page.getByRole("list", { name: "Five-player roster" });
+  if (await roster.count()) await expect(roster.getByRole("listitem")).toHaveCount(5);
 }
 
 test("skip link moves focus to the current decision", async ({ page }) => {
@@ -80,6 +76,9 @@ test("mobile tracked team focus ring remains fully visible", async ({ page }, te
       expect(clipped, `${width}px ${edge} clipping`).toBe(false);
     }
     expect(focus.pageOverflows, `${width}px page overflow`).toBe(false);
+    // Each width is an independent first-load composition check. Active-run
+    // persistence is covered in restoration.spec.ts.
+    await page.evaluate(() => localStorage.clear());
   }
 });
 
@@ -308,6 +307,89 @@ test("the opening reflows at 390px with keyboard-reachable mode actions", async 
     expect(box?.x).toBeGreaterThanOrEqual(0);
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(390);
   }
+});
+
+test("320px critical journey keeps every decision and result operable", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/?e2e-seed=e2e-164");
+  await start(page, "Free Play");
+  await auditNarrowPhase(page, page.getByRole("heading", { name: "Choose a team to scout" }));
+  for (let slot = 0; slot < 5; slot += 1) {
+    await page.locator(".team-card").first().click();
+    await auditNarrowPhase(page, page.getByRole("heading", { name: /Choose from/ }));
+    const handles = page.locator(".player-card__identity strong");
+    expect(await handles.count()).toBeGreaterThan(0);
+    expect(await handles.evaluateAll(elements => elements.every(element => getComputedStyle(element).overflowWrap === "anywhere" && element.scrollWidth <= element.parentElement!.clientWidth + 1))).toBe(true);
+    await page.locator('[data-testid^="player-card-"]').first().getByRole("button").click();
+    await auditNarrowPhase(page, page.getByRole("heading", { name: /Where should/ }));
+    await page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first().click();
+    await auditNarrowPhase(page, page.getByRole("heading", { name: slot === 4 ? "Choose your IGL" : "Choose a team to scout" }));
+  }
+  const igl = page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first();
+  await igl.check();
+  await page.getByRole("button", { name: "Start tournament" }).click();
+  for (const stage of ["group stage", "quarterfinal", "semifinal", "final"] as const) {
+    await auditNarrowPhase(page, page.getByRole("heading", { name: "Your roster vs. Challenger roster" }));
+    await page.getByRole("button", { name: `Play ${stage}` }).click();
+    const skip = page.getByRole("button", { name: "Skip to result" });
+    if (await skip.count()) await skip.click();
+    await auditNarrowPhase(page, page.getByRole("heading", { name: /Series result:/ }));
+    await page.getByRole("button", { name: /^Continue to / }).click();
+    const results = page.getByRole("region", { name: "Results", exact: true });
+    if (await results.count()) {
+      await auditNarrowPhase(page, results.getByRole("heading", { level: 2 }));
+      break;
+    }
+  }
+});
+
+test("representative text, action, boundary, and focus colors meet contrast targets", async ({ page }) => {
+  await page.goto("/");
+  const daily = page.getByRole("button", { name: "Start today's Daily", exact: true });
+  await daily.focus();
+  await assertComputedContrastMatrix([
+    { name: "body text", locator: page.locator(".mode-selection__lede"), minimum: 4.5 },
+    { name: "primary action text", locator: daily, minimum: 4.5 },
+    { name: "primary action boundary", locator: daily, foreground: "backgroundColor", minimum: 3 },
+    { name: "secondary action text", locator: page.getByRole("button", { name: "Start Free Play", exact: true }), minimum: 4.5 },
+    { name: "secondary action boundary", locator: page.getByRole("button", { name: "Start Free Play", exact: true }), foreground: "borderTopColor", minimum: 3 },
+    { name: "focused control", locator: daily, foreground: "outlineColor", minimum: 3 },
+  ]);
+
+  await page.evaluate(() => {
+    Object.defineProperty(Storage.prototype, "setItem", { configurable: true, value: () => { throw new Error("blocked"); } });
+  });
+  await start(page, "Free Play");
+  for (let rerolls = 3; rerolls > 0; rerolls -= 1) await page.getByRole("button", { name: new RegExp(`Replace all 3 teams.*${rerolls} left`) }).click();
+  const exhausted = page.getByRole("button", { name: /Replace all 3 teams.*0 left/ });
+  await assertComputedContrastMatrix([
+    { name: "disabled control text", locator: exhausted, minimum: 4.5 },
+    { name: "disabled control boundary", locator: exhausted, foreground: "borderTopColor", minimum: 3 },
+    { name: "storage error alert text", locator: page.getByRole("alert").filter({ hasText: "Local progress" }), minimum: 4.5 },
+  ]);
+
+  await draftRoster(page);
+  await page.getByRole("group", { name: "Choose your IGL" }).getByRole("radio").first().check();
+  const selected = page.locator('.igl-picker__choice[data-selected="true"]');
+  await assertComputedContrastMatrix([
+    { name: "selected card text", locator: selected.locator("strong"), minimum: 4.5 },
+    { name: "selected card indicator", locator: selected, foreground: "borderTopColor", minimum: 3 },
+  ]);
+
+  await page.goto("/?e2e-seed=e2e-560");
+  await start(page, "Free Play");
+  await completeTournament(page);
+  await assertComputedContrastMatrix([
+    { name: "champion outcome", locator: page.getByRole("heading", { name: "Tournament champion" }), minimum: 4.5 },
+  ]);
+
+  await page.evaluate(() => localStorage.clear());
+  await page.goto("/?e2e-seed=e2e-164");
+  await start(page, "Free Play");
+  await completeTournament(page);
+  await assertComputedContrastMatrix([
+    { name: "elimination outcome", locator: page.getByRole("heading", { name: "Eliminated in the final" }), minimum: 4.5 },
+  ]);
 });
 
 test("forced colors pair primary and exhausted actions with internally consistent system colors", async ({ page }, testInfo) => {

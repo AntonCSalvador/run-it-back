@@ -522,6 +522,11 @@ textarea {
   border-block-end: 1px solid var(--rib-line-subtle);
 }
 
+.restoration-shell { display: grid; place-items: center; min-height: 50vh; text-align: center; }
+.restoration-shell section { max-width: 34rem; border-block: 1px solid var(--rib-line-subtle); padding-block: var(--rib-space-6); }
+.restoration-shell h2 { margin-block-start: 0; }
+.restoration-shell p { color: var(--rib-text-secondary); }
+
 .mode-selection__intro { align-self: center; }
 .mode-selection__intro h2 { max-width: 13ch; font-size: var(--rib-type-outcome-size); line-height: var(--rib-type-outcome-leading); }
 .mode-selection__lede { max-width: 58ch; margin-block: var(--rib-space-4) 0; color: var(--rib-text-secondary); font-size: 1.125rem; line-height: 1.6; }
