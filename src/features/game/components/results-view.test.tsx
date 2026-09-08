@@ -169,6 +169,37 @@ describe("ResultsView", () => {
     expect(screen.getByText("Final · Clutch · Ascent")).toBeVisible();
   });
 
+  it("keeps a concise key-moment lead while preserving every retained moment on demand", () => {
+    const highlights: readonly StagedHighlight[] = Array.from({ length: 6 }, (_, index) => ({
+      id: `moment-${index + 1}`,
+      kind: "clutch" as const,
+      actorCardId: lineup.iglCardId,
+      side: "user" as const,
+      text: `Retained simulated moment ${index + 1}.`,
+      emphasis: "clutch" as const,
+      map: "Ascent",
+      mapIndex: index,
+      stage: index < 3 ? "semifinal" as const : "final" as const,
+    }));
+
+    renderResult(true, { highlights });
+    const moments = screen.getByRole("region", { name: "Key moments" });
+    const lead = moments.querySelector(":scope > ol");
+    const summary = within(moments).getByText("2 additional simulated moments");
+    const overflow = summary.closest("details");
+
+    expect(lead?.children).toHaveLength(4);
+    expect(overflow).not.toHaveAttribute("open");
+    expect(overflow?.querySelector("ol")).toHaveAttribute("start", "5");
+    expect(within(overflow as HTMLElement).getByText("Retained simulated moment 6.")).toBeInTheDocument();
+    fireEvent.click(summary);
+    expect(overflow).toHaveAttribute("open");
+    expect(within(overflow as HTMLElement).getByText("2 additional simulated moments")).toBeVisible();
+    for (let index = 1; index <= highlights.length; index += 1) {
+      expect(within(moments).getAllByText(`Retained simulated moment ${index}.`)).toHaveLength(1);
+    }
+  });
+
   it("uses an honest empty-moment recovery and keeps map scores collapsed after the route", () => {
     renderResult(false);
     const path = screen.getByRole("region", { name: "Tournament path" });

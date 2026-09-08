@@ -311,9 +311,16 @@ describe("parsed broadcast stylesheet", () => {
     const roster = ruleFor(mobile.cssRules, ".roster-bar__slots").style;
     expect(roster.getPropertyValue("grid-template-columns")).toBe("repeat(2,minmax(0,1fr))");
     expect(roster.getPropertyValue("overflow-x")).toBe("visible");
+    const draftRoster = ruleFor(mobile.cssRules, ".draft-layout .roster-bar__slots").style;
+    expect(draftRoster.getPropertyValue("grid-template-columns")).toBe("repeat(2,minmax(0,1fr))");
     const reduced = mediaFor(rules, "(prefers-reduced-motion: reduce)");
     expect(ruleFor(reduced.cssRules, "*").style.getPropertyValue("scroll-behavior")).toBe("auto");
     expect(ruleFor(reduced.cssRules, "*").style.getPropertyPriority("scroll-behavior")).toBe("important");
+  });
+
+  it("removes the empty score track while tournament highlights are revealing", () => {
+    const emptyResult = ruleFor(rules, ".tournament-view__result:empty").style;
+    expect(emptyResult.getPropertyValue("display")).toBe("none");
   });
 
   it("attaches the keyboard focus ring to the focus-visible selector", () => {

@@ -2,7 +2,7 @@
 
 Date: 2026-09-06
 Visual direction selected: 2026-09-07
-Status: Approved for implementation planning
+Status: Implemented; integrated Win32 visual review complete
 
 ## Direction
 
@@ -235,3 +235,42 @@ tiles, excessive pills, ubiquitous rounded cards, decorative HUD clutter,
 unlabeled icon actions, hover-only disclosure, copied broadcast/Riot assets,
 fabricated statistics, punitive streak messaging, or delayed controls that hold
 the player hostage.
+
+## Implemented finish record
+
+The integrated implementation keeps the selected **Live Results Desk** as a
+composition and hierarchy reference rather than a pixel-copy. Its oversized
+score-sheet typography became the opening premise, decision headings, matchup,
+and result treatments; its dense production rundown became the persistent
+four-stage rail and aligned roster/path sheets. Texture, copied iconography,
+licensed marks, and decorative crosshairs were deliberately omitted because the
+repository has no authorized source assets for them and the operating interface
+must keep task state dominant.
+
+Final refinements established these additional patterns:
+
+- At 390px and below, the in-draft roster uses a compact two-column status grid;
+  all five roles remain visible outside the horizontal team/player tracks.
+- An empty tournament score container does not reserve a visual track while
+  semifinal or final highlights are revealing.
+- Results lead with at most four retained moments. Additional verbatim simulated
+  moments remain available in a native, 44px-minimum disclosure so a long final
+  does not bury map details, sharing, and saved history.
+- Desktop moment leads use two editorial columns; narrow layouts return to one
+  reading column without changing source order.
+
+### Visual regression inventory
+
+Current Win32 baselines cover the complete shell at desktop and Pixel 7 for:
+`mode-selection.png`, `three-team-offer.png`, `player-picker.png`,
+`complete-roster.png`, `semifinal-highlights.png`,
+`results-eliminated.png` (`e2e-164`), and `results-champion.png` (`e2e-560`).
+Captures are full-page with animations disabled. The former ambiguous
+`results.png` baseline has been replaced by the two deterministic outcomes.
+
+Linux baselines remain unchanged and retain the pre-redesign screenshot
+inventory, including `results.png`; they were not captured or fabricated from
+Win32 output. Cross-platform regeneration must be performed on Linux before
+enforcing those visuals there. Current automated browser coverage is Chromium;
+real-device, screen-reader, and multi-browser manual validation remain release
+follow-ups rather than completed evidence.

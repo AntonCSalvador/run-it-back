@@ -275,3 +275,43 @@ No accounts, backend services, leaderboards, new game mechanics, public ratings,
 fabricated statistics, unsourced claims, unauthorized assets, or unrelated
 features. Domain and simulation code change only when necessary to support safe
 UI state persistence or presentation; formulas and outcomes remain unchanged.
+
+## Implemented finish and deviations
+
+The production redesign implements the approved Broadcast Tactical direction
+across onboarding, the draft, role and IGL decisions, tournament reveals, recap,
+restoration, and recovery. The selected Live Results Desk comp guided hierarchy,
+density, score-strip rhythm, and color discipline; it was not copied literally.
+Repository-backed initials and team marks remain the intentional media fallback,
+and no unlicensed decorative or participant assets were introduced.
+
+Two integrated polish rounds produced three evidence-led adjustments without
+changing mechanics:
+
+1. The mobile in-draft roster now honors the intended two-column summary instead
+   of stacking five full-width slots beneath each decision.
+2. Tournament highlight reveals no longer reserve an empty score-result grid
+   track before the result exists.
+3. Results show four key moments first and place all remaining retained,
+   verbatim simulated moments behind a native disclosure. Desktop uses two
+   columns for the lead; mobile preserves one source-ordered column.
+
+### Reviewed screenshots
+
+The current Win32 desktop and Pixel 7 suites each contain seven reviewed
+full-page states: mode selection, three-team offer, player picker, complete
+roster/IGL, semifinal highlights, eliminated recap (`e2e-164`), and champion
+recap (`e2e-560`). The previous `results.png` was removed on Win32 only after
+both outcome-specific captures were inspected. Linux folders were intentionally
+left untouched and are stale relative to the redesign; they require native Linux
+capture rather than copied images.
+
+### Known validation limits
+
+- The 320px critical journey is the automated 400%-equivalent reflow check; no
+  physical mobile device was available in this implementation session.
+- Chromium covers automated keyboard, focus, contrast, forced-colors,
+  reduced-motion, restoration, and screenshot journeys. Manual NVDA/VoiceOver,
+  Safari, and Firefox passes remain release follow-ups.
+- The brief's five-session comprehension and task-success measures still require
+  direct user research; automated tests cannot establish those outcomes.

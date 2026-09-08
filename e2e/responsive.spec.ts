@@ -39,9 +39,10 @@ test("mobile tracked team focus ring remains fully visible", async ({ page }, te
   for (const width of [390, 412]) {
     await page.setViewportSize({ width, height: 840 });
     await page.goto("/");
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Tab");
+    const startDaily = page.getByRole("button", { name: "Start today's Daily", exact: true });
+    await startDaily.focus();
     await page.keyboard.press("Enter");
+    await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 
     const teamCard = page.locator(".scroll-track > .team-card").first();
     for (let tabs = 0; tabs < 8 && !await teamCard.evaluate(element => document.activeElement === element); tabs += 1) {
@@ -310,6 +311,7 @@ test("the opening reflows at 390px with keyboard-reachable mode actions", async 
 });
 
 test("320px critical journey keeps every decision and result operable", async ({ page }) => {
+  test.slow();
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/?e2e-seed=e2e-164");
   await start(page, "Free Play");

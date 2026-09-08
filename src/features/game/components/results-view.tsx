@@ -23,6 +23,15 @@ function highlightKindLabel(kind: Highlight["kind"]): string {
   return kind.split("-").map(word => `${word[0].toUpperCase()}${word.slice(1)}`).join(" ");
 }
 
+const MOMENT_LEAD_LIMIT = 4;
+
+function Moment({ highlight }: { highlight: StagedHighlight }) {
+  return <li data-heat={highlight.emphasis !== "normal"}>
+    <p>{stageLabels[highlight.stage].display} · {highlightKindLabel(highlight.kind)} · {highlight.map}</p>
+    <p>{highlight.text}</p>
+  </li>;
+}
+
 export interface ResultsViewProps {
   mode: GameMode;
   result: TerminalResultProjection;
@@ -137,12 +146,13 @@ export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shar
     })}</ol></section>
     <section aria-label="Key moments" className="results-view__moments">
       <h3>Key moments</h3>
-      {highlights.length ? <ol>{highlights.map(highlight => {
-        return <li key={highlight.id} data-heat={highlight.emphasis !== "normal"}>
-          <p>{stageLabels[highlight.stage].display} · {highlightKindLabel(highlight.kind)} · {highlight.map}</p>
-          <p>{highlight.text}</p>
-        </li>;
-      })}</ol> : <p>{champion ? "No narrated key moments were retained." : "No narrated moments before elimination."}</p>}
+      {highlights.length ? <>
+        <ol>{highlights.slice(0, MOMENT_LEAD_LIMIT).map(highlight => <Moment key={highlight.id} highlight={highlight} />)}</ol>
+        {highlights.length > MOMENT_LEAD_LIMIT && <details className="results-view__moments-more">
+          <summary>{highlights.length - MOMENT_LEAD_LIMIT} additional simulated moments</summary>
+          <ol start={MOMENT_LEAD_LIMIT + 1}>{highlights.slice(MOMENT_LEAD_LIMIT).map(highlight => <Moment key={highlight.id} highlight={highlight} />)}</ol>
+        </details>}
+      </> : <p>{champion ? "No narrated key moments were retained." : "No narrated moments before elimination."}</p>}
     </section>
     <details className="results-view__maps">
       <summary>Map-by-map scores</summary>
