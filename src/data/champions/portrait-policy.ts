@@ -9,6 +9,7 @@ export interface FileInfo {
   note: string;
   source: string;
   conflicts: string[];
+  templateValid: boolean;
 }
 
 export type AcceptedBasis = "open-license" | "riot-fan-policy";
@@ -23,6 +24,7 @@ export type PortraitAssessment = FileInfo & {
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
 const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*(.*?)[ \t]*$/gim;
+const FILE_INFO_START = /\{\{\s*fileinfo\s*(?=\||\}\})/gi;
 
 const plain = (value: string) =>
   value
@@ -42,18 +44,56 @@ const sourceUrl = (value: string) => {
 
   try {
     const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:"
-      ? parsed.href
-      : "";
+    return parsed.protocol === "https:" ? parsed.href : "";
   } catch {
     return "";
   }
 };
 
+const fileInfoTemplate = (wikitext: string) => {
+  const starts = [...wikitext.matchAll(FILE_INFO_START)];
+  if (starts.length !== 1 || starts[0].index === undefined) return null;
+
+  const start = starts[0].index;
+  let depth = 0;
+
+  for (let index = start; index < wikitext.length; index += 1) {
+    const token = wikitext.slice(index, index + 2);
+    if (token === "{{") {
+      depth += 1;
+      index += 1;
+      continue;
+    }
+    if (token === "}}") {
+      depth -= 1;
+      index += 1;
+      if (depth === 0) return wikitext.slice(start, index + 1);
+      if (depth < 0) return null;
+    }
+  }
+
+  return null;
+};
+
+const incompleteFileInfo = (): FileInfo => ({
+  featured: [],
+  date: null,
+  license: "",
+  author: "",
+  copyright: "",
+  note: "",
+  source: "",
+  conflicts: [],
+  templateValid: false,
+});
+
 export function parseFileInfo(wikitext: string): FileInfo {
+  const template = fileInfoTemplate(wikitext);
+  if (!template) return incompleteFileInfo();
+
   const fields = new Map<string, string[]>();
 
-  for (const match of wikitext.matchAll(FIELD)) {
+  for (const match of template.matchAll(FIELD)) {
     const key = match[1].toLowerCase();
     fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
   }
@@ -78,6 +118,7 @@ export function parseFileInfo(wikitext: string): FileInfo {
     note: plain(field("note")),
     source: sourceUrl(field("source")),
     conflicts,
+    templateValid: true,
   };
 }
 
@@ -110,7 +151,7 @@ export function assessPortrait(
     : info.license === "permission" && riotOwned && riotSource
       ? "riot-fan-policy"
       : null;
-  const basis = info.conflicts.length ? null : candidateBasis;
+  const basis = info.templateValid && !info.conflicts.length ? candidateBasis : null;
   const credit = [info.author, info.copyright].filter(Boolean).join(" / ");
   const accepted = featured && basis !== null && Boolean(info.source) && Boolean(credit);
 
@@ -122,7 +163,7 @@ export function assessPortrait(
     fileTitle,
     reason: accepted
       ? "accepted"
-      : info.conflicts.length
+      : !info.templateValid || info.conflicts.length
         ? "metadata-incomplete"
         : !featured
         ? "identity-mismatch"

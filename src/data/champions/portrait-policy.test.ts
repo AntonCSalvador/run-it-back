@@ -142,6 +142,58 @@ describe("portrait source policy", () => {
     });
   });
 
+  it.each([
+    ["raw fields", riot.replace("{{FileInfo\n", "").replace("\n}}", "")],
+    ["unterminated template", riot.slice(0, -2)],
+    ["multiple templates", `${riot}\n${riot}`],
+    ["different template name", riot.replace("{{FileInfo", "{{FileInfo Extra")],
+  ])("rejects %s without exactly one well-formed FileInfo template", (_label, info) => {
+    expect(parseFileInfo(info)).toMatchObject({
+      featured: [],
+      source: "",
+      templateValid: false,
+    });
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: false,
+      basis: null,
+      reason: "metadata-incomplete",
+    });
+  });
+
+  it("parses FileInfo fields after nested templates", () => {
+    const info = riot.replace(
+      "|note=Used With Permission. All rights remain with Riot Games.",
+      "|note={{LicenseNote|text=Used With Permission. All rights remain with Riot Games.}}",
+    );
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      source: "https://www.flickr.com/photos/valorantesports/54347821048/",
+    });
+  });
+
+  it.each(["http://example.test/portrait.jpg", "not-a-url"]) (
+    "requires an HTTPS source for open-license media: %s",
+    (source) => {
+      const info = riot
+        .replace("license=permission", "license=cc-by-sa-4.0")
+        .replace(
+          "[https://www.riotgames.com/ Riot Games]",
+          "Example Photographer",
+        )
+        .replace(
+          "https://www.flickr.com/photos/valorantesports/54347821048/",
+          source,
+        );
+
+      expect(assessPortrait("BeYN", "File:BeYN.jpg", info)).toMatchObject({
+        accepted: false,
+        basis: "open-license",
+        reason: "metadata-incomplete",
+      });
+    },
+  );
+
   it("parses fields case-insensitively and chooses the newest unambiguous image", () => {
     const mixedCaseFields = riot
       .replace("featured=", "FeAtUrEd=")
