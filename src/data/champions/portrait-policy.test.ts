@@ -200,6 +200,33 @@ describe("portrait source policy", () => {
     },
   );
 
+  it("rejects FileInfo inside nested identical markup wrappers", () => {
+    const info = `<div><div></div>${riot}</div>`;
+
+    expect(parseFileInfo(info)).toMatchObject({
+      featured: [],
+      source: "",
+      templateValid: false,
+    });
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: false,
+      basis: null,
+      reason: "metadata-incomplete",
+    });
+  });
+
+  it("preserves root FileInfo text inside field markup", () => {
+    const info = riot.replace(
+      "[https://www.riotgames.com/ Riot Games]",
+      "<span>Riot Games</span>",
+    );
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      copyright: "Riot Games",
+    });
+  });
+
   it("parses FileInfo fields after nested templates", () => {
     const info = riot.replace(
       "|note=Used With Permission. All rights remain with Riot Games.",

@@ -29,7 +29,22 @@ export type PortraitAssessment = FileInfo & {
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
 const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*([\s\S]*?)[ \t]*$/i;
-const FILE_INFO_START = /\{\{\s*FileInfo\s*(?=\||\}\})/g;
+const FILE_INFO_START = /^\{\{\s*FileInfo\s*(?=\||\}\})/;
+const VOID_TAGS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "track",
+  "wbr",
+]);
 
 const plain = (value: string) =>
   value
@@ -55,11 +70,71 @@ const sourceUrl = (value: string) => {
   }
 };
 
-const fileInfoTemplate = (wikitext: string) => {
-  const starts = [...wikitext.matchAll(FILE_INFO_START)];
-  if (starts.length !== 1 || starts[0].index === undefined) return null;
+const tagAt = (wikitext: string, start: number) => {
+  let index = start + 1;
+  const closing = wikitext[index] === "/";
+  if (closing) index += 1;
+  while (/\s/.test(wikitext[index] ?? "")) index += 1;
 
-  const start = starts[0].index;
+  if (!/[A-Za-z]/.test(wikitext[index] ?? "")) return null;
+
+  const nameStart = index;
+  while (/[\w:-]/.test(wikitext[index] ?? "")) index += 1;
+  const name = wikitext.slice(nameStart, index).toLowerCase();
+  let quote: string | null = null;
+
+  while (index < wikitext.length) {
+    const character = wikitext[index];
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === ">") {
+      const raw = wikitext.slice(start, index + 1);
+      return {
+        name,
+        closing,
+        selfClosing: !closing && (VOID_TAGS.has(name) || /\/\s*>$/.test(raw)),
+        end: index + 1,
+      };
+    }
+    index += 1;
+  }
+
+  return { name, closing, selfClosing: false, end: wikitext.length };
+};
+
+const rootFileInfoStarts = (wikitext: string) => {
+  const starts: number[] = [];
+  const tags: string[] = [];
+
+  for (let index = 0; index < wikitext.length; index += 1) {
+    if (wikitext[index] === "<") {
+      const tag = tagAt(wikitext, index);
+      if (tag) {
+        if (tag.closing) {
+          if (tags.at(-1) === tag.name) tags.pop();
+        } else if (!tag.selfClosing) {
+          tags.push(tag.name);
+        }
+        index = tag.end - 1;
+        continue;
+      }
+    }
+
+    if (!tags.length && FILE_INFO_START.test(wikitext.slice(index))) {
+      starts.push(index);
+    }
+  }
+
+  return starts;
+};
+
+const fileInfoTemplate = (wikitext: string) => {
+  const starts = rootFileInfoStarts(wikitext);
+  if (starts.length !== 1) return null;
+
+  const start = starts[0];
   let depth = 0;
 
   for (let index = start; index < wikitext.length; index += 1) {
@@ -141,16 +216,7 @@ const fieldsAtFileInfoDepth = (template: string) => {
 };
 
 export function parseFileInfo(wikitext: string): FileInfo {
-  const visibleWikitext = wikitext
-    .replace(/<!--[\s\S]*?(?:-->|$)/g, "")
-    .replace(
-      /<([A-Za-z][\w:-]*)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,
-      "",
-    )
-    .replace(
-      /<([A-Za-z][\w:-]*)\b(?:(?!\/\s*>)[^>])*?>[\s\S]*$/gi,
-      "",
-    );
+  const visibleWikitext = wikitext.replace(/<!--[\s\S]*?(?:-->|$)/g, "");
   const template = fileInfoTemplate(visibleWikitext);
   if (!template) return incompleteFileInfo();
 
