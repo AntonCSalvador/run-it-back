@@ -95,6 +95,20 @@ describe("App", () => {
     expect(screen.getByText("0 unsaved changes")).toBeInTheDocument();
   });
 
+  it("clears a saved status after a later edit", async () => {
+    const user = userEvent.setup();
+    const save = vi.fn().mockResolvedValue({ revision: "b".repeat(64) });
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+    expect(await screen.findByText("All changes saved")).toBeInTheDocument();
+    await user.clear(screen.getByLabelText("Firepower"));
+    await user.type(screen.getByLabelText("Firepower"), "53");
+
+    expect(screen.getByText("Save state: not saved")).toBeInTheDocument();
+  });
+
   it("keeps edits and reports a failed save", async () => {
     const user = userEvent.setup();
     const save = vi.fn().mockRejectedValue(new Error("disk full"));
@@ -120,6 +134,66 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
     resolveSave({ revision: "b".repeat(64) });
     expect(await screen.findByText("All changes saved")).toBeInTheDocument();
+  });
+
+  it("keeps a newer draft dirty when an earlier save succeeds", async () => {
+    const user = userEvent.setup();
+    let resolveSave!: (value: { revision: string }) => void;
+    const save = vi.fn(() => new Promise<{ revision: string }>(resolve => { resolveSave = resolve; }));
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+    await user.clear(screen.getByLabelText("Firepower"));
+    await user.type(screen.getByLabelText("Firepower"), "53");
+    expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
+    resolveSave({ revision: "b".repeat(64) });
+
+    expect(await screen.findByText("Save state: not saved")).toBeInTheDocument();
+    expect(screen.queryByText("All changes saved")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Firepower")).toHaveValue(53);
+    expect(screen.getByText("1 unsaved change")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Undo changes" }));
+    expect(screen.getByLabelText("Firepower")).toHaveValue(52);
+    expect(screen.getByText("0 unsaved changes")).toBeInTheDocument();
+  });
+
+  it("disables saving while the draft is clean", async () => {
+    const user = userEvent.setup();
+    const save = vi.fn();
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+
+    const button = screen.getByRole("button", { name: "Save all changes" });
+    expect(button).toBeDisabled();
+    await user.click(button);
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it("clears a failed save status when undo changes the draft", async () => {
+    const user = userEvent.setup();
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save: vi.fn().mockRejectedValue(new Error("disk full")) }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("disk full");
+    await user.click(screen.getByRole("button", { name: "Undo changes" }));
+
+    expect(screen.getByText("Save state: not saved")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save all changes" })).toBeDisabled();
+  });
+
+  it("clears a failed save status when reset changes the draft", async () => {
+    const user = userEvent.setup();
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save: vi.fn().mockRejectedValue(new Error("disk full")) }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("disk full");
+    await user.click(screen.getByRole("button", { name: "Reset to derived" }));
+
+    expect(screen.getByText("Save state: not saved")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save all changes" })).toBeDisabled();
   });
 
   it("keeps edits and offers a reload after a revision conflict", async () => {

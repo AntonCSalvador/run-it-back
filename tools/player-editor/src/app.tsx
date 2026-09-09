@@ -24,6 +24,7 @@ export function App({ api = browserEditorApi }: { api?: EditorApi }) {
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>({ state: "idle" });
   const loadGeneration = useRef(0);
+  const draftGeneration = useRef(0);
 
   const load = useCallback(async () => {
     const generation = ++loadGeneration.current;
@@ -79,18 +80,24 @@ export function App({ api = browserEditorApi }: { api?: EditorApi }) {
     setFilters(nextFilters);
     setSelectedId(current => nextCards.some(card => card.generated.id === current) ? current : nextCards[0]?.generated.id ?? null);
   };
+  const changeDraft = (update: (current: Record<string, ManualPlayerEntry>) => Record<string, ManualPlayerEntry>) => {
+    draftGeneration.current += 1;
+    setSaveState(current => current.state === "saving" ? current : { state: "idle" });
+    setDraft(update);
+  };
   const saveAll = async () => {
-    if (!revision || saveState.state === "saving") return;
+    if (!revision || !changedIds.size || saveState.state === "saving") return;
     const submittedDraft = structuredClone(draft);
     if (validateDraft(submittedDraft, cardIds).size > 0) return;
     const generation = loadGeneration.current;
+    const submittedGeneration = draftGeneration.current;
     setSaveState({ state: "saving" });
     try {
       const result = await api.save({ revision, catalog: catalogFromDraft(submittedDraft, cardIds) });
       if (generation !== loadGeneration.current) return;
       setRevision(result.revision);
       setSaved(structuredClone(submittedDraft));
-      setSaveState({ state: "saved" });
+      setSaveState(draftGeneration.current === submittedGeneration ? { state: "saved" } : { state: "idle" });
     } catch (error) {
       if (generation !== loadGeneration.current) return;
       const message = error instanceof Error ? error.message : String(error);
@@ -110,7 +117,7 @@ export function App({ api = browserEditorApi }: { api?: EditorApi }) {
       <p>{reviewedCount} / {document.cards.length} reviewed</p>
       <p>{unsavedLabel}</p>
       {saveState.state === "error" ? <div role="alert">{saveStatus}{saveState.conflict ? <button type="button" onClick={reloadAfterConflict}>Reload player data</button> : null}</div> : <span aria-live="polite">{saveStatus}</span>}
-      <button type="button" disabled={errors.size > 0 || saveState.state === "saving"} onClick={() => void saveAll()}>{saveState.state === "saving" ? "Saving…" : "Save all changes"}</button>
+      <button type="button" disabled={!changedIds.size || errors.size > 0 || saveState.state === "saving"} onClick={() => void saveAll()}>{saveState.state === "saving" ? "Saving…" : "Save all changes"}</button>
     </header>
     <div className="editor-workspace">
       <PlayerList cards={cards} allCards={document.cards} selectedId={activeId} filters={filters} changedIds={changedIds} invalidIds={new Set(errors.keys())} onFiltersChange={changeFilters} onSelect={setSelectedId} />
@@ -121,12 +128,9 @@ export function App({ api = browserEditorApi }: { api?: EditorApi }) {
           saved={saved[activeCard.generated.id]}
           error={errors.get(activeCard.generated.id)}
           traitWeights={document.traitWeights}
-          onChange={entry => {
-            setSaveState({ state: "idle" });
-            setDraft(current => ({ ...current, [entry.cardId]: entry }));
-          }}
-          onUndo={() => setDraft(current => ({ ...current, [activeCard.generated.id]: undoEntry(activeCard.generated.id, current, saved) }))}
-          onReset={() => setDraft(current => ({ ...current, [activeCard.generated.id]: resetEntryToDerived(activeCard, current) }))}
+          onChange={entry => changeDraft(current => ({ ...current, [entry.cardId]: entry }))}
+          onUndo={() => changeDraft(current => ({ ...current, [activeCard.generated.id]: undoEntry(activeCard.generated.id, current, saved) }))}
+          onReset={() => changeDraft(current => ({ ...current, [activeCard.generated.id]: resetEntryToDerived(activeCard, current) }))}
         /> : <p>Select a player card to edit.</p>}
       </section>
     </div>
