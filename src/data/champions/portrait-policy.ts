@@ -45,6 +45,7 @@ const VOID_TAGS = new Set([
   "track",
   "wbr",
 ]);
+const MEDIAWIKI_SELF_CLOSING_TAGS = new Set(["ref", "references"]);
 
 const plain = (value: string) =>
   value
@@ -94,7 +95,10 @@ const tagAt = (wikitext: string, start: number) => {
       return {
         name,
         closing,
-        selfClosing: !closing && (VOID_TAGS.has(name) || /\/\s*>$/.test(raw)),
+        selfClosing:
+          !closing &&
+          (VOID_TAGS.has(name) ||
+            (MEDIAWIKI_SELF_CLOSING_TAGS.has(name) && /\/\s*>$/.test(raw))),
         end: index + 1,
       };
     }

@@ -215,6 +215,24 @@ describe("portrait source policy", () => {
     });
   });
 
+  it.each(["div", "span"])(
+    "rejects FileInfo after invalid self-closing %s markup",
+    (tag) => {
+      const info = `<${tag}/>${riot}`;
+
+      expect(parseFileInfo(info)).toMatchObject({
+        featured: [],
+        source: "",
+        templateValid: false,
+      });
+      expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+        accepted: false,
+        basis: null,
+        reason: "metadata-incomplete",
+      });
+    },
+  );
+
   it("preserves root FileInfo text inside field markup", () => {
     const info = riot.replace(
       "[https://www.riotgames.com/ Riot Games]",
