@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
 import { AppHeader } from "./app-header";
@@ -13,6 +13,8 @@ import { dataset as fixtureDataset, lineup, series, terminalState } from "./tour
 import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
 import { RosterBar } from "./roster-bar";
+import { PlayerPicker } from "./player-picker";
+import { IglPicker } from "./igl-picker";
 
 function AccentProbe() { const fire = useFireAccent(); return <button className={fire.fireClass} onClick={fire.trigger}>ignite</button>; }
 function animationEnd(target: HTMLElement, animationName: string): void {
@@ -151,6 +153,20 @@ describe("broadcast accessibility", () => {
     expect(fireEvent.keyDown(roster, { key: "Enter" })).toBe(true);
     expect(fireEvent.keyDown(screen.getByText("duelist"), { key: "ArrowRight" })).toBe(true);
     expect(scrollBy).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps draft portraits decorative and leader radios named by handle and year", () => {
+    const cards = parseDataset(minimalDataset).cards.slice(0, 5);
+    render(<>
+      <PlayerPicker team={teams[0]} cards={cards} portraitForPlayer={playerId => playerId === cards[0].playerId ? "/assets/players/test.webp" : null} onChoose={vi.fn()} onBack={vi.fn()} />
+      <IglPicker cards={cards} selectedId={null} portraitForPlayer={playerId => playerId === cards[0].playerId ? "/assets/players/test.webp" : null} onSelect={vi.fn()} onStart={vi.fn()} />
+    </>);
+
+    for (const card of cards) {
+      const choice = screen.getByRole("button", { name: `${card.displayHandle} ${card.year}` });
+      expect(within(choice).queryByRole("img")).not.toBeInTheDocument();
+      expect(screen.getByRole("radio", { name: `${card.displayHandle} ${card.year}` })).toBeVisible();
+    }
   });
 
   it("allows keyboard focus and changes a live phase status from mode to team", () => {
