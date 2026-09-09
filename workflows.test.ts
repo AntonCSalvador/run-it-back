@@ -26,8 +26,9 @@ describe("workflow action versions", () => {
     expect(normalCi).toMatch(/test:\s*\n\s*if: github\.event_name != 'workflow_dispatch' \|\| inputs\.snapshot_candidate != true/);
     expect(normalCi).not.toContain("--update-snapshots");
     expect(candidate).toMatch(/github\.event_name == 'workflow_dispatch'[\s\S]*?inputs\.snapshot_candidate == true/);
-    expect(candidate).toMatch(/test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey" --update-snapshots[\s\S]*?test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey"/);
+    expect(candidate).toMatch(/test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey\|captures champion recap" --update-snapshots=all[\s\S]*?test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey\|captures champion recap"/);
     expect(candidate).toMatch(/e2e\/__screenshots__\/linux\/\*\*/);
+    expect(candidate).toContain("test-results");
     expect(candidate).not.toContain("git commit");
   });
 
@@ -44,5 +45,20 @@ describe("workflow action versions", () => {
     const quickGuide = readFileSync("docs/vct-algorithm-quick-guide.md", "utf8");
     expect(quickGuide).toContain("npm run edit:players");
     expect(quickGuide).toContain("manual-player-data.json");
+  });
+
+  it("runs all functional E2E journeys until every redesigned Linux outcome baseline exists", () => {
+    const ci = readFileSync(".github/workflows/ci.yml", "utf8");
+    const [normalCi] = ci.split("  snapshot-candidate:");
+    for (const path of [
+      "e2e/__screenshots__/linux/desktop/results-eliminated.png",
+      "e2e/__screenshots__/linux/desktop/results-champion.png",
+      "e2e/__screenshots__/linux/pixel-7/results-eliminated.png",
+      "e2e/__screenshots__/linux/pixel-7/results-champion.png",
+    ]) expect(normalCi).toContain(path);
+    expect(normalCi).toContain('VISUAL_TESTS="captures the complete Free Play journey|captures champion recap"');
+    expect(normalCi).toContain('npm run test:e2e -- --grep-invert "$VISUAL_TESTS"');
+    expect(normalCi).toContain("npm run test:e2e\n");
+    expect(normalCi).not.toContain("--update-snapshots");
   });
 });
