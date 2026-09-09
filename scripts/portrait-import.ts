@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -8,7 +9,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { basename, join } from "node:path";
+import { join } from "node:path";
 import sharp from "sharp";
 import { assessPortrait, choosePortrait } from "../src/data/champions/portrait-policy";
 
@@ -38,6 +39,7 @@ export interface ClientOptions {
   fetch: typeof globalThis.fetch;
   wait(ms: number): Promise<void>;
   userAgent: string;
+  scheduler?: LiquipediaRequestScheduler;
 }
 
 const API_DELAY_MS = 2_000;
@@ -47,6 +49,27 @@ const COMMONS_API = "https://liquipedia.net/commons/api.php";
 
 const sha256 = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 const sleep = (milliseconds: number) => new Promise<void>(resolve => setTimeout(resolve, milliseconds));
+
+export class LiquipediaRequestScheduler {
+  private requested = false;
+  private queue: Promise<void> = Promise.resolve();
+
+  schedule<T>(wait: (milliseconds: number) => Promise<void>, request: () => Promise<T>): Promise<T> {
+    const next = this.queue.then(async () => {
+      if (this.requested) await wait(API_DELAY_MS);
+      this.requested = true;
+      return request();
+    }, async () => {
+      if (this.requested) await wait(API_DELAY_MS);
+      this.requested = true;
+      return request();
+    });
+    this.queue = next.then(() => undefined, () => undefined);
+    return next;
+  }
+}
+
+const globalRequestScheduler = new LiquipediaRequestScheduler();
 
 function isHttps(value: string): boolean {
   try {
@@ -60,19 +83,26 @@ export class CachedLiquipediaClient {
   readonly fetch: typeof globalThis.fetch;
   private readonly cacheDir: string;
   private readonly wait: (milliseconds: number) => Promise<void>;
+  private readonly scheduler: LiquipediaRequestScheduler;
   readonly userAgent: string;
-  private requestedUncached = false;
-  private requestQueue: Promise<void> = Promise.resolve();
 
   constructor(options: ClientOptions) {
     this.cacheDir = options.cacheDir;
     this.fetch = options.fetch;
     this.wait = options.wait;
     this.userAgent = options.userAgent;
+    this.scheduler = options.scheduler ?? globalRequestScheduler;
   }
 
   cachePath(url: string): string {
     return join(this.cacheDir, `${sha256(url)}.json`);
+  }
+
+  request(url: string, init: RequestInit = {}): Promise<Response> {
+    const headers = new Headers(init.headers);
+    headers.set("Accept-Encoding", "gzip");
+    headers.set("User-Agent", this.userAgent);
+    return this.scheduler.schedule(this.wait, () => this.fetch(url, { ...init, headers }));
   }
 
   async json(url: string): Promise<unknown> {
@@ -86,15 +116,7 @@ export class CachedLiquipediaClient {
     }
 
     const fetchJson = async () => {
-      if (this.requestedUncached) await this.wait(API_DELAY_MS);
-      this.requestedUncached = true;
-      const response = await this.fetch(url, {
-        headers: {
-          Accept: "application/json",
-          "Accept-Encoding": "gzip",
-          "User-Agent": this.userAgent,
-        },
-      });
+      const response = await this.request(url, { headers: { Accept: "application/json" } });
       if (!response.ok) throw new Error(`Liquipedia ${response.status} for ${url}`);
       const payload = await response.json();
       mkdirSync(this.cacheDir, { recursive: true });
@@ -104,11 +126,64 @@ export class CachedLiquipediaClient {
       return payload;
     };
 
-    const next = this.requestQueue.then(fetchJson, fetchJson);
-    this.requestQueue = next.then(() => undefined, () => undefined);
-    return next;
+    return fetchJson();
   }
 }
+
+const expectedSourceId = (playerId: string) => {
+  const match = /^player-(\d+)$/.exec(playerId);
+  if (!match) throw new Error(`invalid portrait playerId ${playerId}`);
+  return `liquipedia-portrait-${match[1]}`;
+};
+
+const validateGeneratedPortraits = (players: ImportPlayer[], results: GeneratedPortrait[], stageDir: string) => {
+  const requested = new Map(players.map(player => [player.id, player]));
+  if (requested.size !== players.length) throw new Error("duplicate requested playerId");
+  const unique = (values: string[]) => new Set(values).size === values.length;
+  if (!unique(results.map(result => result.playerId))) throw new Error("duplicate portrait playerId");
+  if (!unique(results.map(result => result.sourceId))) throw new Error("duplicate portrait sourceId");
+  if (!unique(results.map(result => result.portrait))) throw new Error("duplicate portrait path");
+
+  return results.map(result => {
+    if (!requested.has(result.playerId)) throw new Error(`unrequested portrait playerId ${result.playerId}`);
+    if (!/^[0-9a-f]{64}$/.test(result.sha256)) throw new Error(`invalid portrait sha256 for ${result.playerId}`);
+    const filename = `${result.playerId}.${result.sha256.slice(0, 12)}.webp`;
+    const portrait = `/assets/players/${filename}`;
+    if (result.portrait !== portrait) throw new Error(`invalid portrait path for ${result.playerId}`);
+    const sourceId = expectedSourceId(result.playerId);
+    if (result.sourceId !== sourceId || result.source.id !== sourceId) throw new Error(`portrait source ID mismatch for ${result.playerId}`);
+    const stagedAsset = join(stageDir, filename);
+    if (!existsSync(stagedAsset)) throw new Error(`staged portrait is missing for ${result.playerId}`);
+    if (sha256(readFileSync(stagedAsset)) !== result.sha256) throw new Error(`staged portrait checksum mismatch for ${result.playerId}`);
+    return { result, filename, stagedAsset };
+  });
+};
+
+type Publication = { staged: string; target: string; backup?: string; published: boolean };
+
+const publishTransaction = (stageDir: string, publications: Publication[], createdPlayersDirectory: boolean, playersDirectory: string) => {
+  const rollbackDirectory = join(stageDir, "rollback");
+  mkdirSync(rollbackDirectory, { recursive: true });
+  try {
+    for (let index = 0; index < publications.length; index += 1) {
+      const publication = publications[index];
+      if (existsSync(publication.target)) {
+        if (!lstatSync(publication.target).isFile()) throw new Error(`publication target is not a file: ${publication.target}`);
+        publication.backup = join(rollbackDirectory, String(index));
+        renameSync(publication.target, publication.backup);
+      }
+      renameSync(publication.staged, publication.target);
+      publication.published = true;
+    }
+  } catch (error) {
+    for (const publication of [...publications].reverse()) {
+      if (publication.published && existsSync(publication.target)) rmSync(publication.target, { force: true });
+      if (publication.backup && existsSync(publication.backup)) renameSync(publication.backup, publication.target);
+    }
+    if (createdPlayersDirectory && existsSync(playersDirectory)) rmSync(playersDirectory, { recursive: true, force: true });
+    throw error;
+  }
+};
 
 export async function buildPortraitOutputs({ root, players, discover }: ImportPaths): Promise<void> {
   const catalogDirectory = join(root, "src", "data", "champions");
@@ -125,34 +200,24 @@ export async function buildPortraitOutputs({ root, players, discover }: ImportPa
       .map(discovery => discovery.value);
     const results = discovered.filter((result): result is GeneratedPortrait => result !== null)
       .sort((left, right) => left.playerId.localeCompare(right.playerId));
-    const unique = (values: string[]) => new Set(values).size === values.length;
-    if (!unique(results.map(result => result.playerId))) throw new Error("duplicate portrait playerId");
-    if (!unique(results.map(result => result.sourceId))) throw new Error("duplicate portrait sourceId");
-    if (!unique(results.map(result => result.portrait))) throw new Error("duplicate portrait path");
-    if (results.some(result => result.source.id !== result.sourceId)) throw new Error("portrait source ID mismatch");
+    const stagedAssets = validateGeneratedPortraits(players, results, stageDir);
 
     const assetRows = results.map(({ playerId, portrait, sourceId, sha256: checksum }) => ({ playerId, portrait, sourceId, sha256: checksum }));
     const sourceRows = results.map(result => result.source);
 
     const playersDirectory = join(root, "public", "assets", "players");
-    mkdirSync(playersDirectory, { recursive: true });
-    const stagedAssets = results.map(result => ({
-      result,
-      filename: basename(result.portrait),
-      stagedAsset: join(stageDir, basename(result.portrait)),
-    }));
-    for (const { result, stagedAsset } of stagedAssets) {
-      if (!existsSync(stagedAsset)) throw new Error(`staged portrait is missing for ${result.playerId}`);
-    }
-    for (const { filename, stagedAsset } of stagedAssets) {
-      renameSync(stagedAsset, join(playersDirectory, filename));
-    }
-
     mkdirSync(catalogDirectory, { recursive: true });
-    writeFileSync(`${assetsPath}.tmp`, `${JSON.stringify(assetRows, null, 2)}\n`);
-    writeFileSync(`${sourcesPath}.tmp`, `${JSON.stringify(sourceRows, null, 2)}\n`);
-    renameSync(`${assetsPath}.tmp`, assetsPath);
-    renameSync(`${sourcesPath}.tmp`, sourcesPath);
+    const stagedAssetsCatalog = join(stageDir, "portrait-assets.json.tmp");
+    const stagedSourcesCatalog = join(stageDir, "portrait-sources.json.tmp");
+    writeFileSync(stagedAssetsCatalog, `${JSON.stringify(assetRows, null, 2)}\n`);
+    writeFileSync(stagedSourcesCatalog, `${JSON.stringify(sourceRows, null, 2)}\n`);
+    const createdPlayersDirectory = !existsSync(playersDirectory);
+    mkdirSync(playersDirectory, { recursive: true });
+    publishTransaction(stageDir, [
+      ...stagedAssets.map(({ filename, stagedAsset }) => ({ staged: stagedAsset, target: join(playersDirectory, filename), published: false })),
+      { staged: stagedAssetsCatalog, target: assetsPath, published: false },
+      { staged: stagedSourcesCatalog, target: sourcesPath, published: false },
+    ], createdPlayersDirectory, playersDirectory);
   } finally {
     rmSync(stageDir, { recursive: true, force: true });
   }
@@ -235,18 +300,31 @@ async function readLimited(response: Response): Promise<Buffer> {
   return Buffer.concat(chunks);
 }
 
-const report = (player: ImportPlayer, reason: "missing" | "rights-rejected" | "ambiguous") => {
+export type PortraitOutcomeKind = "accepted" | "missing" | "rights-rejected" | "ambiguous";
+export interface PortraitOutcome { playerId: string; kind: PortraitOutcomeKind }
+
+export function formatPortraitImportSummary(outcomes: PortraitOutcome[], total: number): string {
+  if (outcomes.length !== total || new Set(outcomes.map(outcome => outcome.playerId)).size !== total) {
+    throw new Error("portrait outcome total does not match input players");
+  }
+  const count = (kind: PortraitOutcomeKind) => outcomes.filter(outcome => outcome.kind === kind).length;
+  return `portrait import summary: accepted=${count("accepted")} missing=${count("missing")} rights-rejected=${count("rights-rejected")} ambiguous=${count("ambiguous")} total=${total}`;
+}
+
+const report = (player: ImportPlayer, reason: Exclude<PortraitOutcomeKind, "accepted">, record?: (outcome: PortraitOutcome) => void) => {
   console.warn(`portrait ${reason}: ${player.id} (${player.canonicalHandle})`);
+  record?.({ playerId: player.id, kind: reason });
 };
 
 export async function discoverLiquipediaPortrait(
   player: ImportPlayer,
   stageDir: string,
   client: CachedLiquipediaClient,
+  record?: (outcome: PortraitOutcome) => void,
 ): Promise<GeneratedPortrait | null> {
   const fileTitles = await queryAllImages(player, client);
   if (!fileTitles.length) {
-    report(player, "missing");
+    report(player, "missing", record);
     return null;
   }
 
@@ -257,11 +335,11 @@ export async function discoverLiquipediaPortrait(
   });
   const selected = choosePortrait(candidates.map(candidate => candidate.assessment));
   if (selected.kind === "ambiguous") {
-    report(player, "ambiguous");
+    report(player, "ambiguous", record);
     return null;
   }
   if (selected.kind === "none") {
-    report(player, candidates.some(candidate => candidate.assessment.reason === "rights-rejected") ? "rights-rejected" : "missing");
+    report(player, candidates.some(candidate => candidate.assessment.reason === "rights-rejected") ? "rights-rejected" : "missing", record);
     return null;
   }
 
@@ -270,7 +348,7 @@ export async function discoverLiquipediaPortrait(
   if (!originalUrl || !isHttps(originalUrl) || !isHttps(selected.candidate.source)) {
     throw new Error(`invalid HTTPS portrait URL for ${player.id}`);
   }
-  const response = await client.fetch(originalUrl, { headers: { "User-Agent": client.userAgent } });
+  const response = await client.request(originalUrl);
   if (!response.ok) throw new Error(`Liquipedia ${response.status} for ${originalUrl}`);
   const bytes = await readLimited(response);
   const webp = await sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 })
@@ -285,12 +363,12 @@ export async function discoverLiquipediaPortrait(
   const filename = `${player.id}.${checksum.slice(0, 12)}.webp`;
   mkdirSync(stageDir, { recursive: true });
   writeFileSync(join(stageDir, filename), webp);
-  const sourceId = `liquipedia-portrait-${player.id.replace(/^player-/, "")}`;
+  const sourceId = expectedSourceId(player.id);
   const title = selected.candidate.fileTitle!;
   const descriptionUrl = `https://liquipedia.net/commons/${encodeURIComponent(title).replace(/%3A/gi, ":")}`;
   if (!isHttps(descriptionUrl)) throw new Error(`invalid Commons description URL for ${player.id}`);
 
-  return {
+  const generated: GeneratedPortrait = {
     playerId: player.id,
     portrait: `/assets/players/${filename}`,
     sourceId,
@@ -305,6 +383,8 @@ export async function discoverLiquipediaPortrait(
       license: selected.candidate.license,
     },
   };
+  record?.({ playerId: player.id, kind: "accepted" });
+  return generated;
 }
 
 export interface ImportPortraitOptions {
@@ -314,6 +394,7 @@ export interface ImportPortraitOptions {
   cacheDir?: string;
   fetch?: typeof globalThis.fetch;
   wait?: (milliseconds: number) => Promise<void>;
+  scheduler?: LiquipediaRequestScheduler;
 }
 
 export async function importPortraits(options: ImportPortraitOptions): Promise<void> {
@@ -322,10 +403,13 @@ export async function importPortraits(options: ImportPortraitOptions): Promise<v
     fetch: options.fetch ?? globalThis.fetch,
     wait: options.wait ?? sleep,
     userAgent: options.userAgent,
+    scheduler: options.scheduler,
   });
+  const outcomes: PortraitOutcome[] = [];
   await buildPortraitOutputs({
     root: options.root,
     players: options.players,
-    discover: (player, stageDir) => discoverLiquipediaPortrait(player, stageDir, client),
+    discover: (player, stageDir) => discoverLiquipediaPortrait(player, stageDir, client, outcome => outcomes.push(outcome)),
   });
+  console.log(formatPortraitImportSummary(outcomes, options.players.length));
 }
