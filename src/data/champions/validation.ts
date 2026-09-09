@@ -33,8 +33,8 @@ export function validateChampions(dataset: GameDataset, evidence: Evidence[]): v
     source !== null && typeof source === "object" && "id" in source && typeof source.id === "string" && portraitSourceId.test(source.id)
   ));
   const datasetPortraitSources = dataset.sources.filter(source => portraitSourceId.test(source.id));
-  validatePortraitCatalog(dataset.players, parsedPortraitAssets, expectedPortraitSources);
-  validatePortraitCatalog(dataset.players, parsedPortraitAssets, datasetPortraitSources);
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, expectedPortraitSources, { requireOverlay: true });
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, datasetPortraitSources, { requireOverlay: true });
   if (datasetPortraitSources.length !== expectedPortraitSources.length || datasetPortraitSources.some(source => {
     const expected = expectedPortraitSources.find(candidate => candidate.id === source.id);
     return !expected || !sameSourceMetadata(source, expected);

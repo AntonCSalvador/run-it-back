@@ -61,7 +61,9 @@ function isHttps(url: string | undefined): url is string {
   return typeof url === "string" && new URL(url).protocol === "https:";
 }
 
-export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown): void {
+type PortraitCatalogValidationOptions = { requireOverlay?: boolean };
+
+export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown, options: PortraitCatalogValidationOptions = {}): void {
   const knownPlayers = new Set(players.map(player => player.id));
   if (Array.isArray(input)) {
     for (const row of input) {
@@ -99,6 +101,21 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
     if (source.usage === "asset" && !portraitSourceId.test(source.id)) throw new Error(`portrait asset source ID ${source.id}`);
     if (!portraitSourceId.test(source.id)) continue;
     if (!assets.some(asset => asset.sourceId === source.id)) throw new Error(`unused portrait source ${source.id}`);
+  }
+
+  if (options.requireOverlay) {
+    const assetsByPlayerId = new Map(assets.map(asset => [asset.playerId, asset]));
+    for (const player of players) {
+      const asset = assetsByPlayerId.get(player.id);
+      const portraitSourceIds = player.sourceIds.filter(sourceId => portraitSourceId.test(sourceId));
+      if (!asset) {
+        if (player.portrait !== null) throw new Error(`portrait overlay missing for ${player.id}`);
+        if (portraitSourceIds.length) throw new Error(`portrait source overlay missing for ${player.id}`);
+        continue;
+      }
+      if (player.portrait !== asset.portrait) throw new Error(`portrait overlay mismatch for ${player.id}`);
+      if (portraitSourceIds.length !== 1 || portraitSourceIds[0] !== asset.sourceId) throw new Error(`portrait source overlay mismatch for ${player.id}`);
+    }
   }
 }
 

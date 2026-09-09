@@ -7,6 +7,7 @@ import { validateChampions, type Evidence } from "./validation";
 const player = { id: "player-1", canonicalHandle: "BeYN", portrait: null, sourceIds: ["fact"] };
 const row = { playerId: "player-1", portrait: "/assets/players/player-1.abcdef123456.webp", sourceId: "liquipedia-portrait-1", sha256: "a".repeat(64) };
 const source = { id: row.sourceId, url: "https://liquipedia.net/commons/File:BeYN.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/54347821048/", retrievedAt: "2026-09-08", usage: "asset" as const, credit: "Liu YiCun / Riot Games", license: "Riot Legal Jibber Jabber — noncommercial fan project" };
+const overlaidPlayer = applyPortraitCatalog([player], [row])[0];
 
 describe("portrait catalog", () => {
   it("overlays portrait and appends only its asset source", () => {
@@ -33,5 +34,18 @@ describe("portrait catalog", () => {
     const data = structuredClone(championsDataset);
     data.sources.push({ id: "liquipedia-portrait-999", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "https://www.flickr.com/photos/riot/999/", retrievedAt: "2026-09-08", usage: "asset", credit: "Riot Games", license: "Noncommercial fan project" });
     expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/unused portrait source/);
+  });
+
+  it("requires final players to match their portrait overlays exactly", () => {
+    expect(() => validatePortraitCatalog([overlaidPlayer], [row], [source], { requireOverlay: true })).not.toThrow();
+    expect(() => validatePortraitCatalog([{ ...overlaidPlayer, portrait: "/assets/players/player-1.123456abcdef.webp" }], [row], [source], { requireOverlay: true })).toThrow(/portrait overlay/);
+    expect(() => validatePortraitCatalog([{ ...overlaidPlayer, portrait: null }], [row], [source], { requireOverlay: true })).toThrow(/portrait overlay/);
+    expect(() => validatePortraitCatalog([{ ...overlaidPlayer, sourceIds: ["fact", "liquipedia-portrait-2"] }], [row], [source], { requireOverlay: true })).toThrow(/portrait source overlay/);
+    expect(() => validatePortraitCatalog([{ ...overlaidPlayer, sourceIds: ["fact", row.sourceId, "liquipedia-portrait-2"] }], [row], [source], { requireOverlay: true })).toThrow(/portrait source overlay/);
+  });
+
+  it("requires players without overlays to keep portrait fields empty", () => {
+    expect(() => validatePortraitCatalog([{ ...player, portrait: row.portrait }], [], [], { requireOverlay: true })).toThrow(/portrait overlay/);
+    expect(() => validatePortraitCatalog([{ ...player, sourceIds: ["fact", row.sourceId] }], [], [], { requireOverlay: true })).toThrow(/portrait source overlay/);
   });
 });
