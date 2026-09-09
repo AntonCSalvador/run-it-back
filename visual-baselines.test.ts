@@ -5,18 +5,18 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const approvedWindowsBlobs = {
-  "desktop/complete-roster.png": "eadc15495e5c3f9a461268fcefa37d12c20c47c0",
-  "desktop/mode-selection.png": "0e31848491e30b87f7bbae01520018c65e4b6a73",
-  "desktop/player-picker.png": "ce0b9c75df03983298470391a5975ea68bff5e8d",
-  "desktop/results.png": "2a372c1df9cc2e466da998b63646f5e54b5e99fe",
-  "desktop/semifinal-highlights.png": "43de172d1a6c687ff7fb1f8404c632f1d8cd9dbe",
-  "desktop/three-team-offer.png": "13ddda1b54a988be5b58daff79a2b728e0d5efcd",
-  "pixel-7/complete-roster.png": "51d5c266767ca5a9d93c0f0ae08f433914b14dbe",
-  "pixel-7/mode-selection.png": "951638a6ee990b72489b6ae73ac3282ddd5a1922",
-  "pixel-7/player-picker.png": "1698008f91ae3c980fa75476ae44d4c8fa27bc5d",
-  "pixel-7/results.png": "3ac078c75b3f445e55f991ac5a420753016a4259",
-  "pixel-7/semifinal-highlights.png": "0bcc8344cfe6182b9eb0853b3abf99d1c2fd91a7",
-  "pixel-7/three-team-offer.png": "4468842667b21cb718c5e579d66b8ca8402a548c",
+  "desktop/complete-roster.png": "c26029600cda5269b9feb7da52ac7621bd134119",
+  "desktop/mode-selection.png": "ab49d259eebaddc596501bc2e8c1237de95c445d",
+  "desktop/player-picker.png": "abc2938020764e4d955624f79dabada39039c0b1",
+  "desktop/results.png": "3263665a7792d5c9bd165667cf8f9219c0957837",
+  "desktop/semifinal-highlights.png": "85524ecebebbfdd09f64cad24dd12aac4b10cd05",
+  "desktop/three-team-offer.png": "0158803dcc5fe6dbdc8e104b6e1761f19369bb23",
+  "pixel-7/complete-roster.png": "0a06668f56cc5f74b6ef232490af73090f0edf6f",
+  "pixel-7/mode-selection.png": "97d77c86f724e733cbae0a22ac9ca1066767c7ec",
+  "pixel-7/player-picker.png": "8cef87bc486ace86d38b9c5f684fb12aed48e158",
+  "pixel-7/results.png": "15d31ad192c5c94055f7c933c385343afb0b638c",
+  "pixel-7/semifinal-highlights.png": "8f39d4a35c78a0097aeb64dafa67ac4bab3c40e4",
+  "pixel-7/three-team-offer.png": "0dbec1f5e82c0d7b5c71ce497128a240f6f48136",
 } as const;
 
 const approvedLinuxBaselines = {
