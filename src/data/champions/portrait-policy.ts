@@ -83,7 +83,7 @@ export function parseFileInfo(wikitext: string): FileInfo {
 
 export function assessPortrait(
   handle: string,
-  _fileTitle: string,
+  fileTitle: string,
   wikitext: string,
 ): PortraitAssessment {
   const info = parseFileInfo(wikitext);
@@ -119,6 +119,7 @@ export function assessPortrait(
     accepted,
     basis,
     credit,
+    fileTitle,
     reason: accepted
       ? "accepted"
       : info.conflicts.length

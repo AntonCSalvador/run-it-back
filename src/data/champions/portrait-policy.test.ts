@@ -159,24 +159,19 @@ describe("portrait source policy", () => {
       copyright: "Riot Games",
       source: "https://www.flickr.com/photos/valorantesports/54347821048/",
     });
-    const older = {
-      ...assessPortrait(
-        "BeYN",
-        "File:old.jpg",
-        riot.replace("2025-02-24", "2024-01-01"),
-      ),
-      fileTitle: "File:old.jpg",
-    };
-    const newer = {
-      ...assessPortrait("BeYN", "File:new.jpg", riot),
-      fileTitle: "File:new.jpg",
-    };
+    const older = assessPortrait(
+      "BeYN",
+      "File:old.jpg",
+      riot.replace("2025-02-24", "2024-01-01"),
+    );
+    const newer = assessPortrait("BeYN", "File:new.jpg", riot);
     expect(choosePortrait([older, newer])).toMatchObject({
       kind: "selected",
       candidate: { fileTitle: "File:new.jpg" },
     });
+    const tied = assessPortrait("BeYN", "File:tied.jpg", riot);
     expect(
-      choosePortrait([newer, { ...newer, fileTitle: "File:tied.jpg" }]),
+      choosePortrait([newer, tied]),
     ).toEqual({
       kind: "ambiguous",
       candidates: ["File:new.jpg", "File:tied.jpg"],
