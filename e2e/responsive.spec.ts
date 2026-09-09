@@ -13,30 +13,51 @@ async function auditPhase(page: Page): Promise<void> {
   await assertAllEnabledActionsReachableByTab(page);
 }
 
+async function expectRenderedWithin(child: Locator, container: Locator): Promise<void> {
+  const [childBox, containerBox] = await Promise.all([child.boundingBox(), container.boundingBox()]);
+  if (!childBox || !containerBox) throw new Error("Expected visible media and container bounds");
+  const tolerance = 1;
+  expect(childBox.x).toBeGreaterThanOrEqual(containerBox.x - tolerance);
+  expect(childBox.y).toBeGreaterThanOrEqual(containerBox.y - tolerance);
+  expect(childBox.x + childBox.width).toBeLessThanOrEqual(containerBox.x + containerBox.width + tolerance);
+  expect(childBox.y + childBox.height).toBeLessThanOrEqual(containerBox.y + containerBox.height + tolerance);
+}
+
 test("portrait choices and compact roster rows keep their responsive hierarchy", async ({ page }, testInfo) => {
   await page.goto("/?e2e-seed=e2e-164");
   await keyboardActivate(page, page.getByRole("button", { name: "Free Play", exact: true }));
-  await expect(page.locator(".team-card .media-mark__fallback").first()).toHaveCSS("object-fit", "contain");
-  await keyboardActivate(page, page.locator(".team-card").first());
+  const teamCard = page.locator(".team-card").first();
+  const teamMark = teamCard.locator(".media-mark");
+  const teamFallback = teamMark.locator(".media-mark__fallback");
+  await expect(teamFallback).toHaveCSS("object-fit", "contain");
+  await expectRenderedWithin(teamFallback, teamMark);
+  await expectRenderedWithin(teamMark, teamCard);
+  await keyboardActivate(page, teamCard);
 
   const choice = page.locator(".player-portrait--choice").first();
+  const choiceCard = page.locator('[data-testid^="player-card-"]').first();
+  const choiceImage = choice.locator(".media-mark__image");
   const choiceSize = testInfo.project.name === "pixel-7" ? "64px" : "68px";
   await expect(choice).toHaveCSS("width", choiceSize);
   await expect(choice).toHaveCSS("height", choiceSize);
-  expect(await choice.evaluate(element => Boolean(element.closest('[data-testid^="player-card-"]')))).toBe(true);
-  await expect(choice.locator(".media-mark__image")).toHaveCount(1);
-  await expect(choice.locator(".media-mark__image")).toHaveCSS("object-fit", "cover");
+  await expect(choiceImage).toHaveCount(1);
+  await expect(choiceImage).toHaveCSS("object-fit", "cover");
+  await expectRenderedWithin(choiceImage, choice);
+  await expectRenderedWithin(choice, choiceCard);
   await auditPhase(page);
 
   await keyboardActivate(page, choice.locator("xpath=ancestor::button"));
   await keyboardActivate(page, page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first());
 
   const compact = page.locator(".roster-bar .player-portrait--compact").first();
+  const compactImage = compact.locator(".media-mark__image");
+  const compactSlot = compact.locator("xpath=..");
   await expect(compact).toHaveCSS("width", "36px");
   await expect(compact).toHaveCSS("height", "36px");
-  expect(await compact.evaluate(element => Boolean(element.closest(".roster-bar > div")))).toBe(true);
-  await expect(compact.locator(".media-mark__image")).toHaveCount(1);
-  await expect(compact.locator(".media-mark__image")).toHaveCSS("object-fit", "cover");
+  await expect(compactImage).toHaveCount(1);
+  await expect(compactImage).toHaveCSS("object-fit", "cover");
+  await expectRenderedWithin(compactImage, compact);
+  await expectRenderedWithin(compact, compactSlot);
   await auditPhase(page);
 });
 
