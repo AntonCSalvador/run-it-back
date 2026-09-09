@@ -381,6 +381,7 @@ async function queryFilePages(titles: string[], client: CachedLiquipediaClient):
 
 export type PortraitOutcomeKind = "accepted" | "missing" | "rights-rejected" | "ambiguous";
 export interface PortraitOutcome { playerId: string; kind: PortraitOutcomeKind }
+export type PortraitConverter = (bytes: Buffer) => Promise<Buffer>;
 
 export function formatPortraitImportSummary(outcomes: PortraitOutcome[], total: number): string {
   if (outcomes.length !== total || new Set(outcomes.map(outcome => outcome.playerId)).size !== total) {
@@ -395,11 +396,20 @@ const report = (player: ImportPlayer, reason: Exclude<PortraitOutcomeKind, "acce
   record?.({ playerId: player.id, kind: reason });
 };
 
+const convertPortrait: PortraitConverter = bytes => sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 })
+  .rotate()
+  .resize(256, 256, { fit: "cover", position: "attention", withoutEnlargement: true })
+  .webp({ quality: 82, effort: 5 })
+  .toBuffer();
+
+const technicalImageFailure = (error: unknown) => /(?:unsupported image|pixel limit|portrait download exceeds|smaller than 96x96)/i.test(error instanceof Error ? error.message : String(error));
+
 export async function discoverLiquipediaPortrait(
   player: ImportPlayer,
   stageDir: string,
   client: CachedLiquipediaClient,
   record?: (outcome: PortraitOutcome) => void,
+  converter: PortraitConverter = convertPortrait,
 ): Promise<GeneratedPortrait | null> {
   const fileTitles = await queryAllImages(player, client);
   if (!fileTitles.length) {
@@ -428,14 +438,17 @@ export async function discoverLiquipediaPortrait(
     throw new Error(`invalid HTTPS portrait URL for ${player.id}`);
   }
   const response = await client.media(originalUrl);
-  const bytes = await client.bytes(response, MAX_DOWNLOAD_BYTES);
-  const webp = await sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 })
-    .rotate()
-    .resize(256, 256, { fit: "cover", position: "attention", withoutEnlargement: true })
-    .webp({ quality: 82, effort: 5 })
-    .toBuffer();
-  const metadata = await sharp(webp, { failOn: "warning" }).metadata();
-  if ((metadata.width ?? 0) < 96 || (metadata.height ?? 0) < 96) throw new Error(`portrait output is smaller than 96x96 for ${player.id}`);
+  let webp: Buffer;
+  try {
+    webp = await converter(await client.bytes(response, MAX_DOWNLOAD_BYTES));
+    const metadata = await sharp(webp, { failOn: "warning" }).metadata();
+    if ((metadata.width ?? 0) < 96 || (metadata.height ?? 0) < 96) throw new Error(`portrait output is smaller than 96x96 for ${player.id}`);
+  } catch (error) {
+    if (!technicalImageFailure(error)) throw error;
+    console.warn(`portrait unsupported-image: ${player.id} (${error instanceof Error ? error.message : String(error)})`);
+    record?.({ playerId: player.id, kind: "missing" });
+    return null;
+  }
 
   const checksum = sha256(webp);
   const filename = `${player.id}.${checksum.slice(0, 12)}.webp`;
@@ -473,6 +486,7 @@ export interface ImportPortraitOptions {
   fetch?: typeof globalThis.fetch;
   wait?: (milliseconds: number) => Promise<void>;
   scheduler?: LiquipediaRequestScheduler;
+  converter?: PortraitConverter;
 }
 
 export async function importPortraits(options: ImportPortraitOptions): Promise<void> {
@@ -487,7 +501,7 @@ export async function importPortraits(options: ImportPortraitOptions): Promise<v
   await buildPortraitOutputs({
     root: options.root,
     players: options.players,
-    discover: (player, stageDir) => discoverLiquipediaPortrait(player, stageDir, client, outcome => outcomes.push(outcome)),
+    discover: (player, stageDir) => discoverLiquipediaPortrait(player, stageDir, client, outcome => outcomes.push(outcome), options.converter),
   });
   console.log(formatPortraitImportSummary(outcomes, options.players.length));
 }
