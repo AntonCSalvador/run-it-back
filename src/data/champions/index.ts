@@ -1,16 +1,19 @@
 import sourceRefs from "../sources.json";
+import portraitAssets from "./portrait-assets.json";
+import portraitSourceRefs from "./portrait-sources.json";
 import year2021 from "./2021.json";
 import year2022 from "./2022.json";
 import year2023 from "./2023.json";
 import year2024 from "./2024.json";
 import year2025 from "./2025.json";
 import { parseDataset } from "@/features/game/schema";
-import type { GameDataset } from "@/features/game/domain";
+import type { GameDataset, PlayerIdentity } from "@/features/game/domain";
+import { applyPortraitCatalog, parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
 
 const snapshots = [year2021, year2022, year2023, year2024, year2025];
 
-function deduplicatePlayers(): unknown[] {
-  const players = new Map<string, { id: string; canonicalHandle: string; portrait: null; sourceIds: string[] }>();
+function deduplicatePlayers(): PlayerIdentity[] {
+  const players = new Map<string, PlayerIdentity>();
   for (const snapshot of snapshots) {
     for (const player of snapshot.players) {
       const current = players.get(player.id);
@@ -20,6 +23,10 @@ function deduplicatePlayers(): unknown[] {
   }
   return [...players.values()];
 }
+
+const deduplicatedPlayers = deduplicatePlayers();
+const parsedPortraitAssets = parsePortraitCatalog(portraitAssets);
+validatePortraitCatalog(deduplicatedPlayers, parsedPortraitAssets, portraitSourceRefs);
 
 function freezeDataset(dataset: GameDataset): GameDataset {
   for (const source of dataset.sources) Object.freeze(source);
@@ -32,9 +39,9 @@ function freezeDataset(dataset: GameDataset): GameDataset {
 
 export const championsDataset = freezeDataset(parseDataset({
   version: 1,
-  sources: sourceRefs,
+  sources: [...sourceRefs, ...portraitSourceRefs],
   teams: snapshots.flatMap(snapshot => snapshot.teams),
-  players: deduplicatePlayers(),
+  players: applyPortraitCatalog(deduplicatedPlayers, parsedPortraitAssets),
   cards: snapshots.flatMap(snapshot => snapshot.cards),
 }));
 

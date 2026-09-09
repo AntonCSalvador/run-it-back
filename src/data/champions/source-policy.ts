@@ -19,15 +19,18 @@ const REVIEWED_SOURCES = Object.freeze([
 ].map(([id, url]) => Object.freeze({ id, url, retrievedAt: "2026-09-05", usage: "facts" as const })));
 
 export function validateSourceCatalog(sources: readonly SourceRef[]): void {
-  if (sources.length !== REVIEWED_SOURCES.length || new Set(sources.map(source => source.id)).size !== REVIEWED_SOURCES.length) {
+  const factualSources = sources.filter(source => source.usage === "facts");
+  const assetSources = sources.filter(source => source.usage === "asset");
+  if (factualSources.length !== REVIEWED_SOURCES.length || new Set(factualSources.map(source => source.id)).size !== REVIEWED_SOURCES.length) {
     throw new Error("source catalog cardinality: missing, extra, or duplicate records");
   }
   for (const expected of REVIEWED_SOURCES) {
-    const source = sources.find(source => source.id === expected.id);
+    const source = factualSources.find(source => source.id === expected.id);
     // Compare own keys as well as values: omitted optional fields differ from present undefined.
     if (!source || Object.keys(source).sort().join() !== Object.keys(expected).sort().join()
       || Object.entries(expected).some(([key, value]) => source[key as keyof SourceRef] !== value)) {
       throw new Error(`source catalog metadata ${expected.id}`);
     }
   }
+  if (assetSources.some(source => !/^liquipedia-portrait-\d+$/.test(source.id))) throw new Error("asset source ID must be a Liquipedia portrait ID");
 }
