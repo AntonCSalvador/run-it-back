@@ -131,24 +131,28 @@ global rule, request a reviewed entry in
 [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json); the
 overlay remains protected by the source, checksum, and validation workflow.
 
-## How player ratings currently work
+## How player ratings are derived
 
-The raw stats are turned into five ratings:
+The raw stats are turned into five generated comparison ratings:
 
-| Rating | What currently influences it |
+| Rating | What derivation influences it |
 |---|---|
 | Firepower | Average performance rating and ACS |
 | Utility | Average assists |
 | Survival | Fewer average deaths |
 | Clutch | Clutch wins per map |
 | Consistency | Less variation in performance rating |
-| Leadership | 75 for reviewed historical IGL cards; otherwise 50 |
+| Leadership | Generated comparison value: 75 for cards with reviewed historical-IGL evidence; otherwise 50 |
 
 These are not raw percentages like “this player is 80% accurate.” They are
-mostly percentile-style scores comparing the card with players from the same
-year and eligible role.
+mostly percentile-style generated comparison scores comparing the card with
+players from the same year and eligible role. They describe derivation output,
+not necessarily the current runtime values: the validated manual catalog is the
+runtime authority for each card's traits, including leadership, and the local
+editor is the supported way to change those values. `historicalIgl` is an
+independent classification from numeric `traits.leadership`.
 
-Important current behavior:
+Important generated-comparison behavior:
 
 - Each map has equal weight.
 - Multi-role cards are compared in each eligible role and receive an average of
@@ -166,7 +170,7 @@ in the [data methodology](data-methodology.md).
 
 Run `npm run edit:players`. Local browser editor is supported place to change
 eligible roles, firepower, utility, survival, clutch, consistency, leadership,
-historical-IGL, review status. Saving writes
+historical-IGL, editor-only review status. Saving writes
 src/data/champions/manual-player-data.json.
 
 Generated yearly cards and evidence.json remain read-only comparison evidence.
@@ -201,9 +205,10 @@ Every card gets a baseline score using these weights:
 The game averages the five card baselines, then adds:
 
 - **Chemistry:** +2 for every pair from the same team and year, capped at +8.
-- **Selected IGL:** reviewed historical IGL leadership currently gives +2 when
-  that player is selected as the lineup's IGL. An ordinary leadership value of
-  50 gives no bonus.
+- **Selected IGL:** numeric `traits.leadership` contributes
+  `(leadership - 50) * .08` when that player is selected as the lineup's IGL. A
+  manual value of 75 gives +2; a value of 50 gives no bonus. `historicalIgl` is
+  an independent classification and does not itself add strength.
 
 These values live in [rating.ts](../src/features/game/rating.ts).
 

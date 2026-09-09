@@ -149,11 +149,16 @@ or participation of a card, stop and use the report-only workflow instead.
 The manual catalog at
 [manual-player-data.json](../src/data/champions/manual-player-data.json) is the
 **game-facing manual authority** for every card's eligible roles, firepower,
-utility, survival, clutch, consistency, leadership, historical-IGL decision,
-and review status. The local browser tool is a **development-only editor**; it
+utility, survival, clutch, consistency, leadership, and historical-IGL decision.
+The local browser tool is a **development-only editor**; it
 is not part of the production Next.js app or its static Vercel/GitHub Pages
 output. The generated yearly cards and `evidence.json` remain read-only
 comparison evidence for reviewing what derivation produced.
+
+The catalog's `reviewed` field is editor-only audit metadata. It is not merged
+into the runtime `PlayerCard` and has no gameplay effect. Gameplay leadership
+strength is controlled by the numeric `traits.leadership` value; `historicalIgl`
+is an independent classification and does not itself determine that strength.
 
 For an approved game-facing card change, work from the repository root and run:
 
@@ -731,7 +736,7 @@ be reviewed together.
 | --- | --- | --- |
 | [raw-extraction.json](../src/data/champions/raw-extraction.json) | Source input | Pinned source observations. Do not casually edit it; use the documented extraction and review process. |
 | [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed override | Reviewed teams, role exceptions, and IGL decisions. Propose factual changes with evidence; make overlay/checksum changes only through coordinated owner/Codex review. |
-| [manual-player-data.json](../src/data/champions/manual-player-data.json) | Game-facing manual authority | Runtime roles, traits, historical IGL decisions, and review status for every card. Edit through the development-only local player editor, then validate, test, build, and commit the catalog. |
+| [manual-player-data.json](../src/data/champions/manual-player-data.json) | Game-facing manual authority | Runtime roles, traits, and historical IGL decisions for every card. Its `reviewed` field is editor-only audit metadata. Edit through the development-only local player editor, then validate, test, build, and commit the catalog. |
 | [evidence.json](../src/data/champions/evidence.json) | Generated audit output | Inspect it, but do not edit it directly. |
 | [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated comparison output | Inspect them and compare them with the manual catalog; regenerate them after approved raw, derivation, or reviewed-overlay changes. |
 | [derivation.ts](../src/data/champions/derivation.ts) | Derivation/configuration | Global role and trait derivation rules. Request an owner/Codex change only when the global algorithm needs revision, then regenerate and validate the snapshots. |
@@ -757,7 +762,7 @@ source-file edit, and `git diff`.
 
 | Error text | Likely mistaken edit | What to hand off |
 | --- | --- | --- |
-| `manual trait ...`, `manual eligibleRoles ...`, or `manual historicalIgl ...` | The runtime card differs from its manual catalog entry. Use the local editor to make the intended game-facing value match the catalog; do not change generated evidence to hide the mismatch. | Exact card/year, current and proposed manual value, whether it is factual or subjective, and the failing command. |
+| `manual firepower <cardId>`, `manual utility <cardId>`, `manual survival <cardId>`, `manual clutch <cardId>`, `manual consistency <cardId>`, `manual leadership <cardId>`, `manual eligibleRoles <cardId>`, or `manual historicalIgl <cardId>` | The runtime card differs from its manual catalog entry. Use the local editor to make the intended game-facing value match the catalog; do not change generated evidence to hide the mismatch. | Exact card/year, current and proposed manual value, whether it is factual or subjective, and the failing command. |
 | `final roles ...`, `threshold ...`, or `raw class counts ...` | Generated evidence, raw observations, or a reviewed overlay no longer agrees with derivation. | Exact card/year, agent/map evidence, overlay entry if any, source URLs, intended source-file edit, and the failing command. |
 | `reviewed overlays checksum mismatch` | An overlay changed without the owner-approved checksum/integrity update, or the wrong overlay content was edited. | The complete proposed overlay change, factual sources, expected generated roles/IGL effect, error text, and diff. Ask the owner/Codex to review the coordinated change. |
 | `source catalog ...` | A pinned raw source, source catalog entry, or its expected relationship was changed or is missing. | Exact source URL/identifier, event/card it supports, why it should be added or corrected, the changed source record, and the validation output. |
