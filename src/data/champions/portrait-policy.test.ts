@@ -233,6 +233,15 @@ describe("portrait source policy", () => {
     },
   );
 
+  it.each(["nowiki", "pre"])(
+    "accepts root FileInfo after valid self-closing %s markup",
+    (tag) => {
+      expect(
+        assessPortrait("BeYN", "File:DRX BeYN.jpg", `<${tag}/>${riot}`),
+      ).toMatchObject({ accepted: true });
+    },
+  );
+
   it("preserves root FileInfo text inside field markup", () => {
     const info = riot.replace(
       "[https://www.riotgames.com/ Riot Games]",

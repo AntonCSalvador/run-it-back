@@ -45,7 +45,7 @@ const VOID_TAGS = new Set([
   "track",
   "wbr",
 ]);
-const MEDIAWIKI_SELF_CLOSING_TAGS = new Set(["ref", "references"]);
+const MEDIAWIKI_SELF_CLOSING_TAGS = new Set(["nowiki", "pre", "ref", "references"]);
 
 const plain = (value: string) =>
   value
