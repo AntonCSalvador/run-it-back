@@ -1,6 +1,6 @@
 import { ROLES, type GameDataset, type Lineup, type PlayerCard, type Role } from "./domain";
 
-const TRAIT_WEIGHTS = {
+export const TRAIT_WEIGHTS = {
   firepower: 0.35,
   utility: 0.2,
   survival: 0.15,

@@ -32,7 +32,8 @@ performance coverage, clutch wins, and match stage/round/final-score inputs.
 It compares the exact UTF-8 raw artifact, then runs the same offline semantic
 validator used by `npm run validate:data` and every build. This recomputes all
 404 cards' thresholds, suggested/final roles, reviewed overrides, and all six
-traits. It rejects plausible edits to evidence or ratings, not just bad ranges.
+traits. It rejects plausible edits to generated evidence or generated trait
+ratings, not just bad ranges.
 The pinned daily DB is available at the provenance URL; if that URL later
 serves different bytes, the audit deliberately fails. Preserve the original
 SHA-matching DB outside the repository; never commit its large binary.
@@ -45,7 +46,13 @@ LF. Offline validation also pins the SHA-256 of its `JSON.stringify` encoding
 (UTF-8, no newline) so edits to raw inputs cannot silently legitimize edits
 to evidence. `reviewed-overlays.json` is separately checksum-pinned: 80
 sourced event team names/IDs/abbreviations, one role exception, six leadership
-decisions. No raw metrics or trait numbers are manually overlaid.
+decisions. Raw metrics, generated evidence, and derived trait numbers in this
+checksum-pinned evidence path are never manually overlaid. Separately, the
+validated and version-controlled `manual-player-data.json` catalog may
+intentionally override runtime game-facing roles, trait numbers, and
+historical-IGL values. Those manual values do not alter raw extraction,
+reviewed overlays, generated evidence, source citations, or their checksums;
+validation checks each boundary independently.
 
 `src/data/champions/source-policy.ts` separately pins the twelve reviewed
 source records by exact ID, URL, retrieval date (`2026-09-05`), and usage

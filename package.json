@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "edit:players": "vite --config tools/player-editor/vite.config.ts",
     "build": "npm run validate:data && next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -16,6 +17,7 @@
     "smoke:static": "tsx scripts/smoke-static.mts",
     "validate:data": "tsx scripts/validate-data.mts",
     "derive:data": "tsx scripts/derive-champions.mts",
+    "init:player-data": "tsx scripts/seed-manual-player-data.mts",
     "audit:data": "python scripts/verify-champions-extraction.py",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run test:audit-cli && npm run build"
   },
@@ -43,6 +45,7 @@
     "serve": "^14.2.6",
     "tsx": "^4.23.13",
     "typescript": "^5.9.3",
+    "vite": "^8.2.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^5.0.0"
   }

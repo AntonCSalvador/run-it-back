@@ -1,0 +1,6757 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "cardId": "aaaay-funplus-phoenix-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 2,
+        "survival": 82,
+        "clutch": 90,
+        "consistency": 78
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "aaaay-funplus-phoenix-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 1,
+        "survival": 27,
+        "clutch": 14,
+        "consistency": 79
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ade-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 48,
+        "survival": 23,
+        "clutch": 70,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "adverso-leviatan-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 51,
+        "utility": 45,
+        "survival": 32,
+        "clutch": 7,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "akeman-dragon-ranger-gaming-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 14,
+        "utility": 34,
+        "survival": 6,
+        "clutch": 98,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "alfajer-fnatic-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 55,
+        "survival": 79,
+        "clutch": 62,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "alfajer-fnatic-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 5,
+        "survival": 99,
+        "clutch": 37,
+        "consistency": 11
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "alfajer-fnatic-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 28,
+        "survival": 71,
+        "clutch": 67,
+        "consistency": 6
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "alfajer-fnatic-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 20,
+        "survival": 67,
+        "clutch": 10,
+        "consistency": 29
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ange1-funplus-phoenix-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ange1-natus-vincere-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 20,
+        "utility": 89,
+        "survival": 2,
+        "clutch": 38,
+        "consistency": 58
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ara-giantx-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 11,
+        "survival": 83,
+        "clutch": 55,
+        "consistency": 7
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ardiis-funplus-phoenix-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ardiis-nrg-2023",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "artzin-mibr-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 74,
+        "utility": 80,
+        "survival": 63,
+        "clutch": 32,
+        "consistency": 18
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "aspas-leviatan-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 68,
+        "utility": 31,
+        "survival": 57,
+        "clutch": 73,
+        "consistency": 41
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "aspas-loud-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 65,
+        "utility": 43,
+        "survival": 80,
+        "clutch": 49,
+        "consistency": 43
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "aspas-loud-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 31,
+        "survival": 89,
+        "clutch": 73,
+        "consistency": 31
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "aspas-mibr-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 100,
+        "utility": 16,
+        "survival": 100,
+        "clutch": 24,
+        "consistency": 80
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "asuna-100-thieves-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 21,
+        "utility": 78,
+        "survival": 5,
+        "clutch": 38,
+        "consistency": 88
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "atakaptan-fut-esports-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 96,
+        "survival": 46,
+        "clutch": 46,
+        "consistency": 87
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "atakaptan-fut-esports-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 60,
+        "survival": 19,
+        "clutch": 6,
+        "consistency": 79
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "autumn-funplus-phoenix-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 77,
+        "utility": 39,
+        "survival": 26,
+        "clutch": 95,
+        "consistency": 93
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ayrin-xset-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ban-t1-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 45,
+        "survival": 14,
+        "clutch": 48,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ban-talon-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 39,
+        "utility": 34,
+        "survival": 70,
+        "clutch": 32,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "bang-100-thieves-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 81,
+        "survival": 40,
+        "clutch": 83,
+        "consistency": 27
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "bang-sentinels-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 5,
+        "utility": 38,
+        "survival": 50,
+        "clutch": 14,
+        "consistency": 35
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "bazzi-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 65,
+        "survival": 30,
+        "clutch": 88,
+        "consistency": 80
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "bcj-xset-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "benjyfishy-team-heretics-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 46,
+        "utility": 19,
+        "survival": 33,
+        "clutch": 60,
+        "consistency": 23
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "benjyfishy-team-heretics-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 22,
+        "utility": 89,
+        "survival": 32,
+        "clutch": 75,
+        "consistency": 56
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "benkai-paper-rex-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 24,
+        "utility": 64,
+        "survival": 43,
+        "clutch": 65,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "berlin-funplus-phoenix-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 50,
+        "survival": 11,
+        "clutch": 9,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "berlin-funplus-phoenix-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 73,
+        "survival": 32,
+        "clutch": 26,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "berserx-boom-esports-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 8,
+        "survival": 13,
+        "clutch": 21,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "beyn-drx-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 21,
+        "survival": 97,
+        "clutch": 98,
+        "consistency": 17
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "beyn-drx-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 43,
+        "survival": 90,
+        "clutch": 100,
+        "consistency": 86
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "biank-bilibili-gaming-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 51,
+        "survival": 47,
+        "clutch": 53,
+        "consistency": 11
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "biank-trace-esports-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 60,
+        "survival": 60,
+        "clutch": 92,
+        "consistency": 91
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "blazek1ng-boom-esports-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 33,
+        "utility": 35,
+        "survival": 39,
+        "clutch": 4,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boaster-fnatic-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 43,
+        "utility": 85,
+        "survival": 58,
+        "clutch": 16,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boaster-fnatic-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 95,
+        "survival": 70,
+        "clutch": 11,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boaster-fnatic-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 47,
+        "utility": 69,
+        "survival": 97,
+        "clutch": 94,
+        "consistency": 13
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boaster-fnatic-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 48,
+        "survival": 88,
+        "clutch": 54,
+        "consistency": 28
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boaster-fnatic-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 20,
+        "utility": 56,
+        "survival": 86,
+        "clutch": 35,
+        "consistency": 11
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "bonecold-acend-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boo-team-heretics-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 57,
+        "utility": 84,
+        "survival": 47,
+        "clutch": 97,
+        "consistency": 57
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boo-team-heretics-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 15,
+        "utility": 96,
+        "survival": 45,
+        "clutch": 92,
+        "consistency": 66
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "boostio-evil-geniuses-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 40,
+        "survival": 28,
+        "clutch": 29,
+        "consistency": 64
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "borkum-team-secret-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 9,
+        "survival": 99,
+        "clutch": 81,
+        "consistency": 9
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "brawk-nrg-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 100,
+        "utility": 74,
+        "survival": 70,
+        "clutch": 54,
+        "consistency": 6
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "buzz-drx-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 37,
+        "survival": 12,
+        "clutch": 68,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "buzz-drx-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 52,
+        "survival": 47,
+        "clutch": 15,
+        "consistency": 47
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "buzz-drx-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 19,
+        "survival": 72,
+        "clutch": 40,
+        "consistency": 4
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "buzz-t1-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 86,
+        "survival": 10,
+        "clutch": 84,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "buzz-vision-strikers-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 16,
+        "survival": 52,
+        "clutch": 70,
+        "consistency": 16
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "c0m-evil-geniuses-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 77,
+        "utility": 33,
+        "survival": 92,
+        "clutch": 100,
+        "consistency": 33
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "c0m-leviatan-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 41,
+        "survival": 32,
+        "clutch": 71,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "carpe-t1-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 14,
+        "survival": 10,
+        "clutch": 44,
+        "consistency": 42
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cauanzin-loud-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 68,
+        "survival": 70,
+        "clutch": 16,
+        "consistency": 24
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cender-team-vitality-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 18,
+        "utility": 50,
+        "survival": 37,
+        "clutch": 21,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chichoo-edward-gaming-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 65,
+        "utility": 69,
+        "survival": 88,
+        "clutch": 90,
+        "consistency": 85
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chichoo-edward-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 78,
+        "utility": 56,
+        "survival": 69,
+        "clutch": 78,
+        "consistency": 43
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chichoo-edward-gaming-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 61,
+        "survival": 86,
+        "clutch": 73,
+        "consistency": 38
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chichoo-edward-gaming-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 64,
+        "survival": 26,
+        "clutch": 64,
+        "consistency": 85
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chronicle-fnatic-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 33,
+        "utility": 68,
+        "survival": 98,
+        "clutch": 9,
+        "consistency": 7
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chronicle-fnatic-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 33,
+        "survival": 91,
+        "clutch": 37,
+        "consistency": 26
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chronicle-fnatic-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 49,
+        "survival": 70,
+        "clutch": 26,
+        "consistency": 9
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "chronicle-gambit-esports-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 27,
+        "survival": 88,
+        "clutch": 49,
+        "consistency": 13
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cloud-giants-gaming-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 94,
+        "utility": 74,
+        "survival": 42,
+        "clutch": 86,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cloud-giantx-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 78,
+        "utility": 53,
+        "survival": 74,
+        "clutch": 44,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cned-acend-2021",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cned-fut-esports-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 8,
+        "survival": 8,
+        "clutch": 8,
+        "consistency": 97
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cned-natus-vincere-2023",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 76,
+        "utility": 45,
+        "survival": 24,
+        "clutch": 66,
+        "consistency": 14
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "coconut-xi-lai-gaming-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 95,
+        "survival": 13,
+        "clutch": 6,
+        "consistency": 90
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cortezia-mibr-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 36,
+        "survival": 99,
+        "clutch": 31,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crashies-envy-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 77,
+        "survival": 83,
+        "clutch": 52,
+        "consistency": 14
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crashies-fnatic-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 48,
+        "survival": 94,
+        "clutch": 66,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crashies-nrg-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crashies-optic-gaming-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 82,
+        "utility": 84,
+        "survival": 90,
+        "clutch": 59,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crazyguy-rex-regum-qeon-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 13,
+        "utility": 46,
+        "survival": 78,
+        "clutch": 79,
+        "consistency": 77
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crow-zeta-division-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 4,
+        "utility": 60,
+        "survival": 61,
+        "clutch": 63,
+        "consistency": 87
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crow-zeta-division-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crws-talon-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 1,
+        "utility": 11,
+        "survival": 4,
+        "clutch": 23,
+        "consistency": 99
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crws-x10-esports-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 99,
+        "survival": 45,
+        "clutch": 58,
+        "consistency": 51
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "crws-xerxia-esports-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 25,
+        "survival": 29,
+        "clutch": 74,
+        "consistency": 3
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "cryocells-xset-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "d3ffo-gambit-esports-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 55,
+        "utility": 33,
+        "survival": 69,
+        "clutch": 55,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "d4v41-paper-rex-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 77,
+        "survival": 52,
+        "clutch": 98,
+        "consistency": 57
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "d4v41-paper-rex-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 77,
+        "utility": 85,
+        "survival": 89,
+        "clutch": 75,
+        "consistency": 33
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "d4v41-paper-rex-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 43,
+        "survival": 53,
+        "clutch": 86,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "d4v41-paper-rex-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 52,
+        "utility": 85,
+        "survival": 52,
+        "clutch": 85,
+        "consistency": 81
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dapr-sentinels-2021",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 53,
+        "utility": 53,
+        "survival": 20,
+        "clutch": 26,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "daveeys-kru-esports-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 21,
+        "survival": 91,
+        "clutch": 26,
+        "consistency": 85
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "delz1k-kru-esports-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 60,
+        "survival": 10,
+        "clutch": 25,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "delz1k-kru-esports-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 40,
+        "utility": 15,
+        "survival": 73,
+        "clutch": 48,
+        "consistency": 6
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "demon1-dragon-ranger-gaming-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 36,
+        "utility": 31,
+        "survival": 14,
+        "clutch": 74,
+        "consistency": 93
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "demon1-evil-geniuses-2023",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 100,
+        "utility": 26,
+        "survival": 90,
+        "clutch": 78,
+        "consistency": 18
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dep-zeta-division-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 55,
+        "utility": 29,
+        "survival": 45,
+        "clutch": 21,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dep-zeta-division-2023",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dephh-xset-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "derke-fnatic-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 40,
+        "survival": 31,
+        "clutch": 78,
+        "consistency": 12
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "derke-fnatic-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 91,
+        "utility": 14,
+        "survival": 86,
+        "clutch": 53,
+        "consistency": 38
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "derke-fnatic-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 47,
+        "utility": 20,
+        "survival": 99,
+        "clutch": 28,
+        "consistency": 68
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "derke-fnatic-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 38,
+        "survival": 77,
+        "clutch": 83,
+        "consistency": 9
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "derrek-100-thieves-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 53,
+        "survival": 10,
+        "clutch": 63,
+        "consistency": 99
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dgzin-furia-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 60,
+        "utility": 19,
+        "survival": 10,
+        "clutch": 87,
+        "consistency": 60
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dh-t1-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 53,
+        "utility": 83,
+        "survival": 5,
+        "clutch": 91,
+        "consistency": 26
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dimasick-team-liquid-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 20,
+        "utility": 41,
+        "survival": 49,
+        "clutch": 36,
+        "consistency": 61
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dispenser-team-secret-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 39,
+        "survival": 99,
+        "clutch": 64,
+        "consistency": 9
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dk-bilibili-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 73,
+        "survival": 56,
+        "clutch": 22,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "doma-fnatic-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 77,
+        "utility": 93,
+        "survival": 61,
+        "clutch": 13,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "doma-fnatic-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 29,
+        "utility": 46,
+        "survival": 96,
+        "clutch": 53,
+        "consistency": 100
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "dubstep-team-secret-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 58,
+        "utility": 3,
+        "survival": 94,
+        "clutch": 12,
+        "consistency": 8
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "enzo-fnatic-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 89,
+        "survival": 98,
+        "clutch": 52,
+        "consistency": 72
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ethan-evil-geniuses-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 100,
+        "survival": 78,
+        "clutch": 86,
+        "consistency": 66
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ethan-nrg-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 57,
+        "utility": 87,
+        "survival": 53,
+        "clutch": 48,
+        "consistency": 58
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "f0rsaken-paper-rex-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 11,
+        "survival": 24,
+        "clutch": 30,
+        "consistency": 39
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "f0rsaken-paper-rex-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 60,
+        "utility": 71,
+        "survival": 34,
+        "clutch": 16,
+        "consistency": 45
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "f0rsaken-paper-rex-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 33,
+        "survival": 61,
+        "clutch": 84,
+        "consistency": 1
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "f0rsaken-paper-rex-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 85,
+        "utility": 79,
+        "survival": 13,
+        "clutch": 61,
+        "consistency": 25
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "famouz-boom-esports-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 14,
+        "utility": 50,
+        "survival": 13,
+        "clutch": 38,
+        "consistency": 60
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "fengf-trace-esports-2024",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 46,
+        "utility": 3,
+        "survival": 70,
+        "clutch": 60,
+        "consistency": 67
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "finesse-envy-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 28,
+        "utility": 18,
+        "survival": 28,
+        "clutch": 13,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "finesse-nrg-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "finesse-optic-gaming-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 26,
+        "utility": 72,
+        "survival": 74,
+        "clutch": 39,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "fisker-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 7,
+        "utility": 7,
+        "survival": 25,
+        "clutch": 89,
+        "consistency": 25
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "fit1nho-giants-gaming-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 55,
+        "utility": 61,
+        "survival": 8,
+        "clutch": 61,
+        "consistency": 3
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "fl1pzjder-boom-esports-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 48,
+        "utility": 33,
+        "survival": 24,
+        "clutch": 92,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "flashback-drx-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 26,
+        "survival": 95,
+        "clutch": 79,
+        "consistency": 41
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "flashback-drx-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 68,
+        "utility": 28,
+        "survival": 60,
+        "clutch": 28,
+        "consistency": 40
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "flex1n-bilibili-gaming-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 40,
+        "survival": 45,
+        "clutch": 77,
+        "consistency": 21
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "flex1n-dragon-ranger-gaming-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 35,
+        "utility": 89,
+        "survival": 2,
+        "clutch": 5,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "flickless-giantx-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 88,
+        "survival": 75,
+        "clutch": 40,
+        "consistency": 32
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "foxy9-drx-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 68,
+        "survival": 87,
+        "clutch": 44,
+        "consistency": 31
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "foxz-x10-esports-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 63,
+        "utility": 30,
+        "survival": 72,
+        "clutch": 34,
+        "consistency": 12
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "foxz-xerxia-esports-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 35,
+        "utility": 10,
+        "survival": 38,
+        "clutch": 93,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "free1ng-drx-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 32,
+        "survival": 57,
+        "clutch": 62,
+        "consistency": 62
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "frz-team-vikings-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 51,
+        "survival": 27,
+        "clutch": 55,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "governor-talon-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 76,
+        "survival": 18,
+        "clutch": 8,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "grubinho-giantx-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 21,
+        "utility": 57,
+        "survival": 36,
+        "clutch": 57,
+        "consistency": 81
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "gtn-team-vikings-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 30,
+        "utility": 11,
+        "survival": 75,
+        "clutch": 59,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "haodong-edward-gaming-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 14,
+        "utility": 10,
+        "survival": 34,
+        "clutch": 30,
+        "consistency": 21
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "haodong-edward-gaming-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 28,
+        "utility": 81,
+        "survival": 34,
+        "clutch": 56,
+        "consistency": 78
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "happywei-xi-lai-gaming-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 74,
+        "survival": 12,
+        "clutch": 44,
+        "consistency": 11
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "heat-keyd-stars-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "heat-kru-esports-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 11,
+        "survival": 99,
+        "clutch": 23,
+        "consistency": 27
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "heybay-trace-esports-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 16,
+        "utility": 86,
+        "survival": 47,
+        "clutch": 18,
+        "consistency": 27
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "hiro-fnatic-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 50,
+        "survival": 86,
+        "clutch": 40,
+        "consistency": 14
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "hoody-giants-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 80,
+        "utility": 88,
+        "survival": 23,
+        "clutch": 60,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "hyunmin-drx-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 52,
+        "utility": 48,
+        "survival": 76,
+        "clutch": 20,
+        "consistency": 32
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "icy-g2-esports-2024",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 25,
+        "utility": 33,
+        "survival": 18,
+        "clutch": 81,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "izu-t1-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 30,
+        "survival": 22,
+        "clutch": 94,
+        "consistency": 90
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jamppi-team-liquid-2021",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 32,
+        "utility": 30,
+        "survival": 61,
+        "clutch": 74,
+        "consistency": 87
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jamppi-team-liquid-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 64,
+        "utility": 30,
+        "survival": 68,
+        "clutch": 78,
+        "consistency": 34
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jamppi-team-liquid-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 3,
+        "survival": 55,
+        "clutch": 97,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jawgemo-evil-geniuses-2023",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 77,
+        "survival": 62,
+        "clutch": 29,
+        "consistency": 24
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jawgemo-g2-esports-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 83,
+        "utility": 63,
+        "survival": 35,
+        "clutch": 85,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jemkin-rex-regum-qeon-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 46,
+        "utility": 4,
+        "survival": 92,
+        "clutch": 34,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jessievash-team-secret-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 54,
+        "utility": 69,
+        "survival": 96,
+        "clutch": 96,
+        "consistency": 78
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jhow-keyd-stars-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jieni7-edward-gaming-2025",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 22,
+        "utility": 46,
+        "survival": 8,
+        "clutch": 8,
+        "consistency": 80
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jinggg-paper-rex-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 55,
+        "survival": 3,
+        "clutch": 21,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jinggg-paper-rex-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 32,
+        "utility": 85,
+        "survival": 21,
+        "clutch": 11,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jinggg-paper-rex-2024",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 33,
+        "utility": 91,
+        "survival": 38,
+        "clutch": 53,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jinggg-paper-rex-2025",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 67,
+        "survival": 34,
+        "clutch": 40,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jitboys-talon-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 11,
+        "utility": 15,
+        "survival": 2,
+        "clutch": 34,
+        "consistency": 85
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "johnolsen-full-sense-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 11,
+        "utility": 48,
+        "survival": 16,
+        "clutch": 11,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "johnqt-sentinels-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 53,
+        "survival": 100,
+        "clutch": 85,
+        "consistency": 59
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "johnqt-sentinels-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 95,
+        "utility": 26,
+        "survival": 92,
+        "clutch": 62,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jonahp-g2-esports-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 40,
+        "survival": 6,
+        "clutch": 46,
+        "consistency": 89
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "jonahp-g2-esports-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 39,
+        "utility": 85,
+        "survival": 17,
+        "clutch": 74,
+        "consistency": 60
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "k1ng-vision-strikers-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 28,
+        "survival": 83,
+        "clutch": 53,
+        "consistency": 33
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kaajak-fnatic-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 97,
+        "utility": 41,
+        "survival": 89,
+        "clutch": 49,
+        "consistency": 45
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kai-trace-esports-2024",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 16,
+        "survival": 75,
+        "clutch": 18,
+        "consistency": 62
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kamo-team-liquid-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 22,
+        "utility": 4,
+        "survival": 66,
+        "clutch": 66,
+        "consistency": 82
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "karon-gen-g-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 40,
+        "utility": 92,
+        "survival": 56,
+        "clutch": 68,
+        "consistency": 5
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "keiko-team-liquid-2025",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 52,
+        "utility": 47,
+        "survival": 41,
+        "clutch": 56,
+        "consistency": 66
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "keznit-kru-esports-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 82,
+        "utility": 82,
+        "survival": 22,
+        "clutch": 91,
+        "consistency": 45
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "keznit-kru-esports-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 82,
+        "survival": 45,
+        "clutch": 13,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "keznit-kru-esports-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 92,
+        "utility": 76,
+        "survival": 13,
+        "clutch": 87,
+        "consistency": 97
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "keznit-kru-esports-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 92,
+        "utility": 92,
+        "survival": 97,
+        "clutch": 29,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "khalil-furia-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 33,
+        "utility": 83,
+        "survival": 3,
+        "clutch": 43,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "khalil-furia-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 31,
+        "survival": 2,
+        "clutch": 21,
+        "consistency": 65
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kicks-team-vitality-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 97,
+        "survival": 50,
+        "clutch": 84,
+        "consistency": 13
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kiles-acend-2021",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kingg-leviatan-2022",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 64,
+        "survival": 73,
+        "clutch": 56,
+        "consistency": 89
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kingg-leviatan-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 65,
+        "utility": 78,
+        "survival": 62,
+        "clutch": 89,
+        "consistency": 42
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "klaus-kru-esports-2021",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 32,
+        "utility": 35,
+        "survival": 30,
+        "clutch": 98,
+        "consistency": 60
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "klaus-kru-esports-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 60,
+        "survival": 50,
+        "clutch": 6,
+        "consistency": 73
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "klaus-kru-esports-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 20,
+        "survival": 6,
+        "clutch": 4,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "knight-bilibili-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 22,
+        "utility": 50,
+        "survival": 42,
+        "clutch": 52,
+        "consistency": 69
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "knight-bilibili-gaming-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 7,
+        "utility": 81,
+        "survival": 36,
+        "clutch": 27,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "knight-bilibili-gaming-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 80,
+        "utility": 18,
+        "survival": 84,
+        "clutch": 70,
+        "consistency": 41
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "kushy-rex-regum-qeon-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 38,
+        "survival": 48,
+        "clutch": 59,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "l1nk-team-liquid-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 26,
+        "survival": 84,
+        "clutch": 57,
+        "consistency": 44
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "lakia-gen-g-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 4,
+        "utility": 53,
+        "survival": 24,
+        "clutch": 61,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "lakia-vision-strikers-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 38,
+        "utility": 2,
+        "survival": 20,
+        "clutch": 6,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "lammysnax-full-sense-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 18,
+        "survival": 11,
+        "clutch": 6,
+        "consistency": 5
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "laz-zeta-division-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 95,
+        "utility": 27,
+        "survival": 87,
+        "clutch": 95,
+        "consistency": 13
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "laz-zeta-division-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "leaf-cloud9-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 95,
+        "utility": 61,
+        "survival": 3,
+        "clutch": 64,
+        "consistency": 35
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "leaf-g2-esports-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 54,
+        "utility": 16,
+        "survival": 10,
+        "clutch": 29,
+        "consistency": 31
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "leaf-g2-esports-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 56,
+        "survival": 22,
+        "clutch": 70,
+        "consistency": 32
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "leo-fnatic-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 92,
+        "utility": 64,
+        "survival": 100,
+        "clutch": 74,
+        "consistency": 4
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "less-loud-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 86,
+        "utility": 21,
+        "survival": 94,
+        "clutch": 72,
+        "consistency": 36
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "less-loud-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 95,
+        "utility": 19,
+        "survival": 83,
+        "clutch": 63,
+        "consistency": 4
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "levius-bilibili-gaming-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 2,
+        "survival": 79,
+        "clutch": 33,
+        "consistency": 21
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "life-edward-gaming-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 13,
+        "utility": 24,
+        "survival": 26,
+        "clutch": 21,
+        "consistency": 8
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "life-funplus-phoenix-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 13,
+        "survival": 3,
+        "clutch": 50,
+        "consistency": 87
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "luok1ng-trace-esports-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 54,
+        "survival": 70,
+        "clutch": 7,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "lysoar-funplus-phoenix-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 38,
+        "utility": 15,
+        "survival": 32,
+        "clutch": 3,
+        "consistency": 91
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "lysoar-funplus-phoenix-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 15,
+        "utility": 84,
+        "survival": 5,
+        "clutch": 26,
+        "consistency": 63
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mada-nrg-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 46,
+        "survival": 50,
+        "clutch": 46,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "magnum-fnatic-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 9,
+        "survival": 64,
+        "clutch": 89,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mako-drx-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 100,
+        "survival": 62,
+        "clutch": 77,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mako-drx-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 94,
+        "survival": 75,
+        "clutch": 66,
+        "consistency": 29
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mako-drx-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 67,
+        "utility": 67,
+        "survival": 93,
+        "clutch": 48,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mako-drx-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 58,
+        "utility": 64,
+        "survival": 88,
+        "clutch": 73,
+        "consistency": 22
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mako-vision-strikers-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 88,
+        "survival": 88,
+        "clutch": 18,
+        "consistency": 53
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "marved-envy-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 83,
+        "utility": 68,
+        "survival": 18,
+        "clutch": 3,
+        "consistency": 43
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "marved-optic-gaming-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 61,
+        "utility": 79,
+        "survival": 60,
+        "clutch": 72,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mazin-furia-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 39,
+        "survival": 5,
+        "clutch": 79,
+        "consistency": 67
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mazin-furia-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 1,
+        "utility": 79,
+        "survival": 4,
+        "clutch": 40,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mazino-kru-esports-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 79,
+        "utility": 61,
+        "survival": 16,
+        "clutch": 40,
+        "consistency": 28
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mazino-kru-esports-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 93,
+        "survival": 78,
+        "clutch": 18,
+        "consistency": 84
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mazino-leviatan-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 72,
+        "survival": 13,
+        "clutch": 47,
+        "consistency": 59
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "medusa-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 13,
+        "survival": 8,
+        "clutch": 3,
+        "consistency": 58
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "melser-kru-esports-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 5,
+        "utility": 28,
+        "survival": 8,
+        "clutch": 9,
+        "consistency": 92
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "melser-kru-esports-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 24,
+        "survival": 76,
+        "clutch": 60,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "melser-leviatan-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 78,
+        "survival": 85,
+        "clutch": 37,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "meteor-gen-g-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 11,
+        "survival": 43,
+        "clutch": 70,
+        "consistency": 11
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "meteor-t1-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 69,
+        "utility": 43,
+        "survival": 2,
+        "clutch": 74,
+        "consistency": 36
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mindfreak-paper-rex-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 31,
+        "survival": 54,
+        "clutch": 75,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mindfreak-paper-rex-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 51,
+        "utility": 73,
+        "survival": 92,
+        "clutch": 89,
+        "consistency": 33
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mindfreak-paper-rex-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 76,
+        "utility": 79,
+        "survival": 66,
+        "clutch": 68,
+        "consistency": 44
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "miniboo-team-heretics-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 48,
+        "survival": 37,
+        "clutch": 27,
+        "consistency": 21
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "miniboo-team-heretics-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 23,
+        "survival": 41,
+        "clutch": 59,
+        "consistency": 63
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mistic-fnatic-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 19,
+        "utility": 79,
+        "survival": 44,
+        "clutch": 31,
+        "consistency": 59
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mistic-fnatic-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 85,
+        "utility": 85,
+        "survival": 94,
+        "clutch": 84,
+        "consistency": 40
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mitch-cloud9-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 24,
+        "survival": 19,
+        "clutch": 79,
+        "consistency": 29
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mojj-fut-esports-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 49,
+        "survival": 52,
+        "clutch": 88,
+        "consistency": 38
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "monyet-rex-regum-qeon-2025",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 77,
+        "survival": 79,
+        "clutch": 56,
+        "consistency": 43
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mrfalin-fut-esports-2023",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 68,
+        "survival": 83,
+        "clutch": 74,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mrfalin-fut-esports-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 13,
+        "utility": 64,
+        "survival": 13,
+        "clutch": 23,
+        "consistency": 96
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mta-kru-esports-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 19,
+        "survival": 76,
+        "clutch": 12,
+        "consistency": 9
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "munchkin-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 47,
+        "survival": 30,
+        "clutch": 6,
+        "consistency": 59
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "munchkin-gen-g-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 98,
+        "survival": 21,
+        "clutch": 36,
+        "consistency": 69
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "munchkin-t1-2023",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 59,
+        "utility": 30,
+        "survival": 18,
+        "clutch": 44,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "murizzz-keyd-stars-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "mwzera-keyd-stars-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "n4rrate-sentinels-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 80,
+        "survival": 23,
+        "clutch": 86,
+        "consistency": 13
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nagz-kru-esports-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 36,
+        "survival": 47,
+        "clutch": 91,
+        "consistency": 32
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nagz-kru-esports-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 56,
+        "utility": 19,
+        "survival": 79,
+        "clutch": 71,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nagz-kru-esports-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 17,
+        "utility": 50,
+        "survival": 61,
+        "clutch": 9,
+        "consistency": 95
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nats-gambit-esports-2021",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 91,
+        "utility": 51,
+        "survival": 88,
+        "clutch": 42,
+        "consistency": 6
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nats-team-liquid-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 73,
+        "utility": 2,
+        "survival": 23,
+        "clutch": 9,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nats-team-liquid-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 52,
+        "utility": 15,
+        "survival": 70,
+        "clutch": 86,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nephh-bilibili-gaming-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 10,
+        "utility": 44,
+        "survival": 21,
+        "clutch": 1,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nephh-bilibili-gaming-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 25,
+        "survival": 98,
+        "clutch": 30,
+        "consistency": 51
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "neth-crazy-raccoon-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 14,
+        "utility": 83,
+        "survival": 30,
+        "clutch": 45,
+        "consistency": 95
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nicc-dragon-ranger-gaming-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 59,
+        "survival": 9,
+        "clutch": 7,
+        "consistency": 27
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nivera-team-liquid-2021",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 82,
+        "utility": 41,
+        "survival": 95,
+        "clutch": 63,
+        "consistency": 45
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nivera-team-liquid-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 46,
+        "survival": 47,
+        "clutch": 11,
+        "consistency": 49
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nizhaotzh-funplus-phoenix-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 8,
+        "utility": 20,
+        "survival": 69,
+        "clutch": 38,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nobody-edward-gaming-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 16,
+        "utility": 7,
+        "survival": 14,
+        "clutch": 40,
+        "consistency": 36
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nobody-edward-gaming-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 51,
+        "utility": 35,
+        "survival": 15,
+        "clutch": 67,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nobody-edward-gaming-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 43,
+        "utility": 37,
+        "survival": 74,
+        "clutch": 80,
+        "consistency": 51
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nobody-edward-gaming-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 2,
+        "survival": 20,
+        "clutch": 95,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "noman-xi-lai-gaming-2025",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 32,
+        "survival": 50,
+        "clutch": 24,
+        "consistency": 61
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nukkye-giants-gaming-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 15,
+        "utility": 44,
+        "survival": 3,
+        "clutch": 35,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nzr-furia-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 83,
+        "utility": 50,
+        "survival": 77,
+        "clutch": 98,
+        "consistency": 89
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "nzr-furia-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 61,
+        "utility": 4,
+        "survival": 53,
+        "clutch": 89,
+        "consistency": 81
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "pancada-loud-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 94,
+        "survival": 98,
+        "clutch": 60,
+        "consistency": 85
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "patiphan-x10-esports-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 71,
+        "survival": 60,
+        "clutch": 12,
+        "consistency": 76
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "patitek-team-liquid-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 13,
+        "utility": 77,
+        "survival": 27,
+        "clutch": 23,
+        "consistency": 80
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "patmen-paper-rex-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 22,
+        "utility": 11,
+        "survival": 43,
+        "clutch": 18,
+        "consistency": 40
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "primmie-talon-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 87,
+        "survival": 92,
+        "clutch": 97,
+        "consistency": 82
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "ptc-full-sense-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 11,
+        "utility": 53,
+        "survival": 30,
+        "clutch": 45,
+        "consistency": 62
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "qck-furia-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 43,
+        "utility": 42,
+        "survival": 35,
+        "clutch": 83,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "qck-furia-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 37,
+        "utility": 71,
+        "survival": 38,
+        "clutch": 83,
+        "consistency": 29
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "qraxs-fut-esports-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 47,
+        "utility": 79,
+        "survival": 55,
+        "clutch": 23,
+        "consistency": 55
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "qraxs-fut-esports-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 21,
+        "utility": 50,
+        "survival": 67,
+        "clutch": 97,
+        "consistency": 81
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "qw1-fut-esports-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 9,
+        "utility": 9,
+        "survival": 67,
+        "clutch": 40,
+        "consistency": 56
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rarga-xi-lai-gaming-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 66,
+        "survival": 26,
+        "clutch": 34,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rb-drx-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 45,
+        "survival": 28,
+        "clutch": 27,
+        "consistency": 67
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rb-drx-2023",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 11,
+        "utility": 11,
+        "survival": 76,
+        "clutch": 99,
+        "consistency": 34
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rb-vision-strikers-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 61,
+        "survival": 81,
+        "clutch": 83,
+        "consistency": 42
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "redgar-gambit-esports-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 70,
+        "survival": 77,
+        "clutch": 65,
+        "consistency": 31
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "redgar-team-liquid-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 11,
+        "utility": 64,
+        "survival": 5,
+        "clutch": 9,
+        "consistency": 89
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rhyme-giants-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 96,
+        "survival": 23,
+        "clutch": 40,
+        "consistency": 69
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "riens-team-heretics-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 94,
+        "utility": 48,
+        "survival": 67,
+        "clutch": 88,
+        "consistency": 34
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "riens-team-heretics-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 96,
+        "utility": 64,
+        "survival": 39,
+        "clutch": 92,
+        "consistency": 24
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "runner-team-vitality-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 66,
+        "survival": 11,
+        "clutch": 7,
+        "consistency": 75
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "rushia-bilibili-gaming-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 41,
+        "survival": 41,
+        "clutch": 5,
+        "consistency": 38
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "s0m-nrg-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "s0m-nrg-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 69,
+        "survival": 27,
+        "clutch": 57,
+        "consistency": 78
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "s1mon-edward-gaming-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 51,
+        "utility": 97,
+        "survival": 90,
+        "clutch": 57,
+        "consistency": 71
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "saadhak-loud-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 85,
+        "utility": 97,
+        "survival": 88,
+        "clutch": 20,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "saadhak-loud-2023",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 47,
+        "utility": 86,
+        "survival": 65,
+        "clutch": 31,
+        "consistency": 58
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "saadhak-team-vikings-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 88,
+        "survival": 48,
+        "clutch": 93,
+        "consistency": 23
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sacy-loud-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 91,
+        "utility": 100,
+        "survival": 100,
+        "clutch": 71,
+        "consistency": 37
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sacy-sentinels-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 92,
+        "survival": 58,
+        "clutch": 75,
+        "consistency": 43
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sacy-team-vikings-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 98,
+        "utility": 95,
+        "survival": 50,
+        "clutch": 74,
+        "consistency": 29
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "santagolf-full-sense-2021",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 3,
+        "utility": 3,
+        "survival": 58,
+        "clutch": 28,
+        "consistency": 88
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sayaplayer-t1-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 76,
+        "utility": 13,
+        "survival": 71,
+        "clutch": 92,
+        "consistency": 61
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sayf-team-liquid-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 61,
+        "utility": 87,
+        "survival": 32,
+        "clutch": 50,
+        "consistency": 87
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sayf-team-vitality-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 66,
+        "survival": 61,
+        "clutch": 82,
+        "consistency": 92
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "scream-team-liquid-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 91,
+        "utility": 27,
+        "survival": 61,
+        "clutch": 47,
+        "consistency": 36
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "scream-team-liquid-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 77,
+        "utility": 51,
+        "survival": 98,
+        "clutch": 64,
+        "consistency": 25
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "shahzam-sentinels-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 89,
+        "utility": 56,
+        "survival": 53,
+        "clutch": 41,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "shao-funplus-phoenix-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "shao-natus-vincere-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 42,
+        "utility": 70,
+        "survival": 34,
+        "clutch": 98,
+        "consistency": 82
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sheydos-gambit-esports-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 47,
+        "survival": 75,
+        "clutch": 29,
+        "consistency": 54
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "shyy-kru-esports-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 70,
+        "utility": 52,
+        "survival": 89,
+        "clutch": 98,
+        "consistency": 84
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "shyy-leviatan-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 60,
+        "utility": 100,
+        "survival": 62,
+        "clutch": 75,
+        "consistency": 8
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sick-sentinels-2021",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 68,
+        "utility": 57,
+        "survival": 39,
+        "clutch": 71,
+        "consistency": 73
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "skuba-nrg-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 46,
+        "survival": 88,
+        "clutch": 100,
+        "consistency": 75
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "smoggy-edward-gaming-2022",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 66,
+        "utility": 97,
+        "survival": 71,
+        "clutch": 21,
+        "consistency": 97
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "smoggy-edward-gaming-2023",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 40,
+        "utility": 40,
+        "survival": 35,
+        "clutch": 27,
+        "consistency": 44
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "smoggy-edward-gaming-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 96,
+        "utility": 67,
+        "survival": 86,
+        "clutch": 72,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "smoggy-edward-gaming-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 92,
+        "utility": 86,
+        "survival": 8,
+        "clutch": 98,
+        "consistency": 95
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "something-paper-rex-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 53,
+        "utility": 69,
+        "survival": 85,
+        "clutch": 69,
+        "consistency": 37
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "something-paper-rex-2024",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 45,
+        "utility": 43,
+        "survival": 54,
+        "clutch": 22,
+        "consistency": 78
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "something-paper-rex-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 84,
+        "survival": 72,
+        "clutch": 76,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "soulcas-team-liquid-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 28,
+        "utility": 80,
+        "survival": 81,
+        "clutch": 23,
+        "consistency": 30
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "soulcas-team-liquid-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 25,
+        "utility": 42,
+        "survival": 74,
+        "clutch": 28,
+        "consistency": 42
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "soulcas-team-liquid-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 20,
+        "survival": 68,
+        "clutch": 32,
+        "consistency": 90
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "spiritz1-dragon-ranger-gaming-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 74,
+        "utility": 98,
+        "survival": 2,
+        "clutch": 8,
+        "consistency": 34
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sscary-x10-esports-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 74,
+        "survival": 74,
+        "clutch": 9,
+        "consistency": 79
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sscary-xerxia-esports-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 73,
+        "utility": 48,
+        "survival": 88,
+        "clutch": 98,
+        "consistency": 90
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "starxo-acend-2021",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "stax-drx-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 55,
+        "utility": 35,
+        "survival": 63,
+        "clutch": 95,
+        "consistency": 49
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "stax-drx-2023",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": true,
+      "traits": {
+        "leadership": 75,
+        "firepower": 32,
+        "utility": 56,
+        "survival": 60,
+        "clutch": 60,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "stax-t1-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 73,
+        "survival": 5,
+        "clutch": 66,
+        "consistency": 95
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "stax-vision-strikers-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 56,
+        "utility": 38,
+        "survival": 56,
+        "clutch": 26,
+        "consistency": 32
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "stellar-100-thieves-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 12,
+        "utility": 84,
+        "survival": 30,
+        "clutch": 15,
+        "consistency": 72
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sugarz3ro-zeta-division-2022",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 56,
+        "survival": 23,
+        "clutch": 83,
+        "consistency": 48
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sugarz3ro-zeta-division-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "superbuss-full-sense-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 38,
+        "utility": 3,
+        "survival": 38,
+        "clutch": 38,
+        "consistency": 88
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "surf-xerxia-esports-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 7,
+        "utility": 4,
+        "survival": 38,
+        "clutch": 12,
+        "consistency": 35
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sushiboys-x10-esports-2021",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 85,
+        "utility": 46,
+        "survival": 79,
+        "clutch": 28,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sushiboys-xerxia-esports-2022",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 5,
+        "utility": 53,
+        "survival": 20,
+        "clutch": 34,
+        "consistency": 81
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "sutecas-team-vikings-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 78,
+        "utility": 53,
+        "survival": 63,
+        "clutch": 95,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "suygetsu-funplus-phoenix-2022",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "suygetsu-natus-vincere-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 81,
+        "utility": 23,
+        "survival": 46,
+        "clutch": 93,
+        "consistency": 80
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "t3xture-gen-g-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 82,
+        "utility": 37,
+        "survival": 45,
+        "clutch": 82,
+        "consistency": 34
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tacolilla-leviatan-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 34,
+        "utility": 61,
+        "survival": 55,
+        "clutch": 78,
+        "consistency": 49
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tennn-zeta-division-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 27,
+        "utility": 59,
+        "survival": 55,
+        "clutch": 12,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tennn-zeta-division-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tenz-sentinels-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 61,
+        "utility": 52,
+        "survival": 39,
+        "clutch": 45,
+        "consistency": 2
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tenz-sentinels-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 93,
+        "survival": 52,
+        "clutch": 11,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tex-leviatan-2024",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 18,
+        "utility": 32,
+        "survival": 4,
+        "clutch": 41,
+        "consistency": 27
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "trent-g2-esports-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 54,
+        "utility": 57,
+        "survival": 17,
+        "clutch": 44,
+        "consistency": 71
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "trent-g2-esports-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 60,
+        "utility": 14,
+        "survival": 56,
+        "clutch": 87,
+        "consistency": 64
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "trexx-team-liquid-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 23,
+        "survival": 32,
+        "clutch": 23,
+        "consistency": 98
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "trexx-team-vitality-2024",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 99,
+        "utility": 61,
+        "survival": 74,
+        "clutch": 61,
+        "consistency": 4
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "tuyz-loud-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 44,
+        "utility": 79,
+        "survival": 94,
+        "clutch": 79,
+        "consistency": 63
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "v1xen-keyd-stars-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "valyn-g2-esports-2024",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 57,
+        "utility": 57,
+        "survival": 28,
+        "clutch": 88,
+        "consistency": 70
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "valyn-g2-esports-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 69,
+        "utility": 72,
+        "survival": 39,
+        "clutch": 42,
+        "consistency": 72
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "vanity-cloud9-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 29,
+        "utility": 99,
+        "survival": 14,
+        "clutch": 89,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "verno-mibr-2025",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 90,
+        "utility": 68,
+        "survival": 97,
+        "clutch": 57,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "victor-envy-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 74,
+        "survival": 20,
+        "clutch": 29,
+        "consistency": 86
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "victor-nrg-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "victor-optic-gaming-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 56,
+        "utility": 52,
+        "survival": 77,
+        "clutch": 55,
+        "consistency": 72
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "viva-xi-lai-gaming-2025",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 51,
+        "survival": 57,
+        "clutch": 79,
+        "consistency": 64
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "westside-giantx-2025",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 41,
+        "utility": 13,
+        "survival": 61,
+        "clutch": 46,
+        "consistency": 51
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "whzy-bilibili-gaming-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 88,
+        "utility": 35,
+        "survival": 62,
+        "clutch": 19,
+        "consistency": 19
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "whzy-bilibili-gaming-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 39,
+        "utility": 50,
+        "survival": 13,
+        "clutch": 8,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "whzy-bilibili-gaming-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 50,
+        "survival": 40,
+        "clutch": 8,
+        "consistency": 54
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "will-100-thieves-2022",
+      "eligibleRoles": [
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 89,
+        "utility": 43,
+        "survival": 28,
+        "clutch": 70,
+        "consistency": 74
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "witz-team-secret-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 55,
+        "utility": 37,
+        "survival": 99,
+        "clutch": 10,
+        "consistency": 47
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "wo0t-team-heretics-2024",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 71,
+        "utility": 88,
+        "survival": 40,
+        "clutch": 56,
+        "consistency": 65
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "wo0t-team-heretics-2025",
+      "eligibleRoles": [
+        "smokes",
+        "duelist",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 62,
+        "utility": 10,
+        "survival": 44,
+        "clutch": 91,
+        "consistency": 46
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xand-furia-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 48,
+        "utility": 43,
+        "survival": 11,
+        "clutch": 11,
+        "consistency": 93
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xenom-mibr-2025",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 40,
+        "utility": 100,
+        "survival": 91,
+        "clutch": 26,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xeppaa-cloud9-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 31,
+        "utility": 90,
+        "survival": 7,
+        "clutch": 36,
+        "consistency": 39
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xeta-cloud9-2021",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 69,
+        "utility": 90,
+        "survival": 46,
+        "clutch": 68,
+        "consistency": 75
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xeta-t1-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 58,
+        "utility": 16,
+        "survival": 77,
+        "clutch": 70,
+        "consistency": 83
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xffero-boom-esports-2022",
+      "eligibleRoles": [
+        "smokes",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 65,
+        "utility": 22,
+        "survival": 15,
+        "clutch": 61,
+        "consistency": 26
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "xffero-rex-regum-qeon-2025",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 19,
+        "utility": 15,
+        "survival": 80,
+        "clutch": 12,
+        "consistency": 15
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yay-envy-2021",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 84,
+        "utility": 20,
+        "survival": 45,
+        "clutch": 98,
+        "consistency": 84
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yay-optic-gaming-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 100,
+        "utility": 5,
+        "survival": 97,
+        "clutch": 63,
+        "consistency": 20
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yetujey-fut-esports-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 87,
+        "utility": 11,
+        "survival": 18,
+        "clutch": 7,
+        "consistency": 89
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yosemite-bilibili-gaming-2023",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 72,
+        "utility": 44,
+        "survival": 61,
+        "clutch": 82,
+        "consistency": 26
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yosemite-bilibili-gaming-2024",
+      "eligibleRoles": [
+        "smokes",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 2,
+        "utility": 25,
+        "survival": 41,
+        "clutch": 7,
+        "consistency": 96
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "yuicaw-funplus-phoenix-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 18,
+        "utility": 24,
+        "survival": 32,
+        "clutch": 3,
+        "consistency": 82
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zeek-acend-2021",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zekken-sentinels-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 78,
+        "utility": 84,
+        "survival": 31,
+        "clutch": 57,
+        "consistency": 26
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zekken-sentinels-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 42,
+        "utility": 90,
+        "survival": 30,
+        "clutch": 78,
+        "consistency": 22
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zekken-xset-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zellsis-sentinels-2024",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 42,
+        "utility": 93,
+        "survival": 80,
+        "clutch": 61,
+        "consistency": 56
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zellsis-sentinels-2025",
+      "eligibleRoles": [
+        "initiator",
+        "sentinel",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 6,
+        "utility": 50,
+        "survival": 45,
+        "clutch": 5,
+        "consistency": 88
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zest-drx-2022",
+      "eligibleRoles": [
+        "initiator"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 49,
+        "utility": 38,
+        "survival": 38,
+        "clutch": 52,
+        "consistency": 58
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zest-drx-2023",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 69,
+        "utility": 44,
+        "survival": 44,
+        "clutch": 75,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zmjjkk-edward-gaming-2022",
+      "eligibleRoles": [
+        "sentinel"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 79,
+        "utility": 25,
+        "survival": 25,
+        "clutch": 63,
+        "consistency": 94
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zmjjkk-edward-gaming-2023",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 35,
+        "utility": 46,
+        "survival": 25,
+        "clutch": 51,
+        "consistency": 51
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zmjjkk-edward-gaming-2024",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 75,
+        "utility": 59,
+        "survival": 43,
+        "clutch": 49,
+        "consistency": 33
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zmjjkk-edward-gaming-2025",
+      "eligibleRoles": [
+        "duelist"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 90,
+        "utility": 58,
+        "survival": 18,
+        "clutch": 8,
+        "consistency": 10
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zombs-sentinels-2021",
+      "eligibleRoles": [
+        "smokes"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 23,
+        "utility": 93,
+        "survival": 58,
+        "clutch": 80,
+        "consistency": 23
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zyppan-funplus-phoenix-2022",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 50,
+        "utility": 50,
+        "survival": 50,
+        "clutch": 50,
+        "consistency": 50
+      },
+      "reviewed": false
+    },
+    {
+      "cardId": "zyppan-natus-vincere-2023",
+      "eligibleRoles": [
+        "duelist",
+        "initiator",
+        "flex"
+      ],
+      "historicalIgl": false,
+      "traits": {
+        "leadership": 50,
+        "firepower": 24,
+        "utility": 68,
+        "survival": 2,
+        "clutch": 41,
+        "consistency": 89
+      },
+      "reviewed": false
+    }
+  ]
+}

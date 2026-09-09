@@ -10,6 +10,7 @@ read the [data methodology](data-methodology.md).
 - [Start a review](#start-a-review)
 - [Report-only workflow (recommended)](#report-only-workflow-recommended)
 - [Cautious local workflow](#cautious-local-workflow)
+- [Manual player catalog workflow](#manual-player-catalog-workflow)
 - [Glossary](#glossary)
 - [Keep factual review separate from balance tuning](#keep-factual-review-separate-from-balance-tuning)
 - [Review player role tags](#review-player-role-tags)
@@ -100,8 +101,10 @@ or participation of a card, stop and use the report-only workflow instead.
    record and the raw observation rather than editing from a partial search
    result.
 4. Use [Source-of-truth map](#source-of-truth-map) to identify the one allowed
-   source file. Edit only that source file. Do not edit generated yearly
-   snapshots or `evidence.json`.
+   source file. For a game-facing role, trait, historical IGL, or review-status
+   change, use the [manual player catalog workflow](#manual-player-catalog-workflow).
+   For a factual or derivation change, edit only its source file. Do not edit
+   generated yearly snapshots or `evidence.json`.
 5. Run `npm run derive:data` only after an intentional, supported derivation
    rule or approved reviewed-overlay change. It rewrites generated files, so
    never run it merely to inspect data.
@@ -112,8 +115,9 @@ or participation of a card, stop and use the report-only workflow instead.
    card-ID, membership, `mapsPlayed`, or participation correction is **not** a
    safe simple local-derive change. Send it to the owner or Codex for
    coordinated work, which may need to extend generator/materialization,
-   update snapshots, and update validation. Generated roles and traits still
-   must never be hand-edited as source of truth.
+   update snapshots, and update validation. Generated roles and traits remain
+   comparison outputs; the manual catalog is the runtime source for game-facing
+   values.
 6. Validate the data and run the focused safety tests:
 
    ```powershell
@@ -140,6 +144,58 @@ or participation of a card, stop and use the report-only workflow instead.
    make the check pass. Hand off the command output, exact card/year or setting,
    source URLs, and the diff instead.
 
+## Manual player catalog workflow
+
+The manual catalog at
+[manual-player-data.json](../src/data/champions/manual-player-data.json) is the
+**game-facing manual authority** for every card's eligible roles, firepower,
+utility, survival, clutch, consistency, leadership, and historical-IGL decision.
+The local browser tool is a **development-only editor**; it
+is not part of the production Next.js app or its static Vercel/GitHub Pages
+output. The generated yearly cards and `evidence.json` remain read-only
+comparison evidence for reviewing what derivation produced.
+
+The catalog's `reviewed` field is editor-only audit metadata. It is not merged
+into the runtime `PlayerCard` and has no gameplay effect. Gameplay leadership
+strength is controlled by the numeric `traits.leadership` value; `historicalIgl`
+is an independent classification and does not itself determine that strength.
+
+For an approved game-facing card change, work from the repository root and run:
+
+```powershell
+npm run edit:players
+```
+
+Review the exact player-event card, make the change in the local editor, and
+save. Saving writes
+`src/data/champions/manual-player-data.json`. Then run the complete local
+workflow:
+
+```powershell
+npm run validate:data
+npm test
+npm run build
+```
+
+Commit the changed manual JSON on the branch. Merge that branch into `main` so
+the validated catalog is included in the Vercel/GitHub Pages deployment. The
+production build consumes the validated manual values; it does not expose the
+development editor.
+
+`npm run derive:data` is still required for an approved raw-data, derivation,
+or reviewed-overlay change. It refreshes generated yearly fields and
+`evidence.json` for comparison, but never overwrites the manual catalog. After
+derivation, review the generated diff and run `npm run validate:data`, `npm
+test`, and `npm run build` before committing any intentionally changed files.
+
+Runtime roles, traits, and historical IGL values must equal the corresponding
+manual catalog entry; they do not need to equal derivation output. Validation
+still checks raw participation and identity, generated evidence against raw
+extraction and derivation, reviewed-overlay integrity, checksums, and every
+source/citation relationship. A manual gameplay preference therefore cannot
+be used to alter pinned raw observations, reviewed overlays, evidence, source
+catalog entries, or their checksums.
+
 ## Glossary
 
 - **Player identity:** the canonical person record, shared across appearances.
@@ -159,8 +215,8 @@ or participation of a card, stop and use the report-only workflow instead.
   Traits are generated/editorial inputs, not an objective ranking of a player.
 - **IGL:** an in-game leader decision recorded for an event card. It is a
   reviewed leadership decision, separate from the player identity.
-- **Snapshot:** one generated runtime file for a Champions year. Snapshots are
-  loaded into the dataset the game uses.
+- **Snapshot:** one generated comparison file for a Champions year. The dataset
+  combines snapshots with the manual catalog before the game uses them.
 - **Lineup strength:** the game score calculated from five selected cards'
   traits, chemistry, and selected IGL; it drives map odds.
 - **Map chance:** the simulated probability that the user's lineup wins one
@@ -224,9 +280,12 @@ then `npm run validate:data`, updates to
 [derivation tests](../src/data/champions/derivation.test.ts), and a review of
 [the methodology](data-methodology.md). Update
 [validator tests](../src/data/champions/validation.test.ts) too if the data
-shape, evidence, or integrity rule changes. Never edit the generated yearly
-snapshots or [evidence.json](../src/data/champions/evidence.json) to change a
-trait: derivation overwrites them and validation can reject them.
+shape, evidence, or integrity rule changes. Generated yearly snapshots and
+[evidence.json](../src/data/champions/evidence.json) are comparison outputs, not
+game-facing edit points. To change a runtime trait, use the [manual player
+catalog workflow](#manual-player-catalog-workflow). The runtime card must match
+its manual entry; evidence and generated outputs remain checked against raw
+extraction and derivation separately.
 
 #### Coverage, cohorts, and rounding
 
@@ -298,11 +357,11 @@ For each requested card, answer these questions before asking for a change:
   progression rule?
 - Is a 75 leadership value supported by a reviewed historical-IGL decision?
 
-A direct one-player trait edit in a yearly JSON snapshot is not an accepted
-remedy: it is regenerated, can be rejected by validation, and will be
-overwritten. Submit the evidence and requested outcome instead. A future
-balance-override layer could support intentional per-card adjustments, but no
-such layer exists now.
+For an intentional game-facing one-card trait change, use the manual catalog
+workflow and record the exact card/year and reason. Keep factual corrections in
+the pinned raw evidence or a reviewed overlay with sources; keep subjective
+balance preferences in the manual catalog. Generated snapshots and evidence
+remain comparison outputs and should not be edited to represent the preference.
 
 ### Lineup strength: game-balance use of traits
 
@@ -642,27 +701,29 @@ that affects several cards should instead use [Algorithm change](#algorithm-chan
 - **Individual exception:** add a reviewed, evidenced entry to
   [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json).
   Checksum and validator coordination requires the repository owner or Codex.
-- **Direct `eligibleRoles` edits in a yearly JSON snapshot:** do not use these
-  as a fix. They are temporary, rejected by validation, and overwritten by
-  derivation.
+- **Game-facing `eligibleRoles`, traits, or historical IGL:** edit the exact
+  card in the [manual player catalog workflow](#manual-player-catalog-workflow).
+  The runtime card must equal its manual entry. Keep the generated yearly
+  snapshot and `evidence.json` as comparison outputs; keep factual role
+  exceptions in reviewed overlays with their evidence and checksum protections.
 
 ## How data reaches a map roll
 
 The game follows this path:
 
-`raw extraction -> derivation -> generated yearly snapshots -> dataset -> lineup rating -> opponent generation -> map rolls`
+`raw extraction -> derivation -> generated yearly snapshots + evidence -> manual catalog overlay -> dataset -> lineup rating -> opponent generation -> map rolls`
 
 1. Pinned raw observations are transformed by [trait and role derivation](../src/data/champions/derivation.ts), using reviewed exceptions where applicable.
-2. [The derivation script](../scripts/derive-champions.mts) writes generated fields into the 2021-2025 snapshots and the audit evidence view.
-3. [The dataset entry point](../src/data/champions/index.ts) combines those yearly snapshots into the runtime dataset.
+2. [The derivation script](../scripts/derive-champions.mts) writes generated fields into the 2021-2025 snapshots and the audit evidence view; it never writes the manual catalog.
+3. [The dataset entry point](../src/data/champions/index.ts) combines those yearly snapshots and applies the validated manual catalog to the runtime dataset.
 4. [Rating](../src/features/game/rating.ts) calculates each lineup's strength, then computes the user's map-win probability from user strength minus opponent strength.
 5. [Opponent generation](../src/features/game/opponents.ts) builds stage-banded opposing lineups.
 6. [Tournament simulation](../src/features/game/tournament.ts) rolls maps, series, and advancement from those inputs.
 
-Generated yearly role and trait fields are outputs of this flow, not
-source-of-truth edit points. After a factual change, regeneration and
-[dataset validation](../src/data/champions/validation.ts) confirm that the
-snapshots still agree with their inputs.
+Generated yearly role and trait fields are comparison outputs. Runtime roles,
+traits, and historical IGL values come from the manual catalog and must match
+it during [dataset validation](../src/data/champions/validation.ts), while
+evidence continues to agree with raw inputs and derivation.
 
 ## Source-of-truth map
 
@@ -675,8 +736,9 @@ be reviewed together.
 | --- | --- | --- |
 | [raw-extraction.json](../src/data/champions/raw-extraction.json) | Source input | Pinned source observations. Do not casually edit it; use the documented extraction and review process. |
 | [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json) | Reviewed override | Reviewed teams, role exceptions, and IGL decisions. Propose factual changes with evidence; make overlay/checksum changes only through coordinated owner/Codex review. |
+| [manual-player-data.json](../src/data/champions/manual-player-data.json) | Game-facing manual authority | Runtime roles, traits, and historical IGL decisions for every card. Its `reviewed` field is editor-only audit metadata. Edit through the development-only local player editor, then validate, test, build, and commit the catalog. |
 | [evidence.json](../src/data/champions/evidence.json) | Generated audit output | Inspect it, but do not edit it directly. |
-| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated runtime output | Inspect them, but do not edit derived role or trait fields; regenerate them after approved input changes. |
+| [2021.json](../src/data/champions/2021.json) through [2025.json](../src/data/champions/2025.json) | Generated comparison output | Inspect them and compare them with the manual catalog; regenerate them after approved raw, derivation, or reviewed-overlay changes. |
 | [derivation.ts](../src/data/champions/derivation.ts) | Derivation/configuration | Global role and trait derivation rules. Request an owner/Codex change only when the global algorithm needs revision, then regenerate and validate the snapshots. |
 | [rating.ts](../src/features/game/rating.ts) | Gameplay configuration | Trait weights, chemistry, IGL bonus, and map-win probability. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
 | [opponents.ts](../src/features/game/opponents.ts) | Gameplay configuration | Stage bands and opponent construction. Treat edits as balance tuning; ask the owner or Codex to make and test them. |
@@ -693,14 +755,15 @@ the information.
 
 ## Common validation failures
 
-These errors are evidence that the source, overlay, derivation, and generated
-outputs disagree. Do not bypass them. Preserve the error text and hand it off
-with the exact card/year, source URLs, intended source-file edit, and `git diff`.
+These errors are evidence that the manual runtime catalog, source, overlay,
+derivation, and generated outputs disagree. Do not bypass them. Preserve the
+error text and hand it off with the exact card/year, source URLs, intended
+source-file edit, and `git diff`.
 
 | Error text | Likely mistaken edit | What to hand off |
 | --- | --- | --- |
-| `derived trait ...` | A generated trait was edited directly, a source statistic is incomplete/invalid, or a derivation change did not regenerate its snapshots. | Exact card/year and trait, raw map statistics, expected factual or model change, derivation output, and the failing command. |
-| `derived final roles ...` or another role failure | A yearly `eligibleRoles` field was edited, an unsupported overlay role was added, an agent class/count is wrong, or the threshold/validator no longer matches derivation. | Exact card/year, current and proposed roles, agent/map evidence, overlay entry if any, and whether the concern is a one-card exception or global rule. |
+| `manual firepower <cardId>`, `manual utility <cardId>`, `manual survival <cardId>`, `manual clutch <cardId>`, `manual consistency <cardId>`, `manual leadership <cardId>`, `manual eligibleRoles <cardId>`, or `manual historicalIgl <cardId>` | The runtime card differs from its manual catalog entry. Use the local editor to make the intended game-facing value match the catalog; do not change generated evidence to hide the mismatch. | Exact card/year, current and proposed manual value, whether it is factual or subjective, and the failing command. |
+| `final roles ...`, `threshold ...`, or `raw class counts ...` | Generated evidence, raw observations, or a reviewed overlay no longer agrees with derivation. | Exact card/year, agent/map evidence, overlay entry if any, source URLs, intended source-file edit, and the failing command. |
 | `reviewed overlays checksum mismatch` | An overlay changed without the owner-approved checksum/integrity update, or the wrong overlay content was edited. | The complete proposed overlay change, factual sources, expected generated roles/IGL effect, error text, and diff. Ask the owner/Codex to review the coordinated change. |
 | `source catalog ...` | A pinned raw source, source catalog entry, or its expected relationship was changed or is missing. | Exact source URL/identifier, event/card it supports, why it should be added or corrected, the changed source record, and the validation output. |
 

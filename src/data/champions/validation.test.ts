@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import evidence from "./evidence.json";
-import { championsDataset } from "./index";
+import { championsDataset, generatedChampionsDataset, manualPlayerCatalog } from "./index";
+import { applyManualCatalog, parseManualCatalog } from "./manual-data";
 import { validateChampions, type Evidence } from "./validation";
 import raw from "./raw-extraction.json";
 import overlays from "./reviewed-overlays.json";
@@ -11,7 +12,7 @@ describe("Champions audit validation", () => {
     const first = data.sources.find(source => source.id === "liquipedia-champions-2021")!;
     const last = data.sources.find(source => source.id === "liquipedia-champions-2025")!;
     [first.url, last.url] = [last.url, first.url];
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/source catalog/);
   });
 
   it.each(["retrievedAt", "usage", "credit", "license", "undefined credit"])("rejects changes to reviewed source %s metadata", field => {
@@ -21,7 +22,7 @@ describe("Champions audit validation", () => {
     if (field === "credit") data.sources[0].credit = "Unreviewed credit";
     if (field === "license") data.sources[0].license = "Unreviewed license";
     if (field === "undefined credit") data.sources[0].credit = undefined;
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/source catalog/);
   });
 
   it.each(["missing", "extra", "duplicate"])("rejects %s source catalog records", kind => {
@@ -29,7 +30,7 @@ describe("Champions audit validation", () => {
     if (kind === "missing") data.sources.pop();
     if (kind === "extra") data.sources.push({ ...data.sources[0], id: "extra-reviewed-looking-source" });
     if (kind === "duplicate") data.sources.push({ ...data.sources[0] });
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/source catalog/);
   });
 
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
@@ -41,7 +42,7 @@ describe("Champions audit validation", () => {
     if (target === "card") data.cards[0].sourceIds = wrong;
     if (target === "evidence") audit[0].sourceIds = wrong;
     if (target === "clutch evidence") audit[0].clutchSourceIds = wrong;
-    expect(() => validateChampions(data, audit)).toThrow(/sources|citations/);
+    expect(() => validateChampions(data, audit, manualPlayerCatalog)).toThrow(/sources|citations/);
   });
 
   it.each(["extra", "missing", "duplicate"])("rejects %s valid citations", mode => {
@@ -49,7 +50,7 @@ describe("Champions audit validation", () => {
     if (mode === "extra") data.cards[0].sourceIds.push("liquipedia-champions-2025");
     if (mode === "missing") data.cards[0].sourceIds.pop();
     if (mode === "duplicate") data.cards[0].sourceIds.push(data.cards[0].sourceIds[0]);
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/sources|citations/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/sources|citations/);
   });
 
   it.each(["canonicalHandle", "playerId", "displayHandle", "teamName", "teamId"])("rejects edits to pinned %s", target => {
@@ -59,35 +60,67 @@ describe("Champions audit validation", () => {
     if (target === "displayHandle") data.cards[0].displayHandle = "DifferentHandle";
     if (target === "teamName") data.teams[0].name = "Different team";
     if (target === "teamId") data.cards[0].teamId = data.teams[0].id;
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/identity|raw|team mapping/);
   });
 
   it("rejects wrong existing citations for overrides and leadership", () => {
     const audit = structuredClone(evidence) as Evidence[];
     audit.find(row => row.override)!.override!.sourceIds = ["liquipedia-champions-2025"];
-    expect(() => validateChampions(championsDataset, audit)).toThrow(/override/);
+    expect(() => validateChampions(championsDataset, audit, manualPlayerCatalog)).toThrow(/override/);
     const data = structuredClone(championsDataset);
     data.cards.find(card => card.historicalIgl)!.sourceIds = ["liquipedia-champions-2025", "vct-reference-dataset", "riot-vct-2023-awards"];
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/sources|citations/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/sources|citations/);
   });
 
   it("rejects changes to the reviewed IGL citation overlay", () => {
     const sourceIds = overlays.leadership[0].sourceIds;
     try {
       overlays.leadership[0].sourceIds = ["liquipedia-champions-2025"];
-      expect(() => validateChampions(championsDataset, evidence as Evidence[])).toThrow(/overlays checksum/);
+      expect(() => validateChampions(championsDataset, evidence as Evidence[], manualPlayerCatalog)).toThrow(/overlays checksum/);
     } finally { overlays.leadership[0].sourceIds = sourceIds; }
   });
 
   it("accepts the full committed derivation", () => {
-    expect(() => validateChampions(championsDataset, evidence as Evidence[])).not.toThrow();
+    expect(() => validateChampions(championsDataset, evidence as Evidence[], manualPlayerCatalog)).not.toThrow();
+  });
+
+  it("accepts manual player values that differ from the generated derivation", () => {
+    const catalog = structuredClone(manualPlayerCatalog);
+    catalog.cards[0] = {
+      ...catalog.cards[0],
+      eligibleRoles: ["flex"],
+      historicalIgl: true,
+      traits: { firepower: 100, utility: 0, survival: 73, clutch: 22, consistency: 61, leadership: 91 },
+    };
+    const parsed = parseManualCatalog(catalog, catalog.cards.map(card => card.cardId));
+    const runtime = structuredClone(generatedChampionsDataset);
+    runtime.cards = applyManualCatalog(runtime.cards, parsed);
+    expect(() => validateChampions(runtime, evidence as Evidence[], parsed)).not.toThrow();
+  });
+
+  it("rejects a runtime card that differs from its manual entry", () => {
+    const data = structuredClone(championsDataset);
+    data.cards[0].traits.firepower = data.cards[0].traits.firepower === 99 ? 100 : 99;
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/manual firepower/i);
+  });
+
+  it("rejects a runtime historical IGL value that differs from its manual entry", () => {
+    const data = structuredClone(championsDataset);
+    data.cards[0].historicalIgl = !data.cards[0].historicalIgl;
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/manual historicalIgl/i);
+  });
+
+  it("rejects runtime eligible roles that differ from its manual entry", () => {
+    const data = structuredClone(championsDataset);
+    data.cards[0].eligibleRoles = data.cards[0].eligibleRoles.join(",") === "flex" ? ["smokes"] : ["flex"];
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/manual eligibleRoles/i);
   });
 
   it("rejects tampered raw inputs before deriving evidence", () => {
     const wins = raw.cards[0].clutchWins;
     try {
       raw.cards[0].clutchWins++;
-      expect(() => validateChampions(championsDataset, evidence as Evidence[])).toThrow(/raw extraction checksum/);
+      expect(() => validateChampions(championsDataset, evidence as Evidence[], manualPlayerCatalog)).toThrow(/raw extraction checksum/);
     } finally { raw.cards[0].clutchWins = wins; }
   });
 
@@ -97,27 +130,27 @@ describe("Champions audit validation", () => {
     data.cards[0].mapsPlayed++;
     altered[0].mapsPlayed++;
     altered[0].agentClassMaps.smokes++;
-    expect(() => validateChampions(data, altered)).toThrow(/raw mapsPlayed|raw class/);
+    expect(() => validateChampions(data, altered, manualPlayerCatalog)).toThrow(/raw mapsPlayed|raw class/);
     const counts = structuredClone(evidence) as Evidence[];
     counts[0].agentClassMaps.smokes--;
     counts[0].agentClassMaps.duelist++;
-    expect(() => validateChampions(championsDataset, counts)).toThrow(/raw class counts/);
+    expect(() => validateChampions(championsDataset, counts, manualPlayerCatalog)).toThrow(/raw class counts/);
     const falseLeader = structuredClone(championsDataset);
     falseLeader.cards[0].historicalIgl = true;
     falseLeader.cards[0].traits.leadership = 75;
     falseLeader.cards[0].sourceIds.push("riot-vct-2023-awards");
-    expect(() => validateChampions(falseLeader, evidence as Evidence[])).toThrow(/raw historicalIgl|trait leadership/);
+    expect(() => validateChampions(falseLeader, evidence as Evidence[], manualPlayerCatalog)).toThrow(/manual historicalIgl|manual leadership/);
   });
   it.each(["reason", "empty citations", "unknown citation", "extraneous"])("rejects %s overrides even on threshold-satisfying cards", kind => {
     const altered = structuredClone(evidence) as Evidence[];
     altered[0].override = { roles: ["smokes"], reason: kind === "reason" ? " " : "Reviewed role", sourceIds: kind === "empty citations" ? [] : [kind === "unknown citation" ? "missing" : "vct-reference-dataset"] };
-    expect(() => validateChampions(championsDataset, altered)).toThrow(/override/);
+    expect(() => validateChampions(championsDataset, altered, manualPlayerCatalog)).toThrow(/override/);
   });
 
   it("rejects a plausible but unobserved clutch win", () => {
     const altered = structuredClone(evidence) as Evidence[];
     altered.find(row => row.cardId === "ade-crazy-raccoon-2021")!.clutchWins = 3;
-    expect(() => validateChampions(championsDataset, altered)).toThrow(/clutch|raw/);
+    expect(() => validateChampions(championsDataset, altered, manualPlayerCatalog)).toThrow(/clutch|raw/);
   });
 
   it("rejects fabricated partial coverage even when clutch is neutral", () => {
@@ -125,31 +158,31 @@ describe("Champions audit validation", () => {
     const data = structuredClone(championsDataset);
     altered.find(row => row.cardId === "ade-crazy-raccoon-2021")!.clutchCoverageMaps = 3;
     data.cards.find(card => card.id === "ade-crazy-raccoon-2021")!.traits.clutch = 50;
-    expect(() => validateChampions(data, altered)).toThrow(/coverage|raw|trait/);
+    expect(() => validateChampions(data, altered, manualPlayerCatalog)).toThrow(/coverage|raw|trait/);
   });
 
   it.each(["firepower", "utility", "survival", "clutch", "consistency"] as const)("rejects arbitrary %s traits", trait => {
     const data = structuredClone(championsDataset);
     data.cards.find(card => card.id === "ade-crazy-raccoon-2021")!.traits[trait] = 99;
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/trait/);
+    expect(() => validateChampions(data, evidence as Evidence[], manualPlayerCatalog)).toThrow(/manual/);
   });
 
   it("rejects missing evidence and uncited below-threshold role claims", () => {
-    expect(() => validateChampions(championsDataset, evidence.slice(1) as Evidence[])).toThrow(/evidence/i);
+    expect(() => validateChampions(championsDataset, evidence.slice(1) as Evidence[], manualPlayerCatalog)).toThrow(/evidence/i);
     const altered = structuredClone(evidence) as Evidence[];
     const lakia = altered.find(entry => entry.cardId === "lakia-vision-strikers-2021")!;
     lakia.override = null;
-    expect(() => validateChampions(championsDataset, altered)).toThrow(/threshold|override/i);
+    expect(() => validateChampions(championsDataset, altered, manualPlayerCatalog)).toThrow(/threshold|override/i);
   });
 
   it("rejects assets without an asset credit and license source", () => {
     const altered = structuredClone(championsDataset);
     altered.teams[0].logo = "/assets/teams/unlicensed.svg";
-    expect(() => validateChampions(altered, evidence as Evidence[])).toThrow(/asset provenance/i);
+    expect(() => validateChampions(altered, evidence as Evidence[], manualPlayerCatalog)).toThrow(/asset provenance/i);
   });
 
   it("rejects mutated audit semantics", () => {
-    const reject = (mutate: (data: Evidence[]) => void, message: RegExp) => { const data = structuredClone(evidence) as Evidence[]; mutate(data); expect(() => validateChampions(championsDataset, data)).toThrow(message); };
+    const reject = (mutate: (data: Evidence[]) => void, message: RegExp) => { const data = structuredClone(evidence) as Evidence[]; mutate(data); expect(() => validateChampions(championsDataset, data, manualPlayerCatalog)).toThrow(message); };
     reject(data => { data[0].finalEligibleRoles = ["flex"]; }, /final roles|flex/);
     reject(data => { data[0].suggestedRoles = ["sentinel"]; }, /suggested roles/);
     reject(data => { data[0].agentClassMaps.smokes += 1; }, /class counts/);

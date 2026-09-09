@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("workflow action versions", () => {
@@ -32,6 +32,21 @@ describe("workflow action versions", () => {
     expect(candidate).not.toContain("git commit");
   });
 
+  it("documents the local editor while keeping it outside the static production app", () => {
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { scripts?: Record<string, string> };
+    expect(packageJson.scripts?.["edit:players"]).toBe("vite --config tools/player-editor/vite.config.ts");
+
+    const nextConfig = readFileSync("next.config.ts", "utf8");
+    expect(nextConfig).toMatch(/output:\s*["']export["']/);
+
+    const appPaths = readdirSync("src/app", { recursive: true }).map(String);
+    expect(appPaths.some(path => /player-editor/i.test(path))).toBe(false);
+
+    const quickGuide = readFileSync("docs/vct-algorithm-quick-guide.md", "utf8");
+    expect(quickGuide).toContain("npm run edit:players");
+    expect(quickGuide).toContain("manual-player-data.json");
+  });
+
   it("runs all functional E2E journeys until every redesigned Linux outcome baseline exists", () => {
     const ci = readFileSync(".github/workflows/ci.yml", "utf8");
     const [normalCi] = ci.split("  snapshot-candidate:");
@@ -43,7 +58,7 @@ describe("workflow action versions", () => {
     ]) expect(normalCi).toContain(path);
     expect(normalCi).toContain('VISUAL_TESTS="captures the complete Free Play journey|captures champion recap"');
     expect(normalCi).toContain('npm run test:e2e -- --grep-invert "$VISUAL_TESTS"');
-    expect(normalCi).toContain("npm run test:e2e\n");
+    expect(normalCi).toMatch(/^\s*PLAYWRIGHT_PREBUILT=1 npm run test:e2e\r?\n/m);
     expect(normalCi).not.toContain("--update-snapshots");
   });
 });
