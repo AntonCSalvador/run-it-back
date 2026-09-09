@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { App } from "./app";
@@ -70,6 +70,96 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Save all changes" })).toBeDisabled();
     expect(screen.getByText(/select at least one role/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Boaster.*Invalid/i })).toBeInTheDocument();
+  });
+
+  it("saves the complete ordered catalog and adopts the returned revision", async () => {
+    const user = userEvent.setup();
+    const save = vi.fn().mockResolvedValue({ revision: "b".repeat(64) });
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    expect(save).toHaveBeenCalledWith({
+      revision: "a".repeat(64),
+      catalog: expect.objectContaining({
+        version: 1,
+        cards: [
+          expect.objectContaining({ cardId: "boaster-fnatic-2023", traits: expect.objectContaining({ firepower: 52 }) }),
+          expect.objectContaining({ cardId: "2024-card-id" }),
+        ],
+      }),
+    });
+    expect(await screen.findByText("All changes saved")).toBeInTheDocument();
+    expect(screen.getByText("0 unsaved changes")).toBeInTheDocument();
+  });
+
+  it("keeps edits and reports a failed save", async () => {
+    const user = userEvent.setup();
+    const save = vi.fn().mockRejectedValue(new Error("disk full"));
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("disk full");
+    expect(screen.getByText("1 unsaved change")).toBeInTheDocument();
+    expect(screen.getByLabelText("Firepower")).toHaveValue(52);
+  });
+
+  it("disables saving and shows progress while a save is in flight", async () => {
+    const user = userEvent.setup();
+    let resolveSave!: (value: { revision: string }) => void;
+    const save = vi.fn(() => new Promise<{ revision: string }>(resolve => { resolveSave = resolve; }));
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+
+    expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
+    resolveSave({ revision: "b".repeat(64) });
+    expect(await screen.findByText("All changes saved")).toBeInTheDocument();
+  });
+
+  it("keeps edits and offers a reload after a revision conflict", async () => {
+    const user = userEvent.setup();
+    const conflict = Object.assign(new Error("Player data changed on disk; reload before saving"), { status: 409 });
+    const save = vi.fn().mockRejectedValue(conflict);
+    render(<App api={{ load: vi.fn().mockResolvedValue(structuredClone(makeEditorDocument())), save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Player data changed on disk; reload before saving");
+    expect(screen.getByRole("button", { name: "Reload player data" })).toBeInTheDocument();
+    expect(screen.getByText("1 unsaved change")).toBeInTheDocument();
+  });
+
+  it("only reloads conflicted player data after confirming discard", async () => {
+    const user = userEvent.setup();
+    const original = makeEditorDocument();
+    const latest = makeEditorDocument();
+    latest.revision = "c".repeat(64);
+    latest.cards[0].manual.traits.firepower = 81;
+    const load = vi.fn().mockResolvedValueOnce(structuredClone(original)).mockResolvedValueOnce(structuredClone(latest));
+    const save = vi.fn().mockRejectedValue(Object.assign(new Error("Player data changed on disk; reload before saving"), { status: 409 }));
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<App api={{ load, save }} />);
+    await screen.findByRole("button", { name: /Boaster/ });
+    await editBoasterFirepower(user);
+    await user.click(screen.getByRole("button", { name: "Save all changes" }));
+    await user.click(await screen.findByRole("button", { name: "Reload player data" }));
+    expect(confirm).toHaveBeenCalledWith("Discard unsaved changes and reload player data?");
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText("Firepower")).toHaveValue(52);
+
+    confirm.mockReturnValue(true);
+    await user.click(screen.getByRole("button", { name: "Reload player data" }));
+    await waitFor(() => expect(load).toHaveBeenCalledTimes(2));
+    expect(await screen.findByLabelText("Firepower")).toHaveValue(81);
+    expect(screen.getByText("0 unsaved changes")).toBeInTheDocument();
+    confirm.mockRestore();
   });
 
   it("shows a blocking load error and retries", async () => {
