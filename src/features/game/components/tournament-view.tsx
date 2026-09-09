@@ -4,15 +4,16 @@ import { useEffect, useRef } from "react";
 import { ROLES, type Lineup, type PlayerCard } from "../domain";
 import type { GeneratedOpponent } from "../opponents";
 import type { SeriesResult } from "../tournament";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 import { useFireAccent } from "./use-fire-accent";
 
 const stageLabel: Record<GeneratedOpponent["stage"], string> = { group: "Group stage", quarterfinal: "Quarterfinal", semifinal: "Semifinal", final: "Final" };
-function Roster({ label, lineup, cards }: { label: string; lineup: Lineup; cards: readonly PlayerCard[] }) {
+function Roster({ label, lineup, cards, portraitForPlayer }: { label: string; lineup: Lineup; cards: readonly PlayerCard[]; portraitForPlayer: PortraitForPlayer }) {
   const byId = new Map(cards.map(card => [card.id, card]));
-  return <section aria-label={label}><h3>{label}</h3>{ROLES.map(role => { const id = lineup.slots.find(slot => slot.role === role)?.cardId; const card = byId.get(id ?? ""); return <article key={role}><strong>{role}</strong> {card ? <span>{card.displayHandle} {card.year}{lineup.iglCardId === card.id ? " · IGL" : ""}</span> : <span>Unavailable</span>}</article>; })}</section>;
+  return <section aria-label={label}><h3>{label}</h3>{ROLES.map(role => { const id = lineup.slots.find(slot => slot.role === role)?.cardId; const card = byId.get(id ?? ""); return <article key={role}><div className="player-row">{card ? <><PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} /><span><strong>{role}</strong><span>{card.displayHandle} {card.year}{lineup.iglCardId === card.id ? " · IGL" : ""}</span></span></> : <><strong>{role}</strong><span>Unavailable</span></>}</div></article>; })}</section>;
 }
-export interface TournamentViewProps { opponent: GeneratedOpponent; userLineup: Lineup; cards: readonly PlayerCard[]; result: SeriesResult | null; resolving?: boolean; onPlay(): void; onContinue(): void; continueDisabled?: boolean }
-export function TournamentView({ opponent, userLineup, cards, result, resolving = false, onPlay, onContinue, continueDisabled = false }: TournamentViewProps) {
+export interface TournamentViewProps { opponent: GeneratedOpponent; userLineup: Lineup; cards: readonly PlayerCard[]; result: SeriesResult | null; resolving?: boolean; onPlay(): void; onContinue(): void; continueDisabled?: boolean; portraitForPlayer?: PortraitForPlayer }
+export function TournamentView({ opponent, userLineup, cards, result, resolving = false, onPlay, onContinue, continueDisabled = false, portraitForPlayer = () => null }: TournamentViewProps) {
   const { fireClass, trigger } = useFireAccent();
   const stageHeading = useRef<HTMLHeadingElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
@@ -35,8 +36,8 @@ export function TournamentView({ opponent, userLineup, cards, result, resolving 
     <h2 ref={stageHeading} tabIndex={-1}>{stageLabel[opponent.stage]}</h2>
     <p>{opponent.stage === "final" ? "BO5" : "BO3"}</p>
     <div>
-      <Roster label="Your roster" lineup={userLineup} cards={cards} />
-      <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} />
+      <Roster label="Your roster" lineup={userLineup} cards={cards} portraitForPlayer={portraitForPlayer} />
+      <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} portraitForPlayer={portraitForPlayer} />
     </div>
     <div className={result ? fireClass : ""} role="status" aria-label="Series result announcement" aria-live="polite">
       {result && <>

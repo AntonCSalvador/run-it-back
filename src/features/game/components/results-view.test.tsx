@@ -24,7 +24,7 @@ function renderResult(champion = false) {
   const onModeChange = vi.fn();
   const state = terminalState(champion);
   const view = render(<ResultsView mode="daily" tournament={state.tournament} cards={dataset.cards} rerollsUsed={1}
-    shareText={shareText} onRunAgain={onRunAgain} onModeChange={onModeChange} />);
+    shareText={shareText} portraitForPlayer={() => "/assets/players/player-1.abcdef123456.webp"} onRunAgain={onRunAgain} onModeChange={onModeChange} />);
   return { ...view, state, onRunAgain, onModeChange };
 }
 const clickShare = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share" })); });
@@ -108,8 +108,13 @@ describe("ResultsView", () => {
     });
     const roster = screen.getByRole("region", { name: "Drafted roster" });
     expect(roster.children).toHaveLength(5);
-    expect(Array.from(roster.children, row => row.textContent)).toEqual(ROLES.map((role, index) =>
-      `${role}: ${dataset.cards[index].displayHandle} ${dataset.cards[index].year}${dataset.cards[index].id === lineup.iglCardId ? " · IGL" : ""}`));
+    expect(within(roster).getAllByTestId(/^portrait-/)).toHaveLength(5);
+    ROLES.forEach((role, index) => {
+      const row = roster.children[index];
+      expect(row.querySelector("strong")).toHaveTextContent(role);
+      expect(row.querySelector("strong")?.parentElement).toHaveTextContent(`${dataset.cards[index].displayHandle} ${dataset.cards[index].year}`);
+      if (dataset.cards[index].id === lineup.iglCardId) expect(row).toHaveTextContent("IGL");
+    });
     expect(screen.getByText("Rerolls used: 1")).toBeVisible();
     expect(container).not.toHaveTextContent(/strength|probability|\broll\b|traits|firepower|formula|0\.6|0\.2/iu);
   });

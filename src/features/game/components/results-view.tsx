@@ -5,6 +5,7 @@ import { ROLES, type PlayerCard } from "../domain";
 import { useFireAccent } from "./use-fire-accent";
 import type { GameMode } from "../machine";
 import type { TournamentState } from "../tournament";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 
 export interface ResultsViewProps {
   mode: GameMode;
@@ -14,9 +15,10 @@ export interface ResultsViewProps {
   shareText: string;
   onRunAgain(): void;
   onModeChange(mode: GameMode): void;
+  portraitForPlayer?: PortraitForPlayer;
 }
 
-export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, onRunAgain, onModeChange }: ResultsViewProps) {
+export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, onRunAgain, onModeChange, portraitForPlayer = () => null }: ResultsViewProps) {
   const { fireClass, trigger } = useFireAccent();
   const [message, setMessage] = useState("");
   const [fallbackCount, setFallbackCount] = useState(0);
@@ -82,7 +84,7 @@ export function ResultsView({ mode, tournament, cards, rerollsUsed, shareText, o
     </li>)}</ol>
     <section aria-label="Drafted roster">{ROLES.map(role => {
       const card = byId.get(tournament.userLineup.slots.find(slot => slot.role === role)?.cardId ?? "");
-      return <p key={role}>{role}: {card?.displayHandle ?? "Unknown"} {card?.year ?? ""}{card?.id === tournament.userLineup.iglCardId ? " · IGL" : ""}</p>;
+      return <div className="player-row" key={role}>{card ? <><PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} /><span><strong>{role}</strong><span>{card.displayHandle} {card.year}{card.id === tournament.userLineup.iglCardId ? " · IGL" : ""}</span></span></> : <><strong>{role}</strong><span>Unknown</span></>}</div>;
     })}</section>
     <p>Rerolls used: {rerollsUsed}</p>
     <button type="button" disabled={sharing} onClick={share}>Share</button>

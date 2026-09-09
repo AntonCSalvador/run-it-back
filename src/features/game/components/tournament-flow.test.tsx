@@ -82,14 +82,20 @@ describe("tournament presentation", () => {
     const gateway = gatewayFixture();
     const { container } = render(<GameApp dataset={dataset} initialState={activeState()} gateway={gateway} />);
     const opponent = gateway.generateOpponent.mock.results[0].value as GeneratedOpponent;
+    const yourRoster = within(screen.getByRole("region", { name: "Your roster" }));
     const roster = within(screen.getByRole("region", { name: "Opponent roster" }));
+    expect(yourRoster.getAllByTestId(/^portrait-/)).toHaveLength(5);
+    expect(roster.getAllByTestId(/^portrait-/)).toHaveLength(5);
     const rows = roster.getAllByRole("article");
     expect(rows).toHaveLength(5);
     expect(rows.map(row => row.querySelector("strong")?.textContent)).toEqual(["smokes", "duelist", "initiator", "sentinel", "flex"]);
     opponent.lineup.slots.forEach(slot => {
       const card = dataset.cards.find(card => card.id === slot.cardId)!;
       const row = rows[ROLES.indexOf(slot.role)];
-      expect(row).toHaveTextContent(`${slot.role} ${card.displayHandle} ${card.year}${card.id === opponent.lineup.iglCardId ? " · IGL" : ""}`);
+      const identity = row.querySelector("strong")?.parentElement;
+      expect(row.querySelector("strong")).toHaveTextContent(slot.role);
+      expect(identity).toHaveTextContent(`${card.displayHandle} ${card.year}`);
+      if (card.id === opponent.lineup.iglCardId) expect(identity).toHaveTextContent("IGL");
     });
     expect(roster.getAllByText(/IGL/)).toHaveLength(1);
     expect(screen.getAllByRole("button", { name: "Play series" })).toHaveLength(1);

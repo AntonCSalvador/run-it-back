@@ -15,7 +15,7 @@ import { TeamOffer } from "./team-offer";
 import { PlayerPicker } from "./player-picker";
 import { RosterBar } from "./roster-bar";
 import { IglPicker } from "./igl-picker";
-import type { PortraitForPlayer } from "./player-portrait";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 import { TournamentView } from "./tournament-view";
 import { HighlightFeed } from "./highlight-feed";
 import { ResultsView } from "./results-view";
@@ -45,7 +45,7 @@ export function restartCurrentRun(clearSimulationError: () => void, dispatch: (a
   dispatch({ type: "restart" });
 }
 
-function RecentResults({ daily, free, cards }: { daily: readonly DailyRun[]; free: readonly FreePlayRun[]; cards: readonly PlayerCard[] }) {
+function RecentResults({ daily, free, cards, portraitForPlayer }: { daily: readonly DailyRun[]; free: readonly FreePlayRun[]; cards: readonly PlayerCard[]; portraitForPlayer: PortraitForPlayer }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const byId = new Map(cards.map(card => [card.id, card]));
@@ -67,7 +67,7 @@ function RecentResults({ daily, free, cards }: { daily: readonly DailyRun[]; fre
     {selectedRun && <section aria-label={`${selectedRun.label} result details`}>
       <h3>{selectedRun.label} result</h3>
       <p>{outcome(selectedRun.run)} at {selectedRun.run.stageReached}. Rerolls used: {selectedRun.run.rerollsUsed}</p>
-      <ul>{selectedRun.run.roster.map(slot => { const card = byId.get(slot.cardId); return <li key={slot.role}>{slot.role}: {card?.displayHandle ?? "Unknown"} {card?.year ?? ""}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</li>; })}</ul>
+      <ul>{selectedRun.run.roster.map(slot => { const card = byId.get(slot.cardId); return <li key={slot.role}><div className="player-row">{card ? <><PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} /><span><strong>{slot.role}</strong><span>{card.displayHandle} {card.year}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</span></span></> : <><strong>{slot.role}</strong><span>Unknown</span></>}</div></li>; })}</ul>
       <ol>{selectedRun.run.series.map(series => <li key={series.stage}>{series.stage}: {series.userWins}–{series.opponentWins}</li>)}</ol>
     </section>}</>}
   </section>;
@@ -222,7 +222,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       }} onRestart={restart} />
       {storageState.recovered && <p role="status" aria-label="Saved result storage status">Saved results were recovered from invalid storage.</p>}
       {!storageState.persistent && <p role="alert">Results cannot persist in this browser session.</p>}
-      <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} />
+      <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} portraitForPlayer={portraitForPlayer} />
       <p className="phase-status" role="status" aria-live="polite">Current phase: {state.phase}</p>
       {draftPick !== null && <p aria-live="polite">Pick {draftPick} of {ROLES.length}</p>}
       {state.phase === "team" && (() => { const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team)); return offer.length === 3 ? <><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} canReroll={canRerollOffer(state.draft, dataset)} onChoose={teamId => { actionFire.trigger(); dispatch({ type: "choose-team", teamId }); }} onReroll={() => dispatch({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} portraitForPlayer={portraitForPlayer} /></> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>; })()}
@@ -230,8 +230,8 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
       {state.phase === "role" && (() => { const card = cards.get(state.draft.pendingCardId ?? ""); const roles = card?.eligibleRoles.filter(role => !state.draft.slots[role]) ?? []; return !card || !roles.length ? <p role="alert">No eligible role is available. <button type="button" onClick={() => dispatch({ type: "back-to-player" })}>Back to player selection</button> <button type="button" onClick={restart}>Restart draft</button></p> : <><section><h2>Assign {card.displayHandle}</h2><div role="group" aria-label="Choose an open role">{roles.map(role => <button type="button" key={role} onClick={() => { actionFire.trigger(); dispatch({ type: "assign-role", role }); }}>{role}</button>)}</div></section><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} portraitForPlayer={portraitForPlayer} /></>; })()}
       {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} onMove={(cardId, role) => dispatch({ type: "move-card", cardId, role })} portraitForPlayer={portraitForPlayer} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} portraitForPlayer={portraitForPlayer} onSelect={cardId => dispatch({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); dispatch({ type: "enter-tournament" }); } }} /></>)}
       {state.phase === "tournament" && !opponent && <p role="alert">No valid opponent is available. <button type="button" onClick={restart}>Restart run</button></p>}
-      {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
-      {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} />}
+      {state.phase === "tournament" && opponent && <><TournamentView opponent={opponent} userLineup={toLineup(state.draft)} cards={dataset.cards} result={presentedSeries} resolving={lockedStage === state.tournament.currentStage} onPlay={playSeries} onContinue={continueTournament} continueDisabled={!highlightsComplete} portraitForPlayer={portraitForPlayer} />{presentedHighlights !== null && <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} />}</>}
+      {state.phase === "results" && <ResultsView mode={state.mode} tournament={state.tournament} cards={dataset.cards} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => { resetState(); dispatch(createStartAction(state.mode, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} onModeChange={value => { resetState(); dispatch(createStartAction(value, { now, freeSeedFactory: freeSeedFactory ?? (() => testSeed ?? crypto.randomUUID()) })); }} portraitForPlayer={portraitForPlayer} />}
       {simulationError && <p role="alert">{simulationError}</p>}
     </main>;
 }

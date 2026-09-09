@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { StrictMode } from "react";
@@ -72,7 +72,9 @@ describe("GameApp", () => {
     fireEvent.click(screen.getByRole("button", { name: /Show saved results/ }));
     expect(screen.getAllByRole("button", { name: /View .* result/ })).toHaveLength(2);
     fireEvent.click(screen.getByRole("button", { name: "View Daily result" }));
-    expect(screen.getByRole("region", { name: "Daily result details" })).toHaveTextContent("Rerolls used: 1");
+    const details = screen.getByRole("region", { name: "Daily result details" });
+    expect(details).toHaveTextContent("Rerolls used: 1");
+    expect(within(details).getAllByTestId(/^portrait-/)).toHaveLength(5);
   });
 
   it("keeps a large saved history collapsed and bounds its keyboard controls", () => {
