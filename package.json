@@ -16,6 +16,7 @@
     "smoke:static": "tsx scripts/smoke-static.mts",
     "validate:data": "tsx scripts/validate-data.mts",
     "derive:data": "tsx scripts/derive-champions.mts",
+    "init:player-data": "tsx scripts/seed-manual-player-data.mts",
     "audit:data": "python scripts/verify-champions-extraction.py",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run test:audit-cli && npm run build"
   },

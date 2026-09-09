@@ -1,10 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { championsDataset } from "./index";
+import { championsDataset, generatedChampionsDataset, manualPlayerCatalog } from "./index";
 import evidence from "./evidence.json";
+import manualData from "./manual-player-data.json";
 import { ROLES } from "@/features/game/domain";
 import type { Role } from "@/features/game/domain";
 
 describe("Champions 2021–2025 dataset", () => {
+  it("applies the complete manual catalog to generated cards", () => {
+    expect(manualPlayerCatalog.cards).toHaveLength(generatedChampionsDataset.cards.length);
+    expect(manualData.cards.map(card => card.cardId)).toEqual(
+      [...generatedChampionsDataset.cards].sort((left, right) => left.id.localeCompare(right.id)).map(card => card.id),
+    );
+
+    const runtimeCards = new Map(championsDataset.cards.map(card => [card.id, card]));
+    for (const generatedCard of generatedChampionsDataset.cards) {
+      const runtimeCard = runtimeCards.get(generatedCard.id);
+      expect(runtimeCard?.eligibleRoles).toEqual(generatedCard.eligibleRoles);
+      expect(runtimeCard?.historicalIgl).toBe(generatedCard.historicalIgl);
+      expect(runtimeCard?.traits).toEqual(generatedCard.traits);
+    }
+  });
+
   it("contains one complete, sourced sixteen-team event for each year", () => {
     const teamAppearances = new Set(championsDataset.teams.map(team => team.year));
     expect([...teamAppearances].sort()).toEqual([2021, 2022, 2023, 2024, 2025]);

@@ -4,6 +4,8 @@ import year2022 from "./2022.json";
 import year2023 from "./2023.json";
 import year2024 from "./2024.json";
 import year2025 from "./2025.json";
+import manualPlayerData from "./manual-player-data.json";
+import { applyManualCatalog, parseManualCatalog } from "./manual-data";
 import { parseDataset } from "@/features/game/schema";
 import type { GameDataset } from "@/features/game/domain";
 
@@ -30,12 +32,25 @@ function freezeDataset(dataset: GameDataset): GameDataset {
   return Object.freeze(dataset);
 }
 
-export const championsDataset = freezeDataset(parseDataset({
+const generatedInput = {
   version: 1,
   sources: sourceRefs,
   teams: snapshots.flatMap(snapshot => snapshot.teams),
   players: deduplicatePlayers(),
   cards: snapshots.flatMap(snapshot => snapshot.cards),
+};
+
+export const generatedChampionsDataset = parseDataset(generatedInput);
+
+const generatedIds = [...generatedChampionsDataset.cards]
+  .sort((left, right) => left.id.localeCompare(right.id))
+  .map(card => card.id);
+
+export const manualPlayerCatalog = parseManualCatalog(manualPlayerData, generatedIds);
+
+export const championsDataset = freezeDataset(parseDataset({
+  ...generatedChampionsDataset,
+  cards: applyManualCatalog(generatedChampionsDataset.cards, manualPlayerCatalog),
 }));
 
 export const dataset = championsDataset;
