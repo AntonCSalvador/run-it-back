@@ -56,8 +56,83 @@ describe("portrait source policy", () => {
     ).toBe(false);
   });
 
+  it("rejects conflicting rights metadata instead of choosing a duplicate field", () => {
+    const conflicts = [
+      ["license", "cc-by-sa-4.0", "permission"],
+      ["copyright", "Example Team", "[https://www.riotgames.com/ Riot Games]"],
+      ["note", "Team permission only", "Used With Permission. All rights remain with Riot Games."],
+    ];
+
+    for (const [field, conflictingValue, acceptedValue] of conflicts) {
+      const info = riot.replace(
+        `|${field}=${acceptedValue}`,
+        `|${field}=${conflictingValue}\n|${field}=${acceptedValue}`,
+      );
+      expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+        accepted: false,
+        basis: null,
+        reason: "metadata-conflict",
+      });
+    }
+  });
+
+  it("requires case-exact normalized featured handles", () => {
+    expect(
+      assessPortrait(
+        "BeYN",
+        "File:DRX BeYN.jpg",
+        riot.replace("featured=BeYN", "featured=beyn"),
+      ),
+    ).toMatchObject({ accepted: false, reason: "identity-mismatch" });
+  });
+
+  it("rejects ambiguous copyright text containing Riot Games", () => {
+    expect(
+      assessPortrait(
+        "BeYN",
+        "File:DRX BeYN.jpg",
+        riot.replace(
+          "[https://www.riotgames.com/ Riot Games]",
+          "Example Team; Riot Games trademark",
+        ),
+      ),
+    ).toMatchObject({ accepted: false, reason: "rights-rejected" });
+  });
+
+  it("normalizes wiki links and source links before policy checks", () => {
+    const info = riot
+      .replace("featured=BeYN", "featured=[[BeYN]]")
+      .replace(
+        "source=https://www.flickr.com/photos/valorantesports/54347821048/",
+        "source=[https://www.flickr.com/photos/valorantesports/54347821048/ Riot source]",
+      );
+
+    expect(parseFileInfo(info).source).toBe(
+      "https://www.flickr.com/photos/valorantesports/54347821048/",
+    );
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      featured: ["BeYN"],
+    });
+  });
+
   it("parses fields case-insensitively and chooses the newest unambiguous image", () => {
-    expect(parseFileInfo(riot).date).toBe("2025-02-24");
+    const mixedCaseFields = riot
+      .replace("featured=", "FeAtUrEd=")
+      .replace("date=", "DaTe=")
+      .replace("license=", "LiCeNsE=")
+      .replace("author=", "AuThOr=")
+      .replace("copyright=", "CoPyRiGhT=")
+      .replace("note=", "NoTe=")
+      .replace("source=", "SoUrCe=");
+    expect(parseFileInfo(mixedCaseFields)).toMatchObject({
+      featured: ["BeYN"],
+      date: "2025-02-24",
+      license: "permission",
+      author: "Liu YiCun",
+      copyright: "Riot Games",
+      source: "https://www.flickr.com/photos/valorantesports/54347821048/",
+    });
     const older = {
       ...assessPortrait(
         "BeYN",
