@@ -182,7 +182,7 @@ describe("portrait source policy", () => {
     });
   });
 
-  it.each(["pre", "source", "syntaxhighlight", "code"])(
+  it.each(["pre", "source", "syntaxhighlight", "code", "math", "gallery"])(
     "rejects FileInfo inside %s literal markup",
     (tag) => {
       const info = `<${tag}>${riot}</${tag}>`;

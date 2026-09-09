@@ -144,7 +144,11 @@ export function parseFileInfo(wikitext: string): FileInfo {
   const visibleWikitext = wikitext
     .replace(/<!--[\s\S]*?(?:-->|$)/g, "")
     .replace(
-      /<(nowiki|pre|source|syntaxhighlight|code)\b[^>]*>[\s\S]*?(?:<\/\1\s*>|$)/gi,
+      /<([A-Za-z][\w:-]*)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,
+      "",
+    )
+    .replace(
+      /<([A-Za-z][\w:-]*)\b(?:(?!\/\s*>)[^>])*?>[\s\S]*$/gi,
       "",
     );
   const template = fileInfoTemplate(visibleWikitext);
