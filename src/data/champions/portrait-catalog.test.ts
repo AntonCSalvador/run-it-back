@@ -61,6 +61,7 @@ describe("portrait catalog", () => {
       { license: "unknown-rights-marker" },
       { credit: "Example Team" },
       { credit: "Example Photographer" },
+      { credit: "Riot Games" },
       { credit: "Photographer / Riot Games All Rights Reserved. / Example Team" },
       { originalUrl: "https://example.test/riot-photo" },
     ]) expect(() => validatePortraitCatalog([player], [row], [{ ...source, ...invalid }])).toThrow(/reuse grounds/);
@@ -87,6 +88,19 @@ describe("portrait catalog", () => {
 |source=https://www.flickr.com/photos/valorantesports/54347821048/
 }}`);
     expect(assessment).toMatchObject({ accepted: true, credit: "Photographer / Riot Games All Rights Reserved." });
+    expect(() => validatePortraitCatalog([player], [row], [{ ...source, credit: assessment.credit, license: assessment.license, originalUrl: assessment.source }])).not.toThrow();
+  });
+
+  it("accepts importer-derived credits with a multi-part author", () => {
+    const assessment = assessPortrait("BeYN", "File:BeYN.jpg", `{{FileInfo
+|featured=BeYN
+|date=2025-02-24
+|license=permission
+|author=Photo / Video Team
+|copyright=Riot Games
+|source=https://www.flickr.com/photos/valorantesports/54347821048/
+}}`);
+    expect(assessment).toMatchObject({ accepted: true, credit: "Photo / Video Team / Riot Games" });
     expect(() => validatePortraitCatalog([player], [row], [{ ...source, credit: assessment.credit, license: assessment.license, originalUrl: assessment.source }])).not.toThrow();
   });
 });

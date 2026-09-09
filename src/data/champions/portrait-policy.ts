@@ -35,8 +35,12 @@ export const isApprovedOpenPortraitLicense = (license: string) => OPEN.test(lice
 export const isRiotGamesCopyrightOwner = (value: string) => RIOT_GAMES_OWNERSHIP.test(value.trim());
 
 export const hasRiotGamesCopyrightCredit = (credit: string) => {
-  const [attribution, owner, ...extra] = credit.trim().split(/\s+\/\s+/);
-  return !extra.length && (owner ? Boolean(attribution) && isRiotGamesCopyrightOwner(owner) : isRiotGamesCopyrightOwner(attribution));
+  const normalized = credit.trim();
+  const delimiter = " / ";
+  const ownerStart = normalized.lastIndexOf(delimiter);
+  return ownerStart > 0
+    && Boolean(normalized.slice(0, ownerStart).trim())
+    && isRiotGamesCopyrightOwner(normalized.slice(ownerStart + delimiter.length));
 };
 
 export const isApprovedRiotPortraitOriginalUrl = (url: string) => {
