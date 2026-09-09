@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("workflow action versions", () => {
@@ -29,5 +29,20 @@ describe("workflow action versions", () => {
     expect(candidate).toMatch(/test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey" --update-snapshots[\s\S]*?test e2e\/free-play\.spec\.ts --grep "captures the complete Free Play journey"/);
     expect(candidate).toMatch(/e2e\/__screenshots__\/linux\/\*\*/);
     expect(candidate).not.toContain("git commit");
+  });
+
+  it("documents the local editor while keeping it outside the static production app", () => {
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { scripts?: Record<string, string> };
+    expect(packageJson.scripts?.["edit:players"]).toBe("vite --config tools/player-editor/vite.config.ts");
+
+    const nextConfig = readFileSync("next.config.ts", "utf8");
+    expect(nextConfig).toMatch(/output:\s*["']export["']/);
+
+    const appPaths = readdirSync("src/app", { recursive: true }).map(String);
+    expect(appPaths.some(path => /player-editor/i.test(path))).toBe(false);
+
+    const quickGuide = readFileSync("docs/vct-algorithm-quick-guide.md", "utf8");
+    expect(quickGuide).toContain("npm run edit:players");
+    expect(quickGuide).toContain("manual-player-data.json");
   });
 });

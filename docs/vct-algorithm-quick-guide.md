@@ -63,7 +63,7 @@ Always identify a player using:
 A player can have several historical cards. A statement like “Victor should be
 a Duelist” is incomplete because the answer can differ by event year.
 
-The final runtime cards are stored in the yearly files:
+The generated yearly card snapshots are stored in these files:
 
 - [2021 cards](../src/data/champions/2021.json)
 - [2022 cards](../src/data/champions/2022.json)
@@ -71,8 +71,10 @@ The final runtime cards are stored in the yearly files:
 - [2024 cards](../src/data/champions/2024.json)
 - [2025 cards](../src/data/champions/2025.json)
 
-Use these files to see what the app currently loads. Do not make lasting role or
-trait edits directly in them: those fields are generated and can be overwritten.
+Use these files and [evidence.json](../src/data/champions/evidence.json) as
+read-only comparison evidence. The game-facing values loaded at runtime come
+from the manual catalog described below; generated role and trait fields should
+not be edited as a shortcut for changing the game.
 
 ## How role tags currently work
 
@@ -122,9 +124,12 @@ The VCT expert should decide which problem exists:
 3. **This one card is exceptional.** Request a reviewed exception in
    [reviewed-overlays.json](../src/data/champions/reviewed-overlays.json).
 
-Do not “fix” Victor by editing his `eligibleRoles` directly in
-[2022.json](../src/data/champions/2022.json). Validation compares it with the
-generated result, and regeneration will overwrite it.
+Do not edit Victor's `eligibleRoles` directly in
+[2022.json](../src/data/champions/2022.json). For a game-facing role decision,
+use the manual editor below. For a factual, evidence-backed exception to the
+global rule, request a reviewed entry in
+[reviewed-overlays.json](../src/data/champions/reviewed-overlays.json); the
+overlay remains protected by the source, checksum, and validation workflow.
 
 ## How player ratings currently work
 
@@ -157,28 +162,29 @@ The complete calculation is in
 [derivation.ts](../src/data/champions/derivation.ts), with a readable explanation
 in the [data methodology](data-methodology.md).
 
-### Where to change a player's stats
+### Manually review and change every player card
 
-There is currently no simple manual “set this player's firepower to 90” balance
-file.
+Run `npm run edit:players`. Local browser editor is supported place to change
+eligible roles, firepower, utility, survival, clutch, consistency, leadership,
+historical-IGL, review status. Saving writes
+src/data/champions/manual-player-data.json.
 
-For an accurate factual correction:
+Generated yearly cards and evidence.json remain read-only comparison evidence.
+derive:data updates evidence but never overwrites manual catalog. Production game
+uses validated manual values.
 
-- Check [raw-extraction.json](../src/data/champions/raw-extraction.json).
-- Identify the exact player card, map, and incorrect observation.
-- Send the correction and source to the owner or Codex.
-- Do not alter pinned raw evidence just to obtain a preferred rating.
+After save run `npm run validate:data`, `npm test`, and `npm run build`. Commit
+manual JSON on branch and merge main for Vercel/GitHub Pages.
 
-For a global algorithm change:
-
-- Edit the formulas, missing-data behavior, comparison groups, or progression
-  bonus in [derivation.ts](../src/data/champions/derivation.ts).
-- Regenerate with `npm run derive:data`.
-- Validate with `npm run validate:data`.
-
-Direct edits to `traits` in a yearly JSON are rejected by validation and
-overwritten by regeneration. If frequent hand-balancing is wanted, the project
-should first add a dedicated player-balance override file.
+Use the manual catalog for a game-facing balance preference or a reviewed
+game-facing card decision. For an accurate factual correction, inspect
+[raw-extraction.json](../src/data/champions/raw-extraction.json), identify the
+exact player card, map, and incorrect observation, and send the correction and
+source to the owner or Codex. Do not alter pinned raw evidence to obtain a
+preferred rating. Global formula, comparison, or progression changes still
+belong in [derivation.ts](../src/data/champions/derivation.ts), followed by
+`npm run derive:data` and `npm run validate:data`; keep the facts-versus-
+subjective-balance distinction explicit in the request.
 
 ## How five players become one team rating
 
