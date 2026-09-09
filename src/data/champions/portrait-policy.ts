@@ -29,7 +29,7 @@ export type PortraitAssessment = FileInfo & {
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
 const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*(.*?)[ \t]*$/i;
-const FILE_INFO_START = /\{\{\s*fileinfo\s*(?=\||\}\})/gi;
+const FILE_INFO_START = /\{\{\s*FileInfo\s*(?=\||\}\})/g;
 
 const plain = (value: string) =>
   value
@@ -92,18 +92,53 @@ const incompleteFileInfo = (): FileInfo => ({
   templateValid: false,
 });
 
+const addField = (fields: Map<string, string[]>, value: string) => {
+  const match = value.match(FIELD);
+  if (!match) return;
+
+  const key = match[1].toLowerCase();
+  fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
+};
+
+const openingParameter = (line: string) => {
+  const opening = line.match(/^\{\{\s*FileInfo\s*\|/);
+  if (!opening) return null;
+
+  const start = opening[0].length;
+  let templateDepth = 0;
+  let linkDepth = 0;
+
+  for (let index = start; index < line.length; index += 1) {
+    const token = line.slice(index, index + 2);
+    if (token === "{{") {
+      templateDepth += 1;
+      index += 1;
+    } else if (token === "}}") {
+      templateDepth -= 1;
+      index += 1;
+    } else if (token === "[[") {
+      linkDepth += 1;
+      index += 1;
+    } else if (token === "]]" && linkDepth) {
+      linkDepth -= 1;
+      index += 1;
+    } else if (line[index] === "|" && templateDepth === 0 && linkDepth === 0) {
+      return line.slice(start, index);
+    }
+  }
+
+  return line.slice(start);
+};
+
 const fieldsAtFileInfoDepth = (template: string) => {
   const fields = new Map<string, string[]>();
   let depth = 0;
 
   for (const line of template.split(/\r?\n/)) {
-    if (depth === 1) {
-      const match = line.match(FIELD);
-      if (match) {
-        const key = match[1].toLowerCase();
-        fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
-      }
-    }
+    if (depth === 0) {
+      const parameter = openingParameter(line);
+      if (parameter !== null) addField(fields, `|${parameter}`);
+    } else if (depth === 1) addField(fields, line);
 
     for (let index = 0; index < line.length; index += 1) {
       const token = line.slice(index, index + 2);
@@ -121,7 +156,10 @@ const fieldsAtFileInfoDepth = (template: string) => {
 };
 
 export function parseFileInfo(wikitext: string): FileInfo {
-  const template = fileInfoTemplate(wikitext);
+  const visibleWikitext = wikitext
+    .replace(/<!--[\s\S]*?(?:-->|$)/g, "")
+    .replace(/<nowiki\b[^>]*>[\s\S]*?(?:<\/nowiki\s*>|$)/gi, "");
+  const template = fileInfoTemplate(visibleWikitext);
   if (!template) return incompleteFileInfo();
 
   const fields = fieldsAtFileInfoDepth(template);

@@ -166,6 +166,9 @@ describe("portrait source policy", () => {
     ["unterminated template", riot.slice(0, -2)],
     ["multiple templates", `${riot}\n${riot}`],
     ["different template name", riot.replace("{{FileInfo", "{{FileInfo Extra")],
+    ["lowercase template name", riot.replace("{{FileInfo", "{{fileinfo")],
+    ["HTML comment", `<!--${riot}-->`],
+    ["nowiki block", `<nowiki>${riot}</nowiki>`],
   ])("rejects %s without exactly one well-formed FileInfo template", (_label, info) => {
     expect(parseFileInfo(info)).toMatchObject({
       featured: [],
@@ -188,6 +191,15 @@ describe("portrait source policy", () => {
     expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
       accepted: true,
       source: "https://www.flickr.com/photos/valorantesports/54347821048/",
+    });
+  });
+
+  it("parses the first FileInfo parameter on the opening line", () => {
+    const info = riot.replace("{{FileInfo\n|featured=BeYN", "{{FileInfo|featured=BeYN");
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      featured: ["BeYN"],
     });
   });
 
