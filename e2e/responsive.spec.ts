@@ -13,6 +13,54 @@ async function auditPhase(page: Page): Promise<void> {
   await assertAllEnabledActionsReachableByTab(page);
 }
 
+async function expectRenderedWithin(child: Locator, container: Locator): Promise<void> {
+  const [childBox, containerBox] = await Promise.all([child.boundingBox(), container.boundingBox()]);
+  if (!childBox || !containerBox) throw new Error("Expected visible media and container bounds");
+  const tolerance = 1;
+  expect(childBox.x).toBeGreaterThanOrEqual(containerBox.x - tolerance);
+  expect(childBox.y).toBeGreaterThanOrEqual(containerBox.y - tolerance);
+  expect(childBox.x + childBox.width).toBeLessThanOrEqual(containerBox.x + containerBox.width + tolerance);
+  expect(childBox.y + childBox.height).toBeLessThanOrEqual(containerBox.y + containerBox.height + tolerance);
+}
+
+test("portrait choices and compact roster rows keep their responsive hierarchy", async ({ page }, testInfo) => {
+  await page.goto("/?e2e-seed=e2e-164");
+  await keyboardActivate(page, page.getByRole("button", { name: "Start Free Play", exact: true }));
+  const teamCard = page.locator(".team-card").first();
+  const teamMark = teamCard.locator(".media-mark");
+  const teamFallback = teamMark.locator(".media-mark__fallback");
+  await expect(teamFallback).toHaveCSS("object-fit", "contain");
+  await expectRenderedWithin(teamFallback, teamMark);
+  await expectRenderedWithin(teamMark, teamCard);
+  await keyboardActivate(page, teamCard);
+
+  const choice = page.locator(".player-portrait--choice").first();
+  const choiceCard = page.locator('[data-testid^="player-card-"]').first();
+  const choiceImage = choice.locator(".media-mark__image");
+  const choiceSize = testInfo.project.name === "pixel-7" ? "64px" : "68px";
+  await expect(choice).toHaveCSS("width", choiceSize);
+  await expect(choice).toHaveCSS("height", choiceSize);
+  await expect(choiceImage).toHaveCount(1);
+  await expect(choiceImage).toHaveCSS("object-fit", "cover");
+  await expectRenderedWithin(choiceImage, choice);
+  await expectRenderedWithin(choice, choiceCard);
+  await auditPhase(page);
+
+  await keyboardActivate(page, choice.locator("xpath=ancestor::button"));
+  await keyboardActivate(page, page.getByRole("group", { name: "Choose an open role" }).locator("button:not(:disabled)").first());
+
+  const compact = page.locator(".roster-bar .player-portrait--compact").first();
+  const compactImage = compact.locator(".media-mark__image");
+  const compactSlot = compact.locator("xpath=..");
+  await expect(compact).toHaveCSS("width", "36px");
+  await expect(compact).toHaveCSS("height", "36px");
+  await expect(compactImage).toHaveCount(1);
+  await expect(compactImage).toHaveCSS("object-fit", "cover");
+  await expectRenderedWithin(compactImage, compact);
+  await expectRenderedWithin(compact, compactSlot);
+  await auditPhase(page);
+});
+
 async function auditNarrowPhase(page: Page, heading: Locator): Promise<void> {
   await expect(heading).toBeFocused();
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth === innerWidth)).toBe(true);

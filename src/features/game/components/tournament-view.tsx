@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, type ReactNode } from "react";
 import { ROLES, type PlayerCard, type Role } from "../domain";
 import type { GeneratedOpponent, Stage } from "../opponents";
 import { STAGE_ORDER, type SeriesResult, type TournamentState } from "../tournament";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 import { useFireAccent } from "./use-fire-accent";
 
 const stageLabel: Record<Stage, string> = {
@@ -19,7 +20,7 @@ function actionStage(stage: Stage): string {
 
 type DisplayLineup = { readonly slots: readonly { readonly role: Role; readonly cardId: string }[]; readonly iglCardId: string };
 
-function Roster({ label, lineup, cards }: { label: string; lineup: DisplayLineup; cards: readonly PlayerCard[] }) {
+function Roster({ label, lineup, cards, portraitForPlayer }: { label: string; lineup: DisplayLineup; cards: readonly PlayerCard[]; portraitForPlayer: PortraitForPlayer }) {
   const byId = new Map(cards.map(card => [card.id, card]));
   return <section aria-label={label} className="tournament-roster">
     <h3>{label}</h3>
@@ -27,7 +28,7 @@ function Roster({ label, lineup, cards }: { label: string; lineup: DisplayLineup
       {ROLES.map(role => {
         const id = lineup.slots.find(slot => slot.role === role)?.cardId;
         const card = byId.get(id ?? "");
-        return <article key={role}><strong>{role}</strong> {card ? <span>{card.displayHandle} {card.year}{lineup.iglCardId === card.id ? " · IGL" : ""}</span> : <span>Unavailable</span>}</article>;
+        return <article key={role}><strong>{role}</strong>{card ? <><PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} /><span>{card.displayHandle} {card.year}{lineup.iglCardId === card.id ? " · IGL" : ""}</span></> : <span>Unavailable</span>}</article>;
       })}
     </div>
   </section>;
@@ -43,13 +44,14 @@ export interface TournamentViewProps {
   error: string | null;
   reveal?: ReactNode;
   focusOnMount?: boolean;
+  portraitForPlayer?: PortraitForPlayer;
   onPlay(): void;
   onRetryOpponent(): void;
   onRetrySeries(): void;
   onContinue(): void;
 }
 
-export function TournamentView({ tournament, opponent, cards, result, revealComplete, resolving, error, reveal, focusOnMount = false, onPlay, onRetryOpponent, onRetrySeries, onContinue }: TournamentViewProps) {
+export function TournamentView({ tournament, opponent, cards, result, revealComplete, resolving, error, reveal, focusOnMount = false, portraitForPlayer = () => null, onPlay, onRetryOpponent, onRetrySeries, onContinue }: TournamentViewProps) {
   const { fireClass, trigger } = useFireAccent();
   const stageHeading = useRef<HTMLHeadingElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
@@ -121,8 +123,8 @@ export function TournamentView({ tournament, opponent, cards, result, revealComp
       : opponent && !error && reveal == null && <button key="play" className="action-button" type="button" disabled={resolving} onClick={onPlay}>{resolving ? `Playing ${actionStage(tournament.currentStage)}…` : `Play ${actionStage(tournament.currentStage)}`}</button>}
     {reveal}
     <div className="tournament-view__rosters">
-      <Roster label="Your roster" lineup={tournament.userLineup} cards={cards} />
-      {opponent && <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} />}
+      <Roster label="Your roster" lineup={tournament.userLineup} cards={cards} portraitForPlayer={portraitForPlayer} />
+      {opponent && <Roster label="Opponent roster" lineup={opponent.lineup} cards={cards} portraitForPlayer={portraitForPlayer} />}
     </div>
   </section>
   <p id={updateId} className="sr-only" role="status" aria-label="Tournament update" aria-live="polite" aria-atomic="true">{update}</p>

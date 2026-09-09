@@ -16,6 +16,7 @@
     "smoke:static": "tsx scripts/smoke-static.mts",
     "validate:data": "tsx scripts/validate-data.mts",
     "derive:data": "tsx scripts/derive-champions.mts",
+    "import:portraits": "tsx scripts/import-player-portraits.mts",
     "audit:data": "python scripts/verify-champions-extraction.py",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run test:audit-cli && npm run build"
   },
@@ -41,6 +42,7 @@
     "jsdom": "^29.0.0",
     "parse5": "^8.0.1",
     "serve": "^14.2.6",
+    "sharp": "^0.34.3",
     "tsx": "^4.23.13",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^6.1.1",

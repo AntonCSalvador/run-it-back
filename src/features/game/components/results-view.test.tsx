@@ -29,9 +29,9 @@ function renderResult(champion = false, options: { mode?: "daily" | "free-play";
   const onRunAgain = vi.fn();
   const onModeChange = vi.fn();
   const state = terminalState(champion);
-  const view = render(<ResultsView mode={options.mode ?? "daily"} result={projectTerminalResult(options.tournament ?? state.tournament)} cards={dataset.cards} highlights={options.highlights ?? []} rerollsUsed={1}
-    shareText={shareText} onRunAgain={onRunAgain} onModeChange={onModeChange} />);
-  return { ...view, state: { ...state, tournament: options.tournament ?? state.tournament }, onRunAgain, onModeChange };
+    const view = render(<ResultsView mode={options.mode ?? "daily"} result={projectTerminalResult(options.tournament ?? state.tournament)} cards={dataset.cards} highlights={options.highlights ?? []} rerollsUsed={1}
+      shareText={shareText} portraitForPlayer={() => "/assets/players/player-1.abcdef123456.webp"} onRunAgain={onRunAgain} onModeChange={onModeChange} />);
+    return { ...view, state: { ...state, tournament: options.tournament ?? state.tournament }, onRunAgain, onModeChange };
 }
 const clickShare = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: "Share result" })); });
 function deferred() {
@@ -292,6 +292,7 @@ describe("ResultsView", () => {
     });
     const roster = screen.getByRole("region", { name: "Drafted lineup" });
     expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
+    expect(within(roster).getAllByTestId(/^portrait-/)).toHaveLength(5);
     expect(screen.getByText("Rerolls used: 1")).toBeVisible();
     expect(container).not.toHaveTextContent(/strength|probability|\broll\b|traits|firepower|formula|0\.6|0\.2/iu);
   });

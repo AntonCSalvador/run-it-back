@@ -84,6 +84,13 @@ describe("Champions 2021–2025 dataset", () => {
     }
   });
 
+  it("ships policy-cleared local player portraits", () => {
+    const pictured = championsDataset.players.filter(player => player.portrait !== null);
+    expect(pictured.length).toBeGreaterThan(0);
+    expect(pictured.every(player => /^\/assets\/players\/player-\d+\.[a-f0-9]{12}\.webp$/.test(player.portrait!))).toBe(true);
+    expect(pictured.every(player => player.sourceIds.some(id => id.startsWith("liquipedia-portrait-")))).toBe(true);
+  });
+
   it("exports a deeply frozen snapshot", () => {
     expect(Object.isFrozen(championsDataset)).toBe(true);
     expect(Object.isFrozen(championsDataset.cards)).toBe(true);

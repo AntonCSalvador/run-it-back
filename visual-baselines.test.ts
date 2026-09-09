@@ -4,20 +4,20 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const approvedWindowsBlobs = {
-  "desktop/complete-roster.png": "4bdc39aa0226e5a3fc6ea0371211c602377ff3ab",
-  "desktop/mode-selection.png": "3e16da1a0be7504aec1767bcc01e52b44872a834",
-  "desktop/player-picker.png": "ed92995bc37d5aa3c6d3148bdf8be7dddf216f20",
-  "desktop/results-champion.png": "56564f776ac7d9a7658fc0390f622054da350242",
-  "desktop/results-eliminated.png": "87f53080fc2156300518e1e502cb1aa16bb31a4d",
-  "desktop/semifinal-highlights.png": "9ebe99eb53258f380cc260f376d3f7d041d37baf",
-  "desktop/three-team-offer.png": "afb8d5a3d70fdc9ec4e476a3b0117bbc26f5194c",
-  "pixel-7/complete-roster.png": "bfdbc461fe322fc25ec24eb47d4884852d1790b2",
-  "pixel-7/mode-selection.png": "0bdf3a0fca075e036fbeb84e2d191fd48d971079",
-  "pixel-7/player-picker.png": "d7c91b5df9f867ae3108f425c683c76f1f548398",
-  "pixel-7/results-champion.png": "ce857bb6a7a0d6f42d70de50aa3169bfacd6b70b",
-  "pixel-7/results-eliminated.png": "9a7b847f0134e09c027918a457b271e1d1701ec9",
-  "pixel-7/semifinal-highlights.png": "a90e07607db53f4d5d174e283971a99f89a23d89",
-  "pixel-7/three-team-offer.png": "d5b63ff8fba45695212fba4798a5cf28bd0e7163",
+  "desktop/complete-roster.png": "83d0f143528424707357d46bc9155aa77495de4c",
+  "desktop/mode-selection.png": "9afd5415c9029b8585298644a8614c0f3ec38039",
+  "desktop/player-picker.png": "24cdbc458b3e9fd52ac18438d715156b06c6e2dd",
+  "desktop/results-champion.png": "0abde5dfdfca6b4b84465788e8207ae58ac360b0",
+  "desktop/results-eliminated.png": "3c4b04b6a63e552c4abce7f4df7e8efc781a62a9",
+  "desktop/semifinal-highlights.png": "be2445abac612de65a7cbf24dafe0fab784299f0",
+  "desktop/three-team-offer.png": "5bf016c5b167b5973c80fca2f7c327819b27f1a1",
+  "pixel-7/complete-roster.png": "c239f016f8b8794e801a2a3a4b190dbf3a6b2495",
+  "pixel-7/mode-selection.png": "4b5da2be498bf285fa286d3b67cc27a69026fe95",
+  "pixel-7/player-picker.png": "6066681b08e9f1c71b2d2f7d56dc7199c32eb735",
+  "pixel-7/results-champion.png": "8f9830a29c8e4cac08bb92ce8a99e917dcd98ce2",
+  "pixel-7/results-eliminated.png": "a514a515c4e5b987b0260012e6358285e2795792",
+  "pixel-7/semifinal-highlights.png": "7728b0a59235012378d9162ca19233eaf0f0c11d",
+  "pixel-7/three-team-offer.png": "5f8c6fe27a28626233de55ba95f38f6e8faed828",
 } as const;
 
 const approvedLinuxBaselines = {

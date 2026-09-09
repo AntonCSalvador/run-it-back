@@ -2,10 +2,11 @@
 
 import { useEffect, useId, useRef } from "react";
 import type { PlayerCard } from "../domain";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 import { useFireAccent } from "./use-fire-accent";
 
-export interface IglPickerProps { cards: PlayerCard[]; selectedId: string | null; onSelect(id: string): void; onStart(): void }
-export function IglPicker({ cards, selectedId, onSelect, onStart }: IglPickerProps) {
+export interface IglPickerProps { cards: PlayerCard[]; selectedId: string | null; onSelect(id: string): void; onStart(): void; portraitForPlayer?: PortraitForPlayer }
+export function IglPicker({ cards, selectedId, onSelect, onStart, portraitForPlayer = () => null }: IglPickerProps) {
   const fire = useFireAccent();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const startGuidanceId = useId();
@@ -25,6 +26,7 @@ export function IglPicker({ cards, selectedId, onSelect, onStart }: IglPickerPro
           const selected = selectedId === card.id;
           return <label className="igl-picker__choice" data-selected={selected || undefined} data-testid={`igl-choice-${card.id}`} key={card.id}>
             <input aria-label={`${card.displayHandle} ${card.year}`} type="radio" name="igl" checked={selected} onChange={() => onSelect(card.id)} />
+            <PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} />
             <span><strong>{card.displayHandle}</strong><span>{card.year}</span></span>
             {selected && <span className="igl-picker__selected">Selected</span>}
           </label>;

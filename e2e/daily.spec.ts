@@ -19,6 +19,8 @@ test("Daily completion survives reload and repeatable choices produce the same r
   expect(new Set(completion.roster.map((slot: { role: string }) => slot.role)).size).toBe(5);
   expect(completion.roster.some((slot: { cardId: string }) => slot.cardId === completion.iglCardId)).toBe(true);
   const lineupItems = page.getByRole("region", { name: "Drafted lineup" }).getByRole("listitem");
+  await expect(lineupItems).toHaveCount(5);
+  await expect(page.getByRole("region", { name: "Drafted lineup" }).locator('[data-testid^="portrait-"]')).toHaveCount(5);
   const visibleRoster = await lineupItems.evaluateAll(items => items.map(item => ({
     role: item.firstElementChild?.textContent?.toLowerCase(),
     handle: item.querySelector("strong")?.textContent,

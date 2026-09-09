@@ -66,8 +66,10 @@ mirror built from the same `main` branch.
 
 ### Why do some cards use fallback portraits or logos?
 
-The project uses local fallbacks unless an image has clear reuse terms and
-recorded attribution. It does not hotlink uncertain third-party assets.
+The game uses the verified local player portraits and team logos that are
+available in its asset catalogs. A missing or failed image keeps its fixed
+dimensions and displays an accessible fallback, so every picker, roster,
+tournament, and results view remains usable without media.
 
 ### Can the same player appear twice?
 
@@ -93,10 +95,21 @@ the [data methodology](docs/data-methodology.md).
 ## Credits and source policy
 
 Champions facts are compiled from the sources described above. Team logos and
-player portraits currently use local fallbacks rather than claiming rights to
-third-party assets. Contributions must use original assets or sources that
-permit reuse, record the source and license, and never imply official
-affiliation.
+player portraits are local assets, never hotlinked. Run `npm run
+import:portraits` to refresh the portrait set. It reuses the local
+`.cache/liquipedia-portraits` response cache, accepts only recorded open
+licenses or Riot Games policy-eligible originals, and rejects ambiguous,
+incomplete, or unsupported reuse terms. Each accepted image is recorded in
+`src/data/champions/portrait-assets.json` and has its URL, original URL,
+retrieval date, credit, and license in the per-image
+`src/data/champions/portrait-sources.json` catalog.
+
+Run It Back is free and noncommercial. Remove Riot Games policy-based assets
+before making the project commercial. Contributions must use original assets
+or sources that permit reuse, record the source and license, and never imply
+official affiliation.
+
+Run It Back was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
 
 VALORANT and related marks belong to Riot Games and their respective owners.
 

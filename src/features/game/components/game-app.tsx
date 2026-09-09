@@ -15,6 +15,7 @@ import { TeamOffer } from "./team-offer";
 import { PlayerPicker } from "./player-picker";
 import { RosterBar } from "./roster-bar";
 import { IglPicker } from "./igl-picker";
+import type { PortraitForPlayer } from "./player-portrait";
 import { TournamentView } from "./tournament-view";
 import { HighlightFeed } from "./highlight-feed";
 import { ResultsView, type StagedHighlight } from "./results-view";
@@ -306,6 +307,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const teams = new Map(dataset.teams.map(team => [team.id, team]));
   const cards = new Map(dataset.cards.map(card => [card.id, card]));
   const players = new Map(dataset.players.map(player => [player.id, player]));
+  const portraitForPlayer: PortraitForPlayer = playerId => players.get(playerId)?.portrait ?? null;
   const rosterSlots: Partial<Record<Role, PlayerCard>> = Object.fromEntries(ROLES.flatMap(role => {
     const card = state.phase !== "mode" ? cards.get(state.draft.slots[role] ?? "") : undefined;
     return card ? [[role, card] as const] : [];
@@ -362,7 +364,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
           setRecentResultsOpen(true);
           setSelectedResultKey(`daily-${todayUtc}`);
         }} />
-        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
+        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} portraitForPlayer={portraitForPlayer} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
       </>}
       {state.phase === "team" && (() => {
         const offer = state.draft.offeredTeamIds.map(id => teams.get(id)).filter((team): team is NonNullable<typeof team> => Boolean(team));
@@ -370,9 +372,9 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         const rerollState = canReroll
           ? { canReroll: true as const }
           : { canReroll: false as const, rerollReason: state.draft.rerollsRemaining <= 0 ? "No rerolls left" : "No other eligible team offers are available" };
-        return offer.length === 3 ? <div className="draft-layout"><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} {...rerollState} onChoose={teamId => { actionFire.trigger(); dispatchGame({ type: "choose-team", teamId }); }} onReroll={() => dispatchGame({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></div> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>;
+        return offer.length === 3 ? <div className="draft-layout"><TeamOffer teams={offer} rerolls={state.draft.rerollsRemaining} {...rerollState} onChoose={teamId => { actionFire.trigger(); dispatchGame({ type: "choose-team", teamId }); }} onReroll={() => dispatchGame({ type: "reroll" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} portraitForPlayer={portraitForPlayer} /></div> : <p role="alert">No valid team offer is available. <button type="button" onClick={restart}>Restart draft</button></p>;
       })()}
-      {state.phase === "player" && (() => { const team = teams.get(state.draft.selectedTeamId ?? ""); const available = selectableCards(state.draft, dataset); const openRoles = ROLES.filter(role => !state.draft.slots[role]); return !team ? <p role="alert">Selected team is unavailable. <button type="button" onClick={() => dispatchGame({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : !available.length ? <p role="alert">No eligible players are available. <button type="button" onClick={() => dispatchGame({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : <div className="draft-layout"><PlayerPicker team={team} cards={available} openRoles={openRoles} portraitForPlayer={playerId => players.get(playerId)?.portrait ?? null} onChoose={cardId => { actionFire.trigger(); dispatchGame({ type: "choose-card", cardId }); }} onBack={() => dispatchGame({ type: "back-to-teams" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></div>; })()}
+      {state.phase === "player" && (() => { const team = teams.get(state.draft.selectedTeamId ?? ""); const available = selectableCards(state.draft, dataset); const openRoles = ROLES.filter(role => !state.draft.slots[role]); return !team ? <p role="alert">Selected team is unavailable. <button type="button" onClick={() => dispatchGame({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : !available.length ? <p role="alert">No eligible players are available. <button type="button" onClick={() => dispatchGame({ type: "back-to-teams" })}>Back to teams</button> <button type="button" onClick={restart}>Restart draft</button></p> : <div className="draft-layout"><PlayerPicker team={team} cards={available} openRoles={openRoles} portraitForPlayer={portraitForPlayer} onChoose={cardId => { actionFire.trigger(); dispatchGame({ type: "choose-card", cardId }); }} onBack={() => dispatchGame({ type: "back-to-teams" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} portraitForPlayer={portraitForPlayer} /></div>; })()}
       {state.phase === "role" && (() => {
         const card = cards.get(state.draft.pendingCardId ?? "");
         const team = teams.get(state.draft.selectedTeamId ?? "");
@@ -388,13 +390,13 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
             actionFire.trigger();
             setDraftAnnouncement(`${card.displayHandle} added as ${humanRole(role)}. ${draftedCards.length + 1} of 5 drafted.`);
             dispatchGame({ type: "assign-role", role });
-          }} onBack={() => dispatchGame({ type: "back-to-player" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} /></div>;
+          }} onBack={() => dispatchGame({ type: "back-to-player" })} /><RosterBar slots={rosterSlots} onMove={() => undefined} canMove={false} portraitForPlayer={portraitForPlayer} /></div>;
       })()}
-      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} headingLevel={2} onMove={(cardId, role) => dispatchGame({ type: "move-card", cardId, role })} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} onSelect={cardId => dispatchGame({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatchGame({ type: "enter-tournament" }); } }} /></>)}
-      {state.phase === "tournament" && <TournamentView tournament={state.tournament} opponent={opponent} cards={dataset.cards} result={highlightsComplete ? presentedSeries : null} revealComplete={highlightsComplete} resolving={lockedStage === state.tournament.currentStage} error={opponentState.error ?? simulationError} focusOnMount={focusTournamentOnMount} reveal={presentedHighlights !== null ? <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} instant={prefersReducedMotion} focusOnMount /> : null} onPlay={playSeries} onRetryOpponent={() => { setSimulationError(null); setOpponentRevision(value => value + 1); }} onRetrySeries={() => void playSeries()} onContinue={continueTournament} />}
+      {state.phase === "lineup" && (draftedCards.length !== ROLES.length || new Set(draftedCards.map(card => card.id)).size !== ROLES.length ? <p role="alert">Roster is incomplete. <button type="button" onClick={restart}>Restart draft</button></p> : <><RosterBar slots={rosterSlots} iglCardId={state.draft.iglCardId} headingLevel={2} onMove={(cardId, role) => dispatchGame({ type: "move-card", cardId, role })} portraitForPlayer={portraitForPlayer} /><IglPicker cards={draftedCards} selectedId={state.draft.iglCardId} portraitForPlayer={portraitForPlayer} onSelect={cardId => dispatchGame({ type: "tag-igl", cardId })} onStart={() => { if (isLineupReady(state.draft)) { actionFire.trigger(); setFocusTournamentOnMount(true); dispatchGame({ type: "enter-tournament" }); } }} /></>)}
+      {state.phase === "tournament" && <TournamentView tournament={state.tournament} opponent={opponent} cards={dataset.cards} result={highlightsComplete ? presentedSeries : null} revealComplete={highlightsComplete} resolving={lockedStage === state.tournament.currentStage} error={opponentState.error ?? simulationError} focusOnMount={focusTournamentOnMount} portraitForPlayer={portraitForPlayer} reveal={presentedHighlights !== null ? <HighlightFeed highlights={presentedHighlights} onComplete={() => setHighlightsComplete(true)} instant={prefersReducedMotion} focusOnMount /> : null} onPlay={playSeries} onRetryOpponent={() => { setSimulationError(null); setOpponentRevision(value => value + 1); }} onRetrySeries={() => void playSeries()} onContinue={continueTournament} />}
       {state.phase === "results" && terminalResult && <>
-        <ResultsView mode={state.mode} result={terminalResult} cards={dataset.cards} highlights={resultHighlights(runHighlights)} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} onRunAgain={() => beginAnotherRun(state.mode)} onModeChange={beginAnotherRun} />
-        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
+        <ResultsView mode={state.mode} result={terminalResult} cards={dataset.cards} highlights={resultHighlights(runHighlights)} rerollsUsed={3 - state.draft.rerollsRemaining} shareText={resultShare} portraitForPlayer={portraitForPlayer} onRunAgain={() => beginAnotherRun(state.mode)} onModeChange={beginAnotherRun} />
+        <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} portraitForPlayer={portraitForPlayer} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
       </>}
       </main>
       <ExitRunDialog open={exitDialogOpen} onCancel={() => setExitDialogOpen(false)} onConfirm={() => {

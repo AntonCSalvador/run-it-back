@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ROLES, type PlayerCard } from "../domain";
 import type { DailyRun, FreePlayRun, StoredRunResult } from "../storage";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 
 export interface RecentResultsProps {
   daily: readonly DailyRun[];
   free: readonly FreePlayRun[];
   cards: readonly PlayerCard[];
+  portraitForPlayer?: PortraitForPlayer;
   open: boolean;
   selectedKey: string | null;
   onOpenChange(open: boolean): void;
@@ -215,7 +217,7 @@ export function reconcileResultControlNames(
   return { names, nextLedger };
 }
 
-export function RecentResults({ daily, free, cards, open, selectedKey, onOpenChange, onSelectedKeyChange }: RecentResultsProps) {
+export function RecentResults({ daily, free, cards, portraitForPlayer = () => null, open, selectedKey, onOpenChange, onSelectedKeyChange }: RecentResultsProps) {
   const heading = useRef<HTMLHeadingElement>(null);
   const lastFocusIntent = useRef<string | null>(null);
   const [resultReferences, setResultReferences] = useState<ReadonlyMap<string, number>>(() => new Map());
@@ -275,7 +277,7 @@ export function RecentResults({ daily, free, cards, open, selectedKey, onOpenCha
         <p>{outcome(selectedRun.run)} at {selectedRun.run.stageReached}. Rerolls used: {selectedRun.run.rerollsUsed}</p>
         <ul>{selectedRun.run.roster.map(slot => {
           const card = byId.get(slot.cardId);
-          return <li key={slot.role}>{slot.role}: {card?.displayHandle ?? "Unknown player"} {card?.year ?? ""}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</li>;
+          return <li className="player-row" key={slot.role}>{card && <PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} />}<span>{slot.role}: {card?.displayHandle ?? "Unknown player"} {card?.year ?? ""}{slot.cardId === selectedRun.run.iglCardId ? " · IGL" : ""}</span></li>;
         })}</ul>
         <ol>{selectedRun.run.series.map(series => <li key={series.stage}>{series.stage}: {series.userWins}–{series.opponentWins}</li>)}</ol>
       </section>}
