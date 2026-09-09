@@ -13,11 +13,11 @@ describe("Champions 2021–2025 dataset", () => {
     );
 
     const runtimeCards = new Map(championsDataset.cards.map(card => [card.id, card]));
-    for (const generatedCard of generatedChampionsDataset.cards) {
-      const runtimeCard = runtimeCards.get(generatedCard.id);
-      expect(runtimeCard?.eligibleRoles).toEqual(generatedCard.eligibleRoles);
-      expect(runtimeCard?.historicalIgl).toBe(generatedCard.historicalIgl);
-      expect(runtimeCard?.traits).toEqual(generatedCard.traits);
+    for (const manualCard of manualPlayerCatalog.cards) {
+      const runtimeCard = runtimeCards.get(manualCard.cardId);
+      expect(runtimeCard?.eligibleRoles).toEqual(manualCard.eligibleRoles);
+      expect(runtimeCard?.historicalIgl).toBe(manualCard.historicalIgl);
+      expect(runtimeCard?.traits).toEqual(manualCard.traits);
     }
   });
 
@@ -28,7 +28,7 @@ describe("Champions 2021–2025 dataset", () => {
     for (const year of teamAppearances) {
       expect(championsDataset.teams.filter(team => team.year === year)).toHaveLength(16);
       expect(championsDataset.cards.filter(card => card.year === year).length).toBeGreaterThan(0);
-      expect(new Set(championsDataset.cards.filter(card => card.year === year).flatMap(card => card.eligibleRoles))).toEqual(new Set(ROLES));
+      expect(new Set(generatedChampionsDataset.cards.filter(card => card.year === year).flatMap(card => card.eligibleRoles))).toEqual(new Set(ROLES));
     }
   });
 
@@ -46,7 +46,7 @@ describe("Champions 2021–2025 dataset", () => {
 
   it("has a one-to-one role evidence record and cites every below-threshold override", () => {
     expect(evidence).toHaveLength(championsDataset.cards.length);
-    const cards = new Map(championsDataset.cards.map(card => [card.id, card]));
+    const cards = new Map(generatedChampionsDataset.cards.map(card => [card.id, card]));
     expect(new Set(evidence.map(entry => entry.cardId)).size).toBe(evidence.length);
     for (const entry of evidence) {
       const card = cards.get(entry.cardId);
@@ -61,7 +61,7 @@ describe("Champions 2021–2025 dataset", () => {
   });
 
   it("has coverage-aware non-constant clutch traits", () => {
-    const values = new Set(championsDataset.cards.map(card => card.traits.clutch));
+    const values = new Set(generatedChampionsDataset.cards.map(card => card.traits.clutch));
     expect(values.size).toBeGreaterThan(1);
     expect([...values]).toContain(50);
   });
@@ -72,7 +72,7 @@ describe("Champions 2021–2025 dataset", () => {
   });
 
   it("keeps cited historical leadership and event-time team names", () => {
-    const igls = championsDataset.cards.filter(card => card.historicalIgl);
+    const igls = generatedChampionsDataset.cards.filter(card => card.historicalIgl);
     expect(igls.map(card => card.id).sort()).toEqual(["boaster-fnatic-2023", "d4v41-paper-rex-2023", "finesse-nrg-2023", "redgar-team-liquid-2023", "saadhak-loud-2023", "stax-drx-2023"]);
     expect(igls.every(card => card.traits.leadership === 75 && card.sourceIds.includes("riot-vct-2023-awards"))).toBe(true);
     expect(igls.every(card => evidence.find(row => row.cardId === card.id)?.sourceIds.includes("riot-vct-2023-awards"))).toBe(true);
@@ -81,12 +81,12 @@ describe("Champions 2021–2025 dataset", () => {
   });
 
   it("keeps TenZ historical event cards distinct and represents event-specific multi-role play", () => {
-    const tenZ2021 = championsDataset.cards.find(card => card.id === "tenz-sentinels-2021");
-    const tenZ2024 = championsDataset.cards.find(card => card.id === "tenz-sentinels-2024");
+    const tenZ2021 = generatedChampionsDataset.cards.find(card => card.id === "tenz-sentinels-2021");
+    const tenZ2024 = generatedChampionsDataset.cards.find(card => card.id === "tenz-sentinels-2024");
     expect(tenZ2021).toBeDefined();
     expect(tenZ2024).toBeDefined();
     expect(tenZ2021?.id).not.toBe(tenZ2024?.id);
-    expect(championsDataset.cards.some(card => card.eligibleRoles.length > 1)).toBe(true);
+    expect(generatedChampionsDataset.cards.some(card => card.eligibleRoles.length > 1)).toBe(true);
   });
 
   it("leaves uncertain assets null and requires complete asset provenance when present", () => {
