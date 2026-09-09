@@ -46,6 +46,25 @@ describe("portrait source policy", () => {
     });
   });
 
+  it.each([
+    ["author", "Liu YiCun"],
+    ["copyright", "Example Photographer"],
+  ])("requires a nonblank %s for open-license media", (field, value) => {
+    const info = riot
+      .replace("license=permission", "license=cc-by-sa-4.0")
+      .replace(
+        "[https://www.riotgames.com/ Riot Games]",
+        "Example Photographer",
+      )
+      .replace(`|${field}=${value}`, `|${field}=`);
+
+    expect(assessPortrait("BeYN", "File:BeYN.jpg", info)).toMatchObject({
+      accepted: false,
+      basis: "open-license",
+      reason: "metadata-incomplete",
+    });
+  });
+
   it("requires FileInfo to feature the exact normalized player handle", () => {
     expect(
       assessPortrait(

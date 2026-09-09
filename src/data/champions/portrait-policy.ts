@@ -181,7 +181,12 @@ export function assessPortrait(
       : null;
   const basis = info.templateValid && !info.conflicts.length ? candidateBasis : null;
   const credit = [info.author, info.copyright].filter(Boolean).join(" / ");
-  const accepted = featured && basis !== null && Boolean(info.source) && Boolean(credit);
+  const accepted =
+    featured &&
+    basis !== null &&
+    Boolean(info.source) &&
+    Boolean(info.author) &&
+    Boolean(info.copyright);
 
   return {
     ...info,
