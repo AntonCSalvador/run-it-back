@@ -100,12 +100,8 @@ const addField = (fields: Map<string, string[]>, value: string) => {
   fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
 };
 
-const openingParameters = (line: string) => {
-  const opening = line.match(/^\{\{\s*FileInfo\s*\|/);
-  if (!opening) return [];
-
+const depthOneParameters = (line: string, start: number) => {
   const parameters: string[] = [];
-  let start = opening[0].length;
   let templateDepth = 0;
   let linkDepth = 0;
 
@@ -137,6 +133,11 @@ const openingParameters = (line: string) => {
   return parameters;
 };
 
+const openingParameters = (line: string) => {
+  const opening = line.match(/^\{\{\s*FileInfo\s*\|/);
+  return opening ? depthOneParameters(line, opening[0].length) : [];
+};
+
 const fieldsAtFileInfoDepth = (template: string) => {
   const fields = new Map<string, string[]>();
   let depth = 0;
@@ -146,7 +147,11 @@ const fieldsAtFileInfoDepth = (template: string) => {
       for (const parameter of openingParameters(line)) {
         addField(fields, `|${parameter}`);
       }
-    } else if (depth === 1) addField(fields, line);
+    } else if (depth === 1 && line.startsWith("|")) {
+      for (const parameter of depthOneParameters(line, 1)) {
+        addField(fields, `|${parameter}`);
+      }
+    }
 
     for (let index = 0; index < line.length; index += 1) {
       const token = line.slice(index, index + 2);
