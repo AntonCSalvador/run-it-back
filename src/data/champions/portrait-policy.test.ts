@@ -71,9 +71,35 @@ describe("portrait source policy", () => {
       expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
         accepted: false,
         basis: null,
-        reason: "metadata-conflict",
+        reason: "metadata-incomplete",
       });
     }
+  });
+
+  it.each([
+    ["license", "permission"],
+    ["featured", "BeYN"],
+  ])("rejects repeated identical %s fields", (field, value) => {
+    const info = riot.replace(
+      `|${field}=${value}`,
+      `|${field}=${value}\n|${field}=${value}`,
+    );
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: false,
+      basis: null,
+      reason: "metadata-incomplete",
+    });
+  });
+
+  it("supports distinct numbered featured fields", () => {
+    expect(
+      assessPortrait(
+        "BeYN",
+        "File:DRX BeYN.jpg",
+        riot.replace("featured=BeYN", "featured=MaKo\n|featured2=BeYN"),
+      ),
+    ).toMatchObject({ accepted: true, featured: ["MaKo", "BeYN"] });
   });
 
   it("requires case-exact normalized featured handles", () => {

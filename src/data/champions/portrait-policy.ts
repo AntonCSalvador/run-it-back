@@ -50,11 +50,6 @@ const sourceUrl = (value: string) => {
   }
 };
 
-const comparable = (key: string, value: string) =>
-  (key === "source" ? sourceUrl(value) : plain(value))
-    .replace(/\s+/g, " ")
-    .toLocaleLowerCase("en-US");
-
 export function parseFileInfo(wikitext: string): FileInfo {
   const fields = new Map<string, string[]>();
 
@@ -68,11 +63,7 @@ export function parseFileInfo(wikitext: string): FileInfo {
     .flatMap(([, values]) => values.map(plain))
     .filter(Boolean);
   const conflicts = [...fields.entries()]
-    .filter(
-      ([key, values]) =>
-        !/^featured\d*$/.test(key) &&
-        new Set(values.map((value) => comparable(key, value))).size > 1,
-    )
+    .filter(([, values]) => values.length > 1)
     .map(([key]) => key);
   const field = (key: string) => fields.get(key)?.[0] ?? "";
 
@@ -131,7 +122,7 @@ export function assessPortrait(
     reason: accepted
       ? "accepted"
       : info.conflicts.length
-        ? "metadata-conflict"
+        ? "metadata-incomplete"
         : !featured
         ? "identity-mismatch"
         : !basis
