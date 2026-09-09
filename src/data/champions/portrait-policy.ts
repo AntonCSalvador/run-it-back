@@ -28,6 +28,23 @@ export type PortraitAssessment = FileInfo & {
 };
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
+const RIOT_GAMES_CREDIT = /(?:^|\s\/\s)(?:©\s*)?riot games(?:,?\s*inc\.?)?$/i;
+
+export const isApprovedOpenPortraitLicense = (license: string) => OPEN.test(license.trim());
+
+export const hasRiotGamesCopyrightCredit = (credit: string) => RIOT_GAMES_CREDIT.test(credit.trim());
+
+export const isApprovedRiotPortraitOriginalUrl = (url: string) => {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return false;
+    if (parsed.hostname === "riotgames.com" || parsed.hostname === "www.riotgames.com") return true;
+    return (parsed.hostname === "flickr.com" || parsed.hostname === "www.flickr.com")
+      && parsed.pathname.startsWith("/photos/valorantesports/");
+  } catch {
+    return false;
+  }
+};
 const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*([\s\S]*?)[ \t]*$/i;
 const FILE_INFO_START = /^\{\{\s*FileInfo\s*(?=\||\}\})/;
 const VOID_TAGS = new Set([
@@ -270,11 +287,8 @@ export function assessPortrait(
     /^(?:©\s*)?riot games(?:,?\s*inc\.?)?(?:\s+all rights reserved\.?)?$/i.test(
       info.copyright,
     );
-  const riotSource =
-    /^https:\/\/(?:www\.)?(?:riotgames\.com|flickr\.com\/photos\/valorantesports)\//i.test(
-      info.source,
-    );
-  const candidateBasis = OPEN.test(info.license)
+  const riotSource = isApprovedRiotPortraitOriginalUrl(info.source);
+  const candidateBasis = isApprovedOpenPortraitLicense(info.license)
     ? "open-license"
     : info.license === "permission" && riotOwned && riotSource
       ? "riot-fan-policy"

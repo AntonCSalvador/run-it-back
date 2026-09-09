@@ -6,7 +6,7 @@ import { validateChampions, type Evidence } from "./validation";
 
 const player = { id: "player-1", canonicalHandle: "BeYN", portrait: null, sourceIds: ["fact"] };
 const row = { playerId: "player-1", portrait: "/assets/players/player-1.abcdef123456.webp", sourceId: "liquipedia-portrait-1", sha256: "a".repeat(64) };
-const source = { id: row.sourceId, url: "https://liquipedia.net/commons/File:BeYN.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/54347821048/", retrievedAt: "2026-09-08", usage: "asset" as const, credit: "Liu YiCun / Riot Games", license: "Riot Legal Jibber Jabber — noncommercial fan project" };
+const source = { id: row.sourceId, url: "https://liquipedia.net/commons/File:BeYN.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/54347821048/", retrievedAt: "2026-09-08", usage: "asset" as const, credit: "Liu YiCun / Riot Games", license: "permission" };
 const overlaidPlayer = applyPortraitCatalog([player], [row])[0];
 
 describe("portrait catalog", () => {
@@ -32,7 +32,9 @@ describe("portrait catalog", () => {
 
   it("rejects an otherwise valid unused portrait source in the passed dataset", () => {
     const data = structuredClone(championsDataset);
-    data.sources.push({ id: "liquipedia-portrait-999", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "https://www.flickr.com/photos/riot/999/", retrievedAt: "2026-09-08", usage: "asset", credit: "Riot Games", license: "Noncommercial fan project" });
+    let number = 1;
+    while (data.sources.some(candidate => candidate.id === `liquipedia-portrait-${number}`)) number += 1;
+    data.sources.push({ ...source, id: `liquipedia-portrait-${number}` });
     expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/unused portrait source/);
   });
 
@@ -47,5 +49,23 @@ describe("portrait catalog", () => {
   it("requires players without overlays to keep portrait fields empty", () => {
     expect(() => validatePortraitCatalog([{ ...player, portrait: row.portrait }], [], [], { requireOverlay: true })).toThrow(/portrait overlay/);
     expect(() => validatePortraitCatalog([{ ...player, sourceIds: ["fact", row.sourceId] }], [], [], { requireOverlay: true })).toThrow(/portrait source overlay/);
+  });
+
+  it("accepts approved reuse grounds and rejects unsupported claims", () => {
+    expect(() => validatePortraitCatalog([player], [row], [source])).not.toThrow();
+    expect(() => validatePortraitCatalog([player], [row], [{ ...source, license: "cc-by-sa-4.0", credit: "Example Photographer", originalUrl: "https://example.test/photo" }])).not.toThrow();
+    for (const invalid of [
+      { license: "fair use" },
+      { license: "cc-by-nd-4.0" },
+      { license: "unknown-rights-marker" },
+      { credit: "Example Team" },
+      { credit: "Example Photographer" },
+      { originalUrl: "https://example.test/riot-photo" },
+    ]) expect(() => validatePortraitCatalog([player], [row], [{ ...source, ...invalid }])).toThrow(/reuse grounds/);
+  });
+
+  it("rejects malformed and future retrieval dates", () => {
+    expect(() => validatePortraitCatalog([player], [row], [{ ...source, retrievedAt: "2026-02-30" }], { today: "2026-09-09" })).toThrow(/retrievedAt|retrieval date/);
+    expect(() => validatePortraitCatalog([player], [row], [{ ...source, retrievedAt: "2026-09-10" }], { today: "2026-09-09" })).toThrow(/future retrieval date/);
   });
 });

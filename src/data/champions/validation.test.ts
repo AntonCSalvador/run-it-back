@@ -26,17 +26,19 @@ describe("Champions audit validation", () => {
 
   it.each(["missing", "extra", "duplicate"])("rejects %s source catalog records", kind => {
     const data = structuredClone(championsDataset);
-    if (kind === "missing") data.sources.pop();
-    if (kind === "extra") data.sources.push({ ...data.sources[0], id: "extra-reviewed-looking-source" });
-    if (kind === "duplicate") data.sources.push({ ...data.sources[0] });
+    const factual = data.sources.find(source => source.usage === "facts")!;
+    if (kind === "missing") data.sources = data.sources.filter(source => source.id !== factual.id);
+    if (kind === "extra") data.sources.push({ ...factual, id: "extra-reviewed-looking-source" });
+    if (kind === "duplicate") data.sources.push({ ...factual });
     expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
   });
 
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
     const data = structuredClone(championsDataset);
     const audit = structuredClone(evidence) as Evidence[];
-    const wrong = ["liquipedia-champions-2025"];
-    if (target === "player") data.players[0].sourceIds = wrong;
+    const unpictured = data.players.find(player => player.portrait === null)!;
+    const wrong = [data.sources.find(source => source.usage === "facts" && !unpictured.sourceIds.includes(source.id))!.id];
+    if (target === "player") unpictured.sourceIds = wrong;
     if (target === "team") data.teams[0].sourceIds = wrong;
     if (target === "card") data.cards[0].sourceIds = wrong;
     if (target === "evidence") audit[0].sourceIds = wrong;
@@ -55,7 +57,7 @@ describe("Champions audit validation", () => {
   it.each(["canonicalHandle", "playerId", "displayHandle", "teamName", "teamId"])("rejects edits to pinned %s", target => {
     const data = structuredClone(championsDataset);
     if (target === "canonicalHandle") data.players[0].canonicalHandle = "DifferentHandle";
-    if (target === "playerId") data.players[0].id = "player-999999";
+    if (target === "playerId") data.players.find(player => player.portrait === null)!.id = "player-999999";
     if (target === "displayHandle") data.cards[0].displayHandle = "DifferentHandle";
     if (target === "teamName") data.teams[0].name = "Different team";
     if (target === "teamId") data.cards[0].teamId = data.teams[0].id;

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { PlayerIdentity, SourceRef } from "@/features/game/domain";
 import { sourceRefSchema } from "@/features/game/schema";
+import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedRiotPortraitOriginalUrl } from "./portrait-policy";
 
 const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
 const playerId = /^player-(\d+)$/;
@@ -61,9 +62,19 @@ function isHttps(url: string | undefined): url is string {
   return typeof url === "string" && new URL(url).protocol === "https:";
 }
 
-type PortraitCatalogValidationOptions = { requireOverlay?: boolean };
+const DEFAULT_VALIDATION_TODAY = "2026-09-09";
+
+function isCalendarDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
+}
+
+type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string };
 
 export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown, options: PortraitCatalogValidationOptions = {}): void {
+  const today = options.today ?? DEFAULT_VALIDATION_TODAY;
+  if (!isCalendarDate(today)) throw new Error(`invalid portrait validation date ${today}`);
   const knownPlayers = new Set(players.map(player => player.id));
   if (Array.isArray(input)) {
     for (const row of input) {
@@ -82,6 +93,8 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
   assertUnique(portraitSources.map(source => source.id), "portrait source");
   for (const source of portraitSources) {
     if (source.usage !== "asset") throw new Error(`portrait source usage asset required ${source.id}`);
+    if (!isCalendarDate(source.retrievedAt)) throw new Error(`portrait source retrieval date is invalid ${source.id}`);
+    if (source.retrievedAt > today) throw new Error(`future retrieval date ${source.id}`);
   }
   const sourcesById = new Map(portraitSources.map(source => [source.id, source]));
 
@@ -95,6 +108,10 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
     if (!isHttps(source.originalUrl)) throw new Error(`portrait source originalUrl must be HTTPS ${asset.sourceId}`);
     if (!source.credit?.trim()) throw new Error(`portrait source credit is required ${asset.sourceId}`);
     if (!source.license?.trim()) throw new Error(`portrait source license is required ${asset.sourceId}`);
+    const approvedPermission = source.license.trim().toLowerCase() === "permission"
+      && hasRiotGamesCopyrightCredit(source.credit)
+      && isApprovedRiotPortraitOriginalUrl(source.originalUrl);
+    if (!isApprovedOpenPortraitLicense(source.license) && !approvedPermission) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
   }
 
   for (const source of sources) {
