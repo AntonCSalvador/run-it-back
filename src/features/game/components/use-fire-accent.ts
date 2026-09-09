@@ -32,7 +32,7 @@ export function useFireAccent() {
         timeout.current = null;
         activeRef.current = false;
         setActive(false);
-      }, 650);
+      }, 200);
     };
     if (activeRef.current) {
       activeRef.current = false;

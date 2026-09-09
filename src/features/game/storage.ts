@@ -1,9 +1,11 @@
 import { z, type ZodType } from "zod";
 import { ROLES, type Role } from "./domain";
+import type { DraftState } from "./draft";
+import type { GameMode } from "./machine";
 import type { Stage } from "./opponents";
 import { MAP_POOL, STAGE_ORDER } from "./tournament";
 
-export const STORAGE_KEYS = { settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1" } as const;
+export const STORAGE_KEYS = { settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1", active: "run-it-back:active:v1" } as const;
 
 const utcDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const [year, month, day] = value.split("-").map(Number); const parsed = new Date(Date.UTC(year, month - 1, day));
@@ -13,6 +15,17 @@ const stage = z.enum(["group", "quarterfinal", "semifinal", "final"]);
 const rosterSlot = z.object({ role: z.enum(ROLES), cardId: z.string().min(1).max(128) }).strict();
 const seriesSummarySchema = z.object({ stage, userWins: z.number().int().nonnegative(), opponentWins: z.number().int().nonnegative() }).strict();
 const mapSummarySchema = z.object({ map: z.enum(MAP_POOL), userScore: z.number().int().nonnegative(), opponentScore: z.number().int().nonnegative() }).strict();
+const activeDraftSchema = z.object({
+  seed: z.string().min(1).max(256), offerIndex: z.number().int().min(1).max(16), rerollsRemaining: z.number().int().min(0).max(3),
+  offeredTeamIds: z.array(z.string().min(1).max(128)).max(3), selectedTeamId: z.string().min(1).max(128).nullable(), pendingCardId: z.string().min(1).max(128).nullable(),
+  slots: z.object({ smokes: z.string().min(1).max(128).optional(), duelist: z.string().min(1).max(128).optional(), initiator: z.string().min(1).max(128).optional(), sentinel: z.string().min(1).max(128).optional(), flex: z.string().min(1).max(128).optional() }).strict(),
+  iglCardId: z.string().min(1).max(128).nullable(),
+}).strict();
+const activeSeriesSchema = z.object({ stage, userWins: z.number().int().nonnegative(), opponentWins: z.number().int().nonnegative(), maps: z.array(mapSummarySchema).min(2).max(5) }).strict();
+const activeRunSchema = z.object({
+  mode: z.enum(["daily", "free-play"]), phase: z.enum(["team", "player", "role", "lineup", "tournament"]), draft: activeDraftSchema,
+  tournament: z.object({ currentStage: stage, completedSeries: z.array(activeSeriesSchema).max(3) }).strict().optional(),
+}).strict();
 const persistedSeriesSchema = seriesSummarySchema.extend({ maps: z.array(mapSummarySchema).min(2).max(5).optional() }).strict();
 function runIssues(run: { roster: readonly { role: Role; cardId: string }[]; series: readonly { stage: Stage; userWins: number; opponentWins: number }[]; stageReached: Stage; rerollsUsed: number }, context: z.RefinementCtx): void {
   const roles = new Set(run.roster.map(slot => slot.role)); const cards = new Set(run.roster.map(slot => slot.cardId));
@@ -66,6 +79,7 @@ export type StoredRunResult = DailyRun | FreePlayRun;
 export interface StoredSettings { readonly soundEnabled: boolean }
 export interface DailyStorage { readonly completions: readonly DailyRun[]; readonly streak: number }
 export interface HistoryStorage { readonly runs: readonly FreePlayRun[] }
+export interface ActiveRunStorage { readonly run: null | { readonly mode: GameMode; readonly phase: "team" | "player" | "role" | "lineup" | "tournament"; readonly draft: DraftState; readonly tournament?: { readonly currentStage: Stage; readonly completedSeries: readonly { readonly stage: Stage; readonly userWins: number; readonly opponentWins: number; readonly maps: readonly { readonly map: (typeof MAP_POOL)[number]; readonly userScore: number; readonly opponentScore: number }[] }[] } } }
 export interface RecordAdapter<T> { readonly key: string; readonly schema: ZodType<{ version: 1 } & T>; readonly defaultValue: T }
 export interface StorageResult<T> { readonly value: T; readonly recovered: boolean; readonly persistent: boolean }
 
@@ -75,6 +89,7 @@ export const DAILY_RECORD: RecordAdapter<DailyStorage> = { key: STORAGE_KEYS.dai
   value.completions.forEach((run, index) => { if (dates.has(run.utcDate)) context.addIssue({ code: "custom", path: ["completions", index, "utcDate"], message: `Duplicate Daily completion for UTC date ${run.utcDate}` }); dates.add(run.utcDate); });
 }), defaultValue: { completions: [], streak: 0 } };
 export const HISTORY_RECORD: RecordAdapter<HistoryStorage> = { key: STORAGE_KEYS.history, schema: z.object({ version: z.literal(1), runs: z.array(freePlayRunSchema).max(20) }).strict(), defaultValue: { runs: [] } };
+export const ACTIVE_RECORD: RecordAdapter<ActiveRunStorage> = { key: STORAGE_KEYS.active, schema: z.object({ version: z.literal(1), run: activeRunSchema.nullable() }).strict(), defaultValue: { run: null } };
 
 const storageMemory = new WeakMap<Storage, Map<string, unknown>>(); const nullMemory = new Map<string, unknown>(); const dirty = new WeakMap<Storage, Set<string>>(); const tombstones = new WeakMap<Storage, Set<string>>();
 function memoryFor(storage: Storage | null): Map<string, unknown> { if (!storage) return nullMemory; const values = storageMemory.get(storage) ?? new Map<string, unknown>(); storageMemory.set(storage, values); return values; }

@@ -6,7 +6,7 @@ import { createHighlights, type Highlight } from "./narration";
 
 export interface SimulationGateway {
   generateOpponent(seed: string, stage: Stage, userLineup: Lineup): GeneratedOpponent;
-  playSeries(seed: string, stage: Stage, userLineup: Lineup, opponent: GeneratedOpponent): SeriesResult;
+  playSeries(seed: string, stage: Stage, userLineup: Lineup, opponent: GeneratedOpponent): SeriesResult | Promise<SeriesResult>;
   createHighlights(seed: string, series: SeriesResult, userLineup: Lineup, opponent: Lineup): readonly Highlight[];
 }
 function freezeDataset(dataset: GameDataset): GameDataset {

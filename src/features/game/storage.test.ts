@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { DAILY_RECORD, HISTORY_RECORD, SETTINGS_RECORD, STORAGE_KEYS, addDailyCompletion, nextDailyStreak, prependFreePlayHistory, readRecord, removeRecord, writeRecord, type DailyRun, type FreePlayRun, type HistoryStorage, type StoredRunResult } from "./storage";
+import { ACTIVE_RECORD, DAILY_RECORD, HISTORY_RECORD, SETTINGS_RECORD, STORAGE_KEYS, addDailyCompletion, nextDailyStreak, prependFreePlayHistory, readRecord, removeRecord, writeRecord, type DailyRun, type FreePlayRun, type HistoryStorage, type StoredRunResult } from "./storage";
 
 class MemoryStorage implements Storage {
   private readonly entries = new Map<string, string>();
@@ -24,7 +24,7 @@ describe("local run storage", () => {
     expect(nextDailyStreak([dailyRun("2026-01-03")], "2026-01-02", 4)).toBe(4);
   });
   it("uses namespaced v1 keys and round trips each valid record", () => {
-    expect(STORAGE_KEYS).toEqual({ settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1" });
+    expect(STORAGE_KEYS).toEqual({ settings: "run-it-back:settings:v1", daily: "run-it-back:daily:v1", history: "run-it-back:history:v1", active: "run-it-back:active:v1" });
     const storage = new MemoryStorage();
     expect(writeRecord(storage, SETTINGS_RECORD, { soundEnabled: false }).persistent).toBe(true);
     expect(writeRecord(storage, DAILY_RECORD, { completions: [dailyRun("2026-09-05")], streak: 1 }).persistent).toBe(true);
@@ -32,6 +32,16 @@ describe("local run storage", () => {
     expect(readRecord(storage, SETTINGS_RECORD).value).toEqual({ soundEnabled: false });
     expect(readRecord(storage, DAILY_RECORD).value.streak).toBe(1);
     expect(readRecord(storage, HISTORY_RECORD).value.runs).toEqual([freeRun("one")]);
+  });
+
+  it("round trips the isolated active-run record", () => {
+    const storage = new MemoryStorage();
+    const active = { run: { mode: "free-play" as const, phase: "team" as const, draft: { seed: "seed", offerIndex: 1, rerollsRemaining: 3, offeredTeamIds: ["a", "b", "c"], selectedTeamId: null, pendingCardId: null, slots: {}, iglCardId: null } } };
+    const history = JSON.stringify({ version: 1, runs: [freeRun("intact")] });
+    storage.setItem(STORAGE_KEYS.history, history);
+    expect(writeRecord(storage, ACTIVE_RECORD, active)).toMatchObject({ value: active, persistent: true });
+    expect(readRecord(storage, ACTIVE_RECORD).value).toEqual(active);
+    expect(storage.getItem(STORAGE_KEYS.history)).toBe(history);
   });
 
   it("recovers only a corrupt namespaced record without changing others", () => {
