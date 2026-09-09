@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import evidence from "./evidence.json";
 import { championsDataset } from "./index";
 import { applyPortraitCatalog, parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
+import { assessPortrait } from "./portrait-policy";
 import { validateChampions, type Evidence } from "./validation";
 
 const player = { id: "player-1", canonicalHandle: "BeYN", portrait: null, sourceIds: ["fact"] };
@@ -60,6 +61,7 @@ describe("portrait catalog", () => {
       { license: "unknown-rights-marker" },
       { credit: "Example Team" },
       { credit: "Example Photographer" },
+      { credit: "Photographer / Riot Games All Rights Reserved. / Example Team" },
       { originalUrl: "https://example.test/riot-photo" },
     ]) expect(() => validatePortraitCatalog([player], [row], [{ ...source, ...invalid }])).toThrow(/reuse grounds/);
   });
@@ -73,5 +75,18 @@ describe("portrait catalog", () => {
     const future = [{ ...source, retrievedAt: "2026-09-10" }];
     expect(() => validatePortraitCatalog([player], [row], future, { now: () => new Date(2026, 8, 10, 12) })).not.toThrow();
     expect(() => validatePortraitCatalog([player], [row], future, { now: () => new Date(2026, 8, 9, 12) })).toThrow(/future retrieval date/);
+  });
+
+  it("accepts importer-derived Riot ownership credits with the approved legal suffix", () => {
+    const assessment = assessPortrait("BeYN", "File:BeYN.jpg", `{{FileInfo
+|featured=BeYN
+|date=2025-02-24
+|license=permission
+|author=Photographer
+|copyright=Riot Games All Rights Reserved.
+|source=https://www.flickr.com/photos/valorantesports/54347821048/
+}}`);
+    expect(assessment).toMatchObject({ accepted: true, credit: "Photographer / Riot Games All Rights Reserved." });
+    expect(() => validatePortraitCatalog([player], [row], [{ ...source, credit: assessment.credit, license: assessment.license, originalUrl: assessment.source }])).not.toThrow();
   });
 });
