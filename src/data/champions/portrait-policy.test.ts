@@ -203,6 +203,17 @@ describe("portrait source policy", () => {
     });
   });
 
+  it("parses every depth-one parameter in a one-line FileInfo template", () => {
+    const info = "{{FileInfo|featured=BeYN|date=2025-02-24|license=permission|author=Liu YiCun|copyright=Riot Games|note={{X|featured=SomeoneElse|license=fairuse}}|source=https://www.flickr.com/photos/valorantesports/54347821048/}}";
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      featured: ["BeYN"],
+      license: "permission",
+      source: "https://www.flickr.com/photos/valorantesports/54347821048/",
+    });
+  });
+
   it("ignores nested template parameters while parsing FileInfo fields", () => {
     const info = riot.replace(
       "|note=Used With Permission. All rights remain with Riot Games.",
