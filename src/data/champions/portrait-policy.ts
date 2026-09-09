@@ -143,7 +143,10 @@ const fieldsAtFileInfoDepth = (template: string) => {
 export function parseFileInfo(wikitext: string): FileInfo {
   const visibleWikitext = wikitext
     .replace(/<!--[\s\S]*?(?:-->|$)/g, "")
-    .replace(/<nowiki\b[^>]*>[\s\S]*?(?:<\/nowiki\s*>|$)/gi, "");
+    .replace(
+      /<(nowiki|pre|source|syntaxhighlight|code)\b[^>]*>[\s\S]*?(?:<\/\1\s*>|$)/gi,
+      "",
+    );
   const template = fileInfoTemplate(visibleWikitext);
   if (!template) return incompleteFileInfo();
 

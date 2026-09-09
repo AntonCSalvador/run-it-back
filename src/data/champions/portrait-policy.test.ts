@@ -182,6 +182,24 @@ describe("portrait source policy", () => {
     });
   });
 
+  it.each(["pre", "source", "syntaxhighlight", "code"])(
+    "rejects FileInfo inside %s literal markup",
+    (tag) => {
+      const info = `<${tag}>${riot}</${tag}>`;
+
+      expect(parseFileInfo(info)).toMatchObject({
+        featured: [],
+        source: "",
+        templateValid: false,
+      });
+      expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+        accepted: false,
+        basis: null,
+        reason: "metadata-incomplete",
+      });
+    },
+  );
+
   it("parses FileInfo fields after nested templates", () => {
     const info = riot.replace(
       "|note=Used With Permission. All rights remain with Riot Games.",
