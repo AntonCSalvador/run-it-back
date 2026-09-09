@@ -18,7 +18,7 @@ describe("portrait importer", () => {
 
   it("waits two seconds between uncached API requests", async () => {
     const wait = vi.fn().mockResolvedValue(undefined);
-    const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ query: { pages: {} } }) });
+    const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({ query: { pages: {} } })));
     const client = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch, wait, userAgent: "RunItBack/Test" });
     await client.json("https://liquipedia.test/one");
     await client.json("https://liquipedia.test/two");
@@ -98,7 +98,7 @@ describe("portrait importer", () => {
     const scheduler = new LiquipediaRequestScheduler();
     const firstWait = vi.fn().mockResolvedValue(undefined);
     const secondWait = vi.fn().mockResolvedValue(undefined);
-    const firstFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ query: { pages: {} } }) });
+    const firstFetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({ query: { pages: {} } })));
     const secondFetch = vi.fn().mockResolvedValue({ ok: true });
     const first = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch: firstFetch, wait: firstWait, userAgent: "RunItBack/Test", scheduler });
     const second = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch: secondFetch, wait: secondWait, userAgent: "RunItBack/Test", scheduler });
@@ -182,6 +182,9 @@ describe("portrait importer", () => {
     writeFileSync(assets, "OLD-ASSETS");
     mkdirSync(sources);
     writeFileSync(join(sources, "keep"), "OLD-SOURCES");
+    const oldPortrait = join(root, "public", "assets", "players", "player-2.aaaaaaaaaaaa.webp");
+    mkdirSync(join(root, "public", "assets", "players"), { recursive: true });
+    writeFileSync(oldPortrait, "old");
     const bytes = Buffer.from("webp");
     const checksum = createHash("sha256").update(bytes).digest("hex");
     await expect(buildPortraitOutputs({
@@ -199,6 +202,7 @@ describe("portrait importer", () => {
     expect(readFileSync(assets, "utf8")).toBe("OLD-ASSETS");
     expect(readFileSync(join(sources, "keep"), "utf8")).toBe("OLD-SOURCES");
     expect(existsSync(join(root, "public", "assets", "players", `player-1.${checksum.slice(0, 12)}.webp`))).toBe(false);
+    expect(readFileSync(oldPortrait, "utf8")).toBe("old");
   });
 
   it("formats a complete traceable outcome summary", () => {
@@ -217,7 +221,7 @@ describe("portrait importer", () => {
         root: mkdtempSync(join(tmpdir(), "portrait-output-")),
         players: [{ id: "player-1", canonicalHandle: "One" }],
         userAgent: "RunItBack/Test",
-        fetch: vi.fn().mockResolvedValue({ ok: true, json: async () => ({ query: { pages: {} } }) }),
+        fetch: vi.fn().mockImplementation(async () => new Response(JSON.stringify({ query: { pages: {} } }))),
         wait: vi.fn().mockResolvedValue(undefined),
         scheduler: new LiquipediaRequestScheduler(),
       });
@@ -225,5 +229,67 @@ describe("portrait importer", () => {
     } finally {
       log.mockRestore();
     }
+  });
+
+  it("removes obsolete managed portraits while preserving unrelated player files", async () => {
+    const root = mkdtempSync(join(tmpdir(), "portrait-output-"));
+    const playersDirectory = join(root, "public", "assets", "players");
+    mkdirSync(playersDirectory, { recursive: true });
+    writeFileSync(join(playersDirectory, "player-1.aaaaaaaaaaaa.webp"), "old");
+    writeFileSync(join(playersDirectory, "readme.txt"), "keep");
+    await buildPortraitOutputs({ root, players: [{ id: "player-1", canonicalHandle: "One" }], discover: async () => null });
+    expect(existsSync(join(playersDirectory, "player-1.aaaaaaaaaaaa.webp"))).toBe(false);
+    expect(readFileSync(join(playersDirectory, "readme.txt"), "utf8")).toBe("keep");
+  });
+
+  it("coalesces concurrent JSON cache misses", async () => {
+    const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({ query: { pages: {} } })));
+    const client = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch, wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler() });
+    await Promise.all([client.json("https://liquipedia.test/one"), client.json("https://liquipedia.test/one")]);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects oversized JSON before parsing or caching", async () => {
+    const cache = mkdtempSync(join(tmpdir(), "portrait-cache-"));
+    const client = new CachedLiquipediaClient({ cacheDir: cache, fetch: vi.fn().mockResolvedValue(new Response("{}", { headers: { "content-length": "100" } })), wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler(), jsonMaxBytes: 16 });
+    const url = "https://liquipedia.test/oversized";
+    await expect(client.json(url)).rejects.toThrow("JSON response exceeds");
+    expect(existsSync(client.cachePath(url))).toBe(false);
+  });
+
+  it("rejects streamed oversized and malformed JSON without caching either", async () => {
+    const cache = mkdtempSync(join(tmpdir(), "portrait-cache-"));
+    const streamed = new ReadableStream<Uint8Array>({ start(controller) { controller.enqueue(new Uint8Array(32)); controller.close(); } });
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(streamed))
+      .mockResolvedValueOnce(new Response("not-json"));
+    const client = new CachedLiquipediaClient({ cacheDir: cache, fetch, wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler(), jsonMaxBytes: 16 });
+    await expect(client.json("https://liquipedia.test/streamed")).rejects.toThrow("JSON response exceeds");
+    await expect(client.json("https://liquipedia.test/malformed")).rejects.toThrow();
+    expect(existsSync(client.cachePath("https://liquipedia.test/streamed"))).toBe(false);
+    expect(existsSync(client.cachePath("https://liquipedia.test/malformed"))).toBe(false);
+  });
+
+  it("rejects an unapproved media URL before fetching", async () => {
+    const fetch = vi.fn();
+    const client = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch, wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler() });
+    await expect(client.media("https://example.test/image.webp")).rejects.toThrow("unapproved Liquipedia media URL");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("rejects an unapproved media redirect before a second request", async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(null, { status: 302, headers: { location: "https://example.test/image.webp" } }));
+    const client = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch, wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler() });
+    await expect(client.media("https://liquipedia.net/commons/images/test.webp")).rejects.toThrow("unapproved Liquipedia media URL");
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("aborts a stalled request without blocking the scheduler", async () => {
+    const fetch = vi.fn().mockImplementation((_url, init: RequestInit) => new Promise((_resolve, reject) => {
+      init.signal?.addEventListener("abort", () => reject(new Error("aborted")));
+    }));
+    const client = new CachedLiquipediaClient({ cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch, wait: vi.fn().mockResolvedValue(undefined), userAgent: "RunItBack/Test", scheduler: new LiquipediaRequestScheduler(), timeoutMs: 5 });
+    const result = await Promise.race([client.request("https://liquipedia.test/stalled").then(() => "resolved", error => error.message), new Promise(resolve => setTimeout(() => resolve("still-stalled"), 100))]);
+    expect(result).toBe("Liquipedia request timed out");
   });
 });

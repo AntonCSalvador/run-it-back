@@ -4,6 +4,7 @@ import {
   lstatSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   renameSync,
   rmSync,
@@ -40,10 +41,14 @@ export interface ClientOptions {
   wait(ms: number): Promise<void>;
   userAgent: string;
   scheduler?: LiquipediaRequestScheduler;
+  timeoutMs?: number;
+  jsonMaxBytes?: number;
 }
 
 const API_DELAY_MS = 2_000;
 const MAX_DOWNLOAD_BYTES = 15 * 1024 * 1024;
+const MAX_JSON_BYTES = 5 * 1024 * 1024;
+const REQUEST_TIMEOUT_MS = 30_000;
 const VALORANT_API = "https://liquipedia.net/valorant/api.php";
 const COMMONS_API = "https://liquipedia.net/commons/api.php";
 
@@ -71,6 +76,13 @@ export class LiquipediaRequestScheduler {
 
 const globalRequestScheduler = new LiquipediaRequestScheduler();
 
+const approvedMediaUrl = (value: string) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && url.hostname === "liquipedia.net" && url.pathname.startsWith("/commons/images/");
+  } catch { return false; }
+};
+
 function isHttps(value: string): boolean {
   try {
     return new URL(value).protocol === "https:";
@@ -84,6 +96,9 @@ export class CachedLiquipediaClient {
   private readonly cacheDir: string;
   private readonly wait: (milliseconds: number) => Promise<void>;
   private readonly scheduler: LiquipediaRequestScheduler;
+  private readonly timeoutMs: number;
+  private readonly jsonMaxBytes: number;
+  private readonly inFlight = new Map<string, Promise<unknown>>();
   readonly userAgent: string;
 
   constructor(options: ClientOptions) {
@@ -92,6 +107,8 @@ export class CachedLiquipediaClient {
     this.wait = options.wait;
     this.userAgent = options.userAgent;
     this.scheduler = options.scheduler ?? globalRequestScheduler;
+    this.timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
+    this.jsonMaxBytes = options.jsonMaxBytes ?? MAX_JSON_BYTES;
   }
 
   cachePath(url: string): string {
@@ -102,8 +119,54 @@ export class CachedLiquipediaClient {
     const headers = new Headers(init.headers);
     headers.set("Accept-Encoding", "gzip");
     headers.set("User-Agent", this.userAgent);
-    return this.scheduler.schedule(this.wait, () => this.fetch(url, { ...init, headers }));
+    return this.scheduler.schedule(this.wait, () => new Promise<Response>((resolve, reject) => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => { controller.abort(); reject(new Error("Liquipedia request timed out")); }, this.timeoutMs);
+      this.fetch(url, { ...init, headers, signal: controller.signal }).then(
+        response => { clearTimeout(timer); resolve(response); },
+        error => { clearTimeout(timer); reject(error); },
+      );
+    }));
   }
+
+  async media(url: string): Promise<Response> {
+    let current = url;
+    for (let hop = 0; hop <= 4; hop += 1) {
+      if (!approvedMediaUrl(current)) throw new Error("unapproved Liquipedia media URL");
+      const response = await this.request(current, { redirect: "manual" });
+      if (response.status < 300 || response.status >= 400) {
+        if (!response.ok) throw new Error(`Liquipedia ${response.status} for ${current}`);
+        return response;
+      }
+      const location = response.headers.get("location");
+      if (!location) throw new Error("Liquipedia media redirect missing location");
+      current = new URL(location, current).href;
+    }
+    throw new Error("Liquipedia media redirect limit exceeded");
+  }
+
+  private async body(response: Response, limit: number, label: string): Promise<Buffer> {
+    const declared = Number(response.headers.get("content-length"));
+    if (Number.isFinite(declared) && declared > limit) throw new Error(`${label} exceeds ${limit} bytes`);
+    if (!response.body) return Buffer.alloc(0);
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let length = 0;
+    while (true) {
+      const read = reader.read();
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<never>((_resolve, reject) => { timeoutId = setTimeout(() => reject(new Error("Liquipedia request timed out")), this.timeoutMs); });
+      let part: ReadableStreamReadResult<Uint8Array>;
+      try { part = await Promise.race([read, timeout]); } catch (error) { await reader.cancel(); throw error; } finally { if (timeoutId) clearTimeout(timeoutId); }
+      if (part.done) break;
+      length += part.value.byteLength;
+      if (length > limit) { await reader.cancel(); throw new Error(`${label} exceeds ${limit} bytes`); }
+      chunks.push(part.value);
+    }
+    return Buffer.concat(chunks);
+  }
+
+  bytes(response: Response, limit: number): Promise<Buffer> { return this.body(response, limit, "portrait download"); }
 
   async json(url: string): Promise<unknown> {
     const path = this.cachePath(url);
@@ -115,10 +178,12 @@ export class CachedLiquipediaClient {
       }
     }
 
+    const existing = this.inFlight.get(url);
+    if (existing) return existing;
     const fetchJson = async () => {
       const response = await this.request(url, { headers: { Accept: "application/json" } });
       if (!response.ok) throw new Error(`Liquipedia ${response.status} for ${url}`);
-      const payload = await response.json();
+      const payload = JSON.parse((await this.body(response, this.jsonMaxBytes, "JSON response")).toString("utf8"));
       mkdirSync(this.cacheDir, { recursive: true });
       const temporary = `${path}.${process.pid}.${Date.now()}.tmp`;
       writeFileSync(temporary, JSON.stringify(payload));
@@ -126,7 +191,9 @@ export class CachedLiquipediaClient {
       return payload;
     };
 
-    return fetchJson();
+    const pending = fetchJson().finally(() => this.inFlight.delete(url));
+    this.inFlight.set(url, pending);
+    return pending;
   }
 }
 
@@ -194,7 +261,7 @@ const validateGeneratedPortraits = (players: ImportPlayer[], results: GeneratedP
   });
 };
 
-type Publication = { staged: string; target: string; backup?: string; published: boolean };
+type Publication = { staged?: string; target: string; backup?: string; published: boolean };
 
 const publishTransaction = (stageDir: string, publications: Publication[], createdPlayersDirectory: boolean, playersDirectory: string) => {
   const rollbackDirectory = join(stageDir, "rollback");
@@ -207,7 +274,7 @@ const publishTransaction = (stageDir: string, publications: Publication[], creat
         publication.backup = join(rollbackDirectory, String(index));
         renameSync(publication.target, publication.backup);
       }
-      renameSync(publication.staged, publication.target);
+      if (publication.staged) renameSync(publication.staged, publication.target);
       publication.published = true;
     }
   } catch (error) {
@@ -248,10 +315,13 @@ export async function buildPortraitOutputs({ root, players, discover }: ImportPa
     writeFileSync(stagedSourcesCatalog, `${JSON.stringify(sourceRows, null, 2)}\n`);
     const createdPlayersDirectory = !existsSync(playersDirectory);
     mkdirSync(playersDirectory, { recursive: true });
+    const published = new Set(stagedAssets.map(asset => asset.filename));
+    const obsolete = readdirSync(playersDirectory).filter(filename => /^player-\d+\.[0-9a-f]{12}\.webp$/.test(filename) && !published.has(filename));
     publishTransaction(stageDir, [
       ...stagedAssets.map(({ filename, stagedAsset }) => ({ staged: stagedAsset, target: join(playersDirectory, filename), published: false })),
       { staged: stagedAssetsCatalog, target: assetsPath, published: false },
       { staged: stagedSourcesCatalog, target: sourcesPath, published: false },
+      ...obsolete.map(filename => ({ target: join(playersDirectory, filename), published: false })),
     ], createdPlayersDirectory, playersDirectory);
   } finally {
     rmSync(stageDir, { recursive: true, force: true });
@@ -309,32 +379,6 @@ async function queryFilePages(titles: string[], client: CachedLiquipediaClient):
   return pages;
 }
 
-async function readLimited(response: Response): Promise<Buffer> {
-  const declaredLength = Number(response.headers.get("content-length"));
-  if (Number.isFinite(declaredLength) && declaredLength > MAX_DOWNLOAD_BYTES) {
-    throw new Error("portrait download exceeds 15 MiB");
-  }
-  if (!response.body) {
-    const body = Buffer.from(await response.arrayBuffer());
-    if (body.length > MAX_DOWNLOAD_BYTES) throw new Error("portrait download exceeds 15 MiB");
-    return body;
-  }
-  const chunks: Uint8Array[] = [];
-  let length = 0;
-  const reader = response.body.getReader();
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    length += value.byteLength;
-    if (length > MAX_DOWNLOAD_BYTES) {
-      await reader.cancel();
-      throw new Error("portrait download exceeds 15 MiB");
-    }
-    chunks.push(value);
-  }
-  return Buffer.concat(chunks);
-}
-
 export type PortraitOutcomeKind = "accepted" | "missing" | "rights-rejected" | "ambiguous";
 export interface PortraitOutcome { playerId: string; kind: PortraitOutcomeKind }
 
@@ -380,12 +424,11 @@ export async function discoverLiquipediaPortrait(
 
   const candidate = candidates.find(item => item.assessment.fileTitle === selected.candidate.fileTitle);
   const originalUrl = candidate?.originalUrl;
-  if (!originalUrl || !isHttps(originalUrl) || !isHttps(selected.candidate.source)) {
+  if (!originalUrl || !approvedMediaUrl(originalUrl) || !isHttps(selected.candidate.source)) {
     throw new Error(`invalid HTTPS portrait URL for ${player.id}`);
   }
-  const response = await client.request(originalUrl);
-  if (!response.ok) throw new Error(`Liquipedia ${response.status} for ${originalUrl}`);
-  const bytes = await readLimited(response);
+  const response = await client.media(originalUrl);
+  const bytes = await client.bytes(response, MAX_DOWNLOAD_BYTES);
   const webp = await sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 })
     .rotate()
     .resize(256, 256, { fit: "cover", position: "attention", withoutEnlargement: true })
