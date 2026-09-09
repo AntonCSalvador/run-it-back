@@ -2,19 +2,22 @@ import { z } from "zod";
 import type { PlayerIdentity, SourceRef } from "@/features/game/domain";
 import { sourceRefSchema } from "@/features/game/schema";
 
+const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
+const playerId = /^player-(\d+)$/;
+const portraitSourceId = /^liquipedia-portrait-(\d+)$/;
+
 const portraitAssetSchema = z.object({
   playerId: z.string().regex(/^player-\d+$/),
   portrait: z.string().regex(/^\/assets\/players\/player-\d+\.[a-f0-9]{12}\.webp$/),
   sourceId: z.string().regex(/^liquipedia-portrait-\d+$/),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
-}).strict();
+}).strict().superRefine((asset, context) => {
+  const identity = [playerId.exec(asset.playerId)?.[1], portraitPath.exec(asset.portrait)?.[1], portraitSourceId.exec(asset.sourceId)?.[1]];
+  if (identity.some(value => value !== identity[0])) context.addIssue({ code: "custom", message: "portrait identity mismatch" });
+});
 
 export const portraitAssetsSchema = z.array(portraitAssetSchema);
 export type PortraitAsset = z.infer<typeof portraitAssetSchema>;
-
-const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
-const playerId = /^player-(\d+)$/;
-const portraitSourceId = /^liquipedia-portrait-(\d+)$/;
 
 function schemaError(input: unknown): never {
   const parsed = portraitAssetsSchema.safeParse(input);
@@ -73,9 +76,12 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
   assertUnique(assets.map(asset => asset.portrait), "portrait path");
   assertUnique(assets.map(asset => asset.sourceId), "portrait source ID");
 
-  const assetSources = sources.filter(source => source.usage === "asset");
-  assertUnique(assetSources.map(source => source.id), "portrait source");
-  const sourcesById = new Map(assetSources.map(source => [source.id, source]));
+  const portraitSources = sources.filter(source => portraitSourceId.test(source.id));
+  assertUnique(portraitSources.map(source => source.id), "portrait source");
+  for (const source of portraitSources) {
+    if (source.usage !== "asset") throw new Error(`portrait source usage asset required ${source.id}`);
+  }
+  const sourcesById = new Map(portraitSources.map(source => [source.id, source]));
 
   for (const asset of assets) {
     if (!knownPlayers.has(asset.playerId)) throw new Error(`orphan player ${asset.playerId}`);
@@ -89,8 +95,9 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
     if (!source.license?.trim()) throw new Error(`portrait source license is required ${asset.sourceId}`);
   }
 
-  for (const source of assetSources) {
-    if (!portraitSourceId.test(source.id)) throw new Error(`portrait asset source ID ${source.id}`);
+  for (const source of sources) {
+    if (source.usage === "asset" && !portraitSourceId.test(source.id)) throw new Error(`portrait asset source ID ${source.id}`);
+    if (!portraitSourceId.test(source.id)) continue;
     if (!assets.some(asset => asset.sourceId === source.id)) throw new Error(`unused portrait source ${source.id}`);
   }
 }
