@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import evidence from "./evidence.json";
 import { championsDataset } from "./index";
 import { applyPortraitCatalog, parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
@@ -102,5 +102,18 @@ describe("portrait catalog", () => {
 }}`);
     expect(assessment).toMatchObject({ accepted: true, credit: "Photo / Video Team / Riot Games" });
     expect(() => validatePortraitCatalog([player], [row], [{ ...source, credit: assessment.credit, license: assessment.license, originalUrl: assessment.source }])).not.toThrow();
+  });
+
+  it("imports the Champions dataset when the application clock predates portrait retrieval", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 1, 15, 12));
+    vi.resetModules();
+    try {
+      const fresh = await import("./index");
+      expect(fresh.championsDataset.players.some(player => player.portrait !== null)).toBe(true);
+    } finally {
+      vi.useRealTimers();
+      vi.resetModules();
+    }
   });
 });

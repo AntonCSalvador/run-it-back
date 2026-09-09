@@ -72,7 +72,7 @@ function localCalendarDate(date: Date): string {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
 }
 
-type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string; now?: () => Date };
+type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string; now?: () => Date; validateFutureDates?: boolean };
 
 export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown, options: PortraitCatalogValidationOptions = {}): void {
   const today = options.today ?? localCalendarDate(options.now ? options.now() : new Date());
@@ -96,7 +96,7 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
   for (const source of portraitSources) {
     if (source.usage !== "asset") throw new Error(`portrait source usage asset required ${source.id}`);
     if (!isCalendarDate(source.retrievedAt)) throw new Error(`portrait source retrieval date is invalid ${source.id}`);
-    if (source.retrievedAt > today) throw new Error(`future retrieval date ${source.id}`);
+    if (options.validateFutureDates !== false && source.retrievedAt > today) throw new Error(`future retrieval date ${source.id}`);
   }
   const sourcesById = new Map(portraitSources.map(source => [source.id, source]));
 

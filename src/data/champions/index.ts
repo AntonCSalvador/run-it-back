@@ -26,7 +26,7 @@ function deduplicatePlayers(): PlayerIdentity[] {
 
 const deduplicatedPlayers = deduplicatePlayers();
 const parsedPortraitAssets = parsePortraitCatalog(portraitAssets);
-validatePortraitCatalog(deduplicatedPlayers, parsedPortraitAssets, portraitSourceRefs);
+validatePortraitCatalog(deduplicatedPlayers, parsedPortraitAssets, portraitSourceRefs, { validateFutureDates: false });
 
 function freezeDataset(dataset: GameDataset): GameDataset {
   for (const source of dataset.sources) Object.freeze(source);
