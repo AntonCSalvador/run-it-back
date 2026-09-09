@@ -1,12 +1,19 @@
-import { ROLES, type GameDataset, type Role } from "@/features/game/domain";
+import { ROLES, type GameDataset, type Role, type SourceRef } from "@/features/game/domain";
 import { createHash } from "node:crypto";
 import rawData from "./raw-extraction.json";
 import reviewedOverlays from "./reviewed-overlays.json";
 import portraitAssets from "./portrait-assets.json";
 import portraitSourceRefs from "./portrait-sources.json";
 import { deriveChampions, type Overlays, type RawExtraction } from "./derivation";
-import { validatePortraitCatalog } from "./portrait-catalog";
+import { parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
 import { validateSourceCatalog } from "./source-policy";
+
+const portraitSourceId = /^liquipedia-portrait-\d+$/;
+
+function sameSourceMetadata(actual: SourceRef, expected: SourceRef): boolean {
+  return Object.keys(actual).sort().join() === Object.keys(expected).sort().join()
+    && Object.entries(expected).every(([key, value]) => actual[key as keyof SourceRef] === value);
+}
 
 export type Evidence = {
   cardId: string; year: number; mapsPlayed: number; threshold: number;
@@ -21,7 +28,17 @@ export type Evidence = {
 
 export function validateChampions(dataset: GameDataset, evidence: Evidence[]): void {
   validateSourceCatalog(dataset.sources);
-  validatePortraitCatalog(dataset.players, portraitAssets, portraitSourceRefs);
+  const parsedPortraitAssets = parsePortraitCatalog(portraitAssets);
+  const expectedPortraitSources = (portraitSourceRefs as unknown[]).filter((source): source is SourceRef => (
+    source !== null && typeof source === "object" && "id" in source && typeof source.id === "string" && portraitSourceId.test(source.id)
+  ));
+  const datasetPortraitSources = dataset.sources.filter(source => portraitSourceId.test(source.id));
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, expectedPortraitSources);
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, datasetPortraitSources);
+  if (datasetPortraitSources.length !== expectedPortraitSources.length || datasetPortraitSources.some(source => {
+    const expected = expectedPortraitSources.find(candidate => candidate.id === source.id);
+    return !expected || !sameSourceMetadata(source, expected);
+  })) throw new Error("portrait source catalog metadata mismatch");
   const errors: string[] = [];
   if (createHash("sha256").update(JSON.stringify(rawData)).digest("hex") !== "25d688e794e3031b019fa0341653d410afda6da90cbb5cd387e7d9986673c546") throw new Error("raw extraction checksum mismatch");
   if (createHash("sha256").update(JSON.stringify(reviewedOverlays)).digest("hex") !== "960a351382216a2359087835c53c4d506406134b6b42bc815e17f5a3288b1369") throw new Error("reviewed overlays checksum mismatch");
