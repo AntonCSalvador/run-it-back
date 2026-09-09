@@ -13,17 +13,22 @@ export interface FileInfo {
 }
 
 export type AcceptedBasis = "open-license" | "riot-fan-policy";
+export type PortraitReason =
+  | "accepted"
+  | "identity-mismatch"
+  | "rights-rejected"
+  | "metadata-incomplete";
 
 export type PortraitAssessment = FileInfo & {
   accepted: boolean;
   basis: AcceptedBasis | null;
   credit: string;
-  reason: string;
+  reason: PortraitReason;
   fileTitle?: string;
 };
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
-const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*(.*?)[ \t]*$/gim;
+const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*(.*?)[ \t]*$/i;
 const FILE_INFO_START = /\{\{\s*fileinfo\s*(?=\||\}\})/gi;
 
 const plain = (value: string) =>
@@ -87,16 +92,39 @@ const incompleteFileInfo = (): FileInfo => ({
   templateValid: false,
 });
 
+const fieldsAtFileInfoDepth = (template: string) => {
+  const fields = new Map<string, string[]>();
+  let depth = 0;
+
+  for (const line of template.split(/\r?\n/)) {
+    if (depth === 1) {
+      const match = line.match(FIELD);
+      if (match) {
+        const key = match[1].toLowerCase();
+        fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
+      }
+    }
+
+    for (let index = 0; index < line.length; index += 1) {
+      const token = line.slice(index, index + 2);
+      if (token === "{{") {
+        depth += 1;
+        index += 1;
+      } else if (token === "}}") {
+        depth -= 1;
+        index += 1;
+      }
+    }
+  }
+
+  return fields;
+};
+
 export function parseFileInfo(wikitext: string): FileInfo {
   const template = fileInfoTemplate(wikitext);
   if (!template) return incompleteFileInfo();
 
-  const fields = new Map<string, string[]>();
-
-  for (const match of template.matchAll(FIELD)) {
-    const key = match[1].toLowerCase();
-    fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
-  }
+  const fields = fieldsAtFileInfoDepth(template);
 
   const featured = [...fields.entries()]
     .filter(([key]) => /^featured\d*$/.test(key))

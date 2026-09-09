@@ -172,6 +172,19 @@ describe("portrait source policy", () => {
     });
   });
 
+  it("ignores nested template parameters while parsing FileInfo fields", () => {
+    const info = riot.replace(
+      "|note=Used With Permission. All rights remain with Riot Games.",
+      "|note={{X\n|featured=SomeoneElse\n|license=fairuse\n}}",
+    );
+
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", info)).toMatchObject({
+      accepted: true,
+      featured: ["BeYN"],
+      license: "permission",
+    });
+  });
+
   it.each(["http://example.test/portrait.jpg", "not-a-url"]) (
     "requires an HTTPS source for open-license media: %s",
     (source) => {
