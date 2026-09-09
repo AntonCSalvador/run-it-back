@@ -28,7 +28,7 @@ export type PortraitAssessment = FileInfo & {
 };
 
 const OPEN = /^(?:cc0|public-domain|cc-by-(?:nc-)?(?:sa-)?(?:[1-4](?:\.0)?)?)$/i;
-const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*(.*?)[ \t]*$/i;
+const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*([\s\S]*?)[ \t]*$/i;
 const FILE_INFO_START = /\{\{\s*FileInfo\s*(?=\||\}\})/g;
 
 const plain = (value: string) =>
@@ -100,68 +100,40 @@ const addField = (fields: Map<string, string[]>, value: string) => {
   fields.set(key, [...(fields.get(key) ?? []), match[2].trim()]);
 };
 
-const depthOneParameters = (line: string, start: number) => {
-  const parameters: string[] = [];
-  let templateDepth = 0;
-  let linkDepth = 0;
+const fieldsAtFileInfoDepth = (template: string) => {
+  const fields = new Map<string, string[]>();
+  const opening = template.match(/^\{\{\s*FileInfo\s*/);
+  if (!opening) return fields;
 
-  for (let index = start; index < line.length; index += 1) {
-    const token = line.slice(index, index + 2);
+  let depth = 1;
+  let linkDepth = 0;
+  let parameterStart: number | null = null;
+  const addParameter = (end: number) => {
+    if (parameterStart === null) return;
+    addField(fields, `|${template.slice(parameterStart, end).trim()}`);
+  };
+
+  for (let index = opening[0].length; index < template.length; index += 1) {
+    const token = template.slice(index, index + 2);
     if (token === "{{") {
-      templateDepth += 1;
+      depth += 1;
       index += 1;
     } else if (token === "}}") {
-      if (templateDepth === 0) {
-        parameters.push(line.slice(start, index));
-        return parameters;
-      }
-      templateDepth -= 1;
+      depth -= 1;
       index += 1;
+      if (depth === 0) {
+        addParameter(index - 1);
+        break;
+      }
     } else if (token === "[[") {
       linkDepth += 1;
       index += 1;
     } else if (token === "]]" && linkDepth) {
       linkDepth -= 1;
       index += 1;
-    } else if (line[index] === "|" && templateDepth === 0 && linkDepth === 0) {
-      parameters.push(line.slice(start, index));
-      start = index + 1;
-    }
-  }
-
-  parameters.push(line.slice(start));
-  return parameters;
-};
-
-const openingParameters = (line: string) => {
-  const opening = line.match(/^\{\{\s*FileInfo\s*\|/);
-  return opening ? depthOneParameters(line, opening[0].length) : [];
-};
-
-const fieldsAtFileInfoDepth = (template: string) => {
-  const fields = new Map<string, string[]>();
-  let depth = 0;
-
-  for (const line of template.split(/\r?\n/)) {
-    if (depth === 0) {
-      for (const parameter of openingParameters(line)) {
-        addField(fields, `|${parameter}`);
-      }
-    } else if (depth === 1 && line.startsWith("|")) {
-      for (const parameter of depthOneParameters(line, 1)) {
-        addField(fields, `|${parameter}`);
-      }
-    }
-
-    for (let index = 0; index < line.length; index += 1) {
-      const token = line.slice(index, index + 2);
-      if (token === "{{") {
-        depth += 1;
-        index += 1;
-      } else if (token === "}}") {
-        depth -= 1;
-        index += 1;
-      }
+    } else if (template[index] === "|" && depth === 1 && linkDepth === 0) {
+      addParameter(index);
+      parameterStart = index + 1;
     }
   }
 
