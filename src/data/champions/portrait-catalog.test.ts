@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import evidence from "./evidence.json";
+import { championsDataset } from "./index";
 import { applyPortraitCatalog, parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
+import { validateChampions, type Evidence } from "./validation";
 
 const player = { id: "player-1", canonicalHandle: "BeYN", portrait: null, sourceIds: ["fact"] };
 const row = { playerId: "player-1", portrait: "/assets/players/player-1.abcdef123456.webp", sourceId: "liquipedia-portrait-1", sha256: "a".repeat(64) };
@@ -24,5 +27,11 @@ describe("portrait catalog", () => {
   it("requires every portrait-prefixed source to be an asset catalog record", () => {
     expect(() => validatePortraitCatalog([player], [row], [{ ...source, usage: "facts" }])).toThrow(/usage asset/);
     expect(() => validatePortraitCatalog([player], [], [{ ...source, id: "liquipedia-portrait-2", usage: "facts" }])).toThrow(/usage asset/);
+  });
+
+  it("rejects an otherwise valid unused portrait source in the passed dataset", () => {
+    const data = structuredClone(championsDataset);
+    data.sources.push({ id: "liquipedia-portrait-999", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "https://www.flickr.com/photos/riot/999/", retrievedAt: "2026-09-08", usage: "asset", credit: "Riot Games", license: "Noncommercial fan project" });
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/unused portrait source/);
   });
 });

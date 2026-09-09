@@ -32,12 +32,6 @@ describe("Champions audit validation", () => {
     expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
   });
 
-  it("rejects an otherwise valid unused portrait source in the passed dataset", () => {
-    const data = structuredClone(championsDataset);
-    data.sources.push({ id: "liquipedia-portrait-999", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "https://www.flickr.com/photos/riot/999/", retrievedAt: "2026-09-08", usage: "asset", credit: "Riot Games", license: "Noncommercial fan project" });
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/unused portrait source/);
-  });
-
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
     const data = structuredClone(championsDataset);
     const audit = structuredClone(evidence) as Evidence[];
