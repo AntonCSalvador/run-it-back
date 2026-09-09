@@ -79,9 +79,7 @@ describe("draft flow", () => {
     render(<MediaMark src="/assets/teams/loud.webp" alt="LOUD 2022 logo" label="LOUD" />);
     const image = screen.getByRole("img", { name: "LOUD 2022 logo" });
     const wrapper = image.parentElement as HTMLElement;
-    expect(wrapper.style.display).toBe("inline-flex");
-    expect(wrapper.style.width).toBe("48px");
-    expect(wrapper.style.height).toBe("48px");
+    expect(wrapper).toHaveClass("media-mark");
     expect((image as HTMLImageElement).style.width).toBe("100%");
     expect((image as HTMLImageElement).style.height).toBe("100%");
     expect((image as HTMLImageElement).style.display).toBe("block");
