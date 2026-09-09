@@ -68,4 +68,10 @@ describe("portrait catalog", () => {
     expect(() => validatePortraitCatalog([player], [row], [{ ...source, retrievedAt: "2026-02-30" }], { today: "2026-09-09" })).toThrow(/retrievedAt|retrieval date/);
     expect(() => validatePortraitCatalog([player], [row], [{ ...source, retrievedAt: "2026-09-10" }], { today: "2026-09-09" })).toThrow(/future retrieval date/);
   });
+
+  it("derives the default validation date from its injected clock", () => {
+    const future = [{ ...source, retrievedAt: "2026-09-10" }];
+    expect(() => validatePortraitCatalog([player], [row], future, { now: () => new Date(2026, 8, 10, 12) })).not.toThrow();
+    expect(() => validatePortraitCatalog([player], [row], future, { now: () => new Date(2026, 8, 9, 12) })).toThrow(/future retrieval date/);
+  });
 });

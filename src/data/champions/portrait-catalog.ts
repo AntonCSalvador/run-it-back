@@ -62,18 +62,20 @@ function isHttps(url: string | undefined): url is string {
   return typeof url === "string" && new URL(url).protocol === "https:";
 }
 
-const DEFAULT_VALIDATION_TODAY = "2026-09-09";
-
 function isCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(`${value}T00:00:00.000Z`);
   return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
 }
 
-type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string };
+function localCalendarDate(date: Date): string {
+  return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
+}
+
+type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string; now?: () => Date };
 
 export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown, options: PortraitCatalogValidationOptions = {}): void {
-  const today = options.today ?? DEFAULT_VALIDATION_TODAY;
+  const today = options.today ?? localCalendarDate(options.now ? options.now() : new Date());
   if (!isCalendarDate(today)) throw new Error(`invalid portrait validation date ${today}`);
   const knownPlayers = new Set(players.map(player => player.id));
   if (Array.isArray(input)) {
