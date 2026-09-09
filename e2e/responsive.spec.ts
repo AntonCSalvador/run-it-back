@@ -13,6 +13,30 @@ async function auditPhase(page: Page): Promise<void> {
   await assertAllEnabledActionsReachableByTab(page);
 }
 
+test("portrait choices and compact roster rows keep their responsive hierarchy", async ({ page }, testInfo) => {
+  await page.goto("/?e2e-seed=e2e-164");
+  await keyboardActivate(page, page.getByRole("button", { name: "Free Play", exact: true }));
+  await keyboardActivate(page, page.locator(".team-card").first());
+
+  const choice = page.locator(".player-portrait--choice").first();
+  const choiceSize = testInfo.project.name === "pixel-7" ? "64px" : "68px";
+  await expect(choice).toHaveCSS("width", choiceSize);
+  await expect(choice).toHaveCSS("height", choiceSize);
+  expect(await choice.evaluate(element => Boolean(element.closest('[data-testid^="player-card-"]')))).toBe(true);
+  await expect(choice.locator(".media-mark__image")).toHaveCount(1);
+  await auditPhase(page);
+
+  await keyboardActivate(page, choice.locator("xpath=ancestor::button"));
+  await keyboardActivate(page, page.getByRole("group", { name: "Choose an open role" }).getByRole("button").first());
+
+  const compact = page.locator(".roster-bar .player-portrait--compact").first();
+  await expect(compact).toHaveCSS("width", "36px");
+  await expect(compact).toHaveCSS("height", "36px");
+  expect(await compact.evaluate(element => Boolean(element.closest(".roster-bar > div")))).toBe(true);
+  await expect(compact.locator(".media-mark__image")).toHaveCount(1);
+  await auditPhase(page);
+});
+
 test("every phase keeps rendered controls in the viewport and reachable by keyboard", async ({ page }) => {
   await page.goto("/?e2e-seed=e2e-164");
   await auditPhase(page);
