@@ -18,15 +18,23 @@ test("Daily completion survives reload and repeatable choices produce the same r
   expect(completion.roster).toHaveLength(5);
   expect(new Set(completion.roster.map((slot: { role: string }) => slot.role)).size).toBe(5);
   expect(completion.roster.some((slot: { cardId: string }) => slot.cardId === completion.iglCardId)).toBe(true);
-  const visibleRoster = await page.getByRole("region", { name: "Drafted roster" }).locator("p").allTextContents();
-  const expectedRoster = visibleRoster.map(line => {
-    const [, role, handle, year] = line.match(/^(smokes|duelist|initiator|sentinel|flex):\s+(.+)\s+(\d{4})/) ?? [];
+  const visibleRows = page.getByRole("region", { name: "Drafted roster" }).locator(".player-row");
+  expect(await visibleRows.count()).toBe(5);
+  const visibleRoster = await Promise.all(Array.from({ length: 5 }, async (_, index) => {
+    const row = visibleRows.nth(index);
+    return { role: await row.locator("strong").textContent(), identity: await row.locator("strong + span").textContent() };
+  }));
+  expect(visibleRoster.map(row => row.role)).toEqual(["smokes", "duelist", "initiator", "sentinel", "flex"]);
+  const expectedRoster = visibleRoster.map(({ role, identity }) => {
+    const [, handle, year] = identity?.match(/^(.+)\s+(\d{4})(?: · IGL)?$/) ?? [];
     const card = championsDataset.cards.find(candidate => candidate.displayHandle === handle && candidate.year === Number(year));
-    expect(card, `visible Daily card resolves in audited dataset: ${line}`).toBeDefined();
+    expect(card, `visible Daily card resolves in audited dataset: ${identity}`).toBeDefined();
     return { role, cardId: card!.id };
   });
   expect(completion.roster).toEqual(expectedRoster);
-  expect(visibleRoster.find(line => line.includes("IGL"))).toContain(championsDataset.cards.find(card => card.id === completion.iglCardId)?.displayHandle);
+  const visibleIgl = visibleRoster.filter(row => row.identity?.includes("IGL"));
+  expect(visibleIgl).toHaveLength(1);
+  expect(visibleIgl[0]?.identity).toContain(championsDataset.cards.find(card => card.id === completion.iglCardId)?.displayHandle);
   expect(completion.series).toHaveLength(1);
   for (const series of completion.series) {
     expect(series.maps).toHaveLength(series.userWins + series.opponentWins);
