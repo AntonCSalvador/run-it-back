@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it, vi } from "vitest";
-import { CachedLiquipediaClient, buildPortraitOutputs, formatPortraitImportSummary, importPortraits, LiquipediaRequestScheduler } from "./portrait-import";
+import { CachedLiquipediaClient, buildPortraitOutputs, formatPortraitImportSummary, importPortraits, LiquipediaRequestScheduler, type GeneratedPortrait } from "./portrait-import";
 
 describe("portrait importer", () => {
   it("reuses cached JSON without a network request", async () => {
@@ -133,6 +133,44 @@ describe("portrait importer", () => {
     })).rejects.toThrow("portrait path");
     expect(readFileSync(assets, "utf8")).toBe("OLD-ASSETS");
     expect(readFileSync(sources, "utf8")).toBe("OLD-SOURCES");
+  });
+
+  it.each([
+    ["an extra source key", (source: Record<string, unknown>) => { source.injected = "unexpected"; }],
+    ["a non-enumerable source key", (source: Record<string, unknown>) => { Object.defineProperty(source, "hidden", { value: "unexpected" }); }],
+    ["a non-HTTPS description URL", (source: Record<string, unknown>) => { source.url = "http://liquipedia.net/commons/File:One.webp"; }],
+    ["a non-HTTPS original URL", (source: Record<string, unknown>) => { source.originalUrl = "http://example.test/original.jpg"; }],
+    ["an impossible retrieval date", (source: Record<string, unknown>) => { source.retrievedAt = "2026-02-30"; }],
+    ["a non-asset usage", (source: Record<string, unknown>) => { source.usage = "facts"; }],
+    ["blank credit", (source: Record<string, unknown>) => { source.credit = " "; }],
+    ["blank license", (source: Record<string, unknown>) => { source.license = ""; }],
+    ["a mismatched source id", (source: Record<string, unknown>) => { source.id = "liquipedia-portrait-2"; }],
+  ])("rejects %s before replacing generated outputs", async (_label, mutate) => {
+    const root = mkdtempSync(join(tmpdir(), "portrait-output-"));
+    const catalog = join(root, "src", "data", "champions");
+    mkdirSync(catalog, { recursive: true });
+    const assets = join(catalog, "portrait-assets.json");
+    const sources = join(catalog, "portrait-sources.json");
+    writeFileSync(assets, "OLD-ASSETS");
+    writeFileSync(sources, "OLD-SOURCES");
+    const bytes = Buffer.from("webp");
+    const checksum = createHash("sha256").update(bytes).digest("hex");
+    await expect(buildPortraitOutputs({
+      root,
+      players: [{ id: "player-1", canonicalHandle: "One" }],
+      discover: async (_player, stageDir) => {
+        const filename = `player-1.${checksum.slice(0, 12)}.webp`;
+        writeFileSync(join(stageDir, filename), bytes);
+        const source: GeneratedPortrait["source"] & Record<string, unknown> = {
+          id: "liquipedia-portrait-1", url: "https://liquipedia.net/commons/File:One.webp", originalUrl: "https://example.test/original.jpg", retrievedAt: "2026-09-08", usage: "asset", credit: "Photographer", license: "cc-by-sa-4.0",
+        };
+        mutate(source);
+        return { playerId: "player-1", portrait: `/assets/players/${filename}`, sourceId: "liquipedia-portrait-1", sha256: checksum, source };
+      },
+    })).rejects.toThrow("invalid portrait source");
+    expect(readFileSync(assets, "utf8")).toBe("OLD-ASSETS");
+    expect(readFileSync(sources, "utf8")).toBe("OLD-SOURCES");
+    expect(existsSync(join(root, "public", "assets", "players", `player-1.${checksum.slice(0, 12)}.webp`))).toBe(false);
   });
 
   it("rolls back previously published assets and catalogs when source publication fails", async () => {

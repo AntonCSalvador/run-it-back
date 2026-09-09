@@ -136,6 +136,40 @@ const expectedSourceId = (playerId: string) => {
   return `liquipedia-portrait-${match[1]}`;
 };
 
+const sourceKeys = ["credit", "id", "license", "originalUrl", "retrievedAt", "url", "usage"];
+
+const validDate = (value: unknown): value is string => {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
+};
+
+const validatePortraitSource = (source: unknown, sourceId: string, playerId: string) => {
+  const keys = source && typeof source === "object" ? Reflect.ownKeys(source) : [];
+  const stringKeys = keys.filter((key): key is string => typeof key === "string");
+  if (keys.length !== stringKeys.length || stringKeys.sort().join("|") !== sourceKeys.join("|")) {
+    throw new Error(`invalid portrait source keys for ${playerId}`);
+  }
+  const row = source as GeneratedPortrait["source"];
+  if (typeof row.id !== "string" || typeof row.url !== "string" || typeof row.originalUrl !== "string" || typeof row.retrievedAt !== "string" || typeof row.usage !== "string" || typeof row.credit !== "string" || typeof row.license !== "string") {
+    throw new Error(`invalid portrait source values for ${playerId}`);
+  }
+  if (row.id !== sourceId) throw new Error(`invalid portrait source id for ${playerId}`);
+  if (!isHttps(row.url) || !isHttps(row.originalUrl)) throw new Error(`invalid portrait source URL for ${playerId}`);
+  if (!validDate(row.retrievedAt)) throw new Error(`invalid portrait source retrieval date for ${playerId}`);
+  if (row.usage !== "asset") throw new Error(`invalid portrait source usage for ${playerId}`);
+  if (!row.credit.trim() || !row.license.trim()) throw new Error(`invalid portrait source credit or license for ${playerId}`);
+  return {
+    id: row.id,
+    url: row.url,
+    originalUrl: row.originalUrl,
+    retrievedAt: row.retrievedAt,
+    usage: row.usage,
+    credit: row.credit,
+    license: row.license,
+  };
+};
+
 const validateGeneratedPortraits = (players: ImportPlayer[], results: GeneratedPortrait[], stageDir: string) => {
   const requested = new Map(players.map(player => [player.id, player]));
   if (requested.size !== players.length) throw new Error("duplicate requested playerId");
@@ -151,11 +185,12 @@ const validateGeneratedPortraits = (players: ImportPlayer[], results: GeneratedP
     const portrait = `/assets/players/${filename}`;
     if (result.portrait !== portrait) throw new Error(`invalid portrait path for ${result.playerId}`);
     const sourceId = expectedSourceId(result.playerId);
-    if (result.sourceId !== sourceId || result.source.id !== sourceId) throw new Error(`portrait source ID mismatch for ${result.playerId}`);
+    if (result.sourceId !== sourceId) throw new Error(`invalid portrait source id for ${result.playerId}`);
+    const source = validatePortraitSource(result.source, sourceId, result.playerId);
     const stagedAsset = join(stageDir, filename);
     if (!existsSync(stagedAsset)) throw new Error(`staged portrait is missing for ${result.playerId}`);
     if (sha256(readFileSync(stagedAsset)) !== result.sha256) throw new Error(`staged portrait checksum mismatch for ${result.playerId}`);
-    return { result, filename, stagedAsset };
+    return { result, source, filename, stagedAsset };
   });
 };
 
@@ -203,7 +238,7 @@ export async function buildPortraitOutputs({ root, players, discover }: ImportPa
     const stagedAssets = validateGeneratedPortraits(players, results, stageDir);
 
     const assetRows = results.map(({ playerId, portrait, sourceId, sha256: checksum }) => ({ playerId, portrait, sourceId, sha256: checksum }));
-    const sourceRows = results.map(result => result.source);
+    const sourceRows = stagedAssets.map(({ source }) => source);
 
     const playersDirectory = join(root, "public", "assets", "players");
     mkdirSync(catalogDirectory, { recursive: true });
