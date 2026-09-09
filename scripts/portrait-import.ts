@@ -76,6 +76,8 @@ export class LiquipediaRequestScheduler {
 
 const globalRequestScheduler = new LiquipediaRequestScheduler();
 
+class PortraitByteLimitError extends Error {}
+
 const approvedMediaUrl = (value: string) => {
   try {
     const url = new URL(value);
@@ -145,9 +147,9 @@ export class CachedLiquipediaClient {
     throw new Error("Liquipedia media redirect limit exceeded");
   }
 
-  private async body(response: Response, limit: number, label: string): Promise<Buffer> {
+  private async body(response: Response, limit: number, label: string, oversized = () => new Error(`${label} exceeds ${limit} bytes`)): Promise<Buffer> {
     const declared = Number(response.headers.get("content-length"));
-    if (Number.isFinite(declared) && declared > limit) throw new Error(`${label} exceeds ${limit} bytes`);
+    if (Number.isFinite(declared) && declared > limit) throw oversized();
     if (!response.body) return Buffer.alloc(0);
     const reader = response.body.getReader();
     const chunks: Uint8Array[] = [];
@@ -160,13 +162,13 @@ export class CachedLiquipediaClient {
       try { part = await Promise.race([read, timeout]); } catch (error) { await reader.cancel(); throw error; } finally { if (timeoutId) clearTimeout(timeoutId); }
       if (part.done) break;
       length += part.value.byteLength;
-      if (length > limit) { await reader.cancel(); throw new Error(`${label} exceeds ${limit} bytes`); }
+      if (length > limit) { await reader.cancel(); throw oversized(); }
       chunks.push(part.value);
     }
     return Buffer.concat(chunks);
   }
 
-  bytes(response: Response, limit: number): Promise<Buffer> { return this.body(response, limit, "portrait download"); }
+  bytes(response: Response, limit: number): Promise<Buffer> { return this.body(response, limit, "portrait download", () => new PortraitByteLimitError(`portrait download exceeds ${limit} bytes`)); }
 
   async json(url: string): Promise<unknown> {
     const path = this.cachePath(url);
@@ -402,7 +404,11 @@ const convertPortrait: PortraitConverter = bytes => sharp(bytes, { failOn: "warn
   .webp({ quality: 82, effort: 5 })
   .toBuffer();
 
-const technicalImageFailure = (error: unknown) => /(?:unsupported image|pixel limit|portrait download exceeds|smaller than 96x96)/i.test(error instanceof Error ? error.message : String(error));
+const unsupportedImage = (player: ImportPlayer, record: ((outcome: PortraitOutcome) => void) | undefined, error: unknown) => {
+  console.warn(`portrait unsupported-image: ${player.id} (${error instanceof Error ? error.message : String(error)})`);
+  record?.({ playerId: player.id, kind: "missing" });
+  return null;
+};
 
 export async function discoverLiquipediaPortrait(
   player: ImportPlayer,
@@ -438,16 +444,18 @@ export async function discoverLiquipediaPortrait(
     throw new Error(`invalid HTTPS portrait URL for ${player.id}`);
   }
   const response = await client.media(originalUrl);
+  let bytes: Buffer;
+  try { bytes = await client.bytes(response, MAX_DOWNLOAD_BYTES); } catch (error) {
+    if (error instanceof PortraitByteLimitError) return unsupportedImage(player, record, error);
+    throw error;
+  }
   let webp: Buffer;
   try {
-    webp = await converter(await client.bytes(response, MAX_DOWNLOAD_BYTES));
+    webp = await converter(bytes);
     const metadata = await sharp(webp, { failOn: "warning" }).metadata();
     if ((metadata.width ?? 0) < 96 || (metadata.height ?? 0) < 96) throw new Error(`portrait output is smaller than 96x96 for ${player.id}`);
   } catch (error) {
-    if (!technicalImageFailure(error)) throw error;
-    console.warn(`portrait unsupported-image: ${player.id} (${error instanceof Error ? error.message : String(error)})`);
-    record?.({ playerId: player.id, kind: "missing" });
-    return null;
+    return unsupportedImage(player, record, error);
   }
 
   const checksum = sha256(webp);

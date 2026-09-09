@@ -293,7 +293,7 @@ describe("portrait importer", () => {
     expect(result).toBe("Liquipedia request timed out");
   });
 
-  it("records unsupported selected images as missing and continues the import", async () => {
+  it("records corrupt selected images as missing and continues the import", async () => {
     const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const fetch = vi.fn().mockImplementation(async (value: string) => {
@@ -314,9 +314,24 @@ describe("portrait importer", () => {
         root: mkdtempSync(join(tmpdir(), "portrait-output-")),
         players: [{ id: "player-1", canonicalHandle: "One" }, { id: "player-2", canonicalHandle: "Two" }],
         userAgent: "RunItBack/Test", fetch, wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(),
-        converter: async () => { throw new Error("Input image exceeds pixel limit"); },
       });
       expect(log).toHaveBeenCalledWith("portrait import summary: accepted=0 missing=2 rights-rejected=0 ambiguous=0 total=2");
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("unsupported-image"));
+    } finally { log.mockRestore(); warn.mockRestore(); }
+  });
+
+  it("treats every converter failure as an unsupported-image fallback", async () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const fetch = vi.fn().mockImplementation(async (value: string) => {
+      const url = new URL(value);
+      if (url.pathname.endsWith("/valorant/api.php")) return new Response(JSON.stringify({ query: { pages: { 1: { images: [{ title: "File:One.jpg" }] } } } }));
+      if (url.pathname.endsWith("/commons/api.php")) return new Response(JSON.stringify({ query: { pages: { 1: { title: "File:One.jpg", revisions: [{ slots: { main: { "*": "{{FileInfo|featured=One|date=2026-01-01|license=cc-by-sa-4.0|author=Author|copyright=Author|source=https://example.test/original.jpg}}" } } }], imageinfo: [{ url: "https://liquipedia.net/commons/images/a/a/One.jpg" }] } } } }));
+      return new Response("corrupt image");
+    });
+    try {
+      await importPortraits({ root: mkdtempSync(join(tmpdir(), "portrait-output-")), players: [{ id: "player-1", canonicalHandle: "One" }], userAgent: "RunItBack/Test", fetch, wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(), converter: async () => { throw new Error("converter exploded"); } });
+      expect(log).toHaveBeenCalledWith("portrait import summary: accepted=0 missing=1 rights-rejected=0 ambiguous=0 total=1");
       expect(warn).toHaveBeenCalledWith(expect.stringContaining("unsupported-image"));
     } finally { log.mockRestore(); warn.mockRestore(); }
   });
