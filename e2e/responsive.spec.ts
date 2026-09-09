@@ -16,6 +16,7 @@ async function auditPhase(page: Page): Promise<void> {
 test("portrait choices and compact roster rows keep their responsive hierarchy", async ({ page }, testInfo) => {
   await page.goto("/?e2e-seed=e2e-164");
   await keyboardActivate(page, page.getByRole("button", { name: "Free Play", exact: true }));
+  await expect(page.locator(".team-card .media-mark__fallback").first()).toHaveCSS("object-fit", "contain");
   await keyboardActivate(page, page.locator(".team-card").first());
 
   const choice = page.locator(".player-portrait--choice").first();
@@ -24,6 +25,7 @@ test("portrait choices and compact roster rows keep their responsive hierarchy",
   await expect(choice).toHaveCSS("height", choiceSize);
   expect(await choice.evaluate(element => Boolean(element.closest('[data-testid^="player-card-"]')))).toBe(true);
   await expect(choice.locator(".media-mark__image")).toHaveCount(1);
+  await expect(choice.locator(".media-mark__image")).toHaveCSS("object-fit", "cover");
   await auditPhase(page);
 
   await keyboardActivate(page, choice.locator("xpath=ancestor::button"));
@@ -34,6 +36,7 @@ test("portrait choices and compact roster rows keep their responsive hierarchy",
   await expect(compact).toHaveCSS("height", "36px");
   expect(await compact.evaluate(element => Boolean(element.closest(".roster-bar > div")))).toBe(true);
   await expect(compact.locator(".media-mark__image")).toHaveCount(1);
+  await expect(compact.locator(".media-mark__image")).toHaveCSS("object-fit", "cover");
   await auditPhase(page);
 });
 
