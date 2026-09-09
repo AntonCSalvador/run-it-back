@@ -21,7 +21,7 @@ const makeCard = (id: string): PlayerCard => ({
   mapsPlayed: 10,
   eligibleRoles: ["smokes"],
   historicalIgl: false,
-  traits: { firepower: 10, utility: 20, survival: 30, clutch: 40, consistency: 50, leadership: 60 },
+  traits: { leadership: 60, firepower: 10, utility: 20, survival: 30, clutch: 40, consistency: 50 },
   sourceIds: ["source"],
 });
 

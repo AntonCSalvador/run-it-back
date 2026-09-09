@@ -4,12 +4,12 @@ import { ROLES, type PlayerCard, type Role, type Traits } from "@/features/game/
 const integerTrait = z.number().finite().int().min(0).max(100);
 
 export const manualTraitsSchema = z.object({
+  leadership: integerTrait,
   firepower: integerTrait,
   utility: integerTrait,
   survival: integerTrait,
   clutch: integerTrait,
   consistency: integerTrait,
-  leadership: integerTrait,
 }).strict();
 
 export const manualEligibleRolesSchema = z.array(z.enum(ROLES)).min(1).superRefine((roles, context) => {

@@ -1,11 +1,20 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { championsDataset, generatedChampionsDataset, manualPlayerCatalog } from "./index";
 import evidence from "./evidence.json";
 import manualData from "./manual-player-data.json";
+import { parseManualCatalog } from "./manual-data";
 import { ROLES } from "@/features/game/domain";
 import type { Role } from "@/features/game/domain";
 
 describe("Champions 2021–2025 dataset", () => {
+  it("round-trips the production manual catalog without changing its formatted bytes", () => {
+    const source = readFileSync("src/data/champions/manual-player-data.json", "utf8");
+    const catalog = parseManualCatalog(JSON.parse(source), manualData.cards.map(card => card.cardId));
+
+    expect(`${JSON.stringify(catalog, null, 2)}\n`).toBe(source);
+  });
+
   it("applies the complete manual catalog to generated cards", () => {
     expect(manualPlayerCatalog.cards).toHaveLength(generatedChampionsDataset.cards.length);
     expect(manualData.cards.map(card => card.cardId)).toEqual(
