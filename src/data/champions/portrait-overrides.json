@@ -1,1 +1,486 @@
-[]
+[
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-1428",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Sheydos_at_the_VCT_2023_LOCKIN_S%C3%A3o_Paulo.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/a/ad/Sheydos_at_the_VCT_2023_LOCKIN_S%C3%A3o_Paulo.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52687605760/",
+    "credit": "Lance Skundrich / Riot Games",
+    "sourcePublishedAt": "2023-02-13",
+    "event": "VCT 2023 LOCK//IN São Paulo",
+    "cropFocus": {
+      "x": 0.58,
+      "y": 0.32
+    }
+  },
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-783",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Murizzz_at_the_VCT_2023_LOCKIN_S%C3%A3o_Paulo.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/9/9b/Murizzz_at_the_VCT_2023_LOCKIN_S%C3%A3o_Paulo.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52691519274/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "sourcePublishedAt": "2023-02-15",
+    "event": "VCT 2023 LOCK//IN São Paulo",
+    "cropFocus": {
+      "x": 0.7,
+      "y": 0.28
+    }
+  },
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-773",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:VS_k1Ng_at_the_VALORANT_Champions_2021.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/5/5a/VS_k1Ng_at_the_VALORANT_Champions_2021.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/51722770438/",
+    "credit": "Lance Skundrich / Riot Games",
+    "sourcePublishedAt": "2021-12-03",
+    "event": "VALORANT Champions 2021",
+    "cropFocus": {
+      "x": 0.54,
+      "y": 0.3
+    }
+  },
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-2610",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:KRU_Klaus_at_the_VALORANT_Champions_2022.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/c/cd/KRU_Klaus_at_the_VALORANT_Champions_2022.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52336684460/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "sourcePublishedAt": "2022-09-05",
+    "event": "VALORANT Champions 2022",
+    "cropFocus": {
+      "x": 0.6,
+      "y": 0.37
+    }
+  },
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-3342",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:XERXIA_sushiboys_at_the_VCT_Stage_2_Masters_Copenhagen.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/5/56/XERXIA_sushiboys_at_the_VCT_Stage_2_Masters_Copenhagen.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52210958182/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "sourcePublishedAt": "2022-07-12",
+    "event": "VCT 2022 Stage 2 Masters Copenhagen",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.4
+    }
+  },
+  {
+    "sourceKind": "liquipedia",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "playerId": "player-458",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Fnatic_Chronicle_at_the_VCT_LOCK_IN_S%C3%A3o_Paulo.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/8/83/Fnatic_Chronicle_at_the_VCT_LOCK_IN_S%C3%A3o_Paulo.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52726333211/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "sourcePublishedAt": "2023-03-04",
+    "event": "VCT 2023 LOCK//IN São Paulo",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.24
+    }
+  },
+  {
+    "playerId": "player-817",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:OpTic_FNS_at_Masters_Reykjavik_2022.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/thumb/2/2c/OpTic_FNS_at_Masters_Reykjavik_2022.jpg/512px-OpTic_FNS_at_Masters_Reykjavik_2022.jpg",
+    "originalUrl": "https://flickr.com/photos/valorantesports/52007928580/in/album-72177720298132521/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2022-04-15",
+    "event": "VCT 2022 Masters Reykjavík",
+    "cropFocus": {
+      "x": 0.53,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-727",
+    "sourceKind": "vct-roster-graphic",
+    "sourcePageUrl": "https://valorantesports.com/en-US/news/valorant-champions-tour-2023-end-of-season-awards/",
+    "mediaUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/006c0d7a08d1f2f8cd6d78af9f74654ddfde48d2-8000x4500.jpg?rect=5800,850,1150,2000&w=400",
+    "credit": "VALORANT Esports / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2023-08-26",
+    "event": "VCT 2023 Americas end-of-season awards",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.3
+    }
+  },
+  {
+    "playerId": "player-10782",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Secret_witz_at_the_VALORANT_Champions_2021.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/7/78/Secret_witz_at_the_VALORANT_Champions_2021.jpg",
+    "originalUrl": "https://flickr.com/photos/valorantesports/51732794560/",
+    "credit": "Michal Konkol / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-07",
+    "event": "VALORANT Champions 2021",
+    "cropFocus": {
+      "x": 0.55,
+      "y": 0.38
+    }
+  },
+  {
+    "playerId": "player-2335",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:TS_Dispenser.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/d/d2/TS_Dispenser.jpg",
+    "originalUrl": "https://flickr.com/photos/valorantesports/51731892311/in/album-72157720218479901/",
+    "credit": "Michal Konkol / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-07",
+    "event": "VALORANT Champions 2021",
+    "cropFocus": {
+      "x": 0.55,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-252",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Gambit_Chronicle_at_the_VALORANT_Champions_2021.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/4/48/Gambit_Chronicle_at_the_VALORANT_Champions_2021.jpg",
+    "originalUrl": "https://flickr.com/photos/valorantesports/51720071096/",
+    "credit": "Wojciech Wandzel / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-02",
+    "event": "VALORANT Champions 2021",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.35
+    }
+  },
+  {
+    "playerId": "player-1219",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:NIP_v1xen.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/8/80/NIP_v1xen.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valesportsbr/52076270968/",
+    "credit": "Bruno Alvares / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2022-05-15",
+    "event": "VCT 2022 Brazil Stage 2 Challengers",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.25
+    }
+  },
+  {
+    "playerId": "player-1585",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:RED_Canids_gtn_at_VCL_2023_Brazil_Split_1.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/a/aa/RED_Canids_gtn_at_VCL_2023_Brazil_Split_1.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valesportsbr/52750211056/",
+    "credit": "VALORANT Brasil / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2023-03-16",
+    "event": "VCL 2023 Brazil Split 1",
+    "cropFocus": {
+      "x": 0.48,
+      "y": 0.32
+    }
+  },
+  {
+    "playerId": "player-725",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:FURIA_Nozwerr.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/5/54/FURIA_Nozwerr.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valesportsbr/52123878617/",
+    "credit": "Bruno Alvares / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2022-06-05",
+    "event": "VCT 2022 Brazil Stage 2 Challengers",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-8872",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Mazin.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/0/08/Mazin.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valesportsbr/52073915784/",
+    "credit": "Bruno Alvares / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2022-05-14",
+    "event": "VCT 2022 Brazil Stage 2 Challengers",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.45
+    }
+  },
+  {
+    "playerId": "player-651",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Frz_at_First_Strike_Brazil.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/d/d5/Frz_at_First_Strike_Brazil.jpg",
+    "originalUrl": "https://www.flickr.com/photos/191250687@N03/50684362507/",
+    "credit": "Valorant Brasil / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2020-12-05",
+    "event": "VALORANT First Strike Brazil",
+    "cropFocus": {
+      "x": 0.48,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-681",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Xand_at_First_Strike_Brazil.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/3/3f/Xand_at_First_Strike_Brazil.jpg",
+    "originalUrl": "https://www.flickr.com/photos/191250687@N03/50683526703/",
+    "credit": "Valorant Brasil / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2020-12-05",
+    "event": "VALORANT First Strike Brazil",
+    "cropFocus": {
+      "x": 0.64,
+      "y": 0.3
+    }
+  },
+  {
+    "playerId": "player-2173",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Karmine_Magnum_at_VCT_2024_EMEA_Kickoff.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/3/32/Karmine_Magnum_at_VCT_2024_EMEA_Kickoff.jpg",
+    "originalUrl": "https://www.flickr.com/photos/vctemea/53545856818/",
+    "credit": "Michal Konkol / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2024-02-22",
+    "event": "VCT 2024 EMEA Kickoff",
+    "cropFocus": {
+      "x": 0.58,
+      "y": 0.3
+    }
+  },
+  {
+    "playerId": "player-2452",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Talon_Patiphan_at_VCT_Pacific_League_2023.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/3/32/Talon_Patiphan_at_VCT_Pacific_League_2023.jpg",
+    "originalUrl": "https://www.flickr.com/photos/vctpacific/52896891443/",
+    "credit": "VALORANT Champions Tour Pacific Photos / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2023-05-14",
+    "event": "VCT 2023 Pacific League",
+    "cropFocus": {
+      "x": 0.57,
+      "y": 0.35
+    }
+  },
+  {
+    "playerId": "player-4375",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:SuperBuss_at_VCT_2023_Pacific_League.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/4/49/SuperBuss_at_VCT_2023_Pacific_League.jpg",
+    "originalUrl": "https://www.flickr.com/photos/vctpacific/52928967694/",
+    "credit": "VALORANT Champions Tour Pacific Photos / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2023-05-27",
+    "event": "VCT 2023 Pacific League",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-1369",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:JL_Doma_at_VCT_2026_EMEA_Stage_2.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/5/55/JL_Doma_at_VCT_2026_EMEA_Stage_2.jpg",
+    "originalUrl": "https://www.flickr.com/photos/vctemea/55447052504/",
+    "credit": "Michał Konkol / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2026-08-06",
+    "event": "VCT 2026 EMEA Stage 2",
+    "cropFocus": {
+      "x": 0.51,
+      "y": 0.31
+    }
+  },
+  {
+    "playerId": "player-771",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:K1Ng_at_First_Strike_Korea.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/1/1c/K1Ng_at_First_Strike_Korea.jpg",
+    "originalUrl": "https://www.flickr.com/photos/145885012@N07/50684034008/",
+    "credit": "Riot Games Korea / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "riot",
+    "identityConfirmed": true,
+    "event": "First Strike Korea 2020",
+    "cropFocus": {
+      "x": 0.56,
+      "y": 0.36
+    }
+  },
+  {
+    "playerId": "player-46",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-gb/news/esports/valorant-champions-returns-to-berlin/",
+    "videoUrl": "https://www.youtube.com/watch?v=VmvnxLwYuV8",
+    "videoTimestampSeconds": 9,
+    "capturePath": "assets/portrait-sources/player-46.png",
+    "credit": "VALORANT Champions Tour / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-04",
+    "event": "VALORANT Champions 2021"
+  },
+  {
+    "playerId": "player-4376",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-us/news/esports/valorant-champions-returns-to-berlin/",
+    "videoUrl": "https://www.youtube.com/watch?v=hrYGI6COi4k",
+    "videoTimestampSeconds": 6585,
+    "capturePath": "assets/portrait-sources/player-4376.png",
+    "credit": "VALORANT JAPAN / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-01",
+    "event": "VALORANT Champions 2021"
+  },
+  {
+    "playerId": "player-612",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-us/news/esports/valorant-champions-returns-to-berlin/",
+    "videoUrl": "https://www.youtube.com/watch?v=hrYGI6COi4k",
+    "videoTimestampSeconds": 25952.5,
+    "capturePath": "assets/portrait-sources/player-612.png",
+    "credit": "VALORANT JAPAN / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-12-01",
+    "event": "VALORANT Champions 2021"
+  },
+  {
+    "playerId": "player-454",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-us/news/esports/vct-stage-3-masters-everything-you-need-to-know/",
+    "videoUrl": "https://www.youtube.com/watch?v=WPI-z7BaQOI",
+    "videoTimestampSeconds": 25873,
+    "capturePath": "assets/portrait-sources/player-454.png",
+    "credit": "VALORANT JAPAN / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-09-13",
+    "event": "VCT 2021 Stage 3 Masters Berlin"
+  },
+  {
+    "playerId": "player-47",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-us/news/esports/vct-stage-3-masters-everything-you-need-to-know/",
+    "videoUrl": "https://www.youtube.com/watch?v=WPI-z7BaQOI",
+    "videoTimestampSeconds": 26143,
+    "capturePath": "assets/portrait-sources/player-47.png",
+    "credit": "VALORANT JAPAN / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-09-13",
+    "event": "VCT 2021 Stage 3 Masters Berlin"
+  },
+  {
+    "playerId": "player-45",
+    "sourceKind": "vct-broadcast-frame",
+    "sourcePageUrl": "https://playvalorant.com/en-us/news/esports/vct-stage-3-masters-everything-you-need-to-know/",
+    "videoUrl": "https://www.youtube.com/watch?v=WPI-z7BaQOI",
+    "videoTimestampSeconds": 26193,
+    "capturePath": "assets/portrait-sources/player-45.png",
+    "credit": "VALORANT JAPAN / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "Riot Legal Jibber Jabber",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-09-13",
+    "event": "VCT 2021 Stage 3 Masters Berlin"
+  }
+]

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assessPortrait, choosePortrait, parseFileInfo } from "./portrait-policy";
+import { assessPortrait, choosePortrait, parseFileInfo, isApprovedRiotPortraitOriginalUrl } from "./portrait-policy";
 
 const riot = `{{FileInfo
 |featured=BeYN
@@ -12,6 +12,11 @@ const riot = `{{FileInfo
 }}`;
 
 describe("portrait source policy", () => {
+  it.each(["vctemea", "vctpacific", "valesportsbr", "191250687@N03", "145885012@N07"])("accepts reviewed regional Riot account %s", account => {
+    expect(isApprovedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}/123/`)).toBe(true);
+    expect(isApprovedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}-unverified/123/`)).toBe(false);
+    expect(isApprovedRiotPortraitOriginalUrl(`https://flickr.com.example/photos/${account}/123/`)).toBe(false);
+  });
   it("accepts a Riot-owned player portrait under the noncommercial fan policy", () => {
     expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", riot)).toMatchObject({
       accepted: true,

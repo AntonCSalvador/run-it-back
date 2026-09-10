@@ -131,7 +131,7 @@ function validateReuse(row: PortraitOverride): void {
       throw new Error(`Riot ownership required for ${row.playerId}`);
     }
     if (row.sourceKind === "liquipedia") {
-      if (row.license !== "permission" || !row.originalUrl || !isApprovedRiotPortraitOriginalUrl(row.originalUrl) || !hasRiotGamesCopyrightCredit(row.credit)) {
+      if (!["permission", "riot"].includes(row.license) || !row.originalUrl || !isApprovedRiotPortraitOriginalUrl(row.originalUrl) || !hasRiotGamesCopyrightCredit(row.credit)) {
         throw new Error(`Liquipedia Riot permission requires reviewed Riot origin and copyright credit for ${row.playerId}`);
       }
     } else if (!isRiotLicense(row.license)) {

@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { parsePortraitOverrides } from "./portrait-overrides";
+import { championsDataset } from "./index";
+import productionOverrides from "./portrait-overrides.json";
+
+const cohort2021 = ["Witz", "v1xen", "doma", "sheydos", "gtn", "MAGNUM", "dispenser", "Patiphan", "d3ffo", "Klaus", "Sushiboys", "SuperBusS", "SantaGolf", "SicK", "dapr", "Chronicle", "ShahZaM", "zombs", "mitch", "frz", "xand", "nzr", "saadhak", "k1Ng", "Lakia", "murizzz", "FiNESSE", "mazin"];
+
+function missingOverrideHandles(handles: readonly string[]) {
+  const reviewed = new Set(parsePortraitOverrides(productionOverrides, championsDataset.players).map(row => row.playerId));
+  return handles.filter(handle => !championsDataset.players.some(player => player.canonicalHandle === handle && reviewed.has(player.id)));
+}
+
+it("2021 portrait cohort has a reviewed override for every required player", () => {
+  expect(missingOverrideHandles(cohort2021)).toEqual([]);
+});
 
 const players = [{ id: "player-817", canonicalHandle: "FiNESSE" }] as const;
 
@@ -17,6 +30,12 @@ const officialStill = {
 } as const;
 
 describe("portrait overrides", () => {
+  it("accepts the reviewed Liquipedia riot template with a verified Korean Riot origin", () => {
+    const row = { ...officialStill, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:K1Ng_at_First_Strike_Korea.jpg", mediaUrl: "https://liquipedia.net/commons/images/1/1c/K1Ng_at_First_Strike_Korea.jpg", originalUrl: "https://www.flickr.com/photos/145885012@N07/50684034008/", credit: "Riot Games Korea / Riot Games", license: "riot" };
+    expect(parsePortraitOverrides([row], players)).toEqual([row]);
+    expect(() => parsePortraitOverrides([{ ...row, copyrightOwner: "Unknown" }], players)).toThrow();
+    expect(() => parsePortraitOverrides([{ ...row, originalUrl: "https://www.flickr.com/photos/unverified/123/" }], players)).toThrow();
+  });
   it.each([
     { originalUrl: undefined },
     { originalUrl: "https://example.test/portrait" },

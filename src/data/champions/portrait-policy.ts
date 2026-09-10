@@ -49,7 +49,8 @@ export const isApprovedRiotPortraitOriginalUrl = (url: string) => {
     if (parsed.protocol !== "https:") return false;
     if (parsed.hostname === "riotgames.com" || parsed.hostname === "www.riotgames.com") return true;
     return (parsed.hostname === "flickr.com" || parsed.hostname === "www.flickr.com")
-      && parsed.pathname.startsWith("/photos/valorantesports/");
+      && ["valorantesports", "vctemea", "vctpacific", "valesportsbr", "191250687@N03", "145885012@N07"]
+        .some(account => parsed.pathname.startsWith(`/photos/${account}/`));
   } catch {
     return false;
   }
