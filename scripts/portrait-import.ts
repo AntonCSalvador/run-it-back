@@ -13,6 +13,7 @@ import {
 import { join } from "node:path";
 import sharp from "sharp";
 import { assessPortrait, choosePortrait } from "../src/data/champions/portrait-policy";
+import { convertPortrait } from "./portrait-media";
 
 export interface ImportPlayer { id: string; canonicalHandle: string }
 export interface ImportPaths {
@@ -397,12 +398,6 @@ const report = (player: ImportPlayer, reason: Exclude<PortraitOutcomeKind, "acce
   console.warn(`portrait ${reason}: ${player.id} (${player.canonicalHandle})`);
   record?.({ playerId: player.id, kind: reason });
 };
-
-const convertPortrait: PortraitConverter = bytes => sharp(bytes, { failOn: "warning", limitInputPixels: 40_000_000 })
-  .rotate()
-  .resize(256, 256, { fit: "cover", position: "attention", withoutEnlargement: true })
-  .webp({ quality: 82, effort: 5 })
-  .toBuffer();
 
 const unsupportedImage = (player: ImportPlayer, record: ((outcome: PortraitOutcome) => void) | undefined, error: unknown) => {
   console.warn(`portrait unsupported-image: ${player.id} (${error instanceof Error ? error.message : String(error)})`);
