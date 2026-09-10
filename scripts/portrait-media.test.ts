@@ -55,6 +55,27 @@ describe("portrait media", () => {
     expect(fetch).toHaveBeenCalledTimes(5);
   });
 
+  it.each([
+    { status: 302, headers: new Headers({ location: "https://example.test/a.webp" }), error: /unapproved/i },
+    { status: 404, headers: new Headers(), error: /404/ },
+    { status: 200, headers: new Headers({ "content-length": String(MAX_PORTRAIT_BYTES + 1) }), error: /exceeds/i },
+  ])("cancels discarded response bodies for status $status", async ({ status, headers, error }) => {
+    const cancel = vi.fn(() => Promise.reject(new Error("cleanup failed")));
+    const response = new Response(new ReadableStream({ cancel }), { status, headers });
+    await expect(loadRemotePortrait("https://cmsassets.rgpub.io/a.webp", vi.fn().mockResolvedValue(response))).rejects.toThrow(error);
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["rejects", "stalls"])("preserves streamed byte limit errors when cancellation %s", async behavior => {
+    const cancel = vi.fn(() => behavior === "rejects" ? Promise.reject(new Error("cleanup failed")) : new Promise<void>(() => {}));
+    const response = new Response(new ReadableStream({
+      start(controller) { controller.enqueue(new Uint8Array(MAX_PORTRAIT_BYTES + 1)); },
+      cancel,
+    }));
+    await expect(loadRemotePortrait("https://cmsassets.rgpub.io/a.webp", vi.fn().mockResolvedValue(response))).rejects.toThrow(/exceeds/i);
+    expect(cancel).toHaveBeenCalledTimes(1);
+  }, 500);
+
   it("rejects declared and streamed downloads over 15 MiB", async () => {
     const declared = vi.fn().mockResolvedValue(new Response(null, { headers: { "content-length": String(MAX_PORTRAIT_BYTES + 1) } }));
     await expect(loadRemotePortrait("https://cmsassets.rgpub.io/a.webp", declared)).rejects.toThrow(/exceeds/i);

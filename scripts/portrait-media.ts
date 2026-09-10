@@ -56,7 +56,10 @@ export async function convertPortrait(bytes: Buffer, focus?: CropFocus): Promise
 
 async function readResponse(response: Response, limit: number, timeoutMs: number): Promise<Buffer> {
   const declared = Number(response.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > limit) throw new Error(`portrait download exceeds ${limit} bytes`);
+  if (Number.isFinite(declared) && declared > limit) {
+    void response.body?.cancel().catch(() => {});
+    throw new Error(`portrait download exceeds ${limit} bytes`);
+  }
   if (!response.body) return Buffer.alloc(0);
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
@@ -73,7 +76,8 @@ async function readResponse(response: Response, limit: number, timeoutMs: number
       if (length > limit) throw new Error(`portrait download exceeds ${limit} bytes`);
       chunks.push(part.value);
     } catch (error) {
-      await reader.cancel();
+      // Cleanup must neither replace the input error nor delay its delivery.
+      void reader.cancel().catch(() => {});
       throw error;
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
@@ -95,12 +99,16 @@ export async function loadRemotePortrait(url: string, fetcher: typeof globalThis
         new Promise<never>((_resolve, reject) => { timeoutId = setTimeout(() => { controller.abort(); reject(new Error("portrait request timed out")); }, timeoutMs); }),
       ]);
       if (response.status >= 300 && response.status < 400) {
+        void response.body?.cancel().catch(() => {});
         const location = response.headers.get("location");
         if (!location) throw new Error("portrait media redirect missing location");
         current = new URL(location, current).href;
         continue;
       }
-      if (!response.ok) throw new Error(`portrait media ${response.status}`);
+      if (!response.ok) {
+        void response.body?.cancel().catch(() => {});
+        throw new Error(`portrait media ${response.status}`);
+      }
       return readResponse(response, MAX_PORTRAIT_BYTES, timeoutMs);
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
