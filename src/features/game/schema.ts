@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { ROLES, type GameDataset } from "./domain";
+import { PORTRAIT_REUSE_BASES, PORTRAIT_SOURCE_KINDS, ROLES, type GameDataset } from "./domain";
 import { normalizeHandle } from "./handle";
 
 const id = z.string().min(1);
 const year = z.union([z.literal(2021), z.literal(2022), z.literal(2023), z.literal(2024), z.literal(2025)]);
 const sourceIds = z.array(id).min(1);
 export const traitsSchema = z.object({ firepower: z.number().min(0).max(100), utility: z.number().min(0).max(100), survival: z.number().min(0).max(100), clutch: z.number().min(0).max(100), consistency: z.number().min(0).max(100), leadership: z.number().min(0).max(100) }).strict();
-export const sourceRefSchema = z.object({ id, url: z.string().url(), originalUrl: z.string().url().optional(), retrievedAt: z.string().date(), usage: z.enum(["facts", "asset"]), credit: z.string().optional(), license: z.string().optional() }).strict();
+export const sourceRefSchema = z.object({ id, url: z.string().url(), originalUrl: z.string().url().optional(), retrievedAt: z.string().date(), usage: z.enum(["facts", "asset"]), credit: z.string().optional(), license: z.string().optional(), sourceKind: z.enum(PORTRAIT_SOURCE_KINDS).optional(), reuseBasis: z.enum(PORTRAIT_REUSE_BASES).optional(), copyrightOwner: z.string().optional(), sourcePublishedAt: z.string().date().optional(), event: z.string().optional(), videoUrl: z.string().url().optional(), videoTimestampSeconds: z.number().nonnegative().optional(), permissionUrl: z.string().url().optional() }).strict();
 export const teamAppearanceSchema = z.object({ id, name: z.string().min(1), shortName: z.string().min(1), year, logo: z.string().nullable(), sourceIds }).strict();
 const handle = z.string().transform((value, context) => { try { return normalizeHandle(value); } catch { context.addIssue({ code: "custom", message: "Invalid handle" }); return z.NEVER; } });
 export const playerIdentitySchema = z.object({ id, canonicalHandle: handle, portrait: z.string().nullable(), sourceIds }).strict();

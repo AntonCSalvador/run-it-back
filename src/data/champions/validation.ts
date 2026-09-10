@@ -7,8 +7,8 @@ import portraitSourceRefs from "./portrait-sources.json";
 import { deriveChampions, type Overlays, type RawExtraction } from "./derivation";
 import { parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
 import { validateSourceCatalog } from "./source-policy";
+import { portraitSourceIdPattern } from "./portrait-source";
 
-const portraitSourceId = /^liquipedia-portrait-\d+$/;
 
 function sameSourceMetadata(actual: SourceRef, expected: SourceRef): boolean {
   return Object.keys(actual).sort().join() === Object.keys(expected).sort().join()
@@ -30,9 +30,9 @@ export function validateChampions(dataset: GameDataset, evidence: Evidence[]): v
   validateSourceCatalog(dataset.sources);
   const parsedPortraitAssets = parsePortraitCatalog(portraitAssets);
   const expectedPortraitSources = (portraitSourceRefs as unknown[]).filter((source): source is SourceRef => (
-    source !== null && typeof source === "object" && "id" in source && typeof source.id === "string" && portraitSourceId.test(source.id)
+    source !== null && typeof source === "object" && "id" in source && typeof source.id === "string" && portraitSourceIdPattern.test(source.id)
   ));
-  const datasetPortraitSources = dataset.sources.filter(source => portraitSourceId.test(source.id));
+  const datasetPortraitSources = dataset.sources.filter(source => portraitSourceIdPattern.test(source.id));
   validatePortraitCatalog(dataset.players, parsedPortraitAssets, expectedPortraitSources, { requireOverlay: true });
   validatePortraitCatalog(dataset.players, parsedPortraitAssets, datasetPortraitSources, { requireOverlay: true });
   if (datasetPortraitSources.length !== expectedPortraitSources.length || datasetPortraitSources.some(source => {

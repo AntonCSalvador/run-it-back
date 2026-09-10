@@ -2,18 +2,18 @@ import { z } from "zod";
 import type { PlayerIdentity, SourceRef } from "@/features/game/domain";
 import { sourceRefSchema } from "@/features/game/schema";
 import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedRiotPortraitOriginalUrl } from "./portrait-policy";
+import { isApprovedPortraitMediaUrl, isApprovedRiotSourcePage, portraitSourceIdPattern, portraitSourceIdentity, validatePortraitSourceMetadata } from "./portrait-source";
 
 const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
 const playerId = /^player-(\d+)$/;
-const portraitSourceId = /^liquipedia-portrait-(\d+)$/;
 
 const portraitAssetSchema = z.object({
   playerId: z.string().regex(/^player-\d+$/),
   portrait: z.string().regex(/^\/assets\/players\/player-\d+\.[a-f0-9]{12}\.webp$/),
-  sourceId: z.string().regex(/^liquipedia-portrait-\d+$/),
+  sourceId: z.string().regex(portraitSourceIdPattern),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
 }).strict().superRefine((asset, context) => {
-  const identity = [playerId.exec(asset.playerId)?.[1], portraitPath.exec(asset.portrait)?.[1], portraitSourceId.exec(asset.sourceId)?.[1]];
+  const identity = [playerId.exec(asset.playerId)?.[1], portraitPath.exec(asset.portrait)?.[1], portraitSourceIdentity(asset.sourceId)];
   if (identity.some(value => value !== identity[0])) context.addIssue({ code: "custom", message: "portrait identity mismatch" });
 });
 
@@ -91,34 +91,46 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
   assertUnique(assets.map(asset => asset.portrait), "portrait path");
   assertUnique(assets.map(asset => asset.sourceId), "portrait source ID");
 
-  const portraitSources = sources.filter(source => portraitSourceId.test(source.id));
+  const portraitSources = sources.filter(source => portraitSourceIdPattern.test(source.id));
   assertUnique(portraitSources.map(source => source.id), "portrait source");
   for (const source of portraitSources) {
     if (source.usage !== "asset") throw new Error(`portrait source usage asset required ${source.id}`);
     if (!isCalendarDate(source.retrievedAt)) throw new Error(`portrait source retrieval date is invalid ${source.id}`);
     if (options.validateFutureDates !== false && source.retrievedAt > today) throw new Error(`future retrieval date ${source.id}`);
+    validatePortraitSourceMetadata(source);
   }
   const sourcesById = new Map(portraitSources.map(source => [source.id, source]));
 
   for (const asset of assets) {
     if (!knownPlayers.has(asset.playerId)) throw new Error(`orphan player ${asset.playerId}`);
-    const identity = [playerId.exec(asset.playerId)?.[1], portraitPath.exec(asset.portrait)?.[1], portraitSourceId.exec(asset.sourceId)?.[1]];
+    const identity = [playerId.exec(asset.playerId)?.[1], portraitPath.exec(asset.portrait)?.[1], portraitSourceIdentity(asset.sourceId)];
     if (identity.some(value => value !== identity[0])) throw new Error(`portrait identity mismatch ${asset.playerId}`);
     const source = sourcesById.get(asset.sourceId);
     if (!source) throw new Error(`portrait source missing ${asset.sourceId}`);
-    if (!isLiquipediaCommonsDescription(source.url)) throw new Error(`portrait source must be an HTTPS Liquipedia Commons description URL ${asset.sourceId}`);
+    const metadata = validatePortraitSourceMetadata(source);
+    if (metadata.sourceKind === "liquipedia" && !isLiquipediaCommonsDescription(source.url)) throw new Error(`portrait source must be an HTTPS Liquipedia Commons description URL ${asset.sourceId}`);
+    if (metadata.sourceKind !== "liquipedia" && !isApprovedRiotSourcePage(source.url)) throw new Error(`portrait source must be an approved official source page ${asset.sourceId}`);
     if (!isHttps(source.originalUrl)) throw new Error(`portrait source originalUrl must be HTTPS ${asset.sourceId}`);
+    if (metadata.sourceKind !== "liquipedia" && !isApprovedPortraitMediaUrl(source.originalUrl)) throw new Error(`portrait source originalUrl must be approved ${asset.sourceId}`);
     if (!source.credit?.trim()) throw new Error(`portrait source credit is required ${asset.sourceId}`);
     if (!source.license?.trim()) throw new Error(`portrait source license is required ${asset.sourceId}`);
-    const approvedPermission = source.license.trim().toLowerCase() === "permission"
+    const approvedLiquipediaRiotPolicy = metadata.sourceKind === "liquipedia"
+      && metadata.reuseBasis === "riot-fan-policy"
+      && source.license.trim().toLowerCase() === "permission"
       && hasRiotGamesCopyrightCredit(source.credit)
       && isApprovedRiotPortraitOriginalUrl(source.originalUrl);
-    if (!isApprovedOpenPortraitLicense(source.license) && !approvedPermission) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
+    if (metadata.sourceKind !== "liquipedia" && (metadata.copyrightOwner !== "Riot Games" || !isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
+    const approvedReuse = metadata.reuseBasis === "open-license"
+      ? isApprovedOpenPortraitLicense(source.license)
+      : metadata.reuseBasis === "riot-fan-policy"
+        ? metadata.sourceKind === "liquipedia" ? approvedLiquipediaRiotPolicy : metadata.copyrightOwner === "Riot Games"
+        : source.license.trim().toLowerCase() === "permission" && Boolean(metadata.permissionUrl);
+    if (!approvedReuse) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
   }
 
   for (const source of sources) {
-    if (source.usage === "asset" && !portraitSourceId.test(source.id)) throw new Error(`portrait asset source ID ${source.id}`);
-    if (!portraitSourceId.test(source.id)) continue;
+    if (source.usage === "asset" && !portraitSourceIdPattern.test(source.id)) throw new Error(`portrait asset source ID ${source.id}`);
+    if (!portraitSourceIdPattern.test(source.id)) continue;
     if (!assets.some(asset => asset.sourceId === source.id)) throw new Error(`unused portrait source ${source.id}`);
   }
 
@@ -126,7 +138,7 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
     const assetsByPlayerId = new Map(assets.map(asset => [asset.playerId, asset]));
     for (const player of players) {
       const asset = assetsByPlayerId.get(player.id);
-      const portraitSourceIds = player.sourceIds.filter(sourceId => portraitSourceId.test(sourceId));
+      const portraitSourceIds = player.sourceIds.filter(sourceId => portraitSourceIdPattern.test(sourceId));
       if (!asset) {
         if (player.portrait !== null) throw new Error(`portrait overlay missing for ${player.id}`);
         if (portraitSourceIds.length) throw new Error(`portrait source overlay missing for ${player.id}`);
