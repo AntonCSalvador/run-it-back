@@ -119,7 +119,7 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
       && source.license.trim().toLowerCase() === "permission"
       && hasRiotGamesCopyrightCredit(source.credit)
       && isApprovedRiotPortraitOriginalUrl(source.originalUrl);
-    if ((metadata.reuseBasis === "riot-fan-policy" && metadata.copyrightOwner !== "Riot Games") || (metadata.sourceKind !== "liquipedia" && (!isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl)))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
+    if ((metadata.reuseBasis === "riot-fan-policy" && metadata.copyrightOwner !== "Riot Games") || (metadata.sourceKind !== "liquipedia" && (metadata.copyrightOwner !== "Riot Games" || !isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl)))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
     const approvedReuse = metadata.reuseBasis === "open-license"
       ? isApprovedOpenPortraitLicense(source.license)
       : metadata.reuseBasis === "riot-fan-policy"

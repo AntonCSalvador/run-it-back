@@ -87,6 +87,11 @@ describe("portrait catalog", () => {
     expect(() => validatePortraitCatalog([player], [row], [{ ...liquipediaSource, copyrightOwner: "Example Photographer" }])).toThrow(/reuse grounds/);
   });
 
+  it("requires Riot Games ownership for Riot/VCT reuse bases", () => {
+    expect(() => validatePortraitCatalog([player], [riotRow], [{ ...riotSource, reuseBasis: "open-license", license: "cc-by-4.0", copyrightOwner: "Example Photographer" }])).toThrow(/reuse grounds/);
+    expect(() => validatePortraitCatalog([player], [riotRow], [{ ...riotSource, reuseBasis: "explicit-permission", license: "permission", permissionUrl: "https://riotgames.com/en/legal", copyrightOwner: "Example Photographer" }])).toThrow(/reuse grounds/);
+  });
+
   it("rejects malformed and future retrieval dates", () => {
     expect(() => validatePortraitCatalog([player], [row], [{ ...liquipediaSource, retrievedAt: "2026-02-30" }], { today: "2026-09-09" })).toThrow(/retrievedAt|retrieval date/);
     expect(() => validatePortraitCatalog([player], [row], [{ ...liquipediaSource, retrievedAt: "2026-09-10" }], { today: "2026-09-09" })).toThrow(/future retrieval date/);
