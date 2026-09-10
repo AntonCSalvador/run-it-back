@@ -245,6 +245,8 @@ const validateGeneratedPortraits = (players: ImportPlayer[], results: GeneratedP
     const source = validatePortraitSource(result.source, sourceId, result.playerId);
     const stagedAsset = join(stageDir, filename);
     if (!existsSync(stagedAsset)) throw new Error(`staged portrait is missing for ${result.playerId}`);
+    const stat = lstatSync(stagedAsset);
+    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`staged portrait must be a regular file for ${result.playerId}`);
     if (sha256(readFileSync(stagedAsset)) !== result.sha256) throw new Error(`staged portrait checksum mismatch for ${result.playerId}`);
     return { result, source, filename, stagedAsset };
   });
@@ -297,9 +299,9 @@ export async function buildPortraitOutputs({ root, players, discover }: ImportPa
     const assetRows = results.map(({ playerId, portrait, sourceId, sha256: checksum }) => ({ playerId, portrait, sourceId, sha256: checksum }));
     const sourceRows = stagedAssets.map(({ source }) => source);
     validatePortraitCatalog(players.map(player => ({ ...player, portrait: null, sourceIds: [] })), assetRows, sourceRows);
-    await Promise.all(stagedAssets.map(async ({ stagedAsset }) => {
+    await Promise.all(stagedAssets.map(async ({ stagedAsset, result }) => {
       const metadata = await sharp(readFileSync(stagedAsset), { failOn: "warning" }).metadata();
-      if (metadata.format !== "webp" || metadata.width !== 256 || metadata.height !== 256) throw new Error("invalid portrait image dimensions or format");
+      if (metadata.format !== "webp" || metadata.width !== 256 || metadata.height !== 256) throw new Error(`invalid portrait image dimensions or format for ${result.playerId} (${result.sourceId})`);
       await sharp(readFileSync(stagedAsset), { failOn: "warning" }).raw().toBuffer();
     }));
 

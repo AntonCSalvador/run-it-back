@@ -1,13 +1,18 @@
 // @vitest-environment node
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import * as fs from "node:fs";
 import sharp from "sharp";
 import { describe, expect, it, vi } from "vitest";
 import { importPortraits, buildPortraitOutputs, parsePortraitImportArgs, formatPortraitImportSummary, type PortraitOutcome } from "./portrait-import";
 import { parsePortraitOverrides } from "../src/data/champions/portrait-overrides";
+
+// File symlink creation is unavailable without Windows privileges. Keep real
+// filesystem operations while allowing this one lstat boundary to be simulated.
+vi.mock("node:fs", async importOriginal => ({ ...await importOriginal<typeof fs>() }));
 
 const player = { id: "player-817", canonicalHandle: "FiNESSE" };
 const still = { playerId: player.id, sourceKind: "riot-portrait", sourcePageUrl: "https://valorantesports.com/news/finesse", mediaUrl: "https://cmsassets.rgpub.io/finesse.png", credit: "Riot Games", copyrightOwner: "Riot Games", reuseBasis: "riot-fan-policy", license: "Riot Legal", identityConfirmed: true };
@@ -28,6 +33,35 @@ async function fixture(existing = true) {
   return { root, catalog, bytes, snapshot };
 }
 describe("reviewed portrait merge", () => {
+  it("rejects a staged file reported as a symlink before reading its real WebP bytes", async () => {
+    const f = await fixture(); const before = f.snapshot();
+    const asset = JSON.parse(before[0])[0]; const source = JSON.parse(before[1])[0];
+    const actualLstat = fs.lstatSync;
+    const spy = vi.spyOn(fs, "lstatSync");
+    try {
+      await expect(buildPortraitOutputs({ root: f.root, players: [player], discover: async (_player, stageDir) => {
+        const file = join(stageDir, asset.portrait.split("/").at(-1)); writeFileSync(file, f.bytes);
+        spy.mockImplementation(((path: fs.PathLike, ...args: unknown[]) => {
+          const stat = actualLstat(path, ...args as []);
+          if (path === file) stat.isSymbolicLink = () => true;
+          return stat;
+        }) as typeof fs.lstatSync);
+        return { ...asset, source };
+      } })).rejects.toThrow("staged portrait must be a regular file for player-817");
+      expect(f.snapshot()).toEqual(before);
+    } finally { spy.mockRestore(); }
+  });
+  it("rejects a staged symlink without replacing catalogs", async () => {
+    const f = await fixture(); const before = f.snapshot();
+    const asset = JSON.parse(before[0])[0]; const source = JSON.parse(before[1])[0];
+    await expect(buildPortraitOutputs({ root: f.root, players: [player], discover: async (_player, stageDir) => {
+      // Windows file symlinks require privileges. A junction exercises the
+      // same staged-link rejection using an actual filesystem link.
+      symlinkSync(join(f.root, "public/assets/players"), join(stageDir, asset.portrait.split("/").at(-1)), "junction");
+      return { ...asset, source };
+    } })).rejects.toThrow("staged portrait must be a regular file for player-817");
+    expect(f.snapshot()).toEqual(before);
+  });
   it.each([[], ["--retrieved-at", "2026-02-30"], ["--retrieved-at", "2999-01-01"], ["--retrieved-at", "2026-09-09", "--retrieved-at", "2026-09-09"]].map(args => ({ args })))("CLI rejects invalid arguments $args before loading catalogs", ({ args }) => {
     const result = spawnSync(process.execPath, ["--import", "tsx", "scripts/import-player-portraits.mts", ...args], { encoding: "utf8" });
     expect(result.status).toBe(1); expect(result.stderr.trim()).toBe("usage: npm run import:portraits -- --retrieved-at YYYY-MM-DD");
