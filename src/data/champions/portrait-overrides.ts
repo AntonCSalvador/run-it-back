@@ -88,11 +88,11 @@ const portraitOverrideSchema = z.discriminatedUnion("sourceKind", [
 const isRiotLicense = (license: string) => /riot.*(?:legal|fan[ -]?policy|terms)/i.test(license);
 const isApprovedLiquipediaDescriptionPage = (url: string) => {
   const parsed = new URL(url);
-  return parsed.hostname === "liquipedia.net" && parsed.pathname.startsWith("/commons/File:");
+  return parsed.hostname === "liquipedia.net" && /^\/commons\/File:.+/.test(parsed.pathname);
 };
 const isApprovedLiquipediaMediaUrl = (url: string) => {
   const parsed = new URL(url);
-  return parsed.hostname === "liquipedia.net" && parsed.pathname.startsWith("/commons/images/");
+  return parsed.hostname === "liquipedia.net" && /^\/commons\/images\/.+/.test(parsed.pathname);
 };
 
 function validateSource(row: PortraitOverride): void {

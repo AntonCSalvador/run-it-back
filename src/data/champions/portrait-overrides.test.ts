@@ -57,6 +57,8 @@ describe("portrait overrides", () => {
     ["HTTP source", { ...officialStill, sourcePageUrl: "http://valorantesports.com/news/finesse" }, /HTTPS/],
     ["Riot ownership", { ...officialStill, copyrightOwner: "Example Photographer" }, /Riot ownership/],
     ["capture path", { ...officialStill, sourceKind: "vct-broadcast-frame", capturePath: "../escape.png", videoUrl: "https://www.youtube.com/watch?v=official-video", videoTimestampSeconds: 123.5 }, /capture path/],
+    ["empty Liquipedia description filename", { ...officialStill, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:", mediaUrl: "https://liquipedia.net/commons/images/a/a/FiNESSE.jpg", copyrightOwner: "Example Photographer", reuseBasis: "open-license", license: "cc-by-sa-4.0" }, /description page/],
+    ["empty Liquipedia media filename", { ...officialStill, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:FiNESSE.jpg", mediaUrl: "https://liquipedia.net/commons/images/", copyrightOwner: "Example Photographer", reuseBasis: "open-license", license: "cc-by-sa-4.0" }, /media URL/],
   ])("rejects %s", (_label, override, message) => {
     const rows = Array.isArray(override) ? override : [override];
     expect(() => parsePortraitOverrides(rows, players)).toThrow(message);
