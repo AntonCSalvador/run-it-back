@@ -18,7 +18,6 @@ const APPROVED_HOSTS = [
 
 export interface CropFocus { x: number; y: number }
 export interface RemotePortraitOptions {
-  fetch?: typeof globalThis.fetch;
   timeoutMs?: number;
 }
 
@@ -36,10 +35,14 @@ function input(bytes: Buffer) {
 }
 
 export async function convertPortrait(bytes: Buffer, focus?: CropFocus): Promise<Buffer> {
-  const metadata = await input(bytes).metadata();
-  const width = metadata.width ?? 0;
-  const height = metadata.height ?? 0;
-  if (!width || !height || width * height > MAX_PORTRAIT_PIXELS) throw new Error("portrait input exceeds pixel limit");
+  const metadata = await input(bytes).metadata().catch((error: unknown) => {
+    if (error instanceof Error && /pixel limit/i.test(error.message)) throw new Error("portrait input exceeds 80 megapixels", { cause: error });
+    throw error;
+  });
+  const swapsAxes = (metadata.orientation ?? 1) >= 5;
+  const width = (swapsAxes ? metadata.height : metadata.width) ?? 0;
+  const height = (swapsAxes ? metadata.width : metadata.height) ?? 0;
+  if (!width || !height || width * height > MAX_PORTRAIT_PIXELS) throw new Error("portrait input exceeds 80 megapixels");
 
   const image = input(bytes).rotate();
   if (!focus) {
@@ -79,8 +82,7 @@ async function readResponse(response: Response, limit: number, timeoutMs: number
   return Buffer.concat(chunks);
 }
 
-export async function loadRemotePortrait(url: string, options: RemotePortraitOptions = {}): Promise<Buffer> {
-  const fetcher = options.fetch ?? globalThis.fetch;
+export async function loadRemotePortrait(url: string, fetcher: typeof globalThis.fetch = globalThis.fetch, options: RemotePortraitOptions = {}): Promise<Buffer> {
   const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
   let current = url;
   for (let redirects = 0; redirects <= 4; redirects += 1) {
@@ -107,11 +109,17 @@ export async function loadRemotePortrait(url: string, options: RemotePortraitOpt
   throw new Error("portrait media redirect limit exceeded");
 }
 
-export function loadCapturePortrait(root: string, capturePath: string): Buffer {
+export function loadPortraitCapture(root: string, capturePath: string): Buffer {
   const sourceDirectory = resolve(root, "assets", "portrait-sources");
   if (capturePath.split(/[\\/]/).includes("..")) throw new Error("invalid portrait capture path");
   const target = resolve(root, capturePath);
   if (!target.startsWith(`${sourceDirectory}${sep}`) || relative(sourceDirectory, target).startsWith("..")) throw new Error("invalid portrait capture path");
+  let parent = resolve(root);
+  for (const part of relative(parent, target).split(sep).slice(0, -1)) {
+    parent = resolve(parent, part);
+    const parentStat = lstatSync(parent);
+    if (parentStat.isSymbolicLink() || !parentStat.isDirectory()) throw new Error("invalid portrait capture directory");
+  }
   const stat = lstatSync(target);
   if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("invalid portrait capture file");
   if (stat.size > MAX_PORTRAIT_BYTES) throw new Error(`portrait capture exceeds ${MAX_PORTRAIT_BYTES} bytes`);

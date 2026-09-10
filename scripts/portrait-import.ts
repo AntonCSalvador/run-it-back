@@ -13,7 +13,7 @@ import {
 import { join } from "node:path";
 import sharp from "sharp";
 import { assessPortrait, choosePortrait } from "../src/data/champions/portrait-policy";
-import { convertPortrait } from "./portrait-media";
+import { convertPortrait, MAX_PORTRAIT_BYTES } from "./portrait-media";
 
 export interface ImportPlayer { id: string; canonicalHandle: string }
 export interface ImportPaths {
@@ -47,7 +47,6 @@ export interface ClientOptions {
 }
 
 const API_DELAY_MS = 2_000;
-const MAX_DOWNLOAD_BYTES = 15 * 1024 * 1024;
 const MAX_JSON_BYTES = 5 * 1024 * 1024;
 const REQUEST_TIMEOUT_MS = 30_000;
 const VALORANT_API = "https://liquipedia.net/valorant/api.php";
@@ -440,7 +439,7 @@ export async function discoverLiquipediaPortrait(
   }
   const response = await client.media(originalUrl);
   let bytes: Buffer;
-  try { bytes = await client.bytes(response, MAX_DOWNLOAD_BYTES); } catch (error) {
+  try { bytes = await client.bytes(response, MAX_PORTRAIT_BYTES); } catch (error) {
     if (error instanceof PortraitByteLimitError) return unsupportedImage(player, record, error);
     throw error;
   }
