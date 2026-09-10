@@ -23,7 +23,7 @@ export async function discoverCuratedPortrait(player: ImportPlayer, override: Po
   const sourceId = portraitSourceId(player.id, override.sourceKind);
   return { playerId: player.id, portrait: `/assets/players/${filename}`, sourceId, sha256, source: {
     id: sourceId, url: override.sourcePageUrl,
-    originalUrl: override.sourceKind === "vct-broadcast-frame" ? override.sourcePageUrl : override.mediaUrl,
+    originalUrl: override.sourceKind === "vct-broadcast-frame" ? override.sourcePageUrl : override.originalUrl ?? override.mediaUrl,
     retrievedAt: retrievalDate, usage: "asset", credit: override.credit, license: override.license,
     sourceKind: override.sourceKind, reuseBasis: override.reuseBasis, copyrightOwner: override.copyrightOwner,
     ...(override.event !== undefined ? { event: override.event } : {}),

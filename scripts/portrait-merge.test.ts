@@ -9,6 +9,7 @@ import sharp from "sharp";
 import { describe, expect, it, vi } from "vitest";
 import { importPortraits, buildPortraitOutputs, parsePortraitImportArgs, formatPortraitImportSummary, type PortraitOutcome } from "./portrait-import";
 import { parsePortraitOverrides } from "../src/data/champions/portrait-overrides";
+import type { PortraitOverride } from "../src/data/champions/portrait-overrides";
 
 // File symlink creation is unavailable without Windows privileges. Keep real
 // filesystem operations while allowing this one lstat boundary to be simulated.
@@ -33,6 +34,20 @@ async function fixture(existing = true) {
   return { root, catalog, bytes, snapshot };
 }
 describe("reviewed portrait merge", () => {
+  it.each([{ originalUrl: undefined }, { originalUrl: "https://example.test/photo" }, { license: "Riot Legal" }, { copyrightOwner: "Photographer" }, { credit: "Photographer" }])("rejects inconsistent Liquipedia permission before fetching %j", async change => {
+    const f = await fixture(); const before = f.snapshot(); const fetch = vi.fn();
+    const override = { ...still, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:FiNESSE.jpg", mediaUrl: "https://liquipedia.net/commons/images/finesse.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/123/", credit: "VCT Photo Team / Riot Games", license: "permission", ...change } as PortraitOverride;
+    await expect(importPortraits({ root: f.root, players: [player], overrides: [override], retrievalDate: "2026-09-09", userAgent: "test", fetch })).rejects.toThrow();
+    expect(fetch).not.toHaveBeenCalled(); expect(f.snapshot()).toEqual(before);
+  });
+  it("imports reviewed Liquipedia Riot permission with its actual reviewed origin", async () => {
+    const f = await fixture(false);
+    const override = { ...still, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:FiNESSE.jpg", mediaUrl: "https://liquipedia.net/commons/images/finesse.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/123/", credit: "VCT Photo Team / Riot Games", license: "permission" };
+    const fetch = vi.fn(async (_url: string | URL | Request) => { void _url; return new Response(new Uint8Array(f.bytes)); });
+    await importPortraits({ root: f.root, players: [player], overrides: parsePortraitOverrides([override], [player]), retrievalDate: "2026-09-09", userAgent: "test", fetch });
+    expect(fetch.mock.calls[0][0]).toBe(override.mediaUrl);
+    expect(JSON.parse(f.snapshot()[1])[0]).toMatchObject({ originalUrl: override.originalUrl, license: "permission", reuseBasis: "riot-fan-policy", copyrightOwner: "Riot Games" });
+  });
   it("rejects a staged file reported as a symlink before reading its real WebP bytes", async () => {
     const f = await fixture(); const before = f.snapshot();
     const asset = JSON.parse(before[0])[0]; const source = JSON.parse(before[1])[0];

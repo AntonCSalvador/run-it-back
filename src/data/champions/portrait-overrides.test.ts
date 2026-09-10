@@ -17,6 +17,19 @@ const officialStill = {
 } as const;
 
 describe("portrait overrides", () => {
+  it.each([
+    { originalUrl: undefined },
+    { originalUrl: "https://example.test/portrait" },
+    { license: "Riot Legal" },
+    { copyrightOwner: "Photographer" },
+    { credit: "Photographer" },
+  ])("rejects inconsistent reviewed Liquipedia Riot permission %j", change => {
+    const row = { ...officialStill, sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:FiNESSE.jpg", mediaUrl: "https://liquipedia.net/commons/images/finesse.jpg", originalUrl: "https://www.flickr.com/photos/valorantesports/123/", credit: "VCT Photo Team / Riot Games", license: "permission", ...change };
+    expect(() => parsePortraitOverrides([row], players)).toThrow();
+  });
+  it("rejects an original URL override on official stills", () => {
+    expect(() => parsePortraitOverrides([{ ...officialStill, originalUrl: "https://example.test/portrait" }], players)).toThrow();
+  });
   it("allows omitted crop focus and validated reviewed event/date metadata", () => {
     const { cropFocus, ...base } = officialStill;
     void cropFocus;

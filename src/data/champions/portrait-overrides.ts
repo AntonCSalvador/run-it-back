@@ -7,6 +7,8 @@ import {
 import {
   isApprovedOpenPortraitLicense,
   isRiotGamesCopyrightOwner,
+  isApprovedRiotPortraitOriginalUrl,
+  hasRiotGamesCopyrightCredit,
 } from "./portrait-policy";
 import {
   isApprovedPortraitMediaUrl,
@@ -22,6 +24,7 @@ interface PortraitOverrideBase {
   playerId: string;
   sourceKind: (typeof PORTRAIT_SOURCE_KINDS)[number];
   sourcePageUrl: string;
+  originalUrl?: string;
   credit: string;
   copyrightOwner: string;
   reuseBasis: (typeof PORTRAIT_REUSE_BASES)[number];
@@ -55,6 +58,7 @@ const reviewedBaseSchema = z.object({
   playerId: z.string().regex(/^player-\d+$/),
   sourceKind: z.enum(PORTRAIT_SOURCE_KINDS),
   sourcePageUrl: httpsUrl,
+  originalUrl: httpsUrl.optional(),
   credit: z.string().trim().min(1),
   copyrightOwner: z.string().trim().min(1),
   reuseBasis: z.enum(PORTRAIT_REUSE_BASES),
@@ -100,6 +104,9 @@ const isApprovedLiquipediaMediaUrl = (url: string) => {
 };
 
 function validateSource(row: PortraitOverride): void {
+  if (row.sourceKind !== "liquipedia" && row.originalUrl !== undefined) {
+    throw new Error(`reviewed original URL is only supported for Liquipedia ${row.playerId}`);
+  }
   if (row.sourceKind === "liquipedia") {
     if (!isApprovedLiquipediaDescriptionPage(row.sourcePageUrl)) {
       throw new Error(`approved Liquipedia Commons description page required for ${row.playerId}`);
@@ -123,7 +130,11 @@ function validateReuse(row: PortraitOverride): void {
     if (!isRiotGamesCopyrightOwner(row.copyrightOwner)) {
       throw new Error(`Riot ownership required for ${row.playerId}`);
     }
-    if (!isRiotLicense(row.license)) {
+    if (row.sourceKind === "liquipedia") {
+      if (row.license !== "permission" || !row.originalUrl || !isApprovedRiotPortraitOriginalUrl(row.originalUrl) || !hasRiotGamesCopyrightCredit(row.credit)) {
+        throw new Error(`Liquipedia Riot permission requires reviewed Riot origin and copyright credit for ${row.playerId}`);
+      }
+    } else if (!isRiotLicense(row.license)) {
       throw new Error(`Riot Legal license required for ${row.playerId}`);
     }
   }
