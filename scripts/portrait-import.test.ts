@@ -26,12 +26,12 @@ describe("portrait importer", () => {
       wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(), userAgent: "RunItBack/Test",
     });
     const outcomes: PortraitOutcome[] = [];
-    const result = await discoverLiquipediaPortrait({ id: "player-9", canonicalHandle: "TenZ" }, stageDir, client, outcome => outcomes.push(outcome));
+    const result = await discoverLiquipediaPortrait({ id: "player-9", canonicalHandle: "TenZ" }, stageDir, client, "2026-09-09", outcome => outcomes.push(outcome));
     expect(result).not.toBeNull();
     expect(fetch.mock.calls[2][0]).toBe(thumbnailUrl);
     expect(new URL(fetch.mock.calls[1][0]).searchParams.get("iiurlwidth")).toBe("512");
-    expect(result?.source).toMatchObject({ originalUrl: sourceUrl, url: "https://liquipedia.net/commons/File:TenZ.jpg" });
-    expect(outcomes).toEqual([{ playerId: "player-9", kind: "accepted" }]);
+    expect(result?.source).toMatchObject({ originalUrl: sourceUrl, url: "https://liquipedia.net/commons/File:TenZ.jpg", retrievedAt: "2026-09-09", sourceKind: "liquipedia", reuseBasis: "riot-fan-policy", copyrightOwner: "Riot Games" });
+    expect(outcomes).toEqual([{ playerId: "player-9", kind: "imported" }]);
   });
 
   it("reuses cached JSON without a network request", async () => {
@@ -67,6 +67,7 @@ describe("portrait importer", () => {
 
   it("publishes staged portraits with sorted, matching catalogs", async () => {
     const root = mkdtempSync(join(tmpdir(), "portrait-output-"));
+    const bytes = await sharp({ create: { width: 256, height: 256, channels: 3, background: "red" } }).webp().toBuffer();
     const source = (id: string) => ({
       id: `liquipedia-portrait-${id}`,
       url: `https://liquipedia.net/commons/File:${id}.webp`,
@@ -74,15 +75,15 @@ describe("portrait importer", () => {
       retrievedAt: "2026-09-08",
       usage: "asset" as const,
       credit: "Photographer",
-      license: "cc-by-sa-4.0",
+      license: "cc-by-sa-4.0", sourceKind: "liquipedia" as const, reuseBasis: "open-license" as const, copyrightOwner: "Photographer",
     });
     await buildPortraitOutputs({
       root,
       players: [{ id: "player-2", canonicalHandle: "Two" }, { id: "player-1", canonicalHandle: "One" }],
       discover: async (player, stageDir) => {
-        const checksum = createHash("sha256").update("webp").digest("hex");
+        const checksum = createHash("sha256").update(bytes).digest("hex");
         const filename = `${player.id}.${checksum.slice(0, 12)}.webp`;
-        writeFileSync(join(stageDir, filename), "webp");
+        writeFileSync(join(stageDir, filename), bytes);
         return {
           playerId: player.id,
           portrait: `/assets/players/${filename}`,
@@ -95,7 +96,7 @@ describe("portrait importer", () => {
     const catalog = join(root, "src", "data", "champions");
     expect(JSON.parse(readFileSync(join(catalog, "portrait-assets.json"), "utf8"))).toMatchObject([{ playerId: "player-1" }, { playerId: "player-2" }]);
     expect(JSON.parse(readFileSync(join(catalog, "portrait-sources.json"), "utf8"))).toHaveLength(2);
-    expect(readFileSync(join(root, "public", "assets", "players", `player-1.${createHash("sha256").update("webp").digest("hex").slice(0, 12)}.webp`), "utf8")).toBe("webp");
+    expect(readFileSync(join(root, "public", "assets", "players", `player-1.${createHash("sha256").update(bytes).digest("hex").slice(0, 12)}.webp`))).toEqual(bytes);
   });
 
   it("does not replace catalogs when a discovered portrait is absent from staging", async () => {
@@ -114,7 +115,7 @@ describe("portrait importer", () => {
         portrait: "/assets/players/player-1.aaaaaaaaaaaa.webp",
         sourceId: "liquipedia-portrait-1",
         sha256: "a".repeat(64),
-        source: { id: "liquipedia-portrait-1", url: "https://liquipedia.net/commons/File:One.webp", originalUrl: "https://example.test/original.jpg", retrievedAt: "2026-09-08", usage: "asset", credit: "Photographer", license: "cc-by-sa-4.0" },
+        source: { id: "liquipedia-portrait-1", url: "https://liquipedia.net/commons/File:One.webp", originalUrl: "https://example.test/original.jpg", retrievedAt: "2026-09-08", usage: "asset", credit: "Photographer", license: "cc-by-sa-4.0", sourceKind: "liquipedia", reuseBasis: "open-license", copyrightOwner: "Photographer" },
       }),
     })).rejects.toThrow("staged portrait is missing");
     expect(readFileSync(assets, "utf8")).toBe("OLD-ASSETS");
@@ -180,7 +181,7 @@ describe("portrait importer", () => {
     const sources = join(catalog, "portrait-sources.json");
     writeFileSync(assets, "OLD-ASSETS");
     writeFileSync(sources, "OLD-SOURCES");
-    const bytes = Buffer.from("webp");
+    const bytes = await sharp({ create: { width: 256, height: 256, channels: 3, background: "red" } }).webp().toBuffer();
     const checksum = createHash("sha256").update(bytes).digest("hex");
     await expect(buildPortraitOutputs({
       root,
@@ -189,7 +190,7 @@ describe("portrait importer", () => {
         const filename = `player-1.${checksum.slice(0, 12)}.webp`;
         writeFileSync(join(stageDir, filename), bytes);
         const source: GeneratedPortrait["source"] & Record<string, unknown> = {
-          id: "liquipedia-portrait-1", url: "https://liquipedia.net/commons/File:One.webp", originalUrl: "https://example.test/original.jpg", retrievedAt: "2026-09-08", usage: "asset", credit: "Photographer", license: "cc-by-sa-4.0",
+          id: "liquipedia-portrait-1", url: "https://liquipedia.net/commons/File:One.webp", originalUrl: "https://example.test/original.jpg", retrievedAt: "2026-09-08", usage: "asset", credit: "Photographer", license: "cc-by-sa-4.0", sourceKind: "liquipedia" as const, reuseBasis: "open-license" as const, copyrightOwner: "Photographer",
         };
         mutate(source);
         return { playerId: "player-1", portrait: `/assets/players/${filename}`, sourceId: "liquipedia-portrait-1", sha256: checksum, source };
@@ -212,7 +213,7 @@ describe("portrait importer", () => {
     const oldPortrait = join(root, "public", "assets", "players", "player-2.aaaaaaaaaaaa.webp");
     mkdirSync(join(root, "public", "assets", "players"), { recursive: true });
     writeFileSync(oldPortrait, "old");
-    const bytes = Buffer.from("webp");
+    const bytes = await sharp({ create: { width: 256, height: 256, channels: 3, background: "red" } }).webp().toBuffer();
     const checksum = createHash("sha256").update(bytes).digest("hex");
     await expect(buildPortraitOutputs({
       root,
@@ -234,17 +235,17 @@ describe("portrait importer", () => {
 
   it("formats a complete traceable outcome summary", () => {
     expect(formatPortraitImportSummary([
-      { playerId: "player-1", kind: "accepted" },
-      { playerId: "player-2", kind: "missing" },
-      { playerId: "player-3", kind: "rights-rejected" },
-      { playerId: "player-4", kind: "ambiguous" },
-    ], 4)).toBe("portrait import summary: accepted=1 missing=1 rights-rejected=1 ambiguous=1 total=4");
+      { playerId: "player-1", kind: "imported" },
+      { playerId: "player-2", kind: "uncovered", reason: "missing" },
+      { playerId: "player-3", kind: "uncovered", reason: "rights-rejected" },
+      { playerId: "player-4", kind: "uncovered", reason: "ambiguous" },
+    ], 4)).toBe("portrait import summary: preserved=0 imported=1 replaced=0 uncovered=3 total=4");
   });
 
   it("prints the final import summary from its per-player outcomes", async () => {
     const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
     try {
-      await importPortraits({
+      await importPortraits({ retrievalDate: "2026-09-09",
         root: mkdtempSync(join(tmpdir(), "portrait-output-")),
         players: [{ id: "player-1", canonicalHandle: "One" }],
         userAgent: "RunItBack/Test",
@@ -252,20 +253,20 @@ describe("portrait importer", () => {
         wait: vi.fn().mockResolvedValue(undefined),
         scheduler: new LiquipediaRequestScheduler(),
       });
-      expect(log).toHaveBeenCalledWith("portrait import summary: accepted=0 missing=1 rights-rejected=0 ambiguous=0 total=1");
+      expect(log).toHaveBeenCalledWith("portrait import summary: preserved=0 imported=0 replaced=0 uncovered=1 total=1");
     } finally {
       log.mockRestore();
     }
   });
 
-  it("removes obsolete managed portraits while preserving unrelated player files", async () => {
+  it("preserves managed and unrelated files when discovery is incomplete", async () => {
     const root = mkdtempSync(join(tmpdir(), "portrait-output-"));
     const playersDirectory = join(root, "public", "assets", "players");
     mkdirSync(playersDirectory, { recursive: true });
     writeFileSync(join(playersDirectory, "player-1.aaaaaaaaaaaa.webp"), "old");
     writeFileSync(join(playersDirectory, "readme.txt"), "keep");
-    await buildPortraitOutputs({ root, players: [{ id: "player-1", canonicalHandle: "One" }], discover: async () => null });
-    expect(existsSync(join(playersDirectory, "player-1.aaaaaaaaaaaa.webp"))).toBe(false);
+    await expect(buildPortraitOutputs({ root, players: [{ id: "player-1", canonicalHandle: "One" }], discover: async () => null })).rejects.toThrow("incomplete");
+    expect(existsSync(join(playersDirectory, "player-1.aaaaaaaaaaaa.webp"))).toBe(true);
     expect(readFileSync(join(playersDirectory, "readme.txt"), "utf8")).toBe("keep");
   });
 
@@ -337,12 +338,12 @@ describe("portrait importer", () => {
       return new Response("unsupported image bytes");
     });
     try {
-      await importPortraits({
+      await importPortraits({ retrievalDate: "2026-09-09",
         root: mkdtempSync(join(tmpdir(), "portrait-output-")),
         players: [{ id: "player-1", canonicalHandle: "One" }, { id: "player-2", canonicalHandle: "Two" }],
         userAgent: "RunItBack/Test", fetch, wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(),
       });
-      expect(log).toHaveBeenCalledWith("portrait import summary: accepted=0 missing=2 rights-rejected=0 ambiguous=0 total=2");
+      expect(log).toHaveBeenCalledWith("portrait import summary: preserved=0 imported=0 replaced=0 uncovered=2 total=2");
       expect(warn).toHaveBeenCalledWith(expect.stringContaining("unsupported-image"));
     } finally { log.mockRestore(); warn.mockRestore(); }
   });
@@ -357,8 +358,8 @@ describe("portrait importer", () => {
       return new Response("corrupt image");
     });
     try {
-      await importPortraits({ root: mkdtempSync(join(tmpdir(), "portrait-output-")), players: [{ id: "player-1", canonicalHandle: "One" }], userAgent: "RunItBack/Test", fetch, wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(), converter: async () => { throw new Error("converter exploded"); } });
-      expect(log).toHaveBeenCalledWith("portrait import summary: accepted=0 missing=1 rights-rejected=0 ambiguous=0 total=1");
+      await importPortraits({ retrievalDate: "2026-09-09", root: mkdtempSync(join(tmpdir(), "portrait-output-")), players: [{ id: "player-1", canonicalHandle: "One" }], userAgent: "RunItBack/Test", fetch, wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(), converter: async () => { throw new Error("converter exploded"); } });
+      expect(log).toHaveBeenCalledWith("portrait import summary: preserved=0 imported=0 replaced=0 uncovered=1 total=1");
       expect(warn).toHaveBeenCalledWith(expect.stringContaining("unsupported-image"));
     } finally { log.mockRestore(); warn.mockRestore(); }
   });

@@ -17,6 +17,14 @@ const officialStill = {
 } as const;
 
 describe("portrait overrides", () => {
+  it("allows omitted crop focus and validated reviewed event/date metadata", () => {
+    const { cropFocus, ...base } = officialStill;
+    void cropFocus;
+    const row = { ...base, event: "Champions", sourcePublishedAt: "2025-09-01" };
+    expect(parsePortraitOverrides([row], players)).toEqual([row]);
+    expect(() => parsePortraitOverrides([{ ...row, event: " " }], players)).toThrow();
+    expect(() => parsePortraitOverrides([{ ...row, sourcePublishedAt: "2025-02-30" }], players)).toThrow();
+  });
   it("parses a reviewed official still without changing it", () => {
     expect(parsePortraitOverrides([officialStill], players)).toEqual([officialStill]);
   });

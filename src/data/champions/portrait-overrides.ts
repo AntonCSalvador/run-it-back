@@ -28,7 +28,9 @@ interface PortraitOverrideBase {
   license: string;
   permissionUrl?: string;
   identityConfirmed: true;
-  cropFocus: CropFocus;
+  cropFocus?: CropFocus;
+  event?: string;
+  sourcePublishedAt?: string;
 }
 
 export interface PortraitStillOverride extends PortraitOverrideBase {
@@ -59,10 +61,12 @@ const reviewedBaseSchema = z.object({
   license: z.string().trim().min(1),
   permissionUrl: httpsUrl.optional(),
   identityConfirmed: z.literal(true, "identity confirmation required"),
+  event: z.string().trim().min(1).optional(),
+  sourcePublishedAt: z.string().date().optional(),
   cropFocus: z.object({
     x: z.number().min(0).max(1),
     y: z.number().min(0).max(1),
-  }).strict(),
+  }).strict().optional(),
 }).strict();
 
 const stillOverrideSchema = reviewedBaseSchema.extend({
