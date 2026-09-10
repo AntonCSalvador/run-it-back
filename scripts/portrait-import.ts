@@ -334,7 +334,7 @@ type WikiPage = {
   title?: string;
   images?: Array<{ title?: string }>;
   revisions?: Array<{ slots?: { main?: { "*"?: string; content?: string } } }>;
-  imageinfo?: Array<{ url?: string }>;
+  imageinfo?: Array<{ url?: string; thumburl?: string }>;
 };
 type WikiResponse = { query?: { pages?: Record<string, WikiPage> }; continue?: Record<string, string> };
 
@@ -374,6 +374,7 @@ async function queryFilePages(titles: string[], client: CachedLiquipediaClient):
       rvprop: "content",
       rvslots: "main",
       iiprop: "url",
+      iiurlwidth: "512",
       titles: titles.slice(index, index + 50).join("|"),
     })) as WikiResponse;
     pages.push(...Object.values(response.query?.pages ?? {}));
@@ -420,7 +421,7 @@ export async function discoverLiquipediaPortrait(
   const candidates = (await queryFilePages(fileTitles, client)).map(page => {
     const fileTitle = page.title ?? "";
     const wikitext = page.revisions?.[0]?.slots?.main?.["*"] ?? page.revisions?.[0]?.slots?.main?.content ?? "";
-    return { assessment: assessPortrait(player.canonicalHandle, fileTitle, wikitext), originalUrl: page.imageinfo?.[0]?.url ?? "" };
+    return { assessment: assessPortrait(player.canonicalHandle, fileTitle, wikitext), downloadUrl: page.imageinfo?.[0]?.thumburl ?? page.imageinfo?.[0]?.url ?? "" };
   });
   const selected = choosePortrait(candidates.map(candidate => candidate.assessment));
   if (selected.kind === "ambiguous") {
@@ -433,11 +434,11 @@ export async function discoverLiquipediaPortrait(
   }
 
   const candidate = candidates.find(item => item.assessment.fileTitle === selected.candidate.fileTitle);
-  const originalUrl = candidate?.originalUrl;
-  if (!originalUrl || !approvedMediaUrl(originalUrl) || !isHttps(selected.candidate.source)) {
+  const downloadUrl = candidate?.downloadUrl;
+  if (!downloadUrl || !approvedMediaUrl(downloadUrl) || !isHttps(selected.candidate.source)) {
     throw new Error(`invalid HTTPS portrait URL for ${player.id}`);
   }
-  const response = await client.media(originalUrl);
+  const response = await client.media(downloadUrl);
   let bytes: Buffer;
   try { bytes = await client.bytes(response, MAX_PORTRAIT_BYTES); } catch (error) {
     if (error instanceof PortraitByteLimitError) return unsupportedImage(player, record, error);

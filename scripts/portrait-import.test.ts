@@ -4,9 +4,36 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it, vi } from "vitest";
-import { CachedLiquipediaClient, buildPortraitOutputs, formatPortraitImportSummary, importPortraits, LiquipediaRequestScheduler, type GeneratedPortrait } from "./portrait-import";
+import sharp from "sharp";
+import { CachedLiquipediaClient, buildPortraitOutputs, discoverLiquipediaPortrait, formatPortraitImportSummary, importPortraits, LiquipediaRequestScheduler, type GeneratedPortrait, type PortraitOutcome } from "./portrait-import";
 
 describe("portrait importer", () => {
+  it("downloads the requested 512px MediaWiki thumbnail instead of the original", async () => {
+    const stageDir = mkdtempSync(join(tmpdir(), "portrait-stage-"));
+    const jpeg = await sharp({ create: { width: 512, height: 512, channels: 3, background: "#445566" } }).jpeg().toBuffer();
+    const thumbnailUrl = "https://liquipedia.net/commons/images/thumb/512px-TenZ.jpg";
+    const sourceUrl = "https://www.flickr.com/photos/valorantesports/123/";
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ query: { pages: { "1": { images: [{ title: "File:TenZ.jpg" }] } } } })))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ query: { pages: { "2": {
+        title: "File:TenZ.jpg",
+        revisions: [{ slots: { main: { "*": `{{FileInfo|featured=TenZ|date=2024-03-01|license=permission|author=VCT Photo Team|copyright=Riot Games|source=${sourceUrl}}}` } } }],
+        imageinfo: [{ url: "https://liquipedia.net/commons/images/original.jpg", thumburl: thumbnailUrl }],
+      } } } })))
+      .mockResolvedValueOnce(new Response(new Uint8Array(jpeg)));
+    const client = new CachedLiquipediaClient({
+      cacheDir: mkdtempSync(join(tmpdir(), "portrait-cache-")), fetch,
+      wait: vi.fn().mockResolvedValue(undefined), scheduler: new LiquipediaRequestScheduler(), userAgent: "RunItBack/Test",
+    });
+    const outcomes: PortraitOutcome[] = [];
+    const result = await discoverLiquipediaPortrait({ id: "player-9", canonicalHandle: "TenZ" }, stageDir, client, outcome => outcomes.push(outcome));
+    expect(result).not.toBeNull();
+    expect(fetch.mock.calls[2][0]).toBe(thumbnailUrl);
+    expect(new URL(fetch.mock.calls[1][0]).searchParams.get("iiurlwidth")).toBe("512");
+    expect(result?.source).toMatchObject({ originalUrl: sourceUrl, url: "https://liquipedia.net/commons/File:TenZ.jpg" });
+    expect(outcomes).toEqual([{ playerId: "player-9", kind: "accepted" }]);
+  });
+
   it("reuses cached JSON without a network request", async () => {
     const cache = mkdtempSync(join(tmpdir(), "portrait-cache-"));
     const url = "https://liquipedia.test/api?action=query";
