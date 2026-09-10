@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { PlayerIdentity, SourceRef } from "@/features/game/domain";
 import { sourceRefSchema } from "@/features/game/schema";
-import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedRiotPortraitOriginalUrl } from "./portrait-policy";
+import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedRiotPortraitOriginalUrl, isRiotGamesCopyrightOwner } from "./portrait-policy";
 import { isApprovedPortraitMediaUrl, isApprovedRiotSourcePage, portraitSourceIdPattern, portraitSourceIdentity, validatePortraitSourceMetadata } from "./portrait-source";
 
 const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
@@ -119,12 +119,12 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
       && source.license.trim().toLowerCase() === "permission"
       && hasRiotGamesCopyrightCredit(source.credit)
       && isApprovedRiotPortraitOriginalUrl(source.originalUrl);
-    if ((metadata.reuseBasis === "riot-fan-policy" && metadata.copyrightOwner !== "Riot Games") || (metadata.sourceKind !== "liquipedia" && (metadata.copyrightOwner !== "Riot Games" || !isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl)))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
+    if ((metadata.reuseBasis === "riot-fan-policy" && !isRiotGamesCopyrightOwner(metadata.copyrightOwner)) || (metadata.sourceKind !== "liquipedia" && (!isRiotGamesCopyrightOwner(metadata.copyrightOwner) || !isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl)))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
     const approvedReuse = metadata.reuseBasis === "open-license"
       ? isApprovedOpenPortraitLicense(source.license)
       : metadata.reuseBasis === "riot-fan-policy"
-        ? metadata.sourceKind === "liquipedia" ? approvedLiquipediaRiotPolicy : metadata.copyrightOwner === "Riot Games"
-        : source.license.trim().toLowerCase() === "permission" && Boolean(metadata.permissionUrl);
+        ? metadata.sourceKind === "liquipedia" ? approvedLiquipediaRiotPolicy : isRiotGamesCopyrightOwner(metadata.copyrightOwner)
+        : source.license.trim().toLowerCase() === "permission" && metadata.permissionUrl !== undefined && (metadata.sourceKind === "liquipedia" || isApprovedRiotSourcePage(metadata.permissionUrl));
     if (!approvedReuse) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
   }
 
