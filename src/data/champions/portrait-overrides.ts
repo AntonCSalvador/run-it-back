@@ -21,7 +21,7 @@ export interface CropFocus {
 interface PortraitOverrideBase {
   playerId: string;
   sourceKind: (typeof PORTRAIT_SOURCE_KINDS)[number];
-  sourcePage: string;
+  sourcePageUrl: string;
   credit: string;
   copyrightOwner: string;
   reuseBasis: (typeof PORTRAIT_REUSE_BASES)[number];
@@ -52,7 +52,7 @@ const httpsUrl = z.url().refine(
 const reviewedBaseSchema = z.object({
   playerId: z.string().regex(/^player-\d+$/),
   sourceKind: z.enum(PORTRAIT_SOURCE_KINDS),
-  sourcePage: httpsUrl.refine(isApprovedRiotSourcePage, "approved Riot source page required"),
+  sourcePageUrl: httpsUrl,
   credit: z.string().trim().min(1),
   copyrightOwner: z.string().trim().min(1),
   reuseBasis: z.enum(PORTRAIT_REUSE_BASES),
@@ -67,7 +67,7 @@ const reviewedBaseSchema = z.object({
 
 const stillOverrideSchema = reviewedBaseSchema.extend({
   sourceKind: z.enum(PORTRAIT_SOURCE_KINDS.filter(kind => kind !== "vct-broadcast-frame")),
-  mediaUrl: httpsUrl.refine(isApprovedPortraitMediaUrl, "approved portrait media URL required"),
+  mediaUrl: httpsUrl,
 }).strict();
 
 const frameOverrideSchema = reviewedBaseSchema.extend({
@@ -86,6 +86,33 @@ const portraitOverrideSchema = z.discriminatedUnion("sourceKind", [
 ]);
 
 const isRiotLicense = (license: string) => /riot.*(?:legal|fan[ -]?policy|terms)/i.test(license);
+const isApprovedLiquipediaDescriptionPage = (url: string) => {
+  const parsed = new URL(url);
+  return parsed.hostname === "liquipedia.net" && parsed.pathname.startsWith("/commons/File:");
+};
+const isApprovedLiquipediaMediaUrl = (url: string) => {
+  const parsed = new URL(url);
+  return parsed.hostname === "liquipedia.net" && parsed.pathname.startsWith("/commons/images/");
+};
+
+function validateSource(row: PortraitOverride): void {
+  if (row.sourceKind === "liquipedia") {
+    if (!isApprovedLiquipediaDescriptionPage(row.sourcePageUrl)) {
+      throw new Error(`approved Liquipedia Commons description page required for ${row.playerId}`);
+    }
+    if (!isApprovedLiquipediaMediaUrl(row.mediaUrl)) {
+      throw new Error(`approved Liquipedia Commons media URL required for ${row.playerId}`);
+    }
+    return;
+  }
+
+  if (!isApprovedRiotSourcePage(row.sourcePageUrl)) {
+    throw new Error(`approved Riot source page required for ${row.playerId}`);
+  }
+  if (row.sourceKind !== "vct-broadcast-frame" && !isApprovedPortraitMediaUrl(row.mediaUrl)) {
+    throw new Error(`approved portrait media URL required for ${row.playerId}`);
+  }
+}
 
 function validateReuse(row: PortraitOverride): void {
   if (row.reuseBasis === "riot-fan-policy") {
@@ -124,6 +151,7 @@ export function parsePortraitOverrides(
       const expectedPath = new RegExp(`^assets/portrait-sources/${row.playerId}\\.(?:png|jpg|jpeg|webp)$`);
       if (!expectedPath.test(row.capturePath)) throw new Error(`capture path must match ${row.playerId}`);
     }
+    validateSource(row);
     validateReuse(row);
   }
 

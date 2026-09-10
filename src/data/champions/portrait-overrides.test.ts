@@ -6,7 +6,7 @@ const players = [{ id: "player-817", canonicalHandle: "FiNESSE" }] as const;
 const officialStill = {
   playerId: "player-817",
   sourceKind: "riot-portrait",
-  sourcePage: "https://valorantesports.com/news/finesse",
+  sourcePageUrl: "https://valorantesports.com/news/finesse",
   mediaUrl: "https://cmsassets.rgpub.io/images/finesse.png",
   credit: "Valorant Esports / Riot Games",
   copyrightOwner: "Riot Games",
@@ -25,7 +25,7 @@ describe("portrait overrides", () => {
     const frame = {
       ...officialStill,
       sourceKind: "vct-broadcast-frame",
-      sourcePage: "https://valorantesports.com/video/finesse",
+      sourcePageUrl: "https://valorantesports.com/video/finesse",
       videoUrl: "https://www.youtube.com/watch?v=official-video",
       videoTimestampSeconds: 123.5,
       capturePath: "assets/portrait-sources/player-817.png",
@@ -35,11 +35,26 @@ describe("portrait overrides", () => {
     expect(parsePortraitOverrides([frameWithoutMedia], players)).toEqual([frameWithoutMedia]);
   });
 
+  it("parses a Liquipedia Commons still under its open license", () => {
+    const liquipediaStill = {
+      ...officialStill,
+      sourceKind: "liquipedia",
+      sourcePageUrl: "https://liquipedia.net/commons/File:FiNESSE.jpg",
+      mediaUrl: "https://liquipedia.net/commons/images/a/a/FiNESSE.jpg",
+      credit: "Example Photographer",
+      copyrightOwner: "Example Photographer",
+      reuseBasis: "open-license",
+      license: "cc-by-sa-4.0",
+    };
+
+    expect(parsePortraitOverrides([liquipediaStill], players)).toEqual([liquipediaStill]);
+  });
+
   it.each([
     ["unknown player", { ...officialStill, playerId: "player-999" }, /unknown player/],
     ["duplicate player", [officialStill, officialStill], /duplicate player/],
     ["identity confirmation", { ...officialStill, identityConfirmed: false }, /identity confirmation/],
-    ["HTTP source", { ...officialStill, sourcePage: "http://valorantesports.com/news/finesse" }, /HTTPS/],
+    ["HTTP source", { ...officialStill, sourcePageUrl: "http://valorantesports.com/news/finesse" }, /HTTPS/],
     ["Riot ownership", { ...officialStill, copyrightOwner: "Example Photographer" }, /Riot ownership/],
     ["capture path", { ...officialStill, sourceKind: "vct-broadcast-frame", capturePath: "../escape.png", videoUrl: "https://www.youtube.com/watch?v=official-video", videoTimestampSeconds: 123.5 }, /capture path/],
   ])("rejects %s", (_label, override, message) => {
