@@ -482,5 +482,77 @@
     "identityConfirmed": true,
     "sourcePublishedAt": "2021-09-13",
     "event": "VCT 2021 Stage 3 Masters Berlin"
+  },
+  {
+    "playerId": "player-114",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Apeks_Enzo_at_VCT_Ascension_EMEA_2023.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/e/e5/Apeks_Enzo_at_VCT_Ascension_EMEA_2023.jpg",
+    "originalUrl": "https://www.flickr.com/photos/vctemea/53046051574/",
+    "credit": "Hara Amorós / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2023-07-14",
+    "event": "VCT 2023 Ascension EMEA",
+    "cropFocus": {
+      "x": 0.45,
+      "y": 0.4
+    }
+  },
+  {
+    "playerId": "player-2348",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:BOOM_Esports_famouz_at_the_VALORANT_Champions_2022.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/6/62/BOOM_Esports_famouz_at_the_VALORANT_Champions_2022.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/52327527688/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2022-09-01",
+    "event": "VALORANT Champions 2022",
+    "cropFocus": {
+      "x": 0.5,
+      "y": 0.28
+    }
+  },
+  {
+    "playerId": "player-4871",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:RRQ_xffero_at_Valorant_Champions_2025.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/4/40/RRQ_xffero_at_Valorant_Champions_2025.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/54789548583/",
+    "credit": "Colin Young-Wolff / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2025-09-15",
+    "event": "VALORANT Champions Paris 2025",
+    "cropFocus": {
+      "x": 0.57,
+      "y": 0.35
+    }
+  },
+  {
+    "playerId": "player-9800",
+    "sourceKind": "liquipedia",
+    "sourcePageUrl": "https://liquipedia.net/commons/File:Paper_Rex_mindfreak_at_VCT_2021_Masters_Berlin.jpg",
+    "mediaUrl": "https://liquipedia.net/commons/images/f/f5/Paper_Rex_mindfreak_at_VCT_2021_Masters_Berlin.jpg",
+    "originalUrl": "https://www.flickr.com/photos/valorantesports/51447087912/",
+    "credit": "Lance Skundrich / Riot Games",
+    "copyrightOwner": "Riot Games",
+    "reuseBasis": "riot-fan-policy",
+    "license": "permission",
+    "identityConfirmed": true,
+    "sourcePublishedAt": "2021-09-11",
+    "event": "VCT 2021 Stage 3 Masters Berlin",
+    "cropFocus": {
+      "x": 0.55,
+      "y": 0.36
+    }
   }
 ]
