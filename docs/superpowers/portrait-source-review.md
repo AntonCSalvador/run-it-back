@@ -1,4 +1,4 @@
-# Reviewed portrait sources: 2021 cohort
+# Reviewed portrait sources
 
 Reviewed 2026-09-10. This records source research, not a production portrait import. Exact description pages, media URLs, credits, owners and crop focus are in `src/data/champions/portrait-overrides.json`.
 
