@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { PlayerIdentity, SourceRef } from "@/features/game/domain";
 import { sourceRefSchema } from "@/features/game/schema";
-import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedRiotPortraitOriginalUrl, isRiotGamesCopyrightOwner } from "./portrait-policy";
+import { hasRiotGamesCopyrightCredit, isApprovedOpenPortraitLicense, isApprovedReviewedRiotPortraitOriginalUrl, isRiotGamesCopyrightOwner } from "./portrait-policy";
 import { isApprovedPortraitMediaUrl, isApprovedRiotSourcePage, portraitSourceIdPattern, portraitSourceIdentity, validatePortraitSourceMetadata } from "./portrait-source";
 
 const portraitPath = /^\/assets\/players\/player-(\d+)\.[a-f0-9]{12}\.webp$/;
@@ -118,7 +118,7 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
       && metadata.reuseBasis === "riot-fan-policy"
       && ["permission", "riot"].includes(source.license.trim().toLowerCase())
       && hasRiotGamesCopyrightCredit(source.credit)
-      && isApprovedRiotPortraitOriginalUrl(source.originalUrl);
+      && isApprovedReviewedRiotPortraitOriginalUrl(source.originalUrl);
     if ((metadata.reuseBasis === "riot-fan-policy" && !isRiotGamesCopyrightOwner(metadata.copyrightOwner)) || (metadata.sourceKind !== "liquipedia" && (!isRiotGamesCopyrightOwner(metadata.copyrightOwner) || !isApprovedRiotSourcePage(source.url) || !isApprovedPortraitMediaUrl(source.originalUrl)))) throw new Error(`portrait source reuse grounds are not approved ${asset.sourceId}`);
     const approvedReuse = metadata.reuseBasis === "open-license"
       ? isApprovedOpenPortraitLicense(source.license)

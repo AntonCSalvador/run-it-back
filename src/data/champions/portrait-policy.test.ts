@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { assessPortrait, choosePortrait, parseFileInfo, isApprovedRiotPortraitOriginalUrl } from "./portrait-policy";
+import { assessPortrait, choosePortrait, parseFileInfo, isApprovedRiotPortraitOriginalUrl, isApprovedReviewedRiotPortraitOriginalUrl } from "./portrait-policy";
+import { parsePortraitOverrides } from "./portrait-overrides";
 
 const riot = `{{FileInfo
 |featured=BeYN
@@ -12,10 +13,18 @@ const riot = `{{FileInfo
 }}`;
 
 describe("portrait source policy", () => {
+  it.each(["vctemea", "vctpacific", "valesportsbr", "191250687@N03", "145885012@N07"])("requires explicit review for regional Riot account %s", account => {
+    const originalUrl = `https://www.flickr.com/photos/${account}/54347821048/`;
+    const metadata = riot.replace("https://www.flickr.com/photos/valorantesports/54347821048/", originalUrl);
+    expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", metadata).accepted).toBe(false);
+    expect(isApprovedRiotPortraitOriginalUrl(originalUrl)).toBe(false);
+    const override = { playerId: "player-1", sourceKind: "liquipedia", sourcePageUrl: "https://liquipedia.net/commons/File:DRX_BeYN.jpg", mediaUrl: "https://liquipedia.net/commons/images/a/ab/DRX_BeYN.jpg", originalUrl, credit: "Liu YiCun / Riot Games", copyrightOwner: "Riot Games", reuseBasis: "riot-fan-policy", license: "permission", identityConfirmed: true };
+    expect(parsePortraitOverrides([override], [{ id: "player-1", canonicalHandle: "BeYN" }])).toEqual([override]);
+  });
   it.each(["vctemea", "vctpacific", "valesportsbr", "191250687@N03", "145885012@N07"])("accepts reviewed regional Riot account %s", account => {
-    expect(isApprovedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}/123/`)).toBe(true);
-    expect(isApprovedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}-unverified/123/`)).toBe(false);
-    expect(isApprovedRiotPortraitOriginalUrl(`https://flickr.com.example/photos/${account}/123/`)).toBe(false);
+    expect(isApprovedReviewedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}/123/`)).toBe(true);
+    expect(isApprovedReviewedRiotPortraitOriginalUrl(`https://www.flickr.com/photos/${account}-unverified/123/`)).toBe(false);
+    expect(isApprovedReviewedRiotPortraitOriginalUrl(`https://flickr.com.example/photos/${account}/123/`)).toBe(false);
   });
   it("accepts a Riot-owned player portrait under the noncommercial fan policy", () => {
     expect(assessPortrait("BeYN", "File:DRX BeYN.jpg", riot)).toMatchObject({
