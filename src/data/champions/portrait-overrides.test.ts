@@ -5,6 +5,7 @@ import productionOverrides from "./portrait-overrides.json";
 
 const cohort2021 = ["Witz", "v1xen", "doma", "sheydos", "gtn", "MAGNUM", "dispenser", "Patiphan", "d3ffo", "Klaus", "Sushiboys", "SuperBusS", "SantaGolf", "SicK", "dapr", "Chronicle", "ShahZaM", "zombs", "mitch", "frz", "xand", "nzr", "saadhak", "k1Ng", "Lakia", "murizzz", "FiNESSE", "mazin"];
 const cohort2022 = ["Enzo", "Famouz", "xffero", "mindfreak"];
+const cohort2023 = ["something", "Demon1", "DaveeyS", "DK", "Sayf", "carpe", "MOJJ", "nizhaoTZH", "ban", "AtaKaptan", "MrFaliN"];
 
 function missingOverrideHandles(handles: readonly string[]) {
   const reviewed = new Set(parsePortraitOverrides(productionOverrides, championsDataset.players).map(row => row.playerId));
@@ -19,10 +20,14 @@ it("2022 portrait cohort has a reviewed override for every required player", () 
   expect(missingOverrideHandles(cohort2022)).toEqual([]);
 });
 
-it("keeps the reviewed 2021 and 2022 cohorts unique and complete", () => {
+it("2023 portrait cohort has a reviewed override for every required player", () => {
+  expect(missingOverrideHandles(cohort2023)).toEqual([]);
+});
+
+it("keeps the reviewed 2021 through 2023 cohorts unique and complete", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
-  expect(reviewed).toHaveLength(32);
-  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(32);
+  expect(reviewed).toHaveLength(43);
+  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(43);
 });
 
 const players = [{ id: "player-817", canonicalHandle: "FiNESSE" }] as const;
