@@ -6,6 +6,7 @@ import productionOverrides from "./portrait-overrides.json";
 const cohort2021 = ["Witz", "v1xen", "doma", "sheydos", "gtn", "MAGNUM", "dispenser", "Patiphan", "d3ffo", "Klaus", "Sushiboys", "SuperBusS", "SantaGolf", "SicK", "dapr", "Chronicle", "ShahZaM", "zombs", "mitch", "frz", "xand", "nzr", "saadhak", "k1Ng", "Lakia", "murizzz", "FiNESSE", "mazin"];
 const cohort2022 = ["Enzo", "Famouz", "xffero", "mindfreak"];
 const cohort2023 = ["something", "Demon1", "DaveeyS", "DK", "Sayf", "carpe", "MOJJ", "nizhaoTZH", "ban", "AtaKaptan", "MrFaliN"];
+const cohort2024Overrides = ["Kicks", "Foxy9", "johnqt", "JitBoyS", "MiniBoo", "Wo0t", "runneR", "primmie", "hiro", "benjyfishy", "Karon", "Governor", "Flex1n", "heybay", "yetujey", "Autumn", "t3xture"];
 
 function missingOverrideHandles(handles: readonly string[]) {
   const reviewed = new Set(parsePortraitOverrides(productionOverrides, championsDataset.players).map(row => row.playerId));
@@ -24,15 +25,19 @@ it("2023 portrait cohort has a reviewed override for every required player", () 
   expect(missingOverrideHandles(cohort2023)).toEqual([]);
 });
 
+it("2024 portrait cohort has a reviewed override for every required player", () => {
+  expect(missingOverrideHandles(cohort2024Overrides)).toEqual([]);
+});
+
 it("records the reviewed DaveeyS Flickr publication date", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
   expect(reviewed.find(row => row.playerId === "player-2764")?.sourcePublishedAt).toBe("2023-02-23");
 });
 
-it("keeps the reviewed 2021 through 2023 cohorts unique and complete", () => {
+it("keeps the reviewed 2021 through 2024 cohorts unique and complete", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
-  expect(reviewed).toHaveLength(43);
-  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(43);
+  expect(reviewed).toHaveLength(60);
+  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(60);
 });
 
 const players = [{ id: "player-817", canonicalHandle: "FiNESSE" }] as const;
