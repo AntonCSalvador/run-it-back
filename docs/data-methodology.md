@@ -176,7 +176,31 @@ display (for example TenZ has distinct 2021 and 2024 Sentinels cards). A handle
 collision is never automatically merged; it needs a sourced correction. Team
 names use event-time DRX and Bilibili Gaming rather than later sponsor labels.
 
-All portraits/logos are null until a local asset has a stable `/assets/...`
-path and an asset source containing URL, retrieval date, credit, and license.
-Corrections must name the affected card/identity, cite a replacement source,
-update its evidence row, and rerun the validator and extraction check.
+All 239 canonical player identities have a checked-in, local portrait with a
+stable `/assets/...` path. Sources were reviewed in priority order: Riot Games
+and official VALORANT Champions Tour material first, then Liquipedia when its
+file record established an approved open license, Riot ownership covered by the
+noncommercial fan policy, or explicit permission transferable to this project.
+Fair-use files, unknown ownership, permission limited to Liquipedia, VLR
+scrapes, unverified social copies, and hotlinks are forbidden.
+
+Each portrait source records its source page and original media, retrieval date,
+credit, copyright owner, reuse basis, license, and confirmed player identity.
+Regenerate the reviewed catalog only with an explicit retrieval date:
+
+```bash
+npm run import:portraits -- --retrieved-at YYYY-MM-DD
+```
+
+Validation requires 239 distinct players, portrait rows, source records, and
+local WebP paths. Runtime initials remain an accessibility safeguard for a
+missing or corrupt deployed file; they indicate a runtime or deployment failure,
+not an intentionally uncovered player.
+
+If a rights holder requests a takedown or source terms change, identify the
+affected record from `portrait-sources.json`, replace it with another approved
+source before release, rerun the import and complete validator, and inspect the
+replacement portrait. Do not publish a partial catalog as the remedy.
+Corrections must name the affected card or identity, cite the replacement
+source, update its evidence row when applicable, and rerun the validator and
+extraction check.
