@@ -101,7 +101,8 @@ describe("portrait overrides", () => {
       videoTimestampSeconds: 123.5,
       capturePath: "assets/portrait-sources/player-817.png",
     };
-    const { mediaUrl: _mediaUrl, ...frameWithoutMedia } = frame;
+    const frameWithoutMedia: Record<string, unknown> = { ...frame };
+    delete frameWithoutMedia.mediaUrl;
 
     expect(parsePortraitOverrides([frameWithoutMedia], players)).toEqual([frameWithoutMedia]);
   });

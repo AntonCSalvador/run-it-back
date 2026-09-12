@@ -43,7 +43,8 @@ describe("portrait catalog", () => {
   });
 
   it("requires structured portrait provenance fields", () => {
-    const { sourceKind: _sourceKind, ...missing } = liquipediaSource;
+    const missing: Record<string, unknown> = { ...liquipediaSource };
+    delete missing.sourceKind;
     expect(() => validatePortraitCatalog([player], [row], [missing])).toThrow(/structured portrait provenance/);
   });
 
