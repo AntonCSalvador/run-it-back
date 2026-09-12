@@ -108,10 +108,10 @@ The importer reuses the local `.cache/liquipedia-portraits` response cache,
 accepts only recorded open licenses or Riot Games policy-eligible originals,
 and rejects ambiguous, incomplete, or unsupported reuse terms. Fair-use claims
 and permission granted only to Liquipedia are not reusable here. Each accepted
-image is recorded in
-`src/data/champions/portrait-assets.json` and has its URL, original URL,
-retrieval date, credit, and license in the per-image
-`src/data/champions/portrait-sources.json` catalog.
+image is recorded in the
+[portrait asset catalog](src/data/champions/portrait-assets.json), and its URL,
+original URL, retrieval date, credit, and license are recorded in the
+[portrait source catalog](src/data/champions/portrait-sources.json).
 
 Run It Back is free and noncommercial. Remove Riot Games policy-based assets
 before making the project commercial. Contributions must use original assets

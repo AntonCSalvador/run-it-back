@@ -185,8 +185,10 @@ Fair-use files, unknown ownership, permission limited to Liquipedia, VLR
 scrapes, unverified social copies, and hotlinks are forbidden.
 
 Each portrait source records its source page and original media, retrieval date,
-credit, copyright owner, reuse basis, license, and confirmed player identity.
-Regenerate the reviewed catalog only with an explicit retrieval date:
+credit, copyright owner, reuse basis, and license. Reviewed override records
+confirm player identity before import; `portrait-assets.json` then links each
+`playerId` to its `sourceId` and corresponding source row. Regenerate the
+reviewed catalog only with an explicit retrieval date:
 
 ```bash
 npm run import:portraits -- --retrieved-at YYYY-MM-DD
