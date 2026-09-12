@@ -132,3 +132,19 @@ The official [Champions Seoul event guide](https://valorantesports.com/en-SG/new
 | yetujey | [FUT vs EDG Map 1, 660.7s](https://www.youtube.com/watch?v=0smTEiQk3sQ&t=660s), published 2024-08-04 | Full-screen FUT graphic places `YETUJEY` directly beneath the corresponding portrait. The contained 100×100 crop is stored as `assets/portrait-sources/player-8369.png`. |
 
 The cohort assertion was observed failing with exactly all seventeen required handles before source rows were added, then with only runneR, heybay, and yetujey after the fourteen still rows. All fourteen remote media URLs passed `loadRemotePortrait` (15 MiB limit) and all three captures passed `loadPortraitCapture`; every source passed `convertPortrait` (80 MP limit). The seventeen generated 256×256 WebP previews were visually inspected, with crop focus added only where attention crop retained a second person. The manifest now contains 60 cumulative unique, policy-valid overrides. Production catalog import remains deferred.
+
+## 2025 cohort source review
+
+Reviewed 2026-09-10. Riot/VCT publication was checked first. Each selected Commons file explicitly identifies its player in `featured` metadata and links a Riot-owned original on an approved VALORANT Esports Flickr account. Org-owned and Liquipedia-only material was rejected. No identity judgment used facial recognition or roster position. `free1ng` and `HYUNMIN` remain outside the override manifest because bounded automatic Liquipedia discovery supplies them.
+
+| Players | Reviewed Riot/VCT origin | Identity and rights evidence |
+| --- | --- | --- |
+| skuba, PatMen, brawk, Jemkin, iZu, SpiritZ1, Akeman, grubinho, artzin, Monyet, kaajak | VALORANT Champions Tour Photos (`valorantesports`) | Commons `featured` metadata names each player; corresponding 2025 Champions originals retain Riot Games ownership. |
+| Nicc | VALORANT Champions Tour Photos (`valorantesports`) | Commons identifies Nicc; the 2026 Masters London original credits Colin Young-Wolff / Riot Games. |
+| ara, keiko, kamo, paTiTek | VALORANT Champions Tour EMEA (`vctemea`) | Commons identifies each player. Reviewed EMEA originals retain Riot ownership; stale `valesports` links for keiko and kamo were normalized to the same photo IDs on `vctemea`. |
+| crazyguy, DH, Kushy | VALORANT Champions Tour Pacific (`vctpacific`) | Commons identifies each player and links Riot-owned Pacific originals. Kushy's short Flickr URL resolves to photo `54512068991` on the reviewed account. |
+| mada | VALORANT Champions Tour Photos (`valorantesports`) | Commons identifies mada; the 2025 Champions final original credits Colin Young-Wolff / Riot Games. |
+
+All twenty media URLs passed `loadRemotePortrait` and `convertPortrait`. Their 256×256 outputs were visually inspected: each shows one clear intended subject, no face is clipped, and no roster text dominates. No crop-focus override or repository capture was needed. The cohort test was first observed failing with all twenty required handles, then the complete override suite passed with 80 unique policy-valid rows.
+
+The full transactional import ran only after that 80-row gate passed, using retrieval date 2026-09-10. It reported `preserved=153 imported=86 replaced=0 uncovered=0 total=239`. All 86 new WebPs were inspected in player-ID order against their override or automatic record. The six automatic rows (`player-9`, `player-485`, `player-4742`, `player-35013`, `player-1916`, and `player-28400`) use `sourceKind: liquipedia`; cached MediaWiki requests used `iiurlwidth=512` and selected `thumburl` before original URLs.

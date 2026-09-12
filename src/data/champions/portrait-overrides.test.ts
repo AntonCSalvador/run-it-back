@@ -7,6 +7,7 @@ const cohort2021 = ["Witz", "v1xen", "doma", "sheydos", "gtn", "MAGNUM", "dispen
 const cohort2022 = ["Enzo", "Famouz", "xffero", "mindfreak"];
 const cohort2023 = ["something", "Demon1", "DaveeyS", "DK", "Sayf", "carpe", "MOJJ", "nizhaoTZH", "ban", "AtaKaptan", "MrFaliN"];
 const cohort2024Overrides = ["Kicks", "Foxy9", "johnqt", "JitBoyS", "MiniBoo", "Wo0t", "runneR", "primmie", "hiro", "benjyfishy", "Karon", "Governor", "Flex1n", "heybay", "yetujey", "Autumn", "t3xture"];
+const cohort2025Overrides = ["skuba", "ara", "keiko", "Nicc", "PatMen", "crazyguy", "kamo", "brawk", "Jemkin", "iZu", "paTiTek", "SpiritZ1", "DH", "Kushy", "mada", "Akeman", "grubinho", "artzin", "Monyet", "kaajak"];
 
 function missingOverrideHandles(handles: readonly string[]) {
   const reviewed = new Set(parsePortraitOverrides(productionOverrides, championsDataset.players).map(row => row.playerId));
@@ -29,15 +30,19 @@ it("2024 portrait cohort has a reviewed override for every required player", () 
   expect(missingOverrideHandles(cohort2024Overrides)).toEqual([]);
 });
 
+it("2025 portrait cohort has a reviewed override for every required player", () => {
+  expect(missingOverrideHandles(cohort2025Overrides)).toEqual([]);
+});
+
 it("records the reviewed DaveeyS Flickr publication date", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
   expect(reviewed.find(row => row.playerId === "player-2764")?.sourcePublishedAt).toBe("2023-02-23");
 });
 
-it("keeps the reviewed 2021 through 2024 cohorts unique and complete", () => {
+it("keeps all reviewed portrait cohorts unique and complete", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
-  expect(reviewed).toHaveLength(60);
-  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(60);
+  expect(reviewed).toHaveLength(80);
+  expect(new Set(reviewed.map(row => row.playerId)).size).toBe(80);
 });
 
 const players = [{ id: "player-817", canonicalHandle: "FiNESSE" }] as const;

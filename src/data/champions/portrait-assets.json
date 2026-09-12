@@ -42,6 +42,12 @@
     "sha256": "d4b2e914680838682955e8eb45fe4d9f0f892899a50e7cc355f16fc81e3da519"
   },
   {
+    "playerId": "player-10782",
+    "portrait": "/assets/players/player-10782.e7fca379cb7a.webp",
+    "sourceId": "liquipedia-portrait-10782",
+    "sha256": "e7fca379cb7aebeba30e711674ad2a8081ab85e5f6de30857e361f1a8e0d3697"
+  },
+  {
     "playerId": "player-109",
     "portrait": "/assets/players/player-109.07a410edb21f.webp",
     "sourceId": "liquipedia-portrait-109",
@@ -60,6 +66,18 @@
     "sha256": "ba6fcc907a91e044e4904a446f8f9a86c0e5bd0e9dbef0619652bf264193af2b"
   },
   {
+    "playerId": "player-11118",
+    "portrait": "/assets/players/player-11118.657b87303bb7.webp",
+    "sourceId": "liquipedia-portrait-11118",
+    "sha256": "657b87303bb7d840aaef4dd567510fa6d9a15f9fb374c08c493958dc3f353f76"
+  },
+  {
+    "playerId": "player-11134",
+    "portrait": "/assets/players/player-11134.0f44de72e00d.webp",
+    "sourceId": "liquipedia-portrait-11134",
+    "sha256": "0f44de72e00d2c3caf7477f380852cfa39d6001bbfb0e60ed5856234ff714787"
+  },
+  {
     "playerId": "player-11218",
     "portrait": "/assets/players/player-11218.48595e365838.webp",
     "sourceId": "liquipedia-portrait-11218",
@@ -72,10 +90,22 @@
     "sha256": "a006c68e1af7aaf2fc45c984f2acfec331df5824844210298ecabc445fd78030"
   },
   {
+    "playerId": "player-11332",
+    "portrait": "/assets/players/player-11332.f6e364d9f232.webp",
+    "sourceId": "liquipedia-portrait-11332",
+    "sha256": "f6e364d9f232ff53951bbfc9a1a39d87be77f93d130b5c5432bf74b964adc967"
+  },
+  {
     "playerId": "player-1139",
     "portrait": "/assets/players/player-1139.36cc4bb2b45b.webp",
     "sourceId": "liquipedia-portrait-1139",
     "sha256": "36cc4bb2b45bad9f01737a6d4f1c8d79134e5a5eaf2ad1bd54ae076f54720f52"
+  },
+  {
+    "playerId": "player-114",
+    "portrait": "/assets/players/player-114.dc4a2135c610.webp",
+    "sourceId": "liquipedia-portrait-114",
+    "sha256": "dc4a2135c610e561dee52f2f9c3ef5e6ae8265a9bed01f7245960159487c81cc"
   },
   {
     "playerId": "player-1144",
@@ -84,16 +114,46 @@
     "sha256": "eb396fb93c29cf00d90b063f1fc5d6ff1455ab3bb28f8096e58b9e4d1578d70d"
   },
   {
+    "playerId": "player-11494",
+    "portrait": "/assets/players/player-11494.26206c069667.webp",
+    "sourceId": "liquipedia-portrait-11494",
+    "sha256": "26206c0696674fab315fbf71203c8040d90a7da78bb20ba22ba1481d819c701e"
+  },
+  {
+    "playerId": "player-11524",
+    "portrait": "/assets/players/player-11524.53c2929ddf80.webp",
+    "sourceId": "liquipedia-portrait-11524",
+    "sha256": "53c2929ddf80b803808f306ec9ddfea88d9d518bc59ef99c7a0e8da457aab9d0"
+  },
+  {
     "playerId": "player-11527",
     "portrait": "/assets/players/player-11527.2b47f284f41f.webp",
     "sourceId": "liquipedia-portrait-11527",
     "sha256": "2b47f284f41f9b569202034334f95db8ee7dd64ce885a52ef0613b4de397825c"
   },
   {
+    "playerId": "player-11600",
+    "portrait": "/assets/players/player-11600.38231ab28fbf.webp",
+    "sourceId": "liquipedia-portrait-11600",
+    "sha256": "38231ab28fbf7045775855fa00228c3998a5ad84ef50ef4c0491cbf171d71d3e"
+  },
+  {
+    "playerId": "player-1219",
+    "portrait": "/assets/players/player-1219.43d95718c4dd.webp",
+    "sourceId": "liquipedia-portrait-1219",
+    "sha256": "43d95718c4dd985b94866e7b7ec2c611724775f302cb71fdf3f098e33e20c0ee"
+  },
+  {
     "playerId": "player-12365",
     "portrait": "/assets/players/player-12365.d35fce42a5d6.webp",
     "sourceId": "liquipedia-portrait-12365",
     "sha256": "d35fce42a5d66e712e3e3f04b406a7c7403287aaf7b5f54fe244632dbd381b68"
+  },
+  {
+    "playerId": "player-1265",
+    "portrait": "/assets/players/player-1265.1015eb13ee23.webp",
+    "sourceId": "liquipedia-portrait-1265",
+    "sha256": "1015eb13ee2355142f4cc436c806aecbd3da14114276b68d6ca8db4df5fe9a94"
   },
   {
     "playerId": "player-1294",
@@ -114,10 +174,28 @@
     "sha256": "d54ae990b3886e867aca4f0350c1931bd427049886a4f37e14f27bbb2b1a8daf"
   },
   {
+    "playerId": "player-1369",
+    "portrait": "/assets/players/player-1369.8b5cbc4d714a.webp",
+    "sourceId": "liquipedia-portrait-1369",
+    "sha256": "8b5cbc4d714a7db14b659477559d5ca4aac8dbf498f508bc433e07c8a684129b"
+  },
+  {
+    "playerId": "player-13744",
+    "portrait": "/assets/players/player-13744.cbb244a84356.webp",
+    "sourceId": "liquipedia-portrait-13744",
+    "sha256": "cbb244a843560474e13305c949c4a92349897a2601806bc2a8aa7e36e41b87c6"
+  },
+  {
     "playerId": "player-13768",
     "portrait": "/assets/players/player-13768.901eb8c97249.webp",
     "sourceId": "liquipedia-portrait-13768",
     "sha256": "901eb8c972496d157f9977a79662c88f849ddc4b9e7edc08ef683e9eb88b42f2"
+  },
+  {
+    "playerId": "player-13788",
+    "portrait": "/assets/players/player-13788.42100ac108fa.webp",
+    "sourceId": "liquipedia-portrait-13788",
+    "sha256": "42100ac108fa63d024a3312df833f0b3341fecfb5a77ec96db008edf12167089"
   },
   {
     "playerId": "player-1380",
@@ -144,6 +222,18 @@
     "sha256": "ff80306d6d7bada61d40a4cc3a12efe7c26fd648a480c282b2de3a63f5bcbe51"
   },
   {
+    "playerId": "player-1428",
+    "portrait": "/assets/players/player-1428.e85c60686b2b.webp",
+    "sourceId": "liquipedia-portrait-1428",
+    "sha256": "e85c60686b2b800dd5fadef0127a53db998851bbb3d69e6148f2dfc5faaf0924"
+  },
+  {
+    "playerId": "player-1430",
+    "portrait": "/assets/players/player-1430.0bce567e8320.webp",
+    "sourceId": "liquipedia-portrait-1430",
+    "sha256": "0bce567e8320f99b365d53911fbbf65734cc8119fbb48dd6f6d75d5dc9491e15"
+  },
+  {
     "playerId": "player-1457",
     "portrait": "/assets/players/player-1457.652c31cd7759.webp",
     "sourceId": "liquipedia-portrait-1457",
@@ -154,6 +244,12 @@
     "portrait": "/assets/players/player-14669.c34e61439b7d.webp",
     "sourceId": "liquipedia-portrait-14669",
     "sha256": "c34e61439b7d24216177b8e68df8dc9e88534a4d8d7e81402761176aeb57ed55"
+  },
+  {
+    "playerId": "player-14681",
+    "portrait": "/assets/players/player-14681.c94ec2034f3f.webp",
+    "sourceId": "liquipedia-portrait-14681",
+    "sha256": "c94ec2034f3f625e809cf02314e9de76d7217a0a3e46d2cc054ec19696856d75"
   },
   {
     "playerId": "player-1533",
@@ -180,6 +276,18 @@
     "sha256": "0db8cd7a0320856337a45290ba50734da2a58ecf014323089922ad11fd206607"
   },
   {
+    "playerId": "player-1585",
+    "portrait": "/assets/players/player-1585.b8c76b1bb904.webp",
+    "sourceId": "liquipedia-portrait-1585",
+    "sha256": "b8c76b1bb9041e0760e0eb739320614b80cb3da660fe9c05117a1084a584faee"
+  },
+  {
+    "playerId": "player-17086",
+    "portrait": "/assets/players/player-17086.818c3c7bc868.webp",
+    "sourceId": "liquipedia-portrait-17086",
+    "sha256": "818c3c7bc868900c6cae27324f7055dedd60e53082475b52ff3540852d365f43"
+  },
+  {
     "playerId": "player-1711",
     "portrait": "/assets/players/player-1711.6766a5028399.webp",
     "sourceId": "liquipedia-portrait-1711",
@@ -196,6 +304,18 @@
     "portrait": "/assets/players/player-1818.e086a7142407.webp",
     "sourceId": "liquipedia-portrait-1818",
     "sha256": "e086a714240751f9221e0c07df1a29aa58b6c2765c69866e6a6f210e514ac484"
+  },
+  {
+    "playerId": "player-18350",
+    "portrait": "/assets/players/player-18350.ee663bc5d5d7.webp",
+    "sourceId": "liquipedia-portrait-18350",
+    "sha256": "ee663bc5d5d7b8185e0ab98477bcd03abe41c4ff459546bad70978006f1e077f"
+  },
+  {
+    "playerId": "player-1916",
+    "portrait": "/assets/players/player-1916.e7953e4ec548.webp",
+    "sourceId": "liquipedia-portrait-1916",
+    "sha256": "e7953e4ec548118626044e86422016833babbeda0372668582c69985535a593d"
   },
   {
     "playerId": "player-19530",
@@ -216,6 +336,18 @@
     "sha256": "8a9be4c1b9e9aa916ea0ac94681ec7fdf0101de4d2f9e016e814b2fa0dceb2bf"
   },
   {
+    "playerId": "player-21328",
+    "portrait": "/assets/players/player-21328.cff3c9bbdbde.webp",
+    "sourceId": "liquipedia-portrait-21328",
+    "sha256": "cff3c9bbdbdee7d2e6f5ea107c28e05c038160708b348650c8daec7eff684140"
+  },
+  {
+    "playerId": "player-21610",
+    "portrait": "/assets/players/player-21610.2011553934d4.webp",
+    "sourceId": "riot-vct-portrait-21610",
+    "sha256": "2011553934d4de3c18326a585267cd61403adb5de4cca8e967884d058ebb5bd7"
+  },
+  {
     "playerId": "player-21668",
     "portrait": "/assets/players/player-21668.b908c1cf4c71.webp",
     "sourceId": "liquipedia-portrait-21668",
@@ -226,6 +358,18 @@
     "portrait": "/assets/players/player-2168.ceab4730c826.webp",
     "sourceId": "liquipedia-portrait-2168",
     "sha256": "ceab4730c82605731aed972ca52705f2d0521e6121d7d847edc1245b5bc9d81d"
+  },
+  {
+    "playerId": "player-2172",
+    "portrait": "/assets/players/player-2172.1a47a99be38d.webp",
+    "sourceId": "liquipedia-portrait-2172",
+    "sha256": "1a47a99be38d01c7a4cab94d95675670e7cd5092987f7ace2f6d53a696ab4be8"
+  },
+  {
+    "playerId": "player-2173",
+    "portrait": "/assets/players/player-2173.eea47ef72bd5.webp",
+    "sourceId": "liquipedia-portrait-2173",
+    "sha256": "eea47ef72bd586a31e0fb3eb92b96ff64292dc13dc8da6666bb61cfec4d53f36"
   },
   {
     "playerId": "player-22047",
@@ -252,6 +396,18 @@
     "sha256": "f38ae4dcee5bfd7baa445355594c7ba9d9f7d39beba078dd3e1e8d3c5c93c213"
   },
   {
+    "playerId": "player-2335",
+    "portrait": "/assets/players/player-2335.c5dc172401d9.webp",
+    "sourceId": "liquipedia-portrait-2335",
+    "sha256": "c5dc172401d95ed888881beb3463b9a09cbbe9628c5f61c29c82417bb5943b10"
+  },
+  {
+    "playerId": "player-2348",
+    "portrait": "/assets/players/player-2348.bbacc21d08c3.webp",
+    "sourceId": "liquipedia-portrait-2348",
+    "sha256": "bbacc21d08c38b17e8ff2e3cc552bffc7873b9c1f62f64c8f4625742644c7e1f"
+  },
+  {
     "playerId": "player-24007",
     "portrait": "/assets/players/player-24007.c3ae72516f00.webp",
     "sourceId": "liquipedia-portrait-24007",
@@ -262,6 +418,12 @@
     "portrait": "/assets/players/player-2408.a01aa0fac9ab.webp",
     "sourceId": "liquipedia-portrait-2408",
     "sha256": "a01aa0fac9abe2c5c1a74a5570b3cad5dba9b5114603b987e1408974fe1d5a06"
+  },
+  {
+    "playerId": "player-2452",
+    "portrait": "/assets/players/player-2452.566841cee854.webp",
+    "sourceId": "liquipedia-portrait-2452",
+    "sha256": "566841cee854452496baeba1b8c0c254f0b7c3fe8f33d87bf11d1f132639758e"
   },
   {
     "playerId": "player-2462",
@@ -282,10 +444,40 @@
     "sha256": "f71bc9ead37e2488b7eb7dce893c2ec116a9b8010f1fe5c45d8fa7d3a11385ff"
   },
   {
+    "playerId": "player-24895",
+    "portrait": "/assets/players/player-24895.dbe9c0e33c96.webp",
+    "sourceId": "liquipedia-portrait-24895",
+    "sha256": "dbe9c0e33c9666b09184ef0bcd73a0f578c90f01e2b7cd825a8a06660bf9b692"
+  },
+  {
+    "playerId": "player-252",
+    "portrait": "/assets/players/player-252.e2643f3f52e6.webp",
+    "sourceId": "liquipedia-portrait-252",
+    "sha256": "e2643f3f52e607f8461870a1a351f4d3c7485b5d9ef0911c25a5d092ce2d2865"
+  },
+  {
+    "playerId": "player-25255",
+    "portrait": "/assets/players/player-25255.e6bf6211bd06.webp",
+    "sourceId": "liquipedia-portrait-25255",
+    "sha256": "e6bf6211bd064f5afb6ae1eb48af41a557d29183afaa981e29d983414c87663d"
+  },
+  {
     "playerId": "player-261",
     "portrait": "/assets/players/player-261.07accdfd606c.webp",
     "sourceId": "liquipedia-portrait-261",
     "sha256": "07accdfd606c1129bc753c2e8c3ea955f1decb34025214f4a016530856e857da"
+  },
+  {
+    "playerId": "player-2610",
+    "portrait": "/assets/players/player-2610.bafc2379828e.webp",
+    "sourceId": "liquipedia-portrait-2610",
+    "sha256": "bafc2379828eba63fdd3e4e90e3d909dae9bb70a5b27e143a51589374466a760"
+  },
+  {
+    "playerId": "player-26171",
+    "portrait": "/assets/players/player-26171.1bfd24bd12c4.webp",
+    "sourceId": "liquipedia-portrait-26171",
+    "sha256": "1bfd24bd12c4041245dbe37b33b75d20ce9514503c9798e51eba986adf62f25c"
   },
   {
     "playerId": "player-263",
@@ -306,6 +498,18 @@
     "sha256": "4f6b6ce0dd48629b3de869be4e1fa46c0f5be089318cb4b721f0a5e686dce2f3"
   },
   {
+    "playerId": "player-2764",
+    "portrait": "/assets/players/player-2764.fb32b766167c.webp",
+    "sourceId": "liquipedia-portrait-2764",
+    "sha256": "fb32b766167cf8055b64a539bcc5867f554d2e4a22eae97a0b5f63a8963b840a"
+  },
+  {
+    "playerId": "player-28400",
+    "portrait": "/assets/players/player-28400.771762555741.webp",
+    "sourceId": "liquipedia-portrait-28400",
+    "sha256": "771762555741216884eabf0ebf9dde4ddf7f56c3ccb034ce4b3942cd83bf850a"
+  },
+  {
     "playerId": "player-2858",
     "portrait": "/assets/players/player-2858.ead54ceea6ba.webp",
     "sourceId": "liquipedia-portrait-2858",
@@ -324,6 +528,24 @@
     "sha256": "ba7f42bfdd74e2ecf9338fd22fc0d79026a093c2efcb892b4fdb0b0fb30431d6"
   },
   {
+    "playerId": "player-29833",
+    "portrait": "/assets/players/player-29833.f6ca301328f3.webp",
+    "sourceId": "liquipedia-portrait-29833",
+    "sha256": "f6ca301328f3c9dfc4825cdb69631c8cf08a5c7c0d7586f9de36b9dcbfd4da64"
+  },
+  {
+    "playerId": "player-29867",
+    "portrait": "/assets/players/player-29867.41f5956785cc.webp",
+    "sourceId": "liquipedia-portrait-29867",
+    "sha256": "41f5956785ccd4fadad74ad125ef5f93e01305d72b34f186db577be2291dcc36"
+  },
+  {
+    "playerId": "player-29873",
+    "portrait": "/assets/players/player-29873.6ddc21ebd334.webp",
+    "sourceId": "liquipedia-portrait-29873",
+    "sha256": "6ddc21ebd334d6cdee1e637a3f39fa26b8923bb396231ed5b05cbfd4749cd4bd"
+  },
+  {
     "playerId": "player-3017",
     "portrait": "/assets/players/player-3017.5c5632f00d4a.webp",
     "sourceId": "liquipedia-portrait-3017",
@@ -334,6 +556,12 @@
     "portrait": "/assets/players/player-3021.11e047ace163.webp",
     "sourceId": "liquipedia-portrait-3021",
     "sha256": "11e047ace163f84bda267620b3a115a4fb1ae8db5e3bd7d9500af25bb184b1a2"
+  },
+  {
+    "playerId": "player-3024",
+    "portrait": "/assets/players/player-3024.cff64aa6ea99.webp",
+    "sourceId": "liquipedia-portrait-3024",
+    "sha256": "cff64aa6ea99c12e072a4ee819420f1a608941834b8e9c4b2a6391c7e01979de"
   },
   {
     "playerId": "player-3028",
@@ -354,10 +582,40 @@
     "sha256": "0ae6ed49086a0ec5a2961629518abbad8fc3933d679303ac585a6c3cf7a56747"
   },
   {
+    "playerId": "player-309",
+    "portrait": "/assets/players/player-309.5452897c70d8.webp",
+    "sourceId": "liquipedia-portrait-309",
+    "sha256": "5452897c70d8e56020df5fd2f8f038fc04fda2dde6e594a7e0336868295d00a5"
+  },
+  {
+    "playerId": "player-312",
+    "portrait": "/assets/players/player-312.c9c2007b82b0.webp",
+    "sourceId": "liquipedia-portrait-312",
+    "sha256": "c9c2007b82b0ce112c96bc2347f3fa1e557492dae36a505d62d10e9fa2fc988f"
+  },
+  {
+    "playerId": "player-31207",
+    "portrait": "/assets/players/player-31207.43b30f0424e5.webp",
+    "sourceId": "liquipedia-portrait-31207",
+    "sha256": "43b30f0424e5276aeda3e7771d15e530aee659b553c1f8932f5d9175b58cbfe8"
+  },
+  {
+    "playerId": "player-31753",
+    "portrait": "/assets/players/player-31753.666b81b4dc5a.webp",
+    "sourceId": "liquipedia-portrait-31753",
+    "sha256": "666b81b4dc5a642d13f897ae7c603427f91025b4d8e400dc1abe75ff9082dce3"
+  },
+  {
     "playerId": "player-320",
     "portrait": "/assets/players/player-320.30636fd4da60.webp",
     "sourceId": "liquipedia-portrait-320",
     "sha256": "30636fd4da60a3dcb2c9b4b73e854ccdb9f35eefc7d4ca2e40113ef796143ec6"
+  },
+  {
+    "playerId": "player-3342",
+    "portrait": "/assets/players/player-3342.62da968875a1.webp",
+    "sourceId": "liquipedia-portrait-3342",
+    "sha256": "62da968875a1597398e5264150d393ea1d2252572e9accfec060116503ea27aa"
   },
   {
     "playerId": "player-3401",
@@ -372,10 +630,28 @@
     "sha256": "ca96628dbafa38fbb0f44f8a094615b757137563803395eb4b79a7c452c76490"
   },
   {
+    "playerId": "player-34974",
+    "portrait": "/assets/players/player-34974.4fd302d97bb6.webp",
+    "sourceId": "liquipedia-portrait-34974",
+    "sha256": "4fd302d97bb62523145f654ec5f9df152c1fcd9ffc6ea5f0cfb82edffafaf915"
+  },
+  {
+    "playerId": "player-35013",
+    "portrait": "/assets/players/player-35013.896d775cef48.webp",
+    "sourceId": "liquipedia-portrait-35013",
+    "sha256": "896d775cef483666a300f45f371feb329d6c0b7a9d82b08d936106c36557877f"
+  },
+  {
     "playerId": "player-3520",
     "portrait": "/assets/players/player-3520.f36d2747ee87.webp",
     "sourceId": "liquipedia-portrait-3520",
     "sha256": "f36d2747ee8738cdf5a6ddd722ca666bffb21197095870c958f391f3f227c389"
+  },
+  {
+    "playerId": "player-3604",
+    "portrait": "/assets/players/player-3604.c96f544a7e6a.webp",
+    "sourceId": "liquipedia-portrait-3604",
+    "sha256": "c96f544a7e6a910c6436a8122f578999473b73f21e07e21a5d738a4443076968"
   },
   {
     "playerId": "player-36169",
@@ -456,6 +732,12 @@
     "sha256": "1da6a0d4ce89dd9b56fdaf90d5627642c3cb2ed2681fce5266c2e473ab1463c1"
   },
   {
+    "playerId": "player-3980",
+    "portrait": "/assets/players/player-3980.490ef1f14af0.webp",
+    "sourceId": "liquipedia-portrait-3980",
+    "sha256": "490ef1f14af0acaeab5f84089e651492fa428e1394cca62b5123f13e6c12dad6"
+  },
+  {
     "playerId": "player-3993",
     "portrait": "/assets/players/player-3993.a71219e265b3.webp",
     "sourceId": "liquipedia-portrait-3993",
@@ -504,10 +786,28 @@
     "sha256": "959d2558804ab57d8fc6a2f3975dece32b387f84bb984f3ae1b907903c923a26"
   },
   {
+    "playerId": "player-43057",
+    "portrait": "/assets/players/player-43057.25b7eca823c5.webp",
+    "sourceId": "liquipedia-portrait-43057",
+    "sha256": "25b7eca823c5378d0c069369087f4c6a9ff504502190edc14a9373458d47c232"
+  },
+  {
     "playerId": "player-4321",
     "portrait": "/assets/players/player-4321.6ab28c0de2b9.webp",
     "sourceId": "liquipedia-portrait-4321",
     "sha256": "6ab28c0de2b98a191d7d0afe411c7b671abb50ca4e49077f1fc98a2be9d6430e"
+  },
+  {
+    "playerId": "player-4375",
+    "portrait": "/assets/players/player-4375.404c7fa1b7d1.webp",
+    "sourceId": "liquipedia-portrait-4375",
+    "sha256": "404c7fa1b7d189715f7b629b37bdda8748f5d0aa5e735fc19123f5567501a1ac"
+  },
+  {
+    "playerId": "player-4376",
+    "portrait": "/assets/players/player-4376.9dd7a6fd8de7.webp",
+    "sourceId": "riot-vct-portrait-4376",
+    "sha256": "9dd7a6fd8de76c42092522be703b60288c11887f2bd1cb2d2b6b151227fb8425"
   },
   {
     "playerId": "player-4377",
@@ -540,6 +840,18 @@
     "sha256": "52580db921a7726f1c812a48bbfe3c7928e8b556702998f70020740b9a79caba"
   },
   {
+    "playerId": "player-45",
+    "portrait": "/assets/players/player-45.15a958e4a0c4.webp",
+    "sourceId": "riot-vct-portrait-45",
+    "sha256": "15a958e4a0c4bf766644184e6748e48d4d82750df2f1d5964621d42b1e753f7b"
+  },
+  {
+    "playerId": "player-454",
+    "portrait": "/assets/players/player-454.882723dd9375.webp",
+    "sourceId": "riot-vct-portrait-454",
+    "sha256": "882723dd9375c56f095c5c5b57bbd44736e11ff8b314222e70a235e721c304f1"
+  },
+  {
     "playerId": "player-4545",
     "portrait": "/assets/players/player-4545.98b8d60baa44.webp",
     "sourceId": "liquipedia-portrait-4545",
@@ -552,16 +864,46 @@
     "sha256": "4e9110975236b73f3c9d02d60fdd5a7606474b19c09b81d65077c81b94060851"
   },
   {
+    "playerId": "player-458",
+    "portrait": "/assets/players/player-458.9b3f81dac98b.webp",
+    "sourceId": "liquipedia-portrait-458",
+    "sha256": "9b3f81dac98bfa8a05eb3165190bfc40b2f2b6ad8d34aacc8858e7eac4e7f7c9"
+  },
+  {
     "playerId": "player-4581",
     "portrait": "/assets/players/player-4581.114b8e5221eb.webp",
     "sourceId": "liquipedia-portrait-4581",
     "sha256": "114b8e5221eb993409cbd5b0f9837ec2fdecd16faf82fb7b555ce6cd74829e58"
   },
   {
+    "playerId": "player-46",
+    "portrait": "/assets/players/player-46.f3b2fa004224.webp",
+    "sourceId": "riot-vct-portrait-46",
+    "sha256": "f3b2fa0042248743b35187a323b91248a126183cc5abada9e38054672d7289b4"
+  },
+  {
     "playerId": "player-4678",
     "portrait": "/assets/players/player-4678.785d72a7d1a5.webp",
     "sourceId": "liquipedia-portrait-4678",
     "sha256": "785d72a7d1a554d3c281a4a2f82ce4fcd3457d8f36611294c4ccf15268ef2fa8"
+  },
+  {
+    "playerId": "player-47",
+    "portrait": "/assets/players/player-47.d8a9e6dff25b.webp",
+    "sourceId": "riot-vct-portrait-47",
+    "sha256": "d8a9e6dff25badc95b7619d910e6ec5b6fc277ce12a54aa04c9bb71fb213b34a"
+  },
+  {
+    "playerId": "player-4705",
+    "portrait": "/assets/players/player-4705.5e8fcc6553a6.webp",
+    "sourceId": "liquipedia-portrait-4705",
+    "sha256": "5e8fcc6553a62e88c58565386e73a86f5d45a4713b7b9c041d5bd2988bb21d53"
+  },
+  {
+    "playerId": "player-4712",
+    "portrait": "/assets/players/player-4712.6cbf508c30ed.webp",
+    "sourceId": "riot-vct-portrait-4712",
+    "sha256": "6cbf508c30edeac862ac0af279db6257aeba205df9d130bea750f3ffd8b3b141"
   },
   {
     "playerId": "player-4720",
@@ -576,6 +918,12 @@
     "sha256": "470d94eaf8f57ee7242207af76b3e724f040deb54066b8d661fafb4f4feb79da"
   },
   {
+    "playerId": "player-4742",
+    "portrait": "/assets/players/player-4742.25b0e7546bc3.webp",
+    "sourceId": "liquipedia-portrait-4742",
+    "sha256": "25b0e7546bc3d8cf4765c4cd55557d0249a9d77b70005b5e142452f73b5f3a73"
+  },
+  {
     "playerId": "player-4770",
     "portrait": "/assets/players/player-4770.37a69cdee97b.webp",
     "sourceId": "liquipedia-portrait-4770",
@@ -588,6 +936,24 @@
     "sha256": "ee685ba83b189869d602de1855a5c07c3cec783c1e407b27522061715b32f1fd"
   },
   {
+    "playerId": "player-485",
+    "portrait": "/assets/players/player-485.e76cbcb15484.webp",
+    "sourceId": "liquipedia-portrait-485",
+    "sha256": "e76cbcb1548466fc71fda01ac976564b971b1fea76f5e66a59c4df39b8ce46a5"
+  },
+  {
+    "playerId": "player-4866",
+    "portrait": "/assets/players/player-4866.6f5f50c08f81.webp",
+    "sourceId": "liquipedia-portrait-4866",
+    "sha256": "6f5f50c08f81fc26f75ba1c52d3bb33ac767577f43a39e29c7a43648bf7d9b10"
+  },
+  {
+    "playerId": "player-4871",
+    "portrait": "/assets/players/player-4871.a22e14597db1.webp",
+    "sourceId": "liquipedia-portrait-4871",
+    "sha256": "a22e14597db179dcd582f2726b0a6379da56eb66b0570da83178ef445b5d255f"
+  },
+  {
     "playerId": "player-4874",
     "portrait": "/assets/players/player-4874.6a14636ff36f.webp",
     "sourceId": "liquipedia-portrait-4874",
@@ -598,6 +964,12 @@
     "portrait": "/assets/players/player-488.7978d5bf207a.webp",
     "sourceId": "liquipedia-portrait-488",
     "sha256": "7978d5bf207afe91370f43b0b959ffa35eef0635b72e255d73c6301ff890b2bc"
+  },
+  {
+    "playerId": "player-4880",
+    "portrait": "/assets/players/player-4880.79cda1065a21.webp",
+    "sourceId": "riot-vct-portrait-4880",
+    "sha256": "79cda1065a211a6697b731b39a1937c04d4f3836c33e5760ecd115519b3ca589"
   },
   {
     "playerId": "player-4885",
@@ -624,16 +996,40 @@
     "sha256": "d568c98e6fe2c30a99163feeeab577b9bc9bd909711f2dcf642c5f99af8b9d27"
   },
   {
+    "playerId": "player-5129",
+    "portrait": "/assets/players/player-5129.d2c31d9a3f6c.webp",
+    "sourceId": "liquipedia-portrait-5129",
+    "sha256": "d2c31d9a3f6c18201a976cd03411dd09d8a0bb144c56a0625ac8e50af42999f1"
+  },
+  {
+    "playerId": "player-5132",
+    "portrait": "/assets/players/player-5132.557254f4c5e5.webp",
+    "sourceId": "liquipedia-portrait-5132",
+    "sha256": "557254f4c5e5ab12929e25d049a3a32ced2ceb23f1e2a309c80aaf8bbe785241"
+  },
+  {
     "playerId": "player-5244",
     "portrait": "/assets/players/player-5244.fba8b6e96d6e.webp",
     "sourceId": "liquipedia-portrait-5244",
     "sha256": "fba8b6e96d6ee8bda352d53fd3c00e5d7990802f714494c17f2217df3d2601ad"
   },
   {
+    "playerId": "player-52904",
+    "portrait": "/assets/players/player-52904.d549ed66fcbb.webp",
+    "sourceId": "liquipedia-portrait-52904",
+    "sha256": "d549ed66fcbbaad6eb9ac77b2f11eb079f4c261b552e49b53fb001285bf5e11a"
+  },
+  {
     "playerId": "player-5395",
     "portrait": "/assets/players/player-5395.5dc5f07770af.webp",
     "sourceId": "liquipedia-portrait-5395",
     "sha256": "5dc5f07770af6067eba00f037dfeb372c2c59c9cb63d753325cb99d38f655bb8"
+  },
+  {
+    "playerId": "player-5550",
+    "portrait": "/assets/players/player-5550.99c46631b356.webp",
+    "sourceId": "liquipedia-portrait-5550",
+    "sha256": "99c46631b35631b1e91b69f146b47290c961a662e565b635b3c8b6760f6b75ad"
   },
   {
     "playerId": "player-562",
@@ -654,6 +1050,12 @@
     "sha256": "27fff7cc721a73089b2f38012ea0c22b9815f740f6c0ce20a36b9ceaeee1db1c"
   },
   {
+    "playerId": "player-5957",
+    "portrait": "/assets/players/player-5957.b69ebbcfe433.webp",
+    "sourceId": "liquipedia-portrait-5957",
+    "sha256": "b69ebbcfe4330e43a79ff061b1a87bbdaab64eb0fc4c670eda514e0019132915"
+  },
+  {
     "playerId": "player-601",
     "portrait": "/assets/players/player-601.22a61100a742.webp",
     "sourceId": "liquipedia-portrait-601",
@@ -672,6 +1074,12 @@
     "sha256": "f2c0819fbd4bf78a66a54f9da805f0d9ae58bfe79db7802d46961543e6296b80"
   },
   {
+    "playerId": "player-612",
+    "portrait": "/assets/players/player-612.b1e0ef53ecd4.webp",
+    "sourceId": "riot-vct-portrait-612",
+    "sha256": "b1e0ef53ecd4c2545af98574011ddec126a09bc4553e0b262b608e7de2246fe8"
+  },
+  {
     "playerId": "player-619",
     "portrait": "/assets/players/player-619.aab9977b5d1e.webp",
     "sourceId": "liquipedia-portrait-619",
@@ -682,6 +1090,18 @@
     "portrait": "/assets/players/player-6193.cd529bf69fde.webp",
     "sourceId": "liquipedia-portrait-6193",
     "sha256": "cd529bf69fdee13a0564d303225d23570ef5d58ee820d56f0316bd9a8c4314c0"
+  },
+  {
+    "playerId": "player-651",
+    "portrait": "/assets/players/player-651.cd87c4678490.webp",
+    "sourceId": "liquipedia-portrait-651",
+    "sha256": "cd87c4678490b5c7246ec6a14f18855ac03961f51bf73f50d4754d07730311e9"
+  },
+  {
+    "playerId": "player-6510",
+    "portrait": "/assets/players/player-6510.8cc4233df6f2.webp",
+    "sourceId": "liquipedia-portrait-6510",
+    "sha256": "8cc4233df6f28d55851eb68b3ba8c8633105f5aabdd6560170f2b1ddb094f790"
   },
   {
     "playerId": "player-659",
@@ -702,6 +1122,12 @@
     "sha256": "0b8146daf3bee7044f28d669b4b977f5e365b3a5f646e980e38f4f17f18b0feb"
   },
   {
+    "playerId": "player-681",
+    "portrait": "/assets/players/player-681.a135333f45e2.webp",
+    "sourceId": "liquipedia-portrait-681",
+    "sha256": "a135333f45e255d22cc569a88a1c21786c6e69459ecf24a8288917ba45c6c7f9"
+  },
+  {
     "playerId": "player-683",
     "portrait": "/assets/players/player-683.c9db9badcda5.webp",
     "sourceId": "liquipedia-portrait-683",
@@ -718,6 +1144,18 @@
     "portrait": "/assets/players/player-7045.f948d6e0926a.webp",
     "sourceId": "liquipedia-portrait-7045",
     "sha256": "f948d6e0926a0806199f6cb7713a9501abd14d2715c3bc3ad8312678073ec450"
+  },
+  {
+    "playerId": "player-725",
+    "portrait": "/assets/players/player-725.bb4f8f6f9e17.webp",
+    "sourceId": "liquipedia-portrait-725",
+    "sha256": "bb4f8f6f9e179e282804473e61929d406bb41b0b9ca549cda34f9142e0404d6e"
+  },
+  {
+    "playerId": "player-727",
+    "portrait": "/assets/players/player-727.c78d08cb955e.webp",
+    "sourceId": "riot-vct-portrait-727",
+    "sha256": "c78d08cb955e5573f9257beaba5b4c4497fdf8a60c1b6dbca92dfbe91bb23176"
   },
   {
     "playerId": "player-729",
@@ -744,10 +1182,28 @@
     "sha256": "6040e9c4fcb59e6d3271143b688e42189ff09b687e0780052b80e18da4627a37"
   },
   {
+    "playerId": "player-771",
+    "portrait": "/assets/players/player-771.203b0eb3794b.webp",
+    "sourceId": "liquipedia-portrait-771",
+    "sha256": "203b0eb3794b91200c12da7b3c2bb6193d96a0ded2eb6037f8faabf93fa8ed52"
+  },
+  {
     "playerId": "player-772",
     "portrait": "/assets/players/player-772.74ab7c19dbc6.webp",
     "sourceId": "liquipedia-portrait-772",
     "sha256": "74ab7c19dbc64bbd1636341f74e5a60d4cbbb21f2cbe8fac71bef6adc86380bb"
+  },
+  {
+    "playerId": "player-773",
+    "portrait": "/assets/players/player-773.8879457ff573.webp",
+    "sourceId": "liquipedia-portrait-773",
+    "sha256": "8879457ff5739a97752627ed9935f1277048b4a772bf4f835d6548ca5607f51e"
+  },
+  {
+    "playerId": "player-783",
+    "portrait": "/assets/players/player-783.ede56ae50fc3.webp",
+    "sourceId": "liquipedia-portrait-783",
+    "sha256": "ede56ae50fc332bafc46c9ba5788680bbe0be9a4c62315dba12683b6e66bc9bc"
   },
   {
     "playerId": "player-7857",
@@ -780,16 +1236,34 @@
     "sha256": "88589f35ac3f17f9faeb61b8c819867ba7442c91d8de2c79fba5ee2f6f88a6da"
   },
   {
+    "playerId": "player-8044",
+    "portrait": "/assets/players/player-8044.c98c5fc42d84.webp",
+    "sourceId": "liquipedia-portrait-8044",
+    "sha256": "c98c5fc42d84f06e28812b0c431725a4a3a88f40b9f17f27dcd98425dd5756e8"
+  },
+  {
     "playerId": "player-805",
     "portrait": "/assets/players/player-805.0a1be017811d.webp",
     "sourceId": "liquipedia-portrait-805",
     "sha256": "0a1be017811d8d07486b994c7a83005fb6d70317858873b1a2c3df5606941c7e"
   },
   {
+    "playerId": "player-817",
+    "portrait": "/assets/players/player-817.5884c3eab5a6.webp",
+    "sourceId": "liquipedia-portrait-817",
+    "sha256": "5884c3eab5a678d8c067f82dafd2aa725e3fb3ef72be734701319d9c43405ee9"
+  },
+  {
     "playerId": "player-824",
     "portrait": "/assets/players/player-824.d8cf49f3c661.webp",
     "sourceId": "liquipedia-portrait-824",
     "sha256": "d8cf49f3c66152496ee885966258d217d242c1b8bc19d9c35b568fa84cbb4e27"
+  },
+  {
+    "playerId": "player-8369",
+    "portrait": "/assets/players/player-8369.e24fa77f6cf2.webp",
+    "sourceId": "riot-vct-portrait-8369",
+    "sha256": "e24fa77f6cf2b553e62eeff7e0bd82abd02903279382fd85c7144c082f342a7f"
   },
   {
     "playerId": "player-8402",
@@ -810,6 +1284,12 @@
     "sha256": "965c3c38499502341bb1efea383e6a5138f9d35c22a0031a18701de9566e8eab"
   },
   {
+    "playerId": "player-8497",
+    "portrait": "/assets/players/player-8497.743650963f9b.webp",
+    "sourceId": "liquipedia-portrait-8497",
+    "sha256": "743650963f9bbfa05fd9c7ad5745c7545460038ff10c47206b25dfae9cd2c6ef"
+  },
+  {
     "playerId": "player-8549",
     "portrait": "/assets/players/player-8549.f1b19bd06ce6.webp",
     "sourceId": "liquipedia-portrait-8549",
@@ -828,6 +1308,12 @@
     "sha256": "f7d3b2b61cca1a9977f147fbed830e2da374c445104ad072e2bc44892a317cbf"
   },
   {
+    "playerId": "player-872",
+    "portrait": "/assets/players/player-872.91712701653a.webp",
+    "sourceId": "liquipedia-portrait-872",
+    "sha256": "91712701653a00ccf75a56d1fa688fe8d0db2e47b800349acaf77d0b479cc418"
+  },
+  {
     "playerId": "player-881",
     "portrait": "/assets/players/player-881.09bdc95db9a2.webp",
     "sourceId": "liquipedia-portrait-881",
@@ -840,10 +1326,28 @@
     "sha256": "a9fe6255d43b7ed8784de7e659d72375f94427ae1a5c2d67890a40a4f7088442"
   },
   {
+    "playerId": "player-8872",
+    "portrait": "/assets/players/player-8872.4ed3f7261602.webp",
+    "sourceId": "liquipedia-portrait-8872",
+    "sha256": "4ed3f72616023179c19ba7f3c4da7f99b622657d1103a4b5e2f9692e7a459be1"
+  },
+  {
     "playerId": "player-8873",
     "portrait": "/assets/players/player-8873.c1c541f3c2a4.webp",
     "sourceId": "liquipedia-portrait-8873",
     "sha256": "c1c541f3c2a452e7da55688f0c76da12e4e07ff660c9fc824543ffa6e2caccef"
+  },
+  {
+    "playerId": "player-9",
+    "portrait": "/assets/players/player-9.5ff6d6a01914.webp",
+    "sourceId": "liquipedia-portrait-9",
+    "sha256": "5ff6d6a01914281490b1cea7424f852ee164da4b518b591cbf4e3aa036514d42"
+  },
+  {
+    "playerId": "player-9196",
+    "portrait": "/assets/players/player-9196.5f889099c7da.webp",
+    "sourceId": "liquipedia-portrait-9196",
+    "sha256": "5f889099c7dab8c1b63cf5bab4dffe0fe17f08da272cd24e9d00a6a1d52cb542"
   },
   {
     "playerId": "player-92",
@@ -864,6 +1368,12 @@
     "sha256": "5938284666825afd34439e4918a8846095b467bb059ed9cee572c71d7596ef20"
   },
   {
+    "playerId": "player-9554",
+    "portrait": "/assets/players/player-9554.6219cc4370da.webp",
+    "sourceId": "liquipedia-portrait-9554",
+    "sha256": "6219cc4370da35702c53f8f90d93f148771598fde31185e580e7c84b24645216"
+  },
+  {
     "playerId": "player-9780",
     "portrait": "/assets/players/player-9780.ae71660153fd.webp",
     "sourceId": "liquipedia-portrait-9780",
@@ -874,6 +1384,12 @@
     "portrait": "/assets/players/player-98.923858bf4439.webp",
     "sourceId": "liquipedia-portrait-98",
     "sha256": "923858bf4439ec7510ca1adb609abd55b888f34cc9fe8d171e60e96e0a988c74"
+  },
+  {
+    "playerId": "player-9800",
+    "portrait": "/assets/players/player-9800.e24aeb026679.webp",
+    "sourceId": "liquipedia-portrait-9800",
+    "sha256": "e24aeb0266794d5a28c7bddee3d528982e8317e3939c90c4ddaf36b29a5e7b54"
   },
   {
     "playerId": "player-9801",
