@@ -24,6 +24,11 @@ it("2023 portrait cohort has a reviewed override for every required player", () 
   expect(missingOverrideHandles(cohort2023)).toEqual([]);
 });
 
+it("records the reviewed DaveeyS Flickr publication date", () => {
+  const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
+  expect(reviewed.find(row => row.playerId === "player-2764")?.sourcePublishedAt).toBe("2023-02-23");
+});
+
 it("keeps the reviewed 2021 through 2023 cohorts unique and complete", () => {
   const reviewed = parsePortraitOverrides(productionOverrides, championsDataset.players);
   expect(reviewed).toHaveLength(43);
