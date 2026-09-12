@@ -1,4 +1,5 @@
 import type { SourceRef } from "@/features/game/domain";
+import { portraitSourceIdPattern } from "./portrait-source";
 
 // Independently reviewed catalog policy for the 2026-09-05 snapshot.
 // Never import sources.json here: that application catalog is the input being checked.
@@ -32,5 +33,5 @@ export function validateSourceCatalog(sources: readonly SourceRef[]): void {
       throw new Error(`source catalog metadata ${expected.id}`);
     }
   }
-  if (assetSources.some(source => !/^liquipedia-portrait-\d+$/.test(source.id))) throw new Error("asset source ID must be a Liquipedia portrait ID");
+  if (assetSources.some(source => !portraitSourceIdPattern.test(source.id))) throw new Error("asset source ID must be a portrait ID");
 }

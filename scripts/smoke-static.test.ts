@@ -15,7 +15,14 @@ function temporaryProject() {
   mkdirSync(join(root, "out"), { recursive: true });
   mkdirSync(join(root, "src", "data", "champions"), { recursive: true });
   writeFileSync(join(root, "src", "data", "champions", "2021.json"), JSON.stringify({ teams: [], players: [] }));
+  writeFileSync(join(root, "src", "data", "champions", "portrait-assets.json"), "[]");
   return root;
+}
+
+function writePortraitCatalog(root: string, rows: Array<{ portrait: string }>) {
+  const directory = join(root, "src", "data", "champions");
+  mkdirSync(directory, { recursive: true });
+  writeFileSync(join(directory, "portrait-assets.json"), JSON.stringify(rows));
 }
 
 function linkDirectory(target: string, path: string) {
@@ -85,6 +92,26 @@ describe("smoke-static CLI", () => {
 });
 
 describe("smokeStatic", () => {
+  it("includes portrait overlay assets in static smoke checks", () => {
+    const root = temporaryProject();
+    try {
+      writeFileSync(join(root, "out", "index.html"), "");
+      mkdirSync(join(root, "public"), { recursive: true });
+      writePortraitCatalog(root, [{ portrait: "/assets/players/player-1.hash.webp" }]);
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root })).toThrow("player-1.hash.webp");
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+
+  it("checks portrait overlay assets at a configured base path", () => {
+    const root = temporaryProject();
+    try {
+      writeFileSync(join(root, "out", "index.html"), "");
+      mkdirSync(join(root, "public", "assets", "players"), { recursive: true });
+      writeFileSync(join(root, "public", "assets", "players", "player-1.hash.webp"), "portrait");
+      writePortraitCatalog(root, [{ portrait: "/assets/players/player-1.hash.webp" }]);
+      expect(() => smokeStatic(join(root, "out"), { projectRoot: root, basePath: "/run-it-back" })).toThrow("/run-it-back/assets/players/player-1.hash.webp");
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
   it("checks stylesheet relations case-insensitively", () => {
     const root = temporaryProject();
     try {

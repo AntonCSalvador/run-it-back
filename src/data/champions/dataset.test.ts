@@ -88,7 +88,18 @@ describe("Champions 2021–2025 dataset", () => {
     const pictured = championsDataset.players.filter(player => player.portrait !== null);
     expect(pictured.length).toBeGreaterThan(0);
     expect(pictured.every(player => /^\/assets\/players\/player-\d+\.[a-f0-9]{12}\.webp$/.test(player.portrait!))).toBe(true);
-    expect(pictured.every(player => player.sourceIds.some(id => id.startsWith("liquipedia-portrait-")))).toBe(true);
+    expect(pictured.every(player => player.sourceIds.some(id => /^(?:liquipedia|riot-vct)-portrait-\d+$/.test(id)))).toBe(true);
+  });
+
+  it("ships one portrait for every canonical player", () => {
+    expect(championsDataset.players).toHaveLength(239);
+    expect(championsDataset.players.filter(player => player.portrait !== null)).toHaveLength(239);
+  });
+
+  it("covers FiNESSE and the formerly oversized portrait sources", () => {
+    for (const handle of ["FiNESSE", "TenZ", "stax", "Smoggy", "Flashback", "free1ng", "HYUNMIN"]) {
+      expect(championsDataset.players.find(player => player.canonicalHandle === handle)?.portrait).toMatch(/^\/assets\/players\/player-/);
+    }
   });
 
   it("exports a deeply frozen snapshot", () => {

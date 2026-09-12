@@ -43,17 +43,24 @@ export const hasRiotGamesCopyrightCredit = (credit: string) => {
     && isRiotGamesCopyrightOwner(normalized.slice(ownerStart + delimiter.length));
 };
 
-export const isApprovedRiotPortraitOriginalUrl = (url: string) => {
+const isRiotPortraitOriginalUrl = (url: string, accounts: readonly string[]) => {
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:") return false;
     if (parsed.hostname === "riotgames.com" || parsed.hostname === "www.riotgames.com") return true;
     return (parsed.hostname === "flickr.com" || parsed.hostname === "www.flickr.com")
-      && parsed.pathname.startsWith("/photos/valorantesports/");
+      && accounts.some(account => parsed.pathname.startsWith(`/photos/${account}/`));
   } catch {
     return false;
   }
 };
+
+export const isApprovedRiotPortraitOriginalUrl = (url: string) =>
+  isRiotPortraitOriginalUrl(url, ["valorantesports"]);
+
+// Regional provenance is accepted only by the explicit review/catalog path.
+export const isApprovedReviewedRiotPortraitOriginalUrl = (url: string) =>
+  isRiotPortraitOriginalUrl(url, ["valorantesports", "vctemea", "vctpacific", "valesportsbr", "191250687@N03", "145885012@N07"]);
 const FIELD = /^\|[ \t]*([a-z0-9_-]+)[ \t]*=[ \t]*([\s\S]*?)[ \t]*$/i;
 const FILE_INFO_START = /^\{\{\s*FileInfo\s*(?=\||\}\})/;
 const VOID_TAGS = new Set([
