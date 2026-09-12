@@ -34,18 +34,21 @@ export async function validatePortraitFiles(projectRoot: string, catalog: readon
   if (managedFiles.length !== expectedCount) errors.push(`managed portrait directory has ${managedFiles.length} files; expected ${expectedCount}`);
   for (const file of catalogFiles.filter(file => !managedFiles.includes(file))) errors.push(`portrait catalog file missing ${file}`);
   for (const file of managedFiles.filter(file => !catalogFiles.includes(file))) errors.push(`orphan public portrait ${file}`);
-  await Promise.all(catalog.map(async ({ playerId, portrait, sha256: expectedSha256 }) => {
+  const rowDiagnostics = await Promise.all(catalog.map(async ({ playerId, portrait, sha256: expectedSha256 }) => {
+    const rowErrors: string[] = [];
     const error = validateAssetPath(portrait, projectRoot);
-    if (error) { errors.push(`portrait ${playerId} ${error}`); return; }
+    if (error) return [`portrait ${playerId} ${error}`];
     const file = resolve(projectRoot, "public", `.${portrait}`);
     const bytes = readFileSync(file);
     const checksum = createHash("sha256").update(bytes).digest("hex");
-    if (checksum !== expectedSha256) errors.push(`portrait ${playerId} checksum mismatch`);
+    if (checksum !== expectedSha256) rowErrors.push(`portrait ${playerId} checksum mismatch`);
     try {
       const metadata = await sharp(bytes, { failOn: "warning" }).metadata();
-      if (metadata.format !== "webp" || metadata.width !== 256 || metadata.height !== 256) errors.push(`portrait ${playerId} must be a 256x256 WebP`);
-    } catch { errors.push(`portrait ${playerId} must be a 256x256 WebP`); }
+      if (metadata.format !== "webp" || metadata.width !== 256 || metadata.height !== 256) rowErrors.push(`portrait ${playerId} must be a 256x256 WebP`);
+    } catch { rowErrors.push(`portrait ${playerId} must be a 256x256 WebP`); }
+    return rowErrors;
   }));
+  errors.push(...rowDiagnostics.flat());
   return errors;
 }
 
