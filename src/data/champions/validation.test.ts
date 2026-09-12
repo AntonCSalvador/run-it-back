@@ -4,8 +4,14 @@ import { championsDataset } from "./index";
 import { validateChampions, type Evidence } from "./validation";
 import raw from "./raw-extraction.json";
 import overlays from "./reviewed-overlays.json";
+import portraitAssets from "./portrait-assets.json";
 
 describe("Champions audit validation", () => {
+  it("requires exactly one portrait for every canonical player", () => {
+    expect(championsDataset.players).toHaveLength(239);
+    expect(championsDataset.players.filter(player => player.portrait !== null)).toHaveLength(239);
+    expect(new Set(portraitAssets.map(asset => asset.playerId))).toEqual(new Set(championsDataset.players.map(player => player.id)));
+  });
   it("rejects source URLs swapped between otherwise valid IDs", () => {
     const data = structuredClone(championsDataset);
     const first = data.sources.find(source => source.id === "liquipedia-champions-2021")!;
@@ -36,14 +42,14 @@ describe("Champions audit validation", () => {
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
     const data = structuredClone(championsDataset);
     const audit = structuredClone(evidence) as Evidence[];
-    const unpictured = data.players.find(player => player.portrait === null)!;
-    const wrong = [data.sources.find(source => source.usage === "facts" && !unpictured.sourceIds.includes(source.id))!.id];
-    if (target === "player") unpictured.sourceIds = wrong;
+    const selectedPlayer = data.players[0];
+    const wrong = [data.sources.find(source => source.usage === "facts" && !selectedPlayer.sourceIds.includes(source.id))!.id];
+    if (target === "player") selectedPlayer.sourceIds = wrong;
     if (target === "team") data.teams[0].sourceIds = wrong;
     if (target === "card") data.cards[0].sourceIds = wrong;
     if (target === "evidence") audit[0].sourceIds = wrong;
     if (target === "clutch evidence") audit[0].clutchSourceIds = wrong;
-    expect(() => validateChampions(data, audit)).toThrow(/sources|citations/);
+    expect(() => validateChampions(data, audit)).toThrow(/sources|citations|portrait source overlay/);
   });
 
   it.each(["extra", "missing", "duplicate"])("rejects %s valid citations", mode => {
@@ -57,11 +63,11 @@ describe("Champions audit validation", () => {
   it.each(["canonicalHandle", "playerId", "displayHandle", "teamName", "teamId"])("rejects edits to pinned %s", target => {
     const data = structuredClone(championsDataset);
     if (target === "canonicalHandle") data.players[0].canonicalHandle = "DifferentHandle";
-    if (target === "playerId") data.players.find(player => player.portrait === null)!.id = "player-999999";
+    if (target === "playerId") data.players[0].id = "player-999999";
     if (target === "displayHandle") data.cards[0].displayHandle = "DifferentHandle";
     if (target === "teamName") data.teams[0].name = "Different team";
     if (target === "teamId") data.cards[0].teamId = data.teams[0].id;
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping/);
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping|orphan player/);
   });
 
   it("rejects wrong existing citations for overrides and leadership", () => {

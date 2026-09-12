@@ -298,7 +298,7 @@ export async function buildPortraitOutputs({ root, players, discover }: ImportPa
 
     const assetRows = results.map(({ playerId, portrait, sourceId, sha256: checksum }) => ({ playerId, portrait, sourceId, sha256: checksum }));
     const sourceRows = stagedAssets.map(({ source }) => source);
-    validatePortraitCatalog(players.map(player => ({ ...player, portrait: null, sourceIds: [] })), assetRows, sourceRows);
+    validatePortraitCatalog(players.map(player => ({ ...player, portrait: null, sourceIds: [] })), assetRows, sourceRows, { requireCompleteCoverage: true });
     await Promise.all(stagedAssets.map(async ({ stagedAsset, result }) => {
       const metadata = await sharp(readFileSync(stagedAsset), { failOn: "warning" }).metadata();
       if (metadata.format !== "webp" || metadata.width !== 256 || metadata.height !== 256) throw new Error(`invalid portrait image dimensions or format for ${result.playerId} (${result.sourceId})`);

@@ -72,7 +72,7 @@ function localCalendarDate(date: Date): string {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
 }
 
-type PortraitCatalogValidationOptions = { requireOverlay?: boolean; today?: string; now?: () => Date; validateFutureDates?: boolean };
+type PortraitCatalogValidationOptions = { requireOverlay?: boolean; requireCompleteCoverage?: boolean; today?: string; now?: () => Date; validateFutureDates?: boolean };
 
 export function validatePortraitCatalog(players: readonly PlayerIdentity[], input: unknown, sourceInput: unknown, options: PortraitCatalogValidationOptions = {}): void {
   const today = options.today ?? localCalendarDate(options.now ? options.now() : new Date());
@@ -90,6 +90,11 @@ export function validatePortraitCatalog(players: readonly PlayerIdentity[], inpu
   assertUnique(assets.map(asset => asset.playerId), "player");
   assertUnique(assets.map(asset => asset.portrait), "portrait path");
   assertUnique(assets.map(asset => asset.sourceId), "portrait source ID");
+  if (options.requireCompleteCoverage) {
+    const assetPlayerIds = new Set(assets.map(asset => asset.playerId));
+    const missing = players.filter(player => !assetPlayerIds.has(player.id));
+    if (missing.length) throw new Error(`portrait coverage missing ${missing.map(player => `${player.canonicalHandle} (${player.id})`).join(", ")}`);
+  }
 
   const portraitSources = sources.filter(source => portraitSourceIdPattern.test(source.id));
   assertUnique(portraitSources.map(source => source.id), "portrait source");

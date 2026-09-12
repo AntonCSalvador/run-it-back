@@ -13,6 +13,11 @@ const riotSource = { id: riotRow.sourceId, url: "https://valorantesports.com/en-
 const overlaidPlayer = applyPortraitCatalog([player], [row])[0];
 
 describe("portrait catalog", () => {
+  it("rejects a catalog with one player omitted when complete coverage is required", () => {
+    const second = { ...player, id: "player-2", canonicalHandle: "Second" };
+    expect(() => validatePortraitCatalog([player, second], [row], [liquipediaSource], { requireCompleteCoverage: true }))
+      .toThrow(/portrait coverage.*Second.*player-2/);
+  });
   it("overlays portrait and appends only its asset source", () => {
     expect(applyPortraitCatalog([player], [row])).toEqual([{ ...player, portrait: row.portrait, sourceIds: ["fact", row.sourceId] }]);
   });
