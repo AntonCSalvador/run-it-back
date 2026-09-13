@@ -77,10 +77,14 @@ describe("broadcast accessibility", () => {
     expect(ended).toHaveBeenCalledOnce();
     expect(ended.mock.calls[0][0].nativeEvent.animationName).toBe("ignite-a");
   });
-  it("exposes the selected game mode and draft progress semantically", () => {
-    render(<><AppHeader mode="daily" stage="draft" detail="Pick 2 of 5 · Choose a team to scout" onExit={vi.fn()} /><TeamOffer teams={teams} rerolls={2} canReroll onChoose={vi.fn()} onReroll={vi.fn()} /></>);
+  it("exposes the selected game mode, home action, and draft progress semantically", async () => {
+    const onHome = vi.fn();
+    render(<><AppHeader mode="daily" stage="draft" detail="Pick 2 of 5 · Choose a team to scout" onHome={onHome} onExit={vi.fn()} /><TeamOffer teams={teams} rerolls={2} canReroll onChoose={vi.fn()} onReroll={vi.fn()} /></>);
     expect(screen.getByLabelText("Current mode")).toHaveTextContent("Daily");
     expect(screen.getByText("Draft").closest("li")).toHaveAttribute("aria-current", "step");
+    expect(screen.getByRole("button", { name: "Run It Back home" })).toBeVisible();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Run It Back home" }));
+    expect(onHome).toHaveBeenCalledOnce();
     expect(screen.getByRole("button", { name: "Exit run" })).toBeVisible();
     expect(screen.getByText("This replaces every team in the current offer.")).toHaveAttribute("aria-live", "polite");
   });

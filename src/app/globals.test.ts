@@ -188,6 +188,12 @@ describe("parsed broadcast stylesheet", () => {
     expect(ruleFor(rules, ".roster-bar strong").style.getPropertyValue("color")).toBe("var(--rib-text-primary)");
   });
 
+  it("keeps the wordmark background transparent on hover", () => {
+    const hover = exactRuleFor(rules, ".app-banner__home:hover:not(:disabled)").style;
+    expect(hover.getPropertyValue("background")).toBe("transparent");
+    expect(hover.getPropertyValue("color")).toBe("var(--rib-red)");
+  });
+
   it("keeps desktop player cards in a bounded grid without mobile-width columns", () => {
     const track = ruleFor(rules, ".scroll-track").style;
     const picker = ruleFor(rules, ".player-picker__cards").style;
@@ -408,6 +414,11 @@ describe("parsed broadcast stylesheet", () => {
     expect(shell.getPropertyValue("display")).toBe("grid");
     expect(shell.getPropertyValue("place-items")).toBe("center");
     expect(shell.getPropertyValue("min-height")).toContain("50vh");
+  });
+
+  it("reduces saved-run panel padding on narrow screens", () => {
+    const mobile = mediaFor(rules, "(max-width:44rem)");
+    expect(ruleFor(mobile.cssRules, ".mode-selection__saved").style.getPropertyValue("padding")).toBe("var(--rib-space-4)");
   });
 
   it("preserves focus, action, disabled, and state boundaries in forced colors", () => {

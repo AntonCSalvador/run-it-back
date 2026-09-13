@@ -6,6 +6,10 @@ export async function start(page: Page, mode: "Daily" | "Free Play"): Promise<vo
   await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
 }
 
+export async function continueSavedRun(page: Page): Promise<void> {
+  await page.getByRole("button", { name: "Continue saved run" }).click();
+}
+
 export async function draftRoster(page: Page): Promise<void> {
   for (let slot = 0; slot < 5; slot += 1) {
     await page.locator(".team-card").first().click();

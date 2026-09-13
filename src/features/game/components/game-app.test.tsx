@@ -61,6 +61,21 @@ function storedRun(mode: "daily" | "free"): DailyRun | FreePlayRun {
   return mode === "daily" ? { ...common, mode, utcDate: "2026-09-05" } : { ...common, mode };
 }
 
+it("opens home from the wordmark and continues the same decision", async () => {
+  const draft = createDraft("home-round-trip", dataset);
+  const selectedTeamId = draft.offeredTeamIds[0];
+  const active = { phase: "player", mode: "free-play", draft: { ...draft, selectedTeamId } } as const;
+  const storage = memoryStorage();
+  const user = userEvent.setup();
+  render(<GameApp dataset={dataset} storage={storage} initialState={active} />);
+  const decisionName = dataset.teams.find(team => team.id === selectedTeamId)!.name;
+  await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+  expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toHaveFocus();
+  expect(screen.queryByRole("heading", { name: new RegExp(decisionName) })).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Continue saved run" }));
+  expect(screen.getByRole("heading", { name: new RegExp(decisionName) })).toBeVisible();
+});
+
 describe("GameApp", () => {
   it.each([
     ["daily", "daily", STORAGE_KEYS.daily, "Start Daily"],
@@ -406,7 +421,7 @@ describe("GameApp", () => {
 
       broken = false;
       await user.click(screen.getByRole("button", { name: "Recover run" }));
-      expect(screen.getByRole("heading", { name: "Choose a team to scout" })).toHaveFocus();
+      expect(await screen.findByRole("heading", { name: "Choose a team to scout" })).toHaveFocus();
       expect(screen.getByRole("status", { name: "Active run restoration status" })).toHaveTextContent("Saved run restored");
     } finally { errors.mockRestore(); }
   });

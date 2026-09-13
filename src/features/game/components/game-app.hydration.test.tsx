@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { StrictMode, useLayoutEffect } from "react";
 import { hydrateRoot, type Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
@@ -63,18 +64,47 @@ describe("GameApp storage hydration", () => {
     }
   });
 
-  it("restores a saved player decision after the stable shell and focuses its task heading", async () => {
+  it("keeps a managed saved decision behind the home restoration gate until discard is confirmed", async () => {
     const dataset = parseDataset(minimalDataset);
     const draft = createDraft("restore-player", dataset);
     const state = { phase: "player", mode: "free-play", draft: { ...draft, selectedTeamId: draft.offeredTeamIds[0] } } as const;
     const storage = memoryStorage();
     writeRecord(storage, ACTIVE_RECORD, { run: { phase: state.phase, mode: state.mode, draft: state.draft } });
+    const raw = storage.getItem(STORAGE_KEYS.active);
+    const user = userEvent.setup();
+    const decisionName = dataset.teams.find(team => team.id === state.draft.selectedTeamId)!.name;
 
     render(<GameApp dataset={dataset} storage={storage} />);
 
-    const heading = await screen.findByRole("heading", { name: new RegExp(dataset.teams.find(team => team.id === state.draft.selectedTeamId)!.name) });
-    await waitFor(() => expect(heading).toHaveFocus());
-    expect(screen.getByText("Saved run restored. Continue from this decision.")).toBeVisible();
+    const home = await screen.findByRole("heading", { name: "Draft history. Rewrite the bracket." });
+    await waitFor(() => expect(home).toHaveFocus());
+    expect(screen.getByRole("button", { name: "Continue saved run" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Start today's Daily" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start Free Play" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: new RegExp(decisionName) })).not.toBeInTheDocument();
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+
+    await user.click(screen.getByRole("button", { name: "Continue saved run" }));
+    expect(screen.getByRole("heading", { name: new RegExp(decisionName) })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+
+    const startOver = screen.getByRole("button", { name: "Start over" });
+    await user.click(startOver);
+    expect(screen.getByRole("dialog", { name: "Exit this run?" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Keep this run" }));
+    expect(screen.queryByRole("dialog", { name: "Exit this run?" })).not.toBeInTheDocument();
+    expect(startOver).toHaveFocus();
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+    await user.click(screen.getByRole("button", { name: "Continue saved run" }));
+    expect(screen.getByRole("heading", { name: new RegExp(decisionName) })).toHaveFocus();
+
+    await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+    await user.click(screen.getByRole("button", { name: "Start over" }));
+    await user.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
+    expect(storage.getItem(STORAGE_KEYS.active)).toBeNull();
+    expect(screen.getByRole("button", { name: "Start today's Daily" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Start Free Play" })).toBeVisible();
   });
 
   it("keeps the restoration shell and active record stable while an async gateway is pending", async () => {
@@ -95,6 +125,7 @@ describe("GameApp storage hydration", () => {
     expect(setItem).not.toHaveBeenCalled();
     expect(removeItem).not.toHaveBeenCalled();
     await act(async () => pending.resolve(series("group")));
+    fireEvent.click(await screen.findByRole("button", { name: "Continue saved run" }));
     expect(await screen.findByText(/Quarterfinal .* Round 2 of 4/)).toBeVisible();
     expect(screen.getByRole("heading", { name: "Your roster vs. Challenger roster" })).toHaveFocus();
   });
@@ -130,6 +161,7 @@ describe("GameApp storage hydration", () => {
     const view = render(<GameApp dataset={tournamentDataset} storage={storage} gateway={staleGateway} />);
 
     view.rerender(<GameApp dataset={tournamentDataset} storage={storage} gateway={currentGateway} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Continue saved run" }));
     expect(await screen.findByText(/Quarterfinal .* Round 2 of 4/)).toBeVisible();
     fireEvent.click(screen.getByRole("button", { name: "Exit run" }));
     fireEvent.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
@@ -151,6 +183,7 @@ describe("GameApp storage hydration", () => {
     const pending = deferred<SeriesResult>();
     pendingGateway.playSeries.mockImplementation(() => pending.promise);
     const view = render(<GameApp dataset={tournamentDataset} storage={storage} gateway={initialGateway} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Continue saved run" }));
     expect(await screen.findByText(/Quarterfinal .* Round 2 of 4/)).toBeVisible();
 
     view.rerender(<GameApp dataset={tournamentDataset} storage={storage} gateway={pendingGateway} />);
@@ -174,6 +207,7 @@ describe("GameApp storage hydration", () => {
     const initialGateway = gatewayFixture();
     const replacementGateway = gatewayFixture();
     const view = render(<GameApp dataset={tournamentDataset} storage={storage} gateway={initialGateway} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Continue saved run" }));
     expect(await screen.findByText(/Quarterfinal .* Round 2 of 4/)).toBeVisible();
     const activeReads = getItem.mock.calls.filter(([key]) => key === STORAGE_KEYS.active).length;
 
@@ -257,6 +291,7 @@ describe("GameApp storage hydration", () => {
 
     render(<GameApp dataset={dataset} storage={storage} />);
 
+    fireEvent.click(await screen.findByRole("button", { name: "Continue saved run" }));
     expect(await screen.findByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
     expect(values.get(STORAGE_KEYS.active)).toBe(underlyingRaw);
     expect(screen.getByRole("alert")).toHaveTextContent("Local progress cannot persist");

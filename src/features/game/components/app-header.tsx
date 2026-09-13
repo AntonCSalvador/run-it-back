@@ -7,12 +7,13 @@ export interface AppHeaderProps {
   mode: GameMode;
   stage: MacroStage;
   detail: string;
+  onHome(): void;
   onExit?(): void;
 }
 
-export function AppHeader({ mode, stage, detail, onExit }: AppHeaderProps) {
+export function AppHeader({ mode, stage, detail, onHome, onExit }: AppHeaderProps) {
   return <header className="app-banner">
-    <h1>Run It Back</h1>
+    <h1><button className="app-banner__home" type="button" onClick={onHome} aria-label="Run It Back home">Run It Back</button></h1>
     <div className="app-banner__run">
       <p aria-label="Current mode">{mode === "daily" ? "Daily" : "Free Play"}</p>
       <RunProgress stage={stage} detail={detail} />
