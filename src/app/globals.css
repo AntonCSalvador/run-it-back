@@ -176,7 +176,7 @@ main:focus-visible {
   text-transform: inherit;
 }
 
-.app-banner__home:hover { color: var(--rib-red); }
+.app-banner__home:hover:not(:disabled) { background: transparent; color: var(--rib-red); }
 
 .app-banner--entry p { text-transform: uppercase; letter-spacing: 0.08em; }
 

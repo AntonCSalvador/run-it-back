@@ -188,6 +188,12 @@ describe("parsed broadcast stylesheet", () => {
     expect(ruleFor(rules, ".roster-bar strong").style.getPropertyValue("color")).toBe("var(--rib-text-primary)");
   });
 
+  it("keeps the wordmark background transparent on hover", () => {
+    const hover = exactRuleFor(rules, ".app-banner__home:hover:not(:disabled)").style;
+    expect(hover.getPropertyValue("background")).toBe("transparent");
+    expect(hover.getPropertyValue("color")).toBe("var(--rib-red)");
+  });
+
   it("keeps desktop player cards in a bounded grid without mobile-width columns", () => {
     const track = ruleFor(rules, ".scroll-track").style;
     const picker = ruleFor(rules, ".player-picker__cards").style;
