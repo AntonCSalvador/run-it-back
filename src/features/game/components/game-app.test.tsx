@@ -419,9 +419,8 @@ describe("GameApp", () => {
 
       broken = false;
       await user.click(screen.getByRole("button", { name: "Recover run" }));
-      await user.click(await screen.findByRole("button", { name: "Continue saved run" }));
-      expect(screen.getByRole("heading", { name: "Choose a team to scout" })).toHaveFocus();
-      expect(screen.getByRole("status", { name: "Active run restoration status" })).toHaveTextContent("Saved run found");
+      expect(await screen.findByRole("heading", { name: "Choose a team to scout" })).toHaveFocus();
+      expect(screen.getByRole("status", { name: "Active run restoration status" })).toHaveTextContent("Saved run restored");
     } finally { errors.mockRestore(); }
   });
 

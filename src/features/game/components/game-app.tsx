@@ -94,19 +94,23 @@ function millisecondsToNextUtcDay(value: Date): number {
 }
 
 export function GameApp(props: GameAppProps) {
-  const [session, setSession] = useState(() => ({ dataset: props.dataset, revision: 0, initialState: props.initialState, focusModeOnMount: false }));
+  const [session, setSession] = useState(() => ({ dataset: props.dataset, revision: 0, initialState: props.initialState, focusModeOnMount: false, recoverSavedRun: false }));
   // Discard the old run before children render with a different dataset.
   if (session.dataset !== props.dataset) {
-    setSession({ dataset: props.dataset, revision: session.revision + 1, initialState: initialGameState, focusModeOnMount: false });
+    setSession({ dataset: props.dataset, revision: session.revision + 1, initialState: initialGameState, focusModeOnMount: false, recoverSavedRun: false });
   }
   const restart = (): void => {
     clearPlaywrightErrorBoundaryProbe();
-    setSession(value => ({ ...value, revision: value.revision + 1, initialState: initialGameState, focusModeOnMount: true }));
+    setSession(value => ({ ...value, revision: value.revision + 1, initialState: initialGameState, focusModeOnMount: true, recoverSavedRun: false }));
   };
-  return <ErrorBoundary key={session.revision} onRestart={restart}><GameAppCore {...props} initialState={session.initialState} focusModeOnMount={session.focusModeOnMount} onRestart={restart} /></ErrorBoundary>;
+  const recover = (): void => {
+    clearPlaywrightErrorBoundaryProbe();
+    setSession(value => ({ ...value, revision: value.revision + 1, initialState: initialGameState, focusModeOnMount: false, recoverSavedRun: true }));
+  };
+  return <ErrorBoundary key={session.revision} onRestart={recover}><GameAppCore {...props} initialState={session.initialState} focusModeOnMount={session.focusModeOnMount} recoverSavedRun={session.recoverSavedRun} onRestart={restart} /></ErrorBoundary>;
 }
 
-export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, focusModeOnMount = false, onRestart }: GameAppProps & { focusModeOnMount?: boolean; onRestart: () => void }) {
+export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, gateway: suppliedGateway, gatewayFactory, storage, initialState = initialGameState, focusModeOnMount = false, recoverSavedRun = false, onRestart }: GameAppProps & { focusModeOnMount?: boolean; recoverSavedRun?: boolean; onRestart: () => void }) {
   triggerPlaywrightErrorBoundaryOnce();
   const actionFire = useFireAccent();
   const dataset = useMemo(() => parseDataset(suppliedDataset ?? championsDataset), [suppliedDataset]);
@@ -181,19 +185,21 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         if (cancelled) return;
         if (restored) {
           dispatch({ type: "restore-active", state: restored.state });
-          setHomeOpen(true);
-          setFocusHome(true);
+          setHomeOpen(!recoverSavedRun);
+          setFocusHome(!recoverSavedRun);
           if (restored.state.phase === "tournament") {
             setFocusTournamentOnMount(true);
             if (restored.highlights.length) setRunHighlights({ semifinal: restored.highlights });
           }
-          setRestoreNotice("Saved run found. Choose whether to continue or start over.");
+          setRestoreNotice(recoverSavedRun ? "Saved run restored." : "Saved run found. Choose whether to continue or start over.");
         } else {
           recovered = true;
+          setFocusHome(true);
           if (!unresolved) removeRecord(adapter, ACTIVE_RECORD);
           setRestoreNotice("The saved run could not be restored. Completed results are safe. Start a new run when ready.");
         }
       } else if (active.recovered) {
+        setFocusHome(true);
         setRestoreNotice("The saved run could not be restored. Completed results are safe. Start a new run when ready.");
       }
       setActiveStorageState({ recovered, persistent: active.persistent });
@@ -201,7 +207,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
     };
     void hydrate();
     return () => { cancelled = true; };
-  }, [adapter, dataset, gateway, hydrated, managesActiveRun]);
+  }, [adapter, dataset, gateway, hydrated, managesActiveRun, recoverSavedRun]);
   useEffect(() => {
     if (!hydrated || !managesActiveRun || activeReadStatus !== "resolved") return;
     const run = serializeActiveRun(state);
@@ -374,7 +380,7 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
         <ModeSelection dailyState={todayDaily ? "completed" : "available"} streak={streak} savedRun={savedRun} focusOnMount={focusModeOnMount || focusModeAfterExit || focusHome} onStart={startMode} onViewDailyResult={() => {
           setRecentResultsOpen(true);
           setSelectedResultKey(`daily-${todayUtc}`);
-        }} onContinueSavedRun={() => { setHomeOpen(false); setFocusHome(false); }} onStartOver={() => setExitDialogOpen(true)} />
+        }} onContinueSavedRun={() => { setHomeOpen(false); setFocusHome(false); setRestoreNotice("Saved run restored."); }} onStartOver={() => setExitDialogOpen(true)} />
         <RecentResults daily={savedDaily} free={savedFree} cards={dataset.cards} open={recentResultsOpen} selectedKey={selectedResultKey} onOpenChange={setRecentResultsOpen} onSelectedKeyChange={setSelectedResultKey} />
       </>}
       {!showHome && state.phase === "team" && (() => {

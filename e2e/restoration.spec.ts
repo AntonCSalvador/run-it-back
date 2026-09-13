@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { STORAGE_KEYS } from "../src/features/game/storage";
-import { draftRoster, start } from "./support/journey";
+import { continueSavedRun, draftRoster, start } from "./support/journey";
 
 async function chooseFirstTeam(page: Page): Promise<void> {
   await page.locator(".team-card").first().click();
@@ -16,6 +16,8 @@ test("reload restores a committed player decision deterministically", async ({ p
 
   await page.reload();
 
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
+  await continueSavedRun(page);
   await expect(page.getByRole("heading", { name: heading! })).toBeFocused();
   await expect(page.getByRole("status", { name: "Active run restoration status" })).toContainText("Saved run restored");
   expect(await page.locator('[data-testid^="player-card-"] button').allTextContents()).toEqual(playerNames);
@@ -36,6 +38,8 @@ test("reload during semifinal presentation restarts that deterministic stage", a
 
   await page.reload();
 
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
+  await continueSavedRun(page);
   await expect(page.getByText(/^Semifinal · Round 3 of 4$/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Play semifinal" })).toBeVisible();
   await page.getByRole("button", { name: "Play semifinal" }).click();
@@ -63,6 +67,8 @@ test("reload at the Final rebuilds retained semifinal moments exactly once in th
 
   await page.reload();
 
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
+  await continueSavedRun(page);
   await expect(page.getByRole("heading", { name: "Your roster vs. Challenger roster" })).toBeFocused();
   await expect(page.getByRole("button", { name: "Play final" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Series result:/ })).toHaveCount(0);
@@ -74,6 +80,19 @@ test("reload at the Final rebuilds retained semifinal moments exactly once in th
   await expect(page.getByRole("heading", { name: "Tournament champion" })).toBeVisible();
   const recap = page.locator(".results-view__moments");
   for (const moment of retainedMoments) await expect(recap.getByText(moment, { exact: true })).toHaveCount(1);
+});
+
+test("wordmark returns home without clearing active progress", async ({ page }) => {
+  await page.goto("/?e2e-seed=home-round-trip-e2e");
+  await start(page, "Free Play");
+  await chooseFirstTeam(page);
+  const heading = await page.getByRole("heading", { name: /Choose from/ }).textContent();
+  const checkpoint = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active);
+  await page.getByRole("button", { name: "Run It Back home" }).click();
+  await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active)).toBe(checkpoint);
+  await continueSavedRun(page);
+  await expect(page.getByRole("heading", { name: heading! })).toBeVisible();
 });
 
 test("confirmed exit clears only the active run", async ({ page }) => {
@@ -106,6 +125,7 @@ test("corrupt active data is isolated and storage failure keeps the run playable
   await page.evaluate(key => localStorage.setItem(key, "{not-json"), STORAGE_KEYS.active);
   await page.reload();
   await expect(page.getByRole("status", { name: "Active run restoration status" })).toContainText("could not be restored");
+  await expect(page.getByRole("button", { name: "Continue saved run" })).toHaveCount(0);
   await start(page, "Free Play");
 
   await page.context().clearCookies();
