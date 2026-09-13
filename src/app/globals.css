@@ -564,6 +564,16 @@ textarea {
   background: var(--rib-surface-1);
 }
 
+.mode-selection__saved {
+  margin: 0;
+  border: 1px solid var(--rib-line-strong);
+  border-radius: var(--rib-radius-lg);
+  padding: var(--rib-space-6);
+  background: var(--rib-surface-1);
+}
+.mode-selection__saved h3 { margin-block-start: 0; }
+.mode-selection__saved > p { color: var(--rib-text-secondary); }
+
 .mode-selection__free { border-block-start: 1px solid var(--rib-line-subtle); padding: var(--rib-space-6) var(--rib-space-2) 0; }
 .mode-selection__choice-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--rib-space-3); }
 .mode-selection__choice-heading h3,
