@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import type { GameMode } from "../machine";
 
 export interface ModeSelectionProps {
@@ -16,27 +16,32 @@ export interface ModeSelectionProps {
 
 export function ModeSelection({ dailyState, streak, focusOnMount = false, savedRun, onStart, onViewDailyResult, onContinueSavedRun, onStartOver }: ModeSelectionProps) {
   const completed = dailyState === "completed";
+  const id = useId();
+  const modeSelectionTitle = `mode-selection-title-${id}`;
+  const savedRunTitle = `saved-run-title-${id}`;
+  const dailyModeTitle = `daily-mode-title-${id}`;
+  const freePlayTitle = `free-play-title-${id}`;
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { if (focusOnMount) heading.current?.focus(); }, [focusOnMount]);
 
-  return <section className="mode-selection" aria-labelledby="mode-selection-title">
+  return <section className="mode-selection" aria-labelledby={modeSelectionTitle}>
     <div className="mode-selection__intro">
-      <h2 id="mode-selection-title" ref={heading} tabIndex={-1}>Draft history. Rewrite the bracket.</h2>
+      <h2 id={modeSelectionTitle} ref={heading} tabIndex={-1}>Draft history. Rewrite the bracket.</h2>
       <p className="mode-selection__lede">Build a five-player Champions roster, assign every role, choose an IGL, and play through four tournament rounds.</p>
     </div>
 
     <div className="mode-selection__choices" aria-label="Choose how to play">
-      {savedRun ? <section className="mode-selection__saved" aria-labelledby="saved-run-title">
-        <h3 id="saved-run-title">Unfinished {savedRun.mode === "daily" ? "Daily" : "Free Play"} run</h3>
+      {savedRun ? <section className="mode-selection__saved" aria-labelledby={savedRunTitle}>
+        <h3 id={savedRunTitle}>Unfinished {savedRun.mode === "daily" ? "Daily" : "Free Play"} run</h3>
         <p>{savedRun.detail}</p>
         <div className="mode-selection__actions">
           <button className="action-button" type="button" onClick={onContinueSavedRun}>Continue saved run</button>
           <button type="button" onClick={onStartOver}>Start over</button>
         </div>
       </section> : <>
-        <section className="mode-selection__daily" aria-labelledby="daily-mode-title">
+        <section className="mode-selection__daily" aria-labelledby={dailyModeTitle}>
           <div className="mode-selection__choice-heading">
-            <h3 id="daily-mode-title">Daily</h3>
+            <h3 id={dailyModeTitle}>Daily</h3>
             <p className="mode-status" role="status">{completed ? "Completed today" : "Available today"}</p>
           </div>
           <p>One shared draft each UTC day.</p>
@@ -51,8 +56,8 @@ export function ModeSelection({ dailyState, streak, focusOnMount = false, savedR
           </div>
         </section>
 
-        <section className="mode-selection__free" aria-labelledby="free-play-title">
-          <h3 id="free-play-title">Free Play</h3>
+        <section className="mode-selection__free" aria-labelledby={freePlayTitle}>
+          <h3 id={freePlayTitle}>Free Play</h3>
           <p>Unlimited drafts with a fresh bracket each run.</p>
           <button type="button" onClick={() => onStart("free-play")}>Start Free Play</button>
         </section>

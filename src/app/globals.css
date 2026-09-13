@@ -662,7 +662,8 @@ textarea {
   .mode-selection { grid-template-columns: 1fr; min-height: 0; gap: var(--rib-space-6); padding-block-start: var(--rib-space-6); }
   .mode-selection__intro { align-self: start; }
   .mode-selection__choices { gap: var(--rib-space-4); }
-  .mode-selection__daily { padding: var(--rib-space-4); }
+  .mode-selection__daily,
+  .mode-selection__saved { padding: var(--rib-space-4); }
   .mode-selection__format { grid-column: 1; grid-template-columns: 1fr 1fr; gap: var(--rib-space-2); }
   .mode-selection__actions > *,
   .mode-selection__free > button { width: 100%; }

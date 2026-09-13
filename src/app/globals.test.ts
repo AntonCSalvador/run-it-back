@@ -416,6 +416,11 @@ describe("parsed broadcast stylesheet", () => {
     expect(shell.getPropertyValue("min-height")).toContain("50vh");
   });
 
+  it("reduces saved-run panel padding on narrow screens", () => {
+    const mobile = mediaFor(rules, "(max-width:44rem)");
+    expect(ruleFor(mobile.cssRules, ".mode-selection__saved").style.getPropertyValue("padding")).toBe("var(--rib-space-4)");
+  });
+
   it("preserves focus, action, disabled, and state boundaries in forced colors", () => {
     const forced = mediaFor(rules, "(forced-colors: active)");
     const focus = ruleFor(forced.cssRules, ":focus-visible").style;
