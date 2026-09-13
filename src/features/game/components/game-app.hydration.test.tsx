@@ -77,7 +77,7 @@ describe("GameApp storage hydration", () => {
     render(<GameApp dataset={dataset} storage={storage} />);
 
     const home = await screen.findByRole("heading", { name: "Draft history. Rewrite the bracket." });
-    expect(home).toHaveFocus();
+    await waitFor(() => expect(home).toHaveFocus());
     expect(screen.getByRole("button", { name: "Continue saved run" })).toBeVisible();
     expect(screen.queryByRole("button", { name: "Start today's Daily" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Start Free Play" })).not.toBeInTheDocument();
