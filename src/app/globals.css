@@ -165,6 +165,19 @@ main:focus-visible {
 
 .app-banner h1 { margin-inline-end: auto; }
 
+.app-banner__home {
+  min-block-size: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.app-banner__home:hover { color: var(--rib-red); }
+
 .app-banner--entry p { text-transform: uppercase; letter-spacing: 0.08em; }
 
 .app-banner__run {
