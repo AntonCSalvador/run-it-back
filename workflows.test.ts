@@ -43,7 +43,7 @@ describe("workflow action versions", () => {
     ]) expect(normalCi).toContain(path);
     expect(normalCi).toContain('VISUAL_TESTS="captures the complete Free Play journey|captures champion recap"');
     expect(normalCi).toContain('npm run test:e2e -- --grep-invert "$VISUAL_TESTS"');
-    expect(normalCi).toContain("npm run test:e2e\n");
+    expect(normalCi).toMatch(/npm run test:e2e\r?\n/);
     expect(normalCi).not.toContain("--update-snapshots");
   });
 });

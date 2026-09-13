@@ -15,8 +15,9 @@ import { TournamentView } from "./tournament-view";
 import { ResultsView } from "./results-view";
 import { projectTerminalResult } from "../result-projection";
 import { RosterBar } from "./roster-bar";
-import { RunProgress } from "./run-progress";
+import { PlayerPicker } from "./player-picker";
 import { IglPicker } from "./igl-picker";
+import { RunProgress } from "./run-progress";
 
 afterEach(() => window.localStorage.clear());
 
@@ -187,6 +188,20 @@ describe("broadcast accessibility", () => {
     expect(roster).not.toHaveClass("scroll-track");
     expect(fireEvent.keyDown(roster, { key: "ArrowRight" })).toBe(true);
     expect(within(roster).getAllByRole("listitem")).toHaveLength(5);
+  });
+
+  it("keeps draft portraits decorative and leader radios named by handle and year", () => {
+    const cards = parseDataset(minimalDataset).cards.slice(0, 5);
+    render(<>
+      <PlayerPicker team={teams[0]} cards={cards} openRoles={["smokes", "duelist", "initiator", "sentinel", "flex"]} portraitForPlayer={playerId => playerId === cards[0].playerId ? "/assets/players/test.webp" : null} onChoose={vi.fn()} onBack={vi.fn()} />
+      <IglPicker cards={cards} selectedId={null} portraitForPlayer={playerId => playerId === cards[0].playerId ? "/assets/players/test.webp" : null} onSelect={vi.fn()} onStart={vi.fn()} />
+    </>);
+
+    for (const card of cards) {
+      const choice = screen.getByRole("button", { name: `${card.displayHandle} ${card.year}` });
+      expect(within(choice).queryByRole("img")).not.toBeInTheDocument();
+      expect(screen.getByRole("radio", { name: `${card.displayHandle} ${card.year}` })).toBeVisible();
+    }
   });
 
   it("uses peer h2 headings for the completed lineup and IGL decision", () => {

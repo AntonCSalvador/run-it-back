@@ -2,10 +2,11 @@
 
 import { useId } from "react";
 import { ROLES, type PlayerCard, type Role } from "../domain";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 
-export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; iglCardId?: string | null; headingLevel?: 2 | 3; onMove(cardId: string, role: Role): void }
+export interface RosterBarProps { slots: Partial<Record<Role, PlayerCard>>; iglCardId?: string | null; headingLevel?: 2 | 3; onMove(cardId: string, role: Role): void; portraitForPlayer?: PortraitForPlayer }
 type RosterBarIntegrationProps = RosterBarProps & { canMove?: boolean };
-export function RosterBar({ slots, iglCardId = null, headingLevel = 3, onMove, canMove = true }: RosterBarIntegrationProps) {
+export function RosterBar({ slots, iglCardId = null, headingLevel = 3, onMove, canMove = true, portraitForPlayer = () => null }: RosterBarIntegrationProps) {
   const headingId = useId();
   const filledCount = ROLES.filter(role => Boolean(slots[role])).length;
   return <section aria-labelledby={headingId} role="region" className="roster-bar">
@@ -22,6 +23,7 @@ export function RosterBar({ slots, iglCardId = null, headingLevel = 3, onMove, c
     return <li key={role} aria-label={`${role} slot`} data-role={role} data-state={card ? "filled" : "open"}>
       <strong>{role}</strong>
       {card ? <>
+        <PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} />
         <span>{identity}</span>
         {iglCardId === card.id && <span className="roster-bar__igl">IGL</span>}
         {canMove && compatibleTargets.length > 0 && <details className="roster-bar__swaps">

@@ -4,8 +4,14 @@ import { championsDataset } from "./index";
 import { validateChampions, type Evidence } from "./validation";
 import raw from "./raw-extraction.json";
 import overlays from "./reviewed-overlays.json";
+import portraitAssets from "./portrait-assets.json";
 
 describe("Champions audit validation", () => {
+  it("requires exactly one portrait for every canonical player", () => {
+    expect(championsDataset.players).toHaveLength(239);
+    expect(championsDataset.players.filter(player => player.portrait !== null)).toHaveLength(239);
+    expect(new Set(portraitAssets.map(asset => asset.playerId))).toEqual(new Set(championsDataset.players.map(player => player.id)));
+  });
   it("rejects source URLs swapped between otherwise valid IDs", () => {
     const data = structuredClone(championsDataset);
     const first = data.sources.find(source => source.id === "liquipedia-champions-2021")!;
@@ -26,22 +32,24 @@ describe("Champions audit validation", () => {
 
   it.each(["missing", "extra", "duplicate"])("rejects %s source catalog records", kind => {
     const data = structuredClone(championsDataset);
-    if (kind === "missing") data.sources.pop();
-    if (kind === "extra") data.sources.push({ ...data.sources[0], id: "extra-reviewed-looking-source" });
-    if (kind === "duplicate") data.sources.push({ ...data.sources[0] });
+    const factual = data.sources.find(source => source.usage === "facts")!;
+    if (kind === "missing") data.sources = data.sources.filter(source => source.id !== factual.id);
+    if (kind === "extra") data.sources.push({ ...factual, id: "extra-reviewed-looking-source" });
+    if (kind === "duplicate") data.sources.push({ ...factual });
     expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/source catalog/);
   });
 
   it.each(["player", "team", "card", "evidence", "clutch evidence"])("rejects existing but unrelated %s source IDs", target => {
     const data = structuredClone(championsDataset);
     const audit = structuredClone(evidence) as Evidence[];
-    const wrong = ["liquipedia-champions-2025"];
-    if (target === "player") data.players[0].sourceIds = wrong;
+    const selectedPlayer = data.players[0];
+    const wrong = [data.sources.find(source => source.usage === "facts" && !selectedPlayer.sourceIds.includes(source.id))!.id];
+    if (target === "player") selectedPlayer.sourceIds = wrong;
     if (target === "team") data.teams[0].sourceIds = wrong;
     if (target === "card") data.cards[0].sourceIds = wrong;
     if (target === "evidence") audit[0].sourceIds = wrong;
     if (target === "clutch evidence") audit[0].clutchSourceIds = wrong;
-    expect(() => validateChampions(data, audit)).toThrow(/sources|citations/);
+    expect(() => validateChampions(data, audit)).toThrow(/sources|citations|portrait source overlay/);
   });
 
   it.each(["extra", "missing", "duplicate"])("rejects %s valid citations", mode => {
@@ -59,7 +67,7 @@ describe("Champions audit validation", () => {
     if (target === "displayHandle") data.cards[0].displayHandle = "DifferentHandle";
     if (target === "teamName") data.teams[0].name = "Different team";
     if (target === "teamId") data.cards[0].teamId = data.teams[0].id;
-    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping/);
+    expect(() => validateChampions(data, evidence as Evidence[])).toThrow(/identity|raw|team mapping|orphan player/);
   });
 
   it("rejects wrong existing citations for overrides and leadership", () => {

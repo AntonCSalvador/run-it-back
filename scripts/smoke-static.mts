@@ -101,6 +101,8 @@ function datasetAssets(dataDirectory: string) {
     for (const team of parsed.teams ?? []) if (team.logo !== null) assets.push(team.logo);
     for (const player of parsed.players ?? []) if (player.portrait !== null) assets.push(player.portrait);
   }
+  const portraits = JSON.parse(readFileSync(resolve(dataDirectory, "portrait-assets.json"), "utf8")) as Array<{ portrait: string }>;
+  assets.push(...portraits.map(row => row.portrait));
   return assets;
 }
 

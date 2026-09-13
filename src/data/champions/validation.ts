@@ -1,9 +1,19 @@
-import { ROLES, type GameDataset, type Role } from "@/features/game/domain";
+import { ROLES, type GameDataset, type Role, type SourceRef } from "@/features/game/domain";
 import { createHash } from "node:crypto";
 import rawData from "./raw-extraction.json";
 import reviewedOverlays from "./reviewed-overlays.json";
+import portraitAssets from "./portrait-assets.json";
+import portraitSourceRefs from "./portrait-sources.json";
 import { deriveChampions, type Overlays, type RawExtraction } from "./derivation";
+import { parsePortraitCatalog, validatePortraitCatalog } from "./portrait-catalog";
 import { validateSourceCatalog } from "./source-policy";
+import { portraitSourceIdPattern } from "./portrait-source";
+
+
+function sameSourceMetadata(actual: SourceRef, expected: SourceRef): boolean {
+  return Object.keys(actual).sort().join() === Object.keys(expected).sort().join()
+    && Object.entries(expected).every(([key, value]) => actual[key as keyof SourceRef] === value);
+}
 
 export type Evidence = {
   cardId: string; year: number; mapsPlayed: number; threshold: number;
@@ -18,6 +28,17 @@ export type Evidence = {
 
 export function validateChampions(dataset: GameDataset, evidence: Evidence[]): void {
   validateSourceCatalog(dataset.sources);
+  const parsedPortraitAssets = parsePortraitCatalog(portraitAssets);
+  const expectedPortraitSources = (portraitSourceRefs as unknown[]).filter((source): source is SourceRef => (
+    source !== null && typeof source === "object" && "id" in source && typeof source.id === "string" && portraitSourceIdPattern.test(source.id)
+  ));
+  const datasetPortraitSources = dataset.sources.filter(source => portraitSourceIdPattern.test(source.id));
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, expectedPortraitSources, { requireOverlay: true, requireCompleteCoverage: true });
+  validatePortraitCatalog(dataset.players, parsedPortraitAssets, datasetPortraitSources, { requireOverlay: true, requireCompleteCoverage: true });
+  if (datasetPortraitSources.length !== expectedPortraitSources.length || datasetPortraitSources.some(source => {
+    const expected = expectedPortraitSources.find(candidate => candidate.id === source.id);
+    return !expected || !sameSourceMetadata(source, expected);
+  })) throw new Error("portrait source catalog metadata mismatch");
   const errors: string[] = [];
   if (createHash("sha256").update(JSON.stringify(rawData)).digest("hex") !== "25d688e794e3031b019fa0341653d410afda6da90cbb5cd387e7d9986673c546") throw new Error("raw extraction checksum mismatch");
   if (createHash("sha256").update(JSON.stringify(reviewedOverlays)).digest("hex") !== "960a351382216a2359087835c53c4d506406134b6b42bc815e17f5a3288b1369") throw new Error("reviewed overlays checksum mismatch");
@@ -34,10 +55,11 @@ export function validateChampions(dataset: GameDataset, evidence: Evidence[]): v
   if (dataset.cards.length !== 404 || new Set(dataset.cards.map(card => card.id)).size !== 404 || dataset.players.length !== 239 || new Set(dataset.players.map(player => player.id)).size !== 239) errors.push("raw participation cardinality");
   const playerIds = new Set(rawData.cards.map(card => `player-${card.playerId}`));
   if (dataset.players.some(player => !playerIds.has(player.id))) errors.push("raw player identity");
+  const factualSourceIds = new Set(dataset.sources.filter(source => source.usage === "facts").map(source => source.id));
   for (const player of dataset.players) {
     const expected = expectedPlayers.get(player.id);
     if (!expected || player.canonicalHandle !== expected.canonicalHandle) errors.push(`raw identity handle ${player.id}`);
-    if (!expected || JSON.stringify(player.sourceIds) !== JSON.stringify(expected.sourceIds)) errors.push(`identity sources ${player.id}`);
+    if (!expected || JSON.stringify(player.sourceIds.filter(sourceId => factualSourceIds.has(sourceId))) !== JSON.stringify(expected.sourceIds)) errors.push(`identity sources ${player.id}`);
   }
   if (dataset.teams.length !== reviewedOverlays.teams.length || new Set(dataset.teams.map(team => team.id)).size !== 80) errors.push("raw teams");
   for (const expected of reviewedOverlays.teams) {

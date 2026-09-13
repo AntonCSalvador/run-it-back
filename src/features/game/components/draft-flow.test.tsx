@@ -17,7 +17,7 @@ import { IglPicker } from "./igl-picker";
 const dataset = parseDataset(minimalDataset);
 const flexibleDataset = parseDataset({
   ...minimalDataset,
-  players: minimalDataset.players.map(player => ({ ...player, portrait: "/assets/players/test.webp" })),
+  players: minimalDataset.players.map(player => player.id === "aspas" ? { ...player, portrait: "/assets/players/test.webp" } : player),
   cards: minimalDataset.cards.map(card => ({ ...card, eligibleRoles: [...ROLES] })),
 });
 
@@ -307,6 +307,8 @@ describe("draft flow", () => {
     const playerCard = screen.getByTestId(`player-card-${selectedCard.id}`);
     expect(playerCard).toHaveClass("player-card");
     expect(within(playerCard).getByRole("presentation")).toHaveAttribute("src", "/assets/players/test.webp");
+    expect(within(playerCard).getByTestId(`portrait-${selectedCard.playerId}`)).toHaveClass("player-portrait--choice");
+    expect(within(playerCard).queryByRole("img")).not.toBeInTheDocument();
     expect(document.querySelectorAll(".role-chip").length).toBeGreaterThan(0);
     await user.click(screen.getByRole("button", { name: "Back to teams" }));
     expect(offered().map(button => button.textContent).join("|")).toBe(before);
@@ -325,6 +327,7 @@ describe("draft flow", () => {
       expect(within(screen.getByRole("navigation", { name: "Run progress" })).getByRole("status")).toHaveTextContent(`Pick ${drafted.size + 1} of 5`);
       await user.click(within(screen.getByRole("group", { name: "Choose an open role" })).getByRole("button", { name: role }));
       drafted.add(card.id);
+      expect(within(screen.getByLabelText(`${role} slot`)).getByTestId(`portrait-${card.playerId}`)).toHaveClass("player-portrait--compact");
       if (role === "smokes") expect(screen.queryByRole("button", { name: /Move .* to / })).not.toBeInTheDocument();
     }
     expect(screen.getByRole("region", { name: "Roster · 5 of 5 filled" })).toBeVisible();
@@ -340,7 +343,9 @@ describe("draft flow", () => {
     await user.click(move);
     expect(screen.getByLabelText(`${targetRole} slot`)).toHaveTextContent(sourceCard);
     expect(screen.getByLabelText(`${sourceRole} slot`)).toHaveTextContent(displacedCard);
-    expect(screen.getByRole("group", { name: "Choose your IGL" })).toBeVisible();
+    const iglPicker = screen.getByRole("group", { name: "Choose your IGL" });
+    expect(iglPicker).toBeVisible();
+    expect(within(iglPicker).getAllByTestId(/^portrait-/)).toHaveLength(5);
     expect(screen.getByRole("button", { name: "Start tournament" })).toBeDisabled();
     await user.click(screen.getByRole("radio", { name: sourceCard }));
     expect(within(screen.getByLabelText(`${targetRole} slot`)).getByText("IGL")).toBeVisible();
@@ -355,9 +360,7 @@ describe("draft flow", () => {
     render(<MediaMark src="/assets/teams/loud.webp" alt="LOUD 2022 logo" label="LOUD" />);
     const image = screen.getByRole("img", { name: "LOUD 2022 logo" });
     const wrapper = image.parentElement as HTMLElement;
-    expect(wrapper.style.display).toBe("inline-flex");
-    expect(wrapper.style.width).toBe("48px");
-    expect(wrapper.style.height).toBe("48px");
+    expect(wrapper).toHaveClass("media-mark");
     expect((image as HTMLImageElement).style.width).toBe("100%");
     expect((image as HTMLImageElement).style.height).toBe("100%");
     expect((image as HTMLImageElement).style.display).toBe("block");

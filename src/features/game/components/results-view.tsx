@@ -8,6 +8,7 @@ import type { TerminalResultProjection } from "../result-projection";
 import { useFireAccent } from "./use-fire-accent";
 import type { GameMode } from "../machine";
 import { STAGE_ORDER } from "../tournament";
+import { PlayerPortrait, type PortraitForPlayer } from "./player-portrait";
 import { humanRole } from "./role-picker";
 
 const stageLabels: Record<Stage, { readonly display: string; readonly sentence: string }> = {
@@ -41,9 +42,10 @@ export interface ResultsViewProps {
   shareText: string;
   onRunAgain(): void;
   onModeChange(mode: GameMode): void;
+  portraitForPlayer?: PortraitForPlayer;
 }
 
-export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shareText, onRunAgain, onModeChange }: ResultsViewProps) {
+export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shareText, onRunAgain, onModeChange, portraitForPlayer = () => null }: ResultsViewProps) {
   const { fireClass, trigger } = useFireAccent();
   const [message, setMessage] = useState("");
   const [fallbackCount, setFallbackCount] = useState(0);
@@ -140,9 +142,10 @@ export function ResultsView({ mode, result, cards, highlights, rerollsUsed, shar
       const card = byId.get(tournament.userLineup.slots.find(slot => slot.role === role)?.cardId ?? "");
       const isIgl = card?.id === tournament.userLineup.iglCardId;
       return <li key={role}>
-        <span>{humanRole(role)}</span>
+        <span className="results-view__role">{humanRole(role)}</span>
+        {card && <PlayerPortrait portrait={portraitForPlayer(card.playerId)} handle={card.displayHandle} variant="compact" testId={`portrait-${card.playerId}`} />}
         <strong>{card?.displayHandle ?? "Unavailable player"}</strong>
-        <span>{card?.year ?? "Year unavailable"}</span>
+        <span className="results-view__year">{card?.year ?? "Year unavailable"}</span>
         {isIgl && <span className="results-view__igl">IGL</span>}
       </li>;
     })}</ol></section>

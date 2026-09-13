@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
 import { normalizeHandle } from "./handle";
-import { parseDataset } from "./schema";
+import { parseDataset, sourceRefSchema } from "./schema";
 
 type MutableDataset = { cards: Array<{ id: string; mapsPlayed: number; eligibleRoles: string[]; traits: Record<string, number>; sourceIds: string[]; year: number }> };
 const clone = () => structuredClone(minimalDataset) as unknown as MutableDataset;
@@ -52,5 +52,11 @@ describe("game dataset schema", () => {
       const data = clone() as unknown as { cards: Array<{ displayHandle: string }> }; data.cards[0].displayHandle = handle;
       expect(() => parseDataset(data)).toThrow(/handle/i);
     }
+  });
+  it("accepts a valid optional original source URL", () => {
+    expect(sourceRefSchema.parse({ id: "portrait", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "https://www.flickr.com/photos/riot/1", retrievedAt: "2026-09-08", usage: "asset" }).originalUrl).toBe("https://www.flickr.com/photos/riot/1");
+  });
+  it("rejects a malformed optional original source URL", () => {
+    expect(() => sourceRefSchema.parse({ id: "portrait", url: "https://liquipedia.net/commons/File:Portrait.jpg", originalUrl: "not a URL", retrievedAt: "2026-09-08", usage: "asset" })).toThrow(/originalUrl/);
   });
 });
