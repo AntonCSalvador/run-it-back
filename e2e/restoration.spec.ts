@@ -4,21 +4,22 @@ import { continueSavedRun, draftRoster, start } from "./support/journey";
 
 async function chooseFirstTeam(page: Page): Promise<void> {
   await page.locator(".team-card").first().click();
-  await expect(page.getByRole("heading", { name: /Choose from/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Choose from .+$/ })).toBeVisible();
 }
 
 test("reload restores a committed player decision deterministically", async ({ page }) => {
   await page.goto("/?e2e-seed=restore-player-e2e");
   await start(page, "Free Play");
   await chooseFirstTeam(page);
-  const heading = await page.getByRole("heading", { name: /Choose from/ }).textContent();
+  const heading = await page.getByRole("heading", { name: /^Choose from .+$/ }).textContent();
+  expect(heading).not.toBeNull();
   const playerNames = await page.locator('[data-testid^="player-card-"] button').allTextContents();
 
   await page.reload();
 
   await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
   await continueSavedRun(page);
-  await expect(page.getByRole("heading", { name: heading! })).toBeFocused();
+  await expect(page.getByRole("heading", { name: heading!, exact: true })).toBeFocused();
   await expect(page.getByRole("status", { name: "Active run restoration status" })).toContainText("Saved run restored");
   expect(await page.locator('[data-testid^="player-card-"] button').allTextContents()).toEqual(playerNames);
 });
@@ -86,13 +87,16 @@ test("wordmark returns home without clearing active progress", async ({ page }) 
   await page.goto("/?e2e-seed=home-round-trip-e2e");
   await start(page, "Free Play");
   await chooseFirstTeam(page);
-  const heading = await page.getByRole("heading", { name: /Choose from/ }).textContent();
+  const heading = await page.getByRole("heading", { name: /^Choose from .+$/ }).textContent();
+  expect(heading).not.toBeNull();
+  await expect.poll(() => page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active)).not.toBeNull();
   const checkpoint = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active);
+  expect(checkpoint).not.toBeNull();
   await page.getByRole("button", { name: "Run It Back home" }).click();
   await expect(page.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toBeFocused();
   expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.active)).toBe(checkpoint);
   await continueSavedRun(page);
-  await expect(page.getByRole("heading", { name: heading! })).toBeVisible();
+  await expect(page.getByRole("heading", { name: heading!, exact: true })).toBeVisible();
 });
 
 test("confirmed exit clears only the active run", async ({ page }) => {
