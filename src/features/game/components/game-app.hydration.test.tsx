@@ -64,23 +64,47 @@ describe("GameApp storage hydration", () => {
     }
   });
 
-  it("lands on home with an explicit choice before opening a saved decision", async () => {
+  it("keeps a managed saved decision behind the home restoration gate until discard is confirmed", async () => {
     const dataset = parseDataset(minimalDataset);
     const draft = createDraft("restore-player", dataset);
     const state = { phase: "player", mode: "free-play", draft: { ...draft, selectedTeamId: draft.offeredTeamIds[0] } } as const;
     const storage = memoryStorage();
     writeRecord(storage, ACTIVE_RECORD, { run: { phase: state.phase, mode: state.mode, draft: state.draft } });
+    const raw = storage.getItem(STORAGE_KEYS.active);
+    const user = userEvent.setup();
+    const decisionName = dataset.teams.find(team => team.id === state.draft.selectedTeamId)!.name;
 
     render(<GameApp dataset={dataset} storage={storage} />);
 
     const home = await screen.findByRole("heading", { name: "Draft history. Rewrite the bracket." });
     expect(home).toHaveFocus();
     expect(screen.getByRole("button", { name: "Continue saved run" })).toBeVisible();
-    expect(screen.queryByRole("heading", { name: new RegExp(dataset.teams.find(team => team.id === state.draft.selectedTeamId)!.name) })).not.toBeInTheDocument();
-    await userEvent.setup().click(screen.getByRole("button", { name: "Continue saved run" }));
-    const decision = screen.getByRole("heading", { name: new RegExp(dataset.teams.find(team => team.id === state.draft.selectedTeamId)!.name) });
-    expect(decision).toBeVisible();
-    expect(storage.getItem(STORAGE_KEYS.active)).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "Start today's Daily" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start Free Play" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: new RegExp(decisionName) })).not.toBeInTheDocument();
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+
+    await user.click(screen.getByRole("button", { name: "Continue saved run" }));
+    expect(screen.getByRole("heading", { name: new RegExp(decisionName) })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+
+    const startOver = screen.getByRole("button", { name: "Start over" });
+    await user.click(startOver);
+    expect(screen.getByRole("dialog", { name: "Exit this run?" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Keep this run" }));
+    expect(screen.queryByRole("dialog", { name: "Exit this run?" })).not.toBeInTheDocument();
+    expect(startOver).toHaveFocus();
+    expect(storage.getItem(STORAGE_KEYS.active)).toBe(raw);
+    await user.click(screen.getByRole("button", { name: "Continue saved run" }));
+    expect(screen.getByRole("heading", { name: new RegExp(decisionName) })).toHaveFocus();
+
+    await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+    await user.click(screen.getByRole("button", { name: "Start over" }));
+    await user.click(screen.getByRole("button", { name: "Exit run and lose progress" }));
+    expect(storage.getItem(STORAGE_KEYS.active)).toBeNull();
+    expect(screen.getByRole("button", { name: "Start today's Daily" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Start Free Play" })).toBeVisible();
   });
 
   it("keeps the restoration shell and active record stable while an async gateway is pending", async () => {
