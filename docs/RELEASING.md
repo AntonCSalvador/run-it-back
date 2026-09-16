@@ -61,6 +61,23 @@ npm run verify
 tests, offline data validation, and the production static build. It requires
 Node.js 24 and Python 3.11 or newer on `PATH` as `python`.
 
+The release dataset must contain local portraits for all 239 canonical player
+identities. Riot Games and official VCT sources are preferred; Liquipedia is a
+secondary discovery source and is acceptable only with reuse grounds that
+transfer to this project. Never ship fair-use material, permission granted only
+to Liquipedia, VLR images, unverified social copies, or hotlinks. To deliberately
+refresh portraits, record the actual retrieval date:
+
+```sh
+npm run import:portraits -- --retrieved-at YYYY-MM-DD
+```
+
+Keep Run It Back free and noncommercial and retain the Riot fan-project notice
+and per-image source credits. For a takedown, use the source catalog to identify
+the asset, replace it with another approved source before release, rerun the
+complete verification suite, and inspect the replacement. Do not deploy a
+partial portrait catalog.
+
 For changes affecting layout, navigation, responsive behavior, accessibility,
 storage, or the game flow, also run:
 
@@ -115,7 +132,8 @@ Both should return `200`. In a real browser, verify at minimum:
 - the title and mode selection load without a blank screen;
 - a Free Play draft can reach a terminal result;
 - recent history survives a reload in the same browser;
-- fallback portraits and team marks render;
+- all player portraits render (initials indicate a runtime or deployment
+  failure, not expected missing coverage) and team-mark fallbacks render;
 - the Pixel 7 viewport has no horizontal overflow and supports snapping;
 - reduced-motion mode remains usable;
 - no hidden rating, chemistry, probability, or roll appears in player-visible

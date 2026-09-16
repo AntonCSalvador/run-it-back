@@ -64,10 +64,12 @@ elsewhere. It does not publish a score to a Run It Back account.
 Yes. Vercel is the primary deployment. The GitHub Pages link is a secondary
 mirror built from the same `main` branch.
 
-### Why do some cards use fallback portraits or logos?
+### Why might a card show initials instead of a portrait?
 
-The project uses local fallbacks unless an image has clear reuse terms and
-recorded attribution. It does not hotlink uncertain third-party assets.
+All 239 canonical player identities have verified, locally stored portraits.
+Initials are an accessible emergency fallback: if they appear for a player,
+the portrait failed at runtime or was omitted from a deployment, rather than
+being expected dataset coverage. Team marks retain the same resilient fallback.
 
 ### Can the same player appear twice?
 
@@ -93,10 +95,32 @@ the [data methodology](docs/data-methodology.md).
 ## Credits and source policy
 
 Champions facts are compiled from the sources described above. Team logos and
-player portraits currently use local fallbacks rather than claiming rights to
-third-party assets. Contributions must use original assets or sources that
-permit reuse, record the source and license, and never imply official
-affiliation.
+all 239 player portraits are local assets, never hotlinked. Portrait research
+uses Riot Games and official VALORANT Champions Tour sources first, then
+Liquipedia only when its file record establishes reuse grounds that transfer to
+this project. Refresh the reviewed portrait set with an explicit retrieval date:
+
+```bash
+npm run import:portraits -- --retrieved-at YYYY-MM-DD
+```
+
+The importer reuses the local `.cache/liquipedia-portraits` response cache,
+accepts only recorded open licenses or Riot Games policy-eligible originals,
+and rejects ambiguous, incomplete, or unsupported reuse terms. Fair-use claims
+and permission granted only to Liquipedia are not reusable here. Each accepted
+image is recorded in the
+[portrait asset catalog](src/data/champions/portrait-assets.json), and its URL,
+original URL, retrieval date, credit, and license are recorded in the
+[portrait source catalog](src/data/champions/portrait-sources.json).
+
+Run It Back is free and noncommercial. Remove Riot Games policy-based assets
+before making the project commercial. Contributions must use original assets
+or sources that permit reuse, record the source and license, and never imply
+official affiliation. If a rights holder requests a takedown, replace the
+affected source with another approved source before release and rerun the
+complete validation; initials remain only the emergency runtime fallback.
+
+Run It Back was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
 
 VALORANT and related marks belong to Riot Games and their respective owners.
 

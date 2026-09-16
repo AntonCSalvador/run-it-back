@@ -1,10 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { minimalDataset } from "@/data/fixtures/minimal-dataset";
-import { LocalSimulationGateway } from "./gateway";
+import { LocalSimulationGateway, type SimulationGateway } from "./gateway";
 import type { Lineup } from "./domain";
+import { parseDataset } from "./schema";
 
 const lineup: Lineup = { slots: ["smokes", "duelist", "initiator", "sentinel", "flex"].map((role, index) => ({ role: role as Lineup["slots"][number]["role"], cardId: minimalDataset.cards[index].id })), iglCardId: minimalDataset.cards[0].id };
 describe("LocalSimulationGateway", () => {
+  it("accepts an asynchronous series provider at the UI gateway boundary while the local gateway stays synchronous", async () => {
+    const local = new LocalSimulationGateway(parseDataset(minimalDataset));
+    const opponent = local.generateOpponent("async-gateway", "group", lineup);
+    const asyncGateway: SimulationGateway = {
+      generateOpponent: local.generateOpponent.bind(local),
+      playSeries: async (...args) => local.playSeries(...args),
+      createHighlights: local.createHighlights.bind(local),
+    };
+
+    expect(local.playSeries("async-gateway", "group", lineup, opponent)).not.toBeInstanceOf(Promise);
+    await expect(asyncGateway.playSeries("async-gateway", "group", lineup, opponent)).resolves.toMatchObject({ stage: "group" });
+  });
+
   it("owns a cloned validated dataset and composes opponent, series, and highlights", () => {
     const source = structuredClone(minimalDataset); const control = structuredClone(minimalDataset); const gateway = new LocalSimulationGateway(source as never); const baseline = new LocalSimulationGateway(control as never);
     source.cards[10].traits.firepower = 0; source.cards[10].eligibleRoles.push("smokes");

@@ -18,28 +18,47 @@ test("Daily completion survives reload and repeatable choices produce the same r
   expect(completion.roster).toHaveLength(5);
   expect(new Set(completion.roster.map((slot: { role: string }) => slot.role)).size).toBe(5);
   expect(completion.roster.some((slot: { cardId: string }) => slot.cardId === completion.iglCardId)).toBe(true);
-  const visibleRoster = await page.getByRole("region", { name: "Drafted roster" }).locator("p").allTextContents();
-  const expectedRoster = visibleRoster.map(line => {
-    const [, role, handle, year] = line.match(/^(smokes|duelist|initiator|sentinel|flex):\s+(.+)\s+(\d{4})/) ?? [];
+  const lineupItems = page.getByRole("region", { name: "Drafted lineup" }).getByRole("listitem");
+  await expect(lineupItems).toHaveCount(5);
+  await expect(page.getByRole("region", { name: "Drafted lineup" }).locator('[data-testid^="portrait-"]')).toHaveCount(5);
+  const visibleRoster = await lineupItems.evaluateAll(items => items.map(item => ({
+    role: item.firstElementChild?.textContent?.toLowerCase(),
+    handle: item.querySelector("strong")?.textContent,
+    year: item.querySelector("strong + span")?.textContent,
+  })));
+  const expectedRoster = visibleRoster.map(({ role, handle, year }) => {
     const card = championsDataset.cards.find(candidate => candidate.displayHandle === handle && candidate.year === Number(year));
-    expect(card, `visible Daily card resolves in audited dataset: ${line}`).toBeDefined();
+    expect(card, `visible Daily card resolves in audited dataset: ${handle} ${year}`).toBeDefined();
     return { role, cardId: card!.id };
   });
   expect(completion.roster).toEqual(expectedRoster);
-  expect(visibleRoster.find(line => line.includes("IGL"))).toContain(championsDataset.cards.find(card => card.id === completion.iglCardId)?.displayHandle);
+  const iglMarker = page.getByRole("region", { name: "Drafted lineup" }).getByText("IGL", { exact: true });
+  await expect(iglMarker).toBeVisible();
+  const iglLineupItem = iglMarker.locator("..");
+  await expect(iglLineupItem).toHaveRole("listitem");
+  const visibleIglHandle = await iglLineupItem.locator("strong").textContent();
+  expect(visibleIglHandle).toBe(championsDataset.cards.find(card => card.id === completion.iglCardId)?.displayHandle);
   expect(completion.series).toHaveLength(1);
+  await page.getByText("Map-by-map scores").click();
+  const visibleMapScores = await page.getByText("Map-by-map scores").locator("..").innerText();
   for (const series of completion.series) {
     expect(series.maps).toHaveLength(series.userWins + series.opponentWins);
-    for (const map of series.maps) expect(first).toContain(`${map.map} ${map.userScore}–${map.opponentScore}`);
+    for (const map of series.maps) expect(visibleMapScores).toContain(`${map.map} ${map.userScore}–${map.opponentScore}`);
   }
   const terminal = completion.series.at(-1);
   expect(completion.stageReached).toBe(terminal.stage);
   expect(completion.outcome).toBe(terminal.stage === "final" && terminal.userWins === 3 ? "champion" : "eliminated");
+  await page.getByRole("button", { name: "Try Free Play" }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeFocused();
+  await expect(page.getByLabel("Current mode")).toHaveText("Free Play");
+  await page.getByRole("button", { name: "Exit run" }).click();
+  await page.getByRole("button", { name: "Exit run and lose progress" }).click();
   await page.reload();
-  await expect(page.getByLabel("Daily history")).toHaveText("Daily history: 1");
+  await expect(page.getByText("Completed today", { exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("run-it-back:daily:v1") ?? "{}")?.completions?.length)).toBe(1);
-  await expect(page.getByText("Streak: 1", { exact: true })).toBeVisible();
-  await start(page, "Daily");
+  await expect(page.getByLabel("Daily streak")).toHaveText("Current streak: 1");
+  await page.getByRole("button", { name: "Replay today's Daily", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a team to scout" })).toBeVisible();
   await completeTournament(page);
   const replayed = await page.evaluate(() => JSON.parse(localStorage.getItem("run-it-back:daily:v1") ?? "null"));
   expect(replayed.completions).toHaveLength(1);

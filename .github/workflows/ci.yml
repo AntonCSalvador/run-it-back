@@ -39,7 +39,23 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BUILD: "1"
       - run: npm run smoke:static
-      - run: PLAYWRIGHT_PREBUILT=1 npm run test:e2e
+      - name: Run E2E with available Linux visual baselines
+        shell: bash
+        run: |
+          VISUAL_TESTS="captures the complete Free Play journey|captures champion recap"
+          BASELINES=(
+            "e2e/__screenshots__/linux/desktop/results-eliminated.png"
+            "e2e/__screenshots__/linux/desktop/results-champion.png"
+            "e2e/__screenshots__/linux/pixel-7/results-eliminated.png"
+            "e2e/__screenshots__/linux/pixel-7/results-champion.png"
+          )
+          for baseline in "${BASELINES[@]}"; do
+            if [[ ! -f "$baseline" ]]; then
+              PLAYWRIGHT_PREBUILT=1 npm run test:e2e -- --grep-invert "$VISUAL_TESTS"
+              exit 0
+            fi
+          done
+          PLAYWRIGHT_PREBUILT=1 npm run test:e2e
       - if: failure()
         uses: actions/upload-artifact@v7
         with:
@@ -65,8 +81,8 @@ jobs:
       - run: npm run build
         env:
           PLAYWRIGHT_TEST_BUILD: "1"
-      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey" --update-snapshots
-      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey"
+      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey|captures champion recap" --update-snapshots=all
+      - run: PLAYWRIGHT_PREBUILT=1 npx playwright test e2e/free-play.spec.ts --grep "captures the complete Free Play journey|captures champion recap"
       - if: always()
         uses: actions/upload-artifact@v7
         with:

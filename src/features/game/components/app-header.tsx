@@ -1,16 +1,23 @@
 "use client";
 
 import type { GameMode } from "../machine";
+import { type MacroStage, RunProgress } from "./run-progress";
 
-export function AppHeader({ mode, streak, dailyHistoryCount = 0, onStart, onRestart }: { mode: GameMode | null; streak: number; dailyHistoryCount?: number; onStart: (mode: GameMode) => void; onRestart: () => void }) {
-  return <header>
-    <h1>Run It Back</h1>
-    <div role="group" aria-label="Game mode">
-      <button type="button" aria-pressed={mode === "daily"} onClick={() => onStart("daily")}>Daily</button>
-      <button type="button" aria-pressed={mode === "free-play"} onClick={() => onStart("free-play")}>Free Play</button>
+export interface AppHeaderProps {
+  mode: GameMode;
+  stage: MacroStage;
+  detail: string;
+  onHome(): void;
+  onExit?(): void;
+}
+
+export function AppHeader({ mode, stage, detail, onHome, onExit }: AppHeaderProps) {
+  return <header className="app-banner">
+    <h1><button className="app-banner__home" type="button" onClick={onHome} aria-label="Run It Back home">Run It Back</button></h1>
+    <div className="app-banner__run">
+      <p aria-label="Current mode">{mode === "daily" ? "Daily" : "Free Play"}</p>
+      <RunProgress stage={stage} detail={detail} />
     </div>
-    <p aria-label="Daily streak">Streak: {streak}</p>
-    <p aria-label="Daily history">Daily history: {dailyHistoryCount}</p>
-    <button type="button" onClick={onRestart}>Reset current run</button>
+    {onExit && <button className="app-banner__exit" type="button" onClick={onExit}>Exit run</button>}
   </header>;
 }

@@ -1,0 +1,105 @@
+{
+  "title": "Choose Run It Back's structural direction",
+  "question": "All three options honor Broadcast Tactical. Choose the composition that should govern the complete draft-to-recap experience.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Live Results Desk",
+      "kicker": "THE ROLL",
+      "lineage": "sports wire results pages and live broadcast rundowns",
+      "thesis": "Every choice is the next live cue in a four-round tournament rundown.",
+      "palette": ["#0B0D10", "#171B20", "#F2EDE3", "#E84B42", "#D8A84E"],
+      "materials": ["score rules", "editorial columns", "rundown rails"],
+      "viewport": "A large premise and Daily action own the left field while a compact match-notes rail explains the five-pick, one-IGL, four-series run.",
+      "risk": "Purposeful density can become noise unless each screen keeps one primary action.",
+      "raised": [
+        {"from": "Factory catalog", "raise": "Number every pick and round with strict, learnable identifiers."},
+        {"from": "Phosphor terminal", "raise": "Make the highlight feed a legible live transcript with explicit pacing controls."},
+        {"from": "HyperCard stack", "raise": "Keep a visible, exact backtrail at every reversible draft step."}
+      ],
+      "comp": ".impeccable/mocks/decision/run-it-back-live-results-desk-v2.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "Broadcast Control Room",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "production switchers, multiview monitors, and cue sheets",
+      "thesis": "The player directs the broadcast by locking one clear input at a time.",
+      "palette": ["#090B0E", "#15191E", "#EFEAE1", "#E84B42", "#D8A84E"],
+      "materials": ["cue lights", "monitor frames", "tally strips"],
+      "viewport": "Daily and Free Play read as two program sources beneath a dominant live preview that demonstrates the full run.",
+      "risk": "The most familiar esports-operational option can drift toward a generic dashboard.",
+      "comp": ".impeccable/mocks/decision/run-it-back-control-room.webp"
+    },
+    {
+      "id": "challenger-catalog",
+      "label": "Roster Catalog 05",
+      "verdict": "competitive",
+      "lineage": "Factory-style record catalogs fused with event-card collecting",
+      "thesis": "Every player-year card becomes a numbered artifact in one severe tournament catalog.",
+      "palette": ["#08090B", "#F2EDE3", "#E84B42", "#D8A84E"],
+      "materials": ["catalog numbers", "hairline plots", "coded strips"],
+      "viewport": "A disciplined five-slot catalog index surrounds a single active Daily entry and its next action.",
+      "case": "It strongly serves collectors and gives cards identity, but coded navigation needs more explanation than the live desk.",
+      "risk": "Too much code language can hide roles and consequences from first-time players.",
+      "comp": ".impeccable/mocks/decision/run-it-back-roster-catalog.webp",
+      "hero": "https://impeccable.style/worlds/cards/brand-identity-canon-saville-catalog-sleeve-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/brand-identity-canon-saville-catalog-sleeve.webp"
+    },
+    {
+      "id": "challenger-panel",
+      "label": "Elbow Panel Console",
+      "verdict": "declined",
+      "lineage": "starship wall panels",
+      "thesis": "Thick elbows route each selection into the next stage.",
+      "palette": ["#0B0D10", "#E84B42", "#D8A84E", "#F2EDE3"],
+      "materials": ["flat route blocks", "elbow rails"],
+      "viewport": "A routed stage path wraps around the active choice.",
+      "case": "Clear routing, but the panel metaphor identifies science fiction before fantasy esports.",
+      "kept": "A continuous stage rail should make the four-round route unmistakable.",
+      "risk": "The console vocabulary can become decorative HUD clutter.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-elbow-panel-console-hero.webp"
+    },
+    {
+      "id": "challenger-fold",
+      "label": "Deployable Match Sheet",
+      "verdict": "declined",
+      "lineage": "Miura-fold aerospace sheets",
+      "thesis": "The run unfolds from one pick into a complete bracket.",
+      "palette": ["#0B0D10", "#F2EDE3", "#59616B", "#E84B42"],
+      "materials": ["crease rules", "linked cells"],
+      "viewport": "A compact five-cell draft sheet opens into four tournament cells.",
+      "case": "Excellent progressive disclosure, but the folding geometry adds interaction cost without improving player decisions.",
+      "kept": "Reveal complexity only as the player commits each step.",
+      "risk": "Diagonal geometry harms reflow and reading order.",
+      "hero": "https://impeccable.style/worlds/cards/paper-folds-pleats-deployable-miura-orbit-sheet-hero.webp"
+    },
+    {
+      "id": "challenger-hypercard",
+      "label": "Matchday Stack",
+      "verdict": "declined",
+      "lineage": "HyperCard stacks",
+      "thesis": "Each decision is one complete card with an exact return path.",
+      "palette": ["#0B0D10", "#F2EDE3", "#30363D", "#E84B42"],
+      "materials": ["stacked sheets", "explicit buttons"],
+      "viewport": "One large Daily card links directly into a strict stack of draft and tournament screens.",
+      "case": "The sequence is clear, but the nostalgic card stack weakens roster comparison and tournament scale.",
+      "kept": "Every reversible decision gets a literal, predictable Back action.",
+      "risk": "Fixed-card proportions do not serve dense desktop comparison or 390px reflow equally.",
+      "hero": "https://impeccable.style/worlds/cards/medium-native-hypercard-stack-shoebox-hero.webp"
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "buildPath": {"value": "comp", "toggle": true},
+  "canon": true,
+  "canonCard": {
+    "label": "Standard dark card dashboard",
+    "thesis": "A conventional responsive game dashboard executed with clean cards and familiar navigation.",
+    "palette": ["#0B0D10", "#171B20", "#F2EDE3", "#E84B42"],
+    "materials": ["card grid", "top navigation", "status chips"],
+    "viewport": "A centered hero, two equal mode cards, and a row of feature explanations.",
+    "risk": "Clear and familiar, but category-interchangeable and weaker at expressing tournament suspense.",
+    "comp": ".impeccable/mocks/decision/run-it-back-canon.webp"
+  },
+  "steer": true
+}
