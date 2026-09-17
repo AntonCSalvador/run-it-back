@@ -169,13 +169,13 @@ main:focus-visible {
   display: block;
   border-radius: var(--rib-radius-sm);
   padding: var(--rib-space-1) var(--rib-space-2);
-  background: var(--rib-text-primary);
+  background: transparent;
 }
 
 .app-banner__home {
   min-block-size: 0;
   border: 0;
-  background: var(--rib-text-primary);
+  background: transparent;
   color: inherit;
   font: inherit;
   letter-spacing: inherit;
@@ -184,7 +184,7 @@ main:focus-visible {
 
 .app-banner__wordmark { display: block; width: 168px; height: 40px; object-fit: contain; }
 
-.app-banner__home:hover:not(:disabled) { background: var(--rib-text-primary); }
+.app-banner__home:hover:not(:disabled) { background: transparent; }
 
 .app-banner--entry p { text-transform: uppercase; letter-spacing: 0.08em; }
 

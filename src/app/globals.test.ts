@@ -188,17 +188,17 @@ describe("parsed broadcast stylesheet", () => {
     expect(ruleFor(rules, ".roster-bar strong").style.getPropertyValue("color")).toBe("var(--rib-text-primary)");
   });
 
-  it("gives the dark wordmark a responsive warm contrast plate", () => {
+  it("keeps the light wordmark transparent and responsively sized", () => {
     const brand = exactRuleFor(rules, ".app-banner__brand").style;
-    expect(brand.getPropertyValue("background")).toBe("var(--rib-text-primary)");
+    expect(brand.getPropertyValue("background")).toBe("transparent");
     expect(brand.getPropertyValue("padding")).toBe("var(--rib-space-1) var(--rib-space-2)");
-    expect(exactRuleFor(rules, ".app-banner__home").style.getPropertyValue("background")).toBe("var(--rib-text-primary)");
+    expect(exactRuleFor(rules, ".app-banner__home").style.getPropertyValue("background")).toBe("transparent");
     const wordmark = exactRuleFor(rules, ".app-banner__wordmark").style;
     expect(wordmark.getPropertyValue("width")).toBe("168px");
     expect(wordmark.getPropertyValue("height")).toBe("40px");
     expect(wordmark.getPropertyValue("object-fit")).toBe("contain");
     const hover = exactRuleFor(rules, ".app-banner__home:hover:not(:disabled)").style;
-    expect(hover.getPropertyValue("background")).toBe("var(--rib-text-primary)");
+    expect(hover.getPropertyValue("background")).toBe("transparent");
     const mobile = mediaFor(rules, "(max-width:44rem)");
     expect(ruleFor(mobile.cssRules, ".app-banner__wordmark").style.getPropertyValue("width")).toBe("128px");
   });
