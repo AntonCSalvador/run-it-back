@@ -69,7 +69,9 @@ it("opens home from the wordmark and continues the same decision", async () => {
   const user = userEvent.setup();
   render(<GameApp dataset={dataset} storage={storage} initialState={active} />);
   const decisionName = dataset.teams.find(team => team.id === selectedTeamId)!.name;
-  await user.click(screen.getByRole("button", { name: "Run It Back home" }));
+  const home = screen.getByRole("button", { name: "Run It Back home" });
+  expect(home.querySelector("img")).toHaveAttribute("src", "/assets/brand/run-it-back-wordmark.png");
+  await user.click(home);
   expect(screen.getByRole("heading", { name: "Draft history. Rewrite the bracket." })).toHaveFocus();
   expect(screen.queryByRole("heading", { name: new RegExp(decisionName) })).not.toBeInTheDocument();
   await user.click(screen.getByRole("button", { name: "Continue saved run" }));
@@ -361,7 +363,9 @@ describe("GameApp", () => {
 
   it("renders an accessible wordmark and mode controls immediately", () => {
     render(<GameApp />);
-    expect(screen.getByRole("heading", { name: "Run It Back", level: 1 })).toBeVisible();
+    const heading = screen.getByRole("heading", { name: "Run It Back", level: 1 });
+    expect(heading).toBeVisible();
+    expect(heading.querySelector("img")).toHaveAttribute("src", "/assets/brand/run-it-back-wordmark.png");
     expect(screen.getByLabelText("Choose how to play")).toBeVisible();
     expect(screen.getByRole("button", { name: "Start today's Daily" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Start Free Play" })).toBeVisible();

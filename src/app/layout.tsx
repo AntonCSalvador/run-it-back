@@ -24,6 +24,7 @@ const ribDisplay = localFont({
 export const metadata: Metadata = {
   title: "Run It Back",
   description: "Draft event-specific Champions player cards, choose an IGL, and run a fantasy tournament.",
+  icons: { icon: "/assets/brand/run-it-back-icon.png" },
 };
 
 export function LegalNotice() {

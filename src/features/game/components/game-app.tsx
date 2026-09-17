@@ -9,7 +9,7 @@ import { LocalSimulationGateway, type SimulationGateway } from "../gateway";
 import { createGameReducer, createStartAction, initialGameState, type GameAction, type GameMode, type GameState } from "../machine";
 import { parseDataset } from "../schema";
 import { ACTIVE_RECORD, addDailyCompletion, DAILY_RECORD, HISTORY_RECORD, nextDailyStreak, prependFreePlayHistory, readRecord, removeRecord, type DailyRun, type FreePlayRun, writeRecord } from "../storage";
-import { AppHeader } from "./app-header";
+import { AppHeader, BrandWordmark } from "./app-header";
 import { ErrorBoundary } from "./error-boundary";
 import { TeamOffer } from "./team-offer";
 import { PlayerPicker } from "./player-picker";
@@ -365,13 +365,13 @@ export function GameAppCore({ dataset: suppliedDataset, now, freeSeedFactory, ga
   const storageState = { recovered: resultStorageState.recovered || activeStorageState.recovered, persistent: resultStorageState.persistent && activeStorageState.persistent };
   if (!hydrated) return <>
     <a className="skip-link" href="#game-content">Skip to current decision</a>
-    <header className="app-banner app-banner--entry"><h1>Run It Back</h1><p>Fantasy Champions draft</p></header>
+    <header className="app-banner app-banner--entry"><h1 className="app-banner__brand"><BrandWordmark alt="Run It Back" /></h1><p>Fantasy Champions draft</p></header>
     <main id="game-content" tabIndex={-1} className="game-shell restoration-shell" aria-busy="true"><section role="status" aria-live="polite"><h2>Restoring saved run…</h2><p>Checking this browser for an unfinished draft.</p></section></main>
   </>;
   return <>
       <a className="skip-link" href="#game-content">Skip to current decision</a>
       {showHome
-        ? <header className="app-banner app-banner--entry"><h1>Run It Back</h1><p>Fantasy Champions draft</p></header>
+        ? <header className="app-banner app-banner--entry"><h1 className="app-banner__brand"><BrandWordmark alt="Run It Back" /></h1><p>Fantasy Champions draft</p></header>
         : <AppHeader mode={state.mode} stage={progress!.stage} detail={progress!.detail} onHome={() => { setHomeOpen(true); setFocusHome(true); }} onExit={state.phase === "results" ? undefined : () => setExitDialogOpen(true)} />}
       <main id="game-content" tabIndex={-1} className={`game-shell ${actionFire.fireClass}`}>
       <p className="sr-only" role="status" aria-label="Draft update" aria-live="polite" aria-atomic="true">{draftAnnouncement}</p>

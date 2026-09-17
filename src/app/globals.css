@@ -165,18 +165,26 @@ main:focus-visible {
 
 .app-banner h1 { margin-inline-end: auto; }
 
+.app-banner__brand {
+  display: block;
+  border-radius: var(--rib-radius-sm);
+  padding: var(--rib-space-1) var(--rib-space-2);
+  background: var(--rib-text-primary);
+}
+
 .app-banner__home {
   min-block-size: 0;
   border: 0;
-  padding: 0;
-  background: transparent;
+  background: var(--rib-text-primary);
   color: inherit;
   font: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
 }
 
-.app-banner__home:hover:not(:disabled) { background: transparent; color: var(--rib-red); }
+.app-banner__wordmark { display: block; width: 168px; height: 40px; object-fit: contain; }
+
+.app-banner__home:hover:not(:disabled) { background: var(--rib-text-primary); }
 
 .app-banner--entry p { text-transform: uppercase; letter-spacing: 0.08em; }
 
@@ -661,6 +669,7 @@ textarea {
 @media (max-width:44rem) {
   main { padding: 1rem; }
   .app-banner { align-items: flex-start; }
+  .app-banner__wordmark { width: 128px; }
   .app-banner__run { order: 3; grid-template-columns: 1fr; width: 100%; gap: var(--rib-space-2); }
   .app-banner__run > p { border: 0; padding: 0; }
   .app-banner__exit { margin-inline-start: 0; }
