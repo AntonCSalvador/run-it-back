@@ -43,5 +43,6 @@ describe("root layout", () => {
     });
     expect(markup).toContain('Run It Back was created under Riot Games&#x27; &quot;Legal Jibber Jabber&quot; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.');
     expect(metadata.description).toBe("Draft event-specific Champions player cards, choose an IGL, and run a fantasy tournament.");
+    expect(metadata.icons).toEqual({ icon: "/assets/brand/run-it-back-icon.png" });
   });
 });
